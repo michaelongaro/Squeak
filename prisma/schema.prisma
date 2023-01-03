@@ -6,18 +6,32 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  // NOTE: When using postgresql, mysql or sqlserver, uncomment the @db.Text annotations in model Account below
-  // Further reading:
-  // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
-  // https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-model Example {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model Room {
+  id            String  @id @default(cuid())
+  pointsToWin   Int     @default(100)
+  maxRounds     Int     @default(3)
+  maxPlayers    Int     @default(4)
+  playersInRoom Int     @default(1)
+  isPublic      Boolean @default(true)
+  code          String  @unique
+  hostUsername  String
+  hostUserID    String
+}
+
+model Stats {
+  id                    String @id @default(cuid())
+  squeaks               Int    @default(0)
+  averageFinishingPlace Float  @default(0)
+  averageLeftInSqueak   Float  @default(0)
+  lowestScore           Int    @default(0)
+  highestScore          Int    @default(0)
+  totalGamesPlayed      Int    @default(0)
+  user                  User   @relation(fields: [userID], references: [id], onDelete: Cascade)
+  userID                String @unique
 }
 
 // Necessary for Next auth
@@ -48,13 +62,17 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  accounts      Account[]
-  sessions      Session[]
+  id               String    @id @default(cuid())
+  name             String?
+  email            String?   @unique
+  emailVerified    DateTime?
+  image            String?
+  username         String?
+  avatarImage      String?
+  selectedDeckSkin String?
+  stats            Stats?
+  accounts         Account[]
+  sessions         Session[]
 }
 
 model VerificationToken {
