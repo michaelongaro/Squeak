@@ -7,7 +7,7 @@ interface ILocalStorageContext {
 
 const LocalStorageContext = createContext<ILocalStorageContext | null>(null);
 
-export function LocalStorageProvider(props: any) {
+export function LocalStorageProvider(props: { children: React.ReactNode }) {
   const [value, setValue] = useState<string | null>(null);
 
   useEffect(() => {
