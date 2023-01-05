@@ -13,15 +13,15 @@ function HomePage() {
     // could make this into a card and have 2-3 diagonal-ish layered playing cards that are peeking out behind left and right sides of card
     <>
       {roomCtx.pageToRender === "home" ? (
-        <div className="relative flex min-h-[100vh] flex-col items-center justify-center gap-8 bg-green-700">
+        <div className="baseVertFlex relative min-h-[100vh]  gap-8 bg-green-700">
           <div className="text-4xl sm:text-5xl">Squeak</div>
 
-          <div className="flex items-center justify-center gap-4">
+          <div className="baseFlex gap-4">
             <button>Sign up</button>
             <button>Log in</button>
           </div>
 
-          <div className="flex flex-col items-center justify-center gap-4">
+          <div className="baseVertFlex gap-4">
             <button onClick={() => setShowTutorialModal(true)}>
               How to play
             </button>
@@ -36,7 +36,7 @@ function HomePage() {
           {showTutorialModal && <TutorialModal />}
 
           {/* maybe make this into its own component so that every page besides play can show it */}
-          <div className="absolute top-4 right-4 flex items-center justify-center gap-2 sm:gap-4">
+          <div className="baseFlex absolute top-4 right-4 gap-2 sm:gap-4">
             {/* maybe make these buttons in future, but be cautious because you will probably have primary/secondary button
               styles, and I don't think these want those styles */}
             <div>Volume</div>
