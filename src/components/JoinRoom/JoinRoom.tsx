@@ -1,24 +1,20 @@
 import { useState, useEffect } from "react";
 import { io, type Socket } from "socket.io-client";
 import { trpc } from "../../utils/trpc";
-import { type Room } from "@prisma/client";
-import {
-  type IPlayerMetadata,
-  type IRoomConfig,
-} from "../CreateRoom/CreateRoom";
 import { useRoomContext } from "../../context/RoomContext";
+import { useLocalStorageContext } from "../../context/LocalStorageContext";
 
 let socket: Socket;
 
 function JoinRoom() {
   const roomCtx = useRoomContext();
+  const localStorageID = useLocalStorageContext();
+
+  const userID = localStorageID.value; // add ctx.userID ?? localStorageID.value
 
   const [username, setUsername] = useState<string>("");
   const [roomCode, setRoomCode] = useState<string>("");
   const [submittedRoomCode, setSubmittedRoomCode] = useState<string>("");
-  const [userID, setUserID] = useState<string>("joinerUserID");
-  // const [playerMetadata, setPlayerMetadata] = useState<IPlayerMetadata[]>();
-  // const [roomConfig, setRoomConfig] = useState<Room>(); // <IRoomConfig> figure out typings later
 
   const { data: receivedRoomConfig } =
     trpc.rooms.findRoomByCode.useQuery(submittedRoomCode);
@@ -36,7 +32,6 @@ function JoinRoom() {
   }, [roomCtx, receivedRoomConfig]);
 
   useEffect(() => {
-    // socketInitializer();
     socket = io();
 
     socket.on("connectedUsersChanged", (newUsers) =>
@@ -52,20 +47,6 @@ function JoinRoom() {
     // maybe you need to have a disconnect function that runs
     // when the component unmounts?
   }, [roomCtx]);
-
-  // const socketInitializer = async () => {
-  //   await fetch("/api/socket");
-
-  //   socket = io();
-
-  //   socket.on("connectedUsersChanged", (newUsers) =>
-  //     setPlayerMetadata(newUsers)
-  //   );
-
-  //   socket.on("roomConfigUpdated", (roomConfig) => setRoomConfig(roomConfig));
-
-  //   socket.on("navigateToPlayScreen", () => setPageToRender("play"));
-  // };
 
   function checkRoomCode() {
     setSubmittedRoomCode(roomCode);
