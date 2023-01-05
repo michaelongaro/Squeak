@@ -27,19 +27,25 @@ function CreateRoom() {
   const roomCtx = useRoomContext();
   const localStorageID = useLocalStorageContext();
 
+  const userID = localStorageID.value; // add ctx.userID ?? localStorageID.value
+
   const utils = trpc.useContext();
 
   const createRoomInDatabase = trpc.rooms.createRoom.useMutation();
 
-  const [hostUserID, setHostUserID] = useState<string>("sampleUserID");
+  const [hostUserID, setHostUserID] = useState<string>();
   // probably if user isn't logged in, and they don't already have a userID stored
   // in localstorage, then make one for them? use stage useLocalStorage hook for this
 
   const [roomCreated, setRoomCreated] = useState<boolean>(false);
 
   useEffect(() => {
+    if (userID) setHostUserID(userID);
+  }, [userID]);
+
+  useEffect(() => {
     // rough way to check whether context data has been initialized
-    if (roomCtx.roomConfig.code === "") {
+    if (roomCtx.roomConfig.code === "" && hostUserID) {
       roomCtx.setRoomConfig({
         pointsToWin: 100,
         maxRounds: 3,
@@ -47,13 +53,11 @@ function CreateRoom() {
         playersInRoom: 1,
         isPublic: true,
         code: cryptoRandomString({ length: 6 }),
-        hostUsername: "sampleUsername",
-        hostUserID: "sampleUserID",
+        hostUsername: "",
+        hostUserID: hostUserID,
       });
 
-      roomCtx.setPlayerMetadata(
-        [{ username: "sampleUsername", userID: "samplePlayerID" }] // this is just a placeholder
-      );
+      roomCtx.setPlayerMetadata([{ username: "", userID: hostUserID }]);
 
       socket = io();
 
@@ -72,7 +76,7 @@ function CreateRoom() {
 
     // maybe you need to have a disconnect function that runs
     // when the component unmounts?
-  }, [roomCtx]);
+  }, [roomCtx, hostUserID]);
 
   function createRoom() {
     if (roomCtx && roomCtx.roomConfig) {
