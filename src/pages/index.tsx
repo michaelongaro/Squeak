@@ -18,8 +18,12 @@ const Home: NextPage = () => {
   // aka set up auth z
 
   useEffect(() => {
-    if (status === "unauthenticated" && !session) {
-      localStorageID.setValue(cryptoRandomString({ length: 16 }));
+    if (status === "unauthenticated" && !session && !localStorageID.value) {
+      const userID = cryptoRandomString({ length: 16 });
+      if (localStorage.getItem("userID") === null) {
+        localStorage.setItem("userID", userID);
+      }
+      localStorageID.setValue(userID);
     }
   }, [status, session, localStorageID]);
 
