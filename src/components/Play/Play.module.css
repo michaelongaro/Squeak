@@ -1,0 +1,39 @@
+.fullBoardGrid {
+  width: 100vw;
+  /*try 100%*/
+  height: 100vh;
+  display: grid;
+  grid-template-rows: 0.25fr 0.5fr 0.25fr;
+  grid-template-columns: 0.25fr 0.5fr 0.25fr;
+  grid-template-areas:
+    ". topPlayerCards settings"
+    "leftPlayerCards board rightPlayerCards"
+    ". currentPlayerCards .";
+  gap: 1rem;
+}
+
+.topPlayerCards {
+  grid-area: topPlayerCards;
+}
+
+.settings {
+  grid-area: settings;
+}
+
+.leftPlayerCards {
+  grid-area: leftPlayerCards;
+}
+
+.board {
+  grid-area: board;
+  align-items: center;
+  justify-items: center;
+}
+
+.rightPlayerCards {
+  grid-area: rightPlayerCards;
+}
+
+.currentPlayerCards {
+  grid-area: currentPlayerCards;
+}
