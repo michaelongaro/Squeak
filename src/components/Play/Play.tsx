@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
-import { io, type Socket } from "socket.io-client";
 import { useLocalStorageContext } from "../../context/LocalStorageContext";
 import { useRoomContext } from "../../context/RoomContext";
 import Board from "./Board";
-import Card from "./Card";
+import PlayerCardContainer from "./PlayerCardContainer";
 
 import classes from "./Play.module.css";
 
-let socket: Socket;
+import { socket } from "../../pages";
+import OtherPlayersCardContainers from "./OtherPlayersCardContainers";
 
 function Play() {
   const roomCtx = useRoomContext();
@@ -17,14 +17,10 @@ function Play() {
   const [gameStarted, setGameStarted] = useState<boolean>(false);
 
   useEffect(() => {
-    // could also maybe put socket = io() in room context <---- seems like good idea
-    if (!roomCtx.gameData) {
-      socket = io();
-
-      // seems like this is necessary..
-      socket.emit("playerRejoinRoom", roomCtx.roomConfig.code);
-
-      // may have to put this behind a .on("roomRejoinSuccessful") or in another effect or something
+    if (
+      roomCtx.gameData.board === undefined &&
+      roomCtx.gameData.players === undefined
+    ) {
       socket.emit("playerReadyToReceiveInitGameData", roomCtx.roomConfig.code);
 
       socket.on("initGameData", (initGameData) => {
@@ -37,6 +33,7 @@ function Play() {
         setGameStarted(true);
       });
     }
+
     // maybe you need to have a disconnect function that runs
     // when the component unmounts?
   }, [roomCtx]);
@@ -45,44 +42,19 @@ function Play() {
     <div className={`${classes.fullBoardGrid} relative bg-green-700`}>
       {gameStarted && (
         <>
-          {/* should prob filter out current player from below */}
-          {/* {roomCtx.gameData.players.map((player) => (
-        return <OtherPlayerCardContainer player={player} /> 
-        ))}*/}
+          <OtherPlayersCardContainers
+            orderedClassNames={[
+              classes.topPlayerCards,
+              classes.leftPlayerCards,
+              classes.rightPlayerCards,
+            ]}
+          />
 
-          {/* maybe just need to wrap this with a div that has classes.board? */}
           <Board boardClass={classes.board} />
 
-          {/* <PlayerCardContainer /> */}
-          <div className={`${classes.currentPlayerCards}`}>
-            {/* deck, squeakpile, squeakrow */}
-            <div className="grid grid-cols-5 gap-2">
-              <div className="baseFlex gap-2">
-                <div>
-                  {/* actually could maybe just do default down card position, unless
-                you were trying to show slight depth to knwo a bit how many are left.. */}
-                  Squeak Pile
-                </div>
-                <div className="baseFlex gap-2">
-                  {userID &&
-                    roomCtx.gameData?.players[userID]?.squeakRow.map((card) => (
-                      <div key={`${userID}card${card.suit}${card.value}`}>
-                        {/* this should be like a <StackedSqueakCards /> or something */}
-                        <Card
-                          value={card.value}
-                          suit={card.suit}
-                          draggable={true}
-                        />
-                      </div>
-                    ))}
-                </div>
-              </div>
-              <div>
-                {/* opting to just have deck be a big stack of cards w/ current card showing */}
-                Deck
-              </div>
-            </div>
-          </div>
+          <PlayerCardContainer
+            cardContainerClass={classes.currentPlayerCards}
+          />
         </>
       )}
     </div>
