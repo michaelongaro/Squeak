@@ -16,21 +16,54 @@ const valueToNumberMap = {
   K: 13,
 };
 
+const suitToNumberMap = {
+  hearts: 1,
+  clubs: 2,
+  diamonds: 3,
+  spades: 4,
+};
+
 function cardPlacementIsValid(
   currentCell: ICard | null,
   value: string,
-  suit: string
+  suit: string,
+  forBoard: boolean
 ): boolean {
+  console.log(currentCell);
+
   // @ts-expect-error asdf
-  const numValue = valueToNumberMap[value];
+  const numValueOfCardBeingPlaced = valueToNumberMap[value];
+  const numValueOfCurrentCell = currentCell
+    ? // @ts-expect-error asdf
+      valueToNumberMap[currentCell.value]
+    : null;
 
-  // cell is empty + card is an ace
-  if (currentCell === null && numValue === 1) return true;
+  // "K" is the last card that can be placed onto a deck
+  if (forBoard && currentCell?.value !== "K") {
+    // cell is empty + card is an ace
+    if (currentCell === null && numValueOfCardBeingPlaced === 1) return true;
 
-  if (currentCell?.value) {
+    if (currentCell?.value) {
+      if (
+        numValueOfCardBeingPlaced === numValueOfCurrentCell + 1 &&
+        suit === currentCell.suit
+      )
+        return true;
+    }
+  } else {
+    // // @ts-expect-error asdf
+    // const numValue = valueToNumberMap[value];
+
+    // @ts-expect-error asdf
+    const numSuitBeingPlaced = suitToNumberMap[suit];
+    // @ts-expect-error asdf
+    const baseNumSuit = suitToNumberMap[suit];
+
     if (
-      numValue === parseInt(currentCell.value) + 1 &&
-      suit == currentCell.suit
+      // value of card being added is one less than the current card
+      numValueOfCardBeingPlaced === numValueOfCurrentCell - 1 &&
+      // checking for opposite color
+      baseNumSuit % 2 !== numSuitBeingPlaced % 2
     )
       return true;
   }
