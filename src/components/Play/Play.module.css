@@ -1,6 +1,6 @@
 .fullBoardGrid {
   width: 100vw;
-  /*try 100%*/
+  /*^ try 100% if overflow occurs*/
   height: 100vh;
   display: grid;
   grid-template-rows: 0.25fr 0.5fr 0.25fr;
@@ -10,6 +10,15 @@
     "leftPlayerCards board rightPlayerCards"
     ". currentPlayerCards .";
   gap: 1rem;
+}
+
+.currentPlayerCards,
+.leftPlayerCards,
+.rightPlayerCards,
+.topPlayerCards {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .topPlayerCards {
