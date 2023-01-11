@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 import {
   type IPlayerMetadata,
   type IRoomConfig,
@@ -14,12 +14,20 @@ interface IRoomContext {
   setRoomConfig: React.Dispatch<React.SetStateAction<IRoomConfig>>;
   playerMetadata: IPlayerMetadata[];
   setPlayerMetadata: React.Dispatch<React.SetStateAction<IPlayerMetadata[]>>;
-  gameData: IGameMetadata | undefined;
-  setGameData: React.Dispatch<React.SetStateAction<IGameMetadata | undefined>>;
+  gameData: IGameMetadata;
+  setGameData: React.Dispatch<React.SetStateAction<IGameMetadata>>;
   hoveredCell: [number, number] | null;
   setHoveredCell: React.Dispatch<React.SetStateAction<[number, number] | null>>;
-  holdingACard: boolean;
-  setHoldingACard: React.Dispatch<React.SetStateAction<boolean>>;
+  hoveredSqueakStack: number | null;
+  setHoveredSqueakStack: React.Dispatch<React.SetStateAction<number | null>>;
+  holdingADeckCard: boolean;
+  setHoldingADeckCard: React.Dispatch<React.SetStateAction<boolean>>;
+  holdingASqueakCard: boolean;
+  setHoldingASqueakCard: React.Dispatch<React.SetStateAction<boolean>>;
+  originIndexForHeldSqueakCard: number | null;
+  setOriginIndexForHeldSqueakCard: React.Dispatch<
+    React.SetStateAction<number | null>
+  >;
 }
 
 const RoomContext = createContext<IRoomContext | null>(null);
@@ -40,18 +48,20 @@ export function RoomProvider(props: { children: React.ReactNode }) {
   });
   const [playerMetadata, setPlayerMetadata] = useState<IPlayerMetadata[]>([]);
 
-  const [gameData, setGameData] = useState<IGameMetadata>();
+  // safe, because we are only ever accessing/mutating gameData when it is defined
+  const [gameData, setGameData] = useState<IGameMetadata>({} as IGameMetadata);
   const [hoveredCell, setHoveredCell] = useState<[number, number] | null>(null);
-  const [holdingACard, setHoldingACard] = useState<boolean>(false);
+  const [hoveredSqueakStack, setHoveredSqueakStack] = useState<number | null>(
+    null
+  );
+  const [holdingADeckCard, setHoldingADeckCard] = useState<boolean>(false);
+  const [holdingASqueakCard, setHoldingASqueakCard] = useState<boolean>(false);
+  const [originIndexForHeldSqueakCard, setOriginIndexForHeldSqueakCard] =
+    useState<number | null>(null);
 
   useEffect(() => {
-    // socketInitializer();
     fetch("/api/socket");
   }, []);
-
-  // const socketInitializer = async () => {
-  //   await fetch("/api/socket");
-  // };
 
   const context: IRoomContext = {
     pageToRender,
@@ -64,8 +74,14 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     setGameData,
     hoveredCell,
     setHoveredCell,
-    holdingACard,
-    setHoldingACard,
+    hoveredSqueakStack,
+    setHoveredSqueakStack,
+    holdingADeckCard,
+    setHoldingADeckCard,
+    holdingASqueakCard,
+    setHoldingASqueakCard,
+    originIndexForHeldSqueakCard,
+    setOriginIndexForHeldSqueakCard,
   };
 
   return (
