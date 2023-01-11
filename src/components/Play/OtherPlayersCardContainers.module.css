@@ -1,0 +1,87 @@
+.topInnerGridContainer {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  justify-items: center;
+  align-items: center;
+  gap: 1rem;
+  grid-template-areas:
+    " squeakDeck squeakHand0 squeakHand1 squeakHand2 squeakHand3 "
+    " . . cardBeingPlayedOnBoard . . ";
+  width: 70%;
+  /* maybe just have a max-width so things don't get too stretched out */
+  margin: 1rem;
+}
+
+.topInnerGridContainer>* {
+  rotate: 180deg;
+}
+
+.leftInnerGridContainer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
+  justify-items: center;
+  align-items: center;
+  gap: 1rem;
+  grid-template-areas:
+    " . squeakDeck "
+    " . squeakHand0 "
+    " cardBeingPlayedOnBoard squeakHand1 "
+    " . squeakHand2 "
+    " . squeakHand3 ";
+  width: 70%;
+  /* maybe just have a max-width so things don't get too stretched out */
+  margin: 1rem;
+}
+
+.leftInnerGridContainer>* {
+  rotate: 90deg;
+}
+
+.rightInnerGridContainer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
+  justify-items: center;
+  align-items: center;
+  gap: 1rem;
+  grid-template-areas:
+    " squeakDeck . "
+    " squeakHand0 . "
+    " squeakHand1 cardBeingPlayedOnBoard "
+    " squeakHand2 . "
+    " squeakHand3 . ";
+  width: 70%;
+  /* maybe just have a max-width so things don't get too stretched out */
+  margin: 1rem;
+}
+
+.rightInnerGridContainer>* {
+  rotate: 270deg;
+}
+
+/* maybe can get away with just declaring them once below? */
+.squeakDeck {
+  grid-area: squeakDeck;
+}
+
+.squeakHand0 {
+  grid-area: squeakHand0;
+}
+
+.squeakHand1 {
+  grid-area: squeakHand1;
+}
+
+.squeakHand2 {
+  grid-area: squeakHand2;
+}
+
+.squeakHand3 {
+  grid-area: squeakHand3;
+}
+
+.cardBeingPlayedOnBoard {
+  grid-area: cardBeingPlayedOnBoard;
+}

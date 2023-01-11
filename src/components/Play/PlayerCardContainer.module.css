@@ -1,0 +1,41 @@
+.gridContainer {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-template-rows: 1fr 1fr;
+  justify-items: center;
+  align-items: center;
+  gap: 1rem;
+  grid-template-areas:
+    ". . squeakDeck squeakHand0 squeakHand1 squeakHand2 squeakHand3"
+    "playerDeck playerHand . . . . .";
+  width: 70%;
+  /* margin: 1rem; was warping grid pretty heavily for some reason */
+}
+
+.squeakDeck {
+  grid-area: squeakDeck;
+}
+
+.squeakHand0 {
+  grid-area: squeakHand0;
+}
+
+.squeakHand1 {
+  grid-area: squeakHand1;
+}
+
+.squeakHand2 {
+  grid-area: squeakHand2;
+}
+
+.squeakHand3 {
+  grid-area: squeakHand3;
+}
+
+.playerDeck {
+  grid-area: playerDeck;
+}
+
+.playerHand {
+  grid-area: playerHand;
+}
