@@ -1,4 +1,5 @@
-import React from "react";
+import { useRef, useEffect, useState } from "react";
+import { socket } from "../../pages";
 import { useLocalStorageContext } from "../../context/LocalStorageContext";
 import { useRoomContext } from "../../context/RoomContext";
 import Card from "./Card";
@@ -13,50 +14,52 @@ function Board({ boardClass }: IBoard) {
 
   const userID = localStorageID.value; // change to ctx.userID ?? localStorageID.value
 
-  // onMouseEnter/Leave -> set state in roomCtx for currentHoveredCell ([row, col] | null)
-  // listen for .on("cardDropApproved") and update the board accordingly
-  // ^^ will be receiving row,col value+suit userID that dropped it
-  // ^^^^ will prob involve communication with <OtherPlayers /> since the card will be coming
-  // from middle/squeakrow of their component. will involve some animation/rotation
-  // general idea I think is still to
+  // useEffect(() => {
+  //   socket.on("cardDropApproved", (data) => {
+  //     // hide the card (maybe directly mutate the value + suit to undefined? not sure of
+  //     // implications with that)
 
-  console.log(
-    roomCtx.gameData?.board.length,
-    roomCtx.gameData?.board[0]?.length
-  );
+  //     console.log("board got updated");
+
+  //     roomCtx.setGameData({
+  //       ...roomCtx.gameData,
+  //       board: data.updatedBoard,
+  //     });
+  //   });
+  // }, []);
+
+  // might need to add roomCtx to deps here
+
+  // just have unique IDs for each cell,
+  // in board it would be #rowcol and then you can `#${row}${col}` to access
+  // for players prob do like `#${playerID}num` num would be 0-7 or whatever
 
   return (
-    <div
-      style={{
-        boxShadow: roomCtx.holdingACard
-          ? `0px 0px 10px "3px"
-                    } rgba(184,184,184,1)`
-          : "none",
-      }}
-      className={`${boardClass} grid w-full grid-cols-5 gap-1`}
-    >
+    <div className={`${boardClass} grid w-full grid-cols-5 gap-1`}>
       {roomCtx.gameData?.board.map((row, rowIdx) => (
         <>
           {row.map((cell, colIdx) => (
             <div
+              id={`cell${rowIdx}${colIdx}`}
               key={`${userID}board${rowIdx}${colIdx}`}
               style={{
-                boxShadow: roomCtx.holdingACard
-                  ? `0px 0px 10px ${
-                      roomCtx.hoveredCell?.[0] === rowIdx &&
-                      roomCtx.hoveredCell?.[1] === colIdx
-                        ? "5px"
-                        : "3px"
-                    } rgba(184,184,184,1)`
-                  : "none",
+                boxShadow:
+                  roomCtx.holdingADeckCard || roomCtx.holdingASqueakCard
+                    ? `0px 0px 10px ${
+                        roomCtx.hoveredCell?.[0] === rowIdx &&
+                        roomCtx.hoveredCell?.[1] === colIdx
+                          ? "5px"
+                          : "3px"
+                      } rgba(184,184,184,1)`
+                    : "none",
                 opacity:
                   roomCtx.hoveredCell?.[0] === rowIdx &&
                   roomCtx.hoveredCell?.[1] === colIdx &&
-                  roomCtx.holdingACard
+                  (roomCtx.holdingADeckCard || roomCtx.holdingASqueakCard)
                     ? 0.35 // worst case you leave it like this (was prev 0.75)
                     : 1,
               }}
-              className="baseFlex relative z-[600] h-16 min-h-fit w-12 min-w-fit rounded-lg p-4 transition-all"
+              className="baseFlex relative z-[600] h-[80px] min-h-fit w-[60px] min-w-fit rounded-lg p-1 transition-all"
               onMouseEnter={() => roomCtx.setHoveredCell([rowIdx, colIdx])}
               onMouseLeave={() => roomCtx.setHoveredCell(null)}
             >
