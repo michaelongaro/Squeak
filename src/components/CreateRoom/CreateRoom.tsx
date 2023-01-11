@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import { io, type Socket } from "socket.io-client";
 import cryptoRandomString from "crypto-random-string";
 import { trpc } from "../../utils/trpc";
+import { socket } from "../../pages";
 import { useRoomContext } from "../../context/RoomContext";
 import { useLocalStorageContext } from "../../context/LocalStorageContext";
 
@@ -21,8 +21,6 @@ export interface IPlayerMetadata {
   userID: string;
 }
 
-let socket: Socket;
-
 function CreateRoom() {
   const roomCtx = useRoomContext();
   const localStorageID = useLocalStorageContext();
@@ -33,19 +31,11 @@ function CreateRoom() {
 
   const createRoomInDatabase = trpc.rooms.createRoom.useMutation();
 
-  const [hostUserID, setHostUserID] = useState<string>();
-  // probably if user isn't logged in, and they don't already have a userID stored
-  // in localstorage, then make one for them? use stage useLocalStorage hook for this
-
   const [roomCreated, setRoomCreated] = useState<boolean>(false);
 
   useEffect(() => {
-    if (userID) setHostUserID(userID);
-  }, [userID]);
-
-  useEffect(() => {
     // rough way to check whether context data has been initialized
-    if (roomCtx.roomConfig.code === "" && hostUserID) {
+    if (roomCtx.roomConfig.code === "" && userID) {
       roomCtx.setRoomConfig({
         pointsToWin: 100,
         maxRounds: 3,
@@ -54,29 +44,27 @@ function CreateRoom() {
         isPublic: true,
         code: cryptoRandomString({ length: 6 }),
         hostUsername: "",
-        hostUserID: hostUserID,
+        hostUserID: userID,
       });
 
-      roomCtx.setPlayerMetadata([{ username: "", userID: hostUserID }]);
-
-      socket = io();
-
-      socket.on("roomWasCreated", () => setRoomCreated(true)); // have loading dots while this is waiting?
-
-      socket.on("connectedUsersChanged", (newUsers) =>
-        roomCtx?.setPlayerMetadata(newUsers)
-      );
-
-      socket.on("roomConfigUpdated", (roomConfig) =>
-        roomCtx.setRoomConfig(roomConfig)
-      );
-
-      socket.on("navigateToPlayScreen", () => roomCtx?.setPageToRender("play"));
+      roomCtx.setPlayerMetadata([{ username: "", userID: userID }]);
     }
+  }, [roomCtx, userID]);
 
-    // maybe you need to have a disconnect function that runs
-    // when the component unmounts?
-  }, [roomCtx, hostUserID]);
+  useEffect(() => {
+    socket.on("roomWasCreated", () => setRoomCreated(true)); // have loading dots while this is waiting?
+
+    socket.on("connectedUsersChanged", (newUsers) =>
+      roomCtx?.setPlayerMetadata(newUsers)
+    );
+
+    socket.on("roomConfigUpdated", (roomConfig) =>
+      roomCtx.setRoomConfig(roomConfig)
+    );
+
+    socket.on("navigateToPlayScreen", () => roomCtx?.setPageToRender("play"));
+  }, []);
+  // might need to add roomCtx to deps here
 
   function createRoom() {
     if (roomCtx && roomCtx.roomConfig) {
@@ -91,12 +79,13 @@ function CreateRoom() {
 
     roomCtx.setRoomConfig({ ...roomCtx.roomConfig, [key]: value });
     if (roomCreated) {
-      socket.emit("updateRoomConfig", { ...roomCtx.roomConfig, [key]: value });
+      socket.emit("updateRoomConfig", {
+        ...roomCtx.roomConfig,
+        [key]: value,
+      });
     }
     // trpc mutation to update room in database
   }
-
-  // if (roomCtx === null) return <></>;
 
   return (
     <div className="baseVertFlex min-h-[100vh] gap-4 bg-green-700">

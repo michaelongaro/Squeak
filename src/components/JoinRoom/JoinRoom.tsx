@@ -1,10 +1,8 @@
 import { useState, useEffect } from "react";
-import { io, type Socket } from "socket.io-client";
 import { trpc } from "../../utils/trpc";
+import { socket } from "../../pages";
 import { useRoomContext } from "../../context/RoomContext";
 import { useLocalStorageContext } from "../../context/LocalStorageContext";
-
-let socket: Socket;
 
 function JoinRoom() {
   const roomCtx = useRoomContext();
@@ -32,8 +30,6 @@ function JoinRoom() {
   }, [roomCtx, receivedRoomConfig]);
 
   useEffect(() => {
-    socket = io();
-
     socket.on("connectedUsersChanged", (newUsers) =>
       roomCtx.setPlayerMetadata(newUsers)
     );
@@ -43,10 +39,8 @@ function JoinRoom() {
     );
 
     socket.on("navigateToPlayScreen", () => roomCtx.setPageToRender("play"));
-
-    // maybe you need to have a disconnect function that runs
-    // when the component unmounts?
-  }, [roomCtx]);
+  }, []);
+  // might need to add roomCtx to deps here
 
   function checkRoomCode() {
     setSubmittedRoomCode(roomCode);

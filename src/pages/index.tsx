@@ -9,6 +9,9 @@ import { useLocalStorageContext } from "../context/LocalStorageContext";
 import { useEffect } from "react";
 import cryptoRandomString from "crypto-random-string";
 
+import { io, type Socket } from "socket.io-client";
+export const socket = io();
+
 const Home: NextPage = () => {
   const { data: session, status } = useSession();
   const localStorageID = useLocalStorageContext();
