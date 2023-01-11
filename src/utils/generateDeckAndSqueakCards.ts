@@ -4,8 +4,8 @@ export interface ICard {
 }
 
 export interface IPlayerCards {
-  squeakPile: ICard[];
-  squeakRow: ICard[];
+  squeakDeck: ICard[];
+  squeakHand: ICard[][];
   deck: ICard[];
 }
 
@@ -57,12 +57,17 @@ function shuffleDeck(deck: ICard[]): ICard[] {
 
 function generateDeckAndSqueakCards(): IPlayerCards {
   const deck = createAndFormatDeck();
-  const squeakPile = deck.splice(0, 13);
-  const squeakRow = squeakPile.splice(0, 4);
+  const squeakDeck = deck.splice(0, 13);
+  const squeakHand = [
+    [squeakDeck.shift()!],
+    [squeakDeck.shift()!],
+    [squeakDeck.shift()!],
+    [squeakDeck.shift()!],
+  ];
 
   return {
-    squeakPile,
-    squeakRow,
+    squeakDeck,
+    squeakHand,
     deck,
   };
 }
