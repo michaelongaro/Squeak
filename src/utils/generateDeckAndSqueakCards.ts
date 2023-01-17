@@ -7,6 +7,7 @@ export interface IPlayerCards {
   squeakDeck: ICard[];
   squeakHand: ICard[][];
   deck: ICard[];
+  topCardsInDeck: (ICard | null)[];
 }
 
 const suits = ["C", "S", "H", "D"];
@@ -64,11 +65,13 @@ function generateDeckAndSqueakCards(): IPlayerCards {
     [squeakDeck.shift()!],
     [squeakDeck.shift()!],
   ];
+  const topCardsInDeck = [null, null, null];
 
   return {
     squeakDeck,
     squeakHand,
     deck,
+    topCardsInDeck,
   };
 }
 
