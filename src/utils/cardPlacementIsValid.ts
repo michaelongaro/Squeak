@@ -17,11 +17,27 @@ const valueToNumberMap = {
 };
 
 const suitToNumberMap = {
-  hearts: 1,
-  clubs: 2,
-  diamonds: 3,
-  spades: 4,
+  H: 1,
+  C: 2,
+  D: 3,
+  S: 4,
 };
+
+type validCardValues =
+  | "A"
+  | "2"
+  | "3"
+  | "4"
+  | "5"
+  | "6"
+  | "7"
+  | "8"
+  | "9"
+  | "10"
+  | "J"
+  | "Q"
+  | "K";
+type validCardSuits = "H" | "C" | "D" | "S";
 
 function cardPlacementIsValid(
   currentCell: ICard | null,
@@ -29,41 +45,36 @@ function cardPlacementIsValid(
   suit: string,
   forBoard: boolean
 ): boolean {
-  console.log(currentCell);
-
-  // @ts-expect-error asdf
-  const numValueOfCardBeingPlaced = valueToNumberMap[value];
-  const numValueOfCurrentCell = currentCell
-    ? // @ts-expect-error asdf
-      valueToNumberMap[currentCell.value]
+  const proposedNumValue = valueToNumberMap[value as validCardValues];
+  const baseNumValue = currentCell
+    ? valueToNumberMap[currentCell.value as validCardValues]
     : null;
 
-  // "K" is the last card that can be placed onto a deck
+  const proposedNumSuit = currentCell
+    ? suitToNumberMap[currentCell.suit as validCardSuits]
+    : null;
+
+  const baseNumSuit = suitToNumberMap[suit as validCardSuits];
+
+  // "K" is the last card that can be placed onto a deck (necessary?)
   if (forBoard && currentCell?.value !== "K") {
     // cell is empty + card is an ace
-    if (currentCell === null && numValueOfCardBeingPlaced === 1) return true;
+    if (baseNumValue === null && proposedNumValue === 1) return true;
 
-    if (currentCell?.value) {
+    if (baseNumValue && proposedNumSuit) {
       if (
-        numValueOfCardBeingPlaced === numValueOfCurrentCell + 1 &&
-        suit === currentCell.suit
+        proposedNumValue === baseNumValue + 1 &&
+        proposedNumSuit === baseNumSuit
       )
         return true;
     }
-  } else {
-    // // @ts-expect-error asdf
-    // const numValue = valueToNumberMap[value];
-
-    // @ts-expect-error asdf
-    const numSuitBeingPlaced = suitToNumberMap[suit];
-    // @ts-expect-error asdf
-    const baseNumSuit = suitToNumberMap[suit];
-
+  } else if (!forBoard && baseNumValue) {
     if (
+      proposedNumSuit &&
       // value of card being added is one less than the current card
-      numValueOfCardBeingPlaced === numValueOfCurrentCell - 1 &&
+      proposedNumValue === baseNumValue - 1 &&
       // checking for opposite color
-      baseNumSuit % 2 !== numSuitBeingPlaced % 2
+      baseNumSuit % 2 !== proposedNumSuit % 2
     )
       return true;
   }
