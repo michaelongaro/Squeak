@@ -33,6 +33,13 @@ export interface IPlayerCardMetadata {
   squeakDeck: ICard[];
   squeakHand: ICard[][];
   deck: ICard[];
+  topCardsInDeck: (ICard | null)[];
+}
+
+export interface IPlayerDrawFromDeck {
+  topCardsInDeck: (ICard | null)[];
+  playerID: string;
+  roomCode: string;
 }
 
 export interface ICardDropProposal {
@@ -48,19 +55,20 @@ export interface ICardDropProposal {
 }
 
 export interface IDrawFromSqueakDeck {
+  roomCode: string;
   indexToDrawTo: number;
   playerID: string;
+  newCard?: ICard;
   updatedBoard?: (ICard | null)[][];
   updatedPlayerCards?: IPlayerCards;
-  roomCode: string;
 }
 
-// maybe use this again if you want to show some depth for each "deck" on board
-// instead of just showing the top card.
-// interface IDeck {
-//   cards: ICard[];
-//   suit: string;
-// }
+export interface IDrawFromDeck {
+  topCard: ICard;
+  playerID: string;
+  updatedBoard: (ICard | null)[][];
+  updatedPlayerCards: IPlayerCards;
+}
 
 interface IJoinRoomConfig {
   code: string;
@@ -196,6 +204,43 @@ export default function SocketHandler(req, res) {
     });
 
     socket.on(
+      "playerDrawFromDeck",
+      ({ topCardsInDeck, playerID, roomCode }: IPlayerDrawFromDeck) => {
+        const playerCards = gameData[roomCode]?.players[playerID];
+
+        if (playerCards) {
+          playerCards.topCardsInDeck = topCardsInDeck;
+        }
+
+        io.in(roomCode).emit("playerDrawnFromDeck", {
+          updatedBoard: gameData[roomCode]?.board,
+          updatedPlayerCards: gameData[roomCode]?.players,
+        });
+      }
+    );
+
+    socket.on(
+      "drawFromSqueakDeck",
+      ({ indexToDrawTo, playerID, roomCode }: IDrawFromSqueakDeck) => {
+        const player = gameData[roomCode]?.players?.[playerID];
+        if (player) {
+          const card = player.squeakDeck.shift();
+          if (card) {
+            player.squeakHand?.[indexToDrawTo]?.push(card);
+
+            io.in(roomCode).emit("cardDrawnFromSqueakDeck", {
+              playerID,
+              indexToDrawTo,
+              newCard: card,
+              updatedBoard: gameData[roomCode]?.board,
+              updatedPlayerCards: gameData[roomCode]?.players,
+            });
+          }
+        }
+      }
+    );
+
+    socket.on(
       "proposedCardDrop",
       ({
         card,
@@ -229,6 +274,15 @@ export default function SocketHandler(req, res) {
             // @ts-expect-error asdf
             gameData[roomCode].board[row][col] = card;
 
+            // shifting topCardsInDeck
+            const topCardsInDeck =
+              gameData[roomCode]?.players[playerID]?.topCardsInDeck;
+
+            if (topCardsInDeck) {
+              topCardsInDeck.pop();
+              topCardsInDeck.unshift(null);
+            }
+
             // removing card from player's deck
             // @ts-expect-error asdf
             gameData[roomCode].players[playerID].deck = gameData[
@@ -246,8 +300,9 @@ export default function SocketHandler(req, res) {
 
             io.in(roomCode).emit("cardDropApproved", {
               card,
-              deckStart: true,
-              boardEndLocation,
+              // deckStart: true,
+              // boardEndLocation,
+              endID: `cell${row}${col}`,
               updatedBoard: gameData[roomCode]?.board,
               updatedPlayerCards: gameData[roomCode]?.players,
               playerID,
@@ -265,6 +320,15 @@ export default function SocketHandler(req, res) {
           if (squeakStackLocation) {
             squeakStackLocation.push(card);
 
+            // shifting topCardsInDeck
+            const topCardsInDeck =
+              gameData[roomCode]?.players[playerID]?.topCardsInDeck;
+
+            if (topCardsInDeck) {
+              topCardsInDeck.pop();
+              topCardsInDeck.unshift(null);
+            }
+
             // removing card from player's deck
             // @ts-expect-error asdf
             gameData[roomCode].players[playerID].deck = gameData[
@@ -280,8 +344,13 @@ export default function SocketHandler(req, res) {
 
             io.in(roomCode).emit("cardDropApproved", {
               card,
-              deckStart: true,
-              squeakEndLocation,
+              // deckStart: true,
+              // squeakEndCoords: {
+              //   col: squeakEndLocation,
+              //   row: squeakStackLocation.length,
+              // },
+              endID: `${playerID}squeakHand${squeakEndLocation}`,
+              updatedBoard: gameData[roomCode]?.board, // ideally shouldn't have to send this
               updatedPlayerCards: gameData[roomCode]?.players,
               playerID,
             });
@@ -310,8 +379,9 @@ export default function SocketHandler(req, res) {
 
             io.in(roomCode).emit("cardDropApproved", {
               card,
-              squeakStartLocation,
-              boardEndLocation,
+              // squeakStartLocation,
+              // boardEndLocation,
+              endID: `cell${row}${col}`,
               updatedBoard: gameData[roomCode]?.board,
               updatedPlayerCards: gameData[roomCode]?.players,
               playerID,
@@ -331,37 +401,37 @@ export default function SocketHandler(req, res) {
               squeakEndLocation
             ];
 
-          if (endSqueakStackLocation) {
-            endSqueakStackLocation.push(card);
-            startSqueakStackLocation?.pop();
+          const indexOfCardInStartStack = startSqueakStackLocation?.findIndex(
+            (c) => c.value === card.value && c.suit === card.suit
+          );
+
+          const cardsToMove = startSqueakStackLocation?.splice(
+            indexOfCardInStartStack!
+          );
+
+          if (endSqueakStackLocation && cardsToMove) {
+            // moving all child cards below the card being moved to the new stack
+            // @ts-expect-error asqdf
+            gameData[roomCode].players[playerID].squeakHand[squeakEndLocation] =
+              endSqueakStackLocation.concat(cardsToMove);
 
             io.in(roomCode).emit("cardDropApproved", {
               card,
-              squeakStartLocation,
-              squeakEndLocation,
+              // squeakStartLocation,
+              squeakEndCoords: {
+                squeakStack:
+                  // @ts-expect-error asqdf
+                  gameData[roomCode].players[playerID].squeakHand[
+                    squeakEndLocation
+                  ],
+                stackOfCardsMoved: cardsToMove,
+                col: squeakEndLocation,
+                row: endSqueakStackLocation.length,
+              },
+              endID: `${playerID}squeakHand${squeakEndLocation}`,
+              updatedBoard: gameData[roomCode]?.board, // ideally shouldn't have to send this
               updatedPlayerCards: gameData[roomCode]?.players,
               playerID,
-            });
-          }
-        }
-      }
-    );
-
-    socket.on(
-      "drawFromSqueakDeck",
-      ({ indexToDrawTo, playerID, roomCode }: IDrawFromSqueakDeck) => {
-        const player = gameData[roomCode]?.players?.[playerID];
-        if (player) {
-          const card = player.squeakDeck.shift();
-          if (card) {
-            player.squeakHand?.[indexToDrawTo]?.push(card);
-
-            console.log("gameData: ", gameData[roomCode]?.board);
-
-            io.in(roomCode).emit("cardDrawnFromSqueakDeck", {
-              playerID,
-              updatedBoard: gameData[roomCode]?.board,
-              updatedPlayerCards: gameData[roomCode]?.players,
             });
           }
         }
