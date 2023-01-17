@@ -5,6 +5,11 @@ import {
 } from "../components/CreateRoom/CreateRoom";
 import { type IGameMetadata } from "../pages/api/socket";
 
+interface IHeldSqueakStackLocation {
+  squeakStack: [number, number];
+  location: { x: number; y: number };
+}
+
 interface IRoomContext {
   pageToRender: "home" | "createRoom" | "joinRoom" | "play";
   setPageToRender: React.Dispatch<
@@ -27,6 +32,14 @@ interface IRoomContext {
   originIndexForHeldSqueakCard: number | null;
   setOriginIndexForHeldSqueakCard: React.Dispatch<
     React.SetStateAction<number | null>
+  >;
+  heldSqueakStackLocation: IHeldSqueakStackLocation | null;
+  setHeldSqueakStackLocation: React.Dispatch<
+    React.SetStateAction<IHeldSqueakStackLocation | null>
+  >;
+  resetHeldSqueakStackLocation: [number, number] | null;
+  setResetHeldSqueakStackLocation: React.Dispatch<
+    React.SetStateAction<[number, number] | null>
   >;
 }
 
@@ -59,6 +72,11 @@ export function RoomProvider(props: { children: React.ReactNode }) {
   const [originIndexForHeldSqueakCard, setOriginIndexForHeldSqueakCard] =
     useState<number | null>(null);
 
+  const [heldSqueakStackLocation, setHeldSqueakStackLocation] =
+    useState<IHeldSqueakStackLocation | null>(null);
+  const [resetHeldSqueakStackLocation, setResetHeldSqueakStackLocation] =
+    useState<[number, number] | null>(null);
+
   useEffect(() => {
     fetch("/api/socket");
   }, []);
@@ -82,6 +100,10 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     setHoldingASqueakCard,
     originIndexForHeldSqueakCard,
     setOriginIndexForHeldSqueakCard,
+    heldSqueakStackLocation,
+    setHeldSqueakStackLocation,
+    resetHeldSqueakStackLocation,
+    setResetHeldSqueakStackLocation,
   };
 
   return (
