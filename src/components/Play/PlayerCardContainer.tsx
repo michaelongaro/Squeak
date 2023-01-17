@@ -8,7 +8,10 @@ import { FaRedoAlt } from "react-icons/fa";
 import { type ICard } from "../../utils/generateDeckAndSqueakCards";
 import classes from "./PlayerCardContainer.module.css";
 import useTrackHoverOverSqueakStacks from "../../hooks/useTrackHoverOverSqueakStacks";
-import { type IDrawFromSqueakDeck } from "../../pages/api/socket";
+import {
+  IPlayerDrawFromDeck,
+  type IDrawFromSqueakDeck,
+} from "../../pages/api/socket";
 
 interface IPlayerCardContainer {
   cardContainerClass: string | undefined;
@@ -31,37 +34,29 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
   const [currRevealedCardsFromDeck, setCurrRevealedCardsFromDeck] = useState<
     (ICard | null)[]
   >([null, null, null]);
+  const [deckHasBeenDrawnFrom, setDeckHasBeenDrawnFrom] =
+    useState<boolean>(false);
 
   useEffect(() => {
-    socket.on("cardDrawnFromSqueakDeck", (data) =>
-      handleCardDrawnFromSqueakDeck(data)
-    );
-  }, []);
-
-  function handleCardDrawnFromSqueakDeck({
-    playerID,
-    updatedBoard,
-    updatedPlayerCards,
-  }: Partial<IDrawFromSqueakDeck>) {
-    if (playerID === userID) {
-      roomCtx.setGameData({
-        ...roomCtx.gameData,
-        board: updatedBoard || roomCtx.gameData?.board, // board will be set to null otherwise, not sure why
-        players: updatedPlayerCards || roomCtx.gameData?.players,
-      });
-    }
-  }
+    socket.emit("playerDrawFromDeck", {
+      topCardsInDeck: currRevealedCardsFromDeck,
+      playerID: userID,
+      roomCode: roomCtx.roomConfig.code,
+    });
+  }, [userID, roomCtx.roomConfig.code, currRevealedCardsFromDeck]);
 
   // TODO: extract to util function (will need to pass in ctx vars + setters)
   function cycleThroughDeck() {
     // @ts-expect-error asdf
     const currDeckLength = roomCtx.gameData?.players[userID]?.deck.length;
 
+    // these are actually rendered with the last card in the array at the top
+
     if (currDeckIdx + 3 <= currDeckLength) {
       setCurrRevealedCardsFromDeck([
-        roomCtx.gameData?.players[userID!]?.deck[currDeckIdx + 1] || null,
-        roomCtx.gameData?.players[userID!]?.deck[currDeckIdx + 2] || null,
         roomCtx.gameData?.players[userID!]?.deck[currDeckIdx + 3] || null,
+        roomCtx.gameData?.players[userID!]?.deck[currDeckIdx + 2] || null,
+        roomCtx.gameData?.players[userID!]?.deck[currDeckIdx + 1] || null,
       ]);
 
       if (currDeckIdx + 3 === currDeckLength) {
@@ -71,16 +66,16 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
       }
     } else if (currDeckIdx + 2 === currDeckLength) {
       setCurrRevealedCardsFromDeck([
-        roomCtx.gameData?.players[userID!]?.deck[currDeckIdx + 1] || null,
-        roomCtx.gameData?.players[userID!]?.deck[currDeckIdx + 2] || null,
         null,
+        roomCtx.gameData?.players[userID!]?.deck[currDeckIdx + 2] || null,
+        roomCtx.gameData?.players[userID!]?.deck[currDeckIdx + 1] || null,
       ]);
       setCurrDeckIdx(-1);
     } else if (currDeckIdx + 1 === currDeckLength) {
       setCurrRevealedCardsFromDeck([
+        null,
+        null,
         roomCtx.gameData?.players[userID!]?.deck[currDeckIdx + 1] || null,
-        null,
-        null,
       ]);
       setCurrDeckIdx(-1);
     } else {
@@ -101,14 +96,11 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
     return emptySqueakStackIdx;
   }
 
-  // really not sure why the board gets set to null one squeak draw, however since the server looks like
-  // it is sending the correct data, try to just send back the board as well.
-
   return (
     <div className={`${cardContainerClass}`}>
       <div className={`${classes.gridContainer}`}>
         <div
-          id={"currUserSqueakDeck"}
+          id={`${userID}squeakDeck`}
           style={{
             boxShadow:
               emptySqueakStackIdx() !== -1
@@ -116,7 +108,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                 : "none",
             cursor: emptySqueakStackIdx() !== -1 ? "pointer" : "default",
           }}
-          className={`${classes.squeakDeck}`}
+          className={`${classes.squeakDeck} h-full w-full`}
           onClick={() => {
             const indexToDrawTo = emptySqueakStackIdx();
 
@@ -129,7 +121,42 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
             }
           }}
         >
-          <Card showCardBack={true} draggable={false} />
+          {roomCtx.gameData.players[userID!]!.squeakDeck.length > 0 ? (
+            <div className="relative h-full w-full">
+              <div className="absolute top-0 left-0 h-full w-full">
+                <Card
+                  showCardBack={true}
+                  draggable={false}
+                  ownerID={userID!}
+                  startID={`${userID}squeakDeck`}
+                  animationConfig={{
+                    xMultiplier: 1,
+                    yMultiplier: 1,
+                    rotation: 0,
+                  }}
+                />
+              </div>
+              <div className="absolute top-0 left-0 h-full w-full">
+                <Card
+                  value={
+                    roomCtx.gameData.players[userID!]!.squeakDeck[0]!.value
+                  }
+                  suit={roomCtx.gameData.players[userID!]!.squeakDeck[0]!.suit}
+                  showCardBack={true} // this would need to be changed halfway through card flip
+                  draggable={false}
+                  ownerID={userID!}
+                  startID={`${userID}squeakDeck`}
+                  animationConfig={{
+                    xMultiplier: 1,
+                    yMultiplier: 1,
+                    rotation: 0,
+                  }}
+                />
+              </div>
+            </div>
+          ) : (
+            <button>Squeak!</button>
+          )}
         </div>
 
         {userID &&
@@ -137,15 +164,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
             (cards, cardsIdx) => (
               <div
                 key={`${userID}card${cardsIdx}`}
-                id={`currUserSqueakHand${cardsIdx}`}
-                // style={{
-                //   boxShadow:
-                //     roomCtx.holdingADeckCard || roomCtx.holdingASqueakCard
-                //       ? "0px 0px 10px 3px rgba(184,184,184,1)"
-                //       : "none",
-                //   height:
-                //     cards.length === 1 ? 72 : `${cards.length * 15 + 72}px`,
-                // }}
+                id={`${userID}squeakHand${cardsIdx}`}
                 // @ts-expect-error asdf
                 className={`${cardClassMap[cardsIdx]} relative h-full w-full`}
               >
@@ -163,6 +182,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                   {cards.map((card, cardIdx) => (
                     <div
                       key={`${userID}card${cardIdx}`} //${card.suit}${card.value}
+                      id={`${userID}squeakStack${cardsIdx}${cardIdx}`}
                       className={`absolute left-0 h-full w-full`}
                       style={{
                         zIndex:
@@ -178,22 +198,32 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                         roomCtx.setHoveredSqueakStack(null);
                       }}
                       onMouseDown={() => {
-                        if (cardIdx === cards.length - 1) {
-                          roomCtx.setOriginIndexForHeldSqueakCard(cardsIdx);
-                          roomCtx.setHoldingASqueakCard(true);
-                          roomCtx.setHoveredSqueakStack(null);
-                        }
+                        roomCtx.setOriginIndexForHeldSqueakCard(cardsIdx);
+                        roomCtx.setHoldingASqueakCard(true);
+                        roomCtx.setHoveredSqueakStack(null);
                       }}
                       onMouseUp={() => {
                         roomCtx.setHoldingASqueakCard(false);
                         roomCtx.setOriginIndexForHeldSqueakCard(null);
+                        roomCtx.setResetHeldSqueakStackLocation([
+                          cardsIdx,
+                          cardIdx,
+                        ]);
                       }}
                     >
                       <Card
                         value={card.value}
                         suit={card.suit}
-                        draggable={true} //cardIdx === cards.length - 1
+                        draggable={true}
                         origin={"squeak"}
+                        squeakStackLocation={[cardsIdx, cardIdx]}
+                        ownerID={userID!}
+                        startID={`${userID}squeakStack${cardsIdx}${cardIdx}`}
+                        animationConfig={{
+                          xMultiplier: 1,
+                          yMultiplier: 1,
+                          rotation: 0,
+                        }}
                       />
                     </div>
                   ))}
@@ -206,14 +236,16 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
           <>
             <div className={`${classes.playerDeck}`}>
               <div
-                id={"currUserDeck"}
+                id={`${userID}deck`}
                 className="grid cursor-pointer grid-cols-1 items-center justify-items-center"
-                onClick={() => cycleThroughDeck()}
+                onClick={() => {
+                  setDeckHasBeenDrawnFrom(true);
+                  cycleThroughDeck();
+                }}
               >
                 <div
                   style={{
-                    opacity: currDeckIdx === -1 ? 1 : 0, // would I guess have to have a check to make sure it
-                    // doesn't show right at start
+                    opacity: currDeckIdx === -1 && deckHasBeenDrawnFrom ? 1 : 0,
                   }}
                   className="col-start-1 row-start-1"
                 >
@@ -221,26 +253,39 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                 </div>
                 <div
                   style={{
-                    opacity: currDeckIdx === -1 ? 0.25 : 1, // would I guess have to have a check to make sure it
-                    // doesn't show right at start
+                    opacity:
+                      currDeckIdx === -1 && deckHasBeenDrawnFrom ? 0.25 : 1,
                   }}
                   className="col-start-1 row-start-1"
                 >
-                  <Card showCardBack={true} draggable={false} />
+                  <Card
+                    showCardBack={true}
+                    draggable={false}
+                    ownerID={userID!}
+                    startID={`${userID}deck`}
+                    animationConfig={{
+                      xMultiplier: 1,
+                      yMultiplier: 1,
+                      rotation: 0,
+                    }}
+                  />
                 </div>
               </div>
             </div>
 
             {currDeckIdx > -1 && (
               <div
-                id={"currUserDeckHand"}
-                className={`${classes.playerHand} relative h-full w-full`}
+                id={`${userID}hand`}
+                className={`${classes.playerHand} relative h-[64px] w-[48px] select-none lg:h-[72px] lg:w-[56px]`}
               >
                 <>
                   {currRevealedCardsFromDeck.map((card, idx) => (
                     <div
                       key={`${userID}card${card?.suit}${card?.value}`}
                       className="absolute top-0 left-0"
+                      style={{
+                        top: `${-1 * (idx * 2)}px`,
+                      }}
                       onMouseDown={() => {
                         console.log("mouse down on deck card");
 
@@ -256,6 +301,13 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                         suit={card?.suit}
                         draggable={true} // only if currentlyShownOpenCardIdx === idx or something (already is good enough as is?)
                         origin={"deck"}
+                        ownerID={userID!}
+                        startID={`${userID}hand`}
+                        animationConfig={{
+                          xMultiplier: 1,
+                          yMultiplier: 1,
+                          rotation: 0,
+                        }}
                       />
                     </div>
                   ))}
