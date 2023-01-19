@@ -1,19 +1,16 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { socket } from "../../pages/";
 import { useLocalStorageContext } from "../../context/LocalStorageContext";
 import { useRoomContext } from "../../context/RoomContext";
-import {
-  type IDrawFromSqueakDeck,
-  type ICardDropProposal,
-  type IPlayerCardMetadata,
-} from "../../pages/api/socket";
+import { type IDrawFromDeck } from "../../pages/api/socket";
+import { type IPlayerCards } from "../../utils/generateDeckAndSqueakCards";
 import Card from "./Card";
 
 interface IOtherPlayersCardContainers {
   orderedClassNames: (string | undefined)[];
 }
 
-interface IOtherPlayers extends IPlayerCardMetadata {
+interface IOtherPlayers extends IPlayerCards {
   playerID: string;
   animationConfig: IAnimationConfig;
 }
@@ -96,16 +93,28 @@ function OtherPlayersCardContainers({
     }
   }, [roomCtx.gameData.players, userID]);
 
+  const handleCardDrawnFromDeck = useCallback(
+    ({ playerID, updatedBoard, updatedPlayerCards }: IDrawFromDeck) => {
+      if (playerID === userID) return;
+
+      roomCtx.setGameData({
+        ...roomCtx.gameData,
+        board: updatedBoard || roomCtx.gameData?.board,
+        players: updatedPlayerCards || roomCtx.gameData?.players,
+      });
+    },
+    [roomCtx, userID]
+  );
+
   useEffect(() => {
-    allPlayersExceptCurrentUser.forEach((player) => {
-      console.log(
-        player.playerID,
-        player.topCardsInDeck[0],
-        player.topCardsInDeck[1],
-        player.topCardsInDeck[2]
+    socket.on("playerDrawnFromDeck", (data) => handleCardDrawnFromDeck(data));
+
+    return () => {
+      socket.off("playerDrawnFromDeck", (data) =>
+        handleCardDrawnFromDeck(data)
       );
-    });
-  }, [allPlayersExceptCurrentUser]);
+    };
+  }, [handleCardDrawnFromDeck]);
 
   return (
     <>
@@ -114,7 +123,7 @@ function OtherPlayersCardContainers({
           <div className={internalOrderedGridClassNames[idx]}>
             <div
               id={`${player.playerID}squeakDeck`}
-              className={`${classes.squeakDeck}  h-[64px] w-[48px] lg:h-[72px] lg:w-[56px]`}
+              className={`${classes.squeakDeck} h-[64px] w-[48px] lg:h-[72px] lg:w-[56px]`}
             >
               {player.squeakDeck.length > 0 ? (
                 <div className="relative h-full w-full">
