@@ -7,7 +7,9 @@ export interface IPlayerCards {
   squeakDeck: ICard[];
   squeakHand: ICard[][];
   deck: ICard[];
+  deckIdx: number;
   topCardsInDeck: (ICard | null)[];
+  nextTopCardInDeck: ICard | null;
 }
 
 const suits = ["C", "S", "H", "D"];
@@ -32,8 +34,8 @@ function createAndFormatDeck(): ICard[] {
   for (let i = 0; i < 4; i++) {
     for (let j = 0; j < 13; j++) {
       deck.push({
-        value: values[j]!, // not sure how to avoid using "!" here
-        suit: suits[i]!,
+        value: values[j] as string,
+        suit: suits[i] as string,
       });
     }
   }
@@ -48,7 +50,7 @@ function shuffleDeck(deck: ICard[]): ICard[] {
   while (deck.length > 0) {
     const randomIndex = Math.floor(Math.random() * deck.length);
     if (deck[randomIndex] === undefined) continue;
-    const card: ICard = deck[randomIndex]!; // not sure how to avoid using "!" here
+    const card: ICard = deck[randomIndex] as ICard;
     shuffledDeck.push(card);
     deck.splice(randomIndex, 1);
   }
@@ -60,18 +62,23 @@ function generateDeckAndSqueakCards(): IPlayerCards {
   const deck = createAndFormatDeck();
   const squeakDeck = deck.splice(0, 13);
   const squeakHand = [
-    [squeakDeck.shift()!],
-    [squeakDeck.shift()!],
-    [squeakDeck.shift()!],
-    [squeakDeck.shift()!],
+    [squeakDeck.shift() as ICard],
+    [squeakDeck.shift() as ICard],
+    [squeakDeck.shift() as ICard],
+    [squeakDeck.shift() as ICard],
   ];
+
+  const deckIdx = -1;
   const topCardsInDeck = [null, null, null];
+  const nextTopCardInDeck = deck[2] || null;
 
   return {
     squeakDeck,
     squeakHand,
     deck,
+    deckIdx,
     topCardsInDeck,
+    nextTopCardInDeck,
   };
 }
 
