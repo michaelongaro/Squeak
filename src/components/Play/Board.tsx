@@ -14,26 +14,6 @@ function Board({ boardClass }: IBoard) {
 
   const userID = localStorageID.value; // change to ctx.userID ?? localStorageID.value
 
-  // useEffect(() => {
-  //   socket.on("cardDropApproved", (data) => {
-  //     // hide the card (maybe directly mutate the value + suit to undefined? not sure of
-  //     // implications with that)
-
-  //     console.log("board got updated");
-
-  //     roomCtx.setGameData({
-  //       ...roomCtx.gameData,
-  //       board: data.updatedBoard,
-  //     });
-  //   });
-  // }, []);
-
-  // might need to add roomCtx to deps here
-
-  // just have unique IDs for each cell,
-  // in board it would be #rowcol and then you can `#${row}${col}` to access
-  // for players prob do like `#${playerID}num` num would be 0-7 or whatever
-
   return (
     <div className={`${boardClass} grid w-full grid-cols-5 gap-1`}>
       {roomCtx.gameData?.board.map((row, rowIdx) => (
@@ -41,7 +21,7 @@ function Board({ boardClass }: IBoard) {
           {row.map((cell, colIdx) => (
             <div
               id={`cell${rowIdx}${colIdx}`}
-              key={`${userID}board${rowIdx}${colIdx}`}
+              key={`board${rowIdx}${colIdx}`}
               style={{
                 boxShadow:
                   roomCtx.holdingADeckCard || roomCtx.holdingASqueakCard
