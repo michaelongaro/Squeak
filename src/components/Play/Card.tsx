@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import Image from "next/image";
 import React from "react";
 import Draggable, {
   type DraggableData,
@@ -9,13 +8,11 @@ import { socket } from "../../pages/";
 import { useRoomContext } from "../../context/RoomContext";
 import { useLocalStorageContext } from "../../context/LocalStorageContext";
 import cardPlacementIsValid from "../../utils/cardPlacementIsValid";
-import {
-  type IDrawFromSqueakDeck,
-  type ICardDropProposal,
-  type IDrawFromDeck,
-} from "../../pages/api/socket";
-import { type ICard } from "../../utils/generateDeckAndSqueakCards";
 import { type IAnimationConfig } from "./OtherPlayersCardContainers";
+import useCardDrawFromDeck from "../../hooks/useCardDrawFromDeck";
+import useCardDrawFromSqueakDeck from "../../hooks/useCardDrawFromSqueakDeck";
+import useCardDropApproved from "../../hooks/useCardDropApproved";
+import useCardDropDenied from "../../hooks/useCardDropDenied";
 
 interface ICardComponent {
   value?: string;
@@ -27,16 +24,6 @@ interface ICardComponent {
   startID?: string;
   squeakStackLocation?: [number, number];
   animationConfig: IAnimationConfig;
-}
-
-interface ICardDropAccepted extends Partial<ICardDropProposal> {
-  squeakEndCoords?: {
-    squeakStack: ICard[];
-    stackOfCardsMoved: ICard[];
-    col: number;
-    row: number;
-  };
-  endID: string; // have this here or on main interface?
 }
 
 function Card({
@@ -58,307 +45,137 @@ function Card({
   const [cardOffsetPosition, setCardOffsetPosition] = useState({ x: 0, y: 0 });
   const [cardHasBeenPlaced, setCardHasBeenPlaced] = useState(false);
   const [manuallyShowCardFront, setManuallyShowCardFront] = useState(false);
-  const [cardIsMoving, setCardIsMoving] = useState(false);
 
   const cardRef = useRef<HTMLDivElement>(null);
+  const cardIsMovingRef = useRef(false);
 
   const moveCard = useCallback(
     ({ x, y }: { x: number; y: number }, flip: boolean) => {
-      console.log("moveCard called with", value, suit);
+      // console.log("moveCard called with", value, suit);
 
-      if (cardRef.current && !cardIsMoving) {
-        setCardIsMoving(true); // hopefully still allows full pass of function after this call..
+      if (!cardRef.current || cardIsMovingRef.current) return;
 
-        cardRef.current.style.transition = "all 10s linear"; // ease-in-out
+      cardIsMovingRef.current = true;
 
-        if (x === 0 && y === 0) {
-          console.log("card is being moved back to original position");
+      cardRef.current.style.transition = "all 0.25s linear"; // ease-in-out
+      cardRef.current.style.zIndex = "1000"; // make sure card is on top while moving over other cards
 
-          setCardOffsetPosition({ x, y });
-        } else if (startID) {
-          const currentCard = document.getElementById(startID); // if any reason at all, why not just use ref?
+      if (x === 0 && y === 0) {
+        console.log("going back to 0,0");
 
-          if (currentCard) {
-            const currentCardPosition = currentCard.getBoundingClientRect();
+        setCardOffsetPosition({ x, y });
+      } else if (startID) {
+        const currentCard = document.getElementById(startID);
 
-            console.log("animation config is", animationConfig);
+        if (!currentCard) return;
 
-            const endXCoordinate =
-              Math.floor(x - currentCardPosition.x) *
-              animationConfig.xMultiplier;
-            const endYCoordinate =
-              Math.floor(y - currentCardPosition.y) *
-              animationConfig.yMultiplier;
+        const { x: currentX, y: currentY } =
+          currentCard.getBoundingClientRect();
 
-            console.log("card offset is", endXCoordinate, " ", endYCoordinate);
+        // console.log("cardIsMoving: ", cardIsMovingRef);
+        // console.log("currentX: ", currentX, "currentY: ", currentY);
+
+        const endXCoordinate =
+          Math.floor(x - currentX) * animationConfig.xMultiplier;
+        const endYCoordinate =
+          Math.floor(y - currentY) * animationConfig.yMultiplier;
+
+        // console.log(
+        //   "endXCoordinate: ",
+        //   endXCoordinate,
+        //   "endYCoordinate: ",
+        //   endYCoordinate
+        // );
+
+        setCardOffsetPosition({
+          x: endXCoordinate,
+          y: endYCoordinate,
+        });
+
+        cardRef.current.style.transform += `rotateZ(${animationConfig.rotation}deg)`;
+      }
+
+      if (flip) {
+        if (cardRef.current) {
+          // cardRef.current.style.zIndex = "1000"; // make sure card is on top while moving over other cards
+          console.log("pre transform: ", cardRef.current.style.transform);
+          cardRef.current.style.transform += "rotateY(360deg)"; // could try 90 and then go back to 0 at end?
+          console.log("post transform: ", cardRef.current.style.transform);
+        }
+
+        setTimeout(() => {
+          setManuallyShowCardFront(true);
+        }, 125);
+      }
+
+      if (squeakStackLocation) {
+        roomCtx.setHeldSqueakStackLocation({
+          squeakStack: squeakStackLocation,
+          location: { x, y },
+        });
+      }
+
+      setTimeout(() => {
+        if (cardRef.current) {
+          console.log("even getting called?");
+
+          cardRef.current.style.transition = "none";
+          cardRef.current.style.zIndex = "500"; // or go back to 500?
+
+          if (flip) {
+            cardRef.current.style.transform = "translate(0px, 0px)";
             setCardOffsetPosition({
-              x: endXCoordinate,
-              y: endYCoordinate,
+              x: 0,
+              y: 0,
             });
-
-            cardRef.current.style.transform += `rotateZ(${animationConfig.rotation}deg)`;
+            setManuallyShowCardFront(false);
           }
+          cardIsMovingRef.current = false;
         }
+      }, 250); //150
 
-        if (flip) {
-          if (cardRef.current) {
-            cardRef.current.style.zIndex = "1000"; // make sure card is on top while moving over other cards
-            console.log("pre transform: ", cardRef.current.style.transform);
-            cardRef.current.style.transform += "rotateY(90deg)";
-            console.log("post transform: ", cardRef.current.style.transform);
-          }
+      // idk somehow maybe have if (!flip) {
 
-          setTimeout(() => {
-            setManuallyShowCardFront(true);
-          }, 5000);
-        }
+      //}
 
-        if (squeakStackLocation) {
-          roomCtx.setHeldSqueakStackLocation({
-            squeakStack: squeakStackLocation,
-            location: { x, y },
-          });
-        }
-
-        setTimeout(() => {
-          if (cardRef.current) {
-            cardRef.current.style.zIndex = "auto"; // or go back to 500?
-            cardRef.current.style.transition = "none";
-            setCardIsMoving(false);
-          }
-        }, 10000); //150
-
-        if (origin === "deck") {
-          roomCtx.setHoldingADeckCard(false);
-        } else if (origin === "squeak") {
-          roomCtx.setHoldingASqueakCard(false);
-        }
+      if (origin === "deck") {
+        roomCtx.setHoldingADeckCard(false);
+      } else if (origin === "squeak") {
+        roomCtx.setHoldingASqueakCard(false);
       }
     },
-    [
-      origin,
-      roomCtx,
-      squeakStackLocation,
-      startID,
-      animationConfig,
-      cardIsMoving,
-      suit,
-      value,
-    ]
+    [origin, roomCtx, squeakStackLocation, animationConfig, startID]
   );
 
-  const handleCardDrawnFromSqueakDeck = useCallback(
-    ({
-      playerID,
-      indexToDrawTo,
-      updatedBoard,
-      newCard,
-      updatedPlayerCards,
-    }: IDrawFromSqueakDeck) => {
-      if (
-        playerID !== ownerID ||
-        newCard?.suit !== suit ||
-        newCard?.value !== value
-      )
-        return;
+  // hooks to handle socket emits from server
+  useCardDrawFromDeck({
+    value,
+    suit,
+    userID,
+    moveCard,
+  });
 
-      const endID = `${playerID}squeakHand${indexToDrawTo}`;
+  useCardDrawFromSqueakDeck({
+    value,
+    suit,
+    ownerID,
+    moveCard,
+  });
 
-      const endLocation = document
-        .getElementById(endID)
-        ?.getBoundingClientRect();
+  useCardDropApproved({
+    value,
+    suit,
+    ownerID,
+    userID,
+    moveCard,
+    setCardOffsetPosition,
+    setCardHasBeenPlaced,
+  });
 
-      console.log(
-        "endID: ",
-        endID,
-        playerID,
-        ownerID,
-        newCard?.suit,
-        suit,
-        newCard?.value,
-        value
-      );
-
-      if (endLocation) {
-        const endX = endLocation.x;
-        const endY = endLocation.y;
-
-        moveCard({ x: endX, y: endY }, true);
-
-        setTimeout(() => {
-          console.log("setting game data nyow");
-
-          roomCtx.setGameData({
-            ...roomCtx.gameData,
-            board: updatedBoard || roomCtx.gameData?.board,
-            players: updatedPlayerCards || roomCtx.gameData?.players,
-          });
-
-          setCardHasBeenPlaced(true);
-        }, 10000);
-      } else {
-        console.log("end location not found"); // eventually delete this else part
-      }
-    },
-    [roomCtx, moveCard, suit, value, ownerID]
-  );
-
-  const handleCardDrawnFromDeck = useCallback(
-    ({
-      topCard,
-      playerID,
-      updatedBoard,
-      updatedPlayerCards,
-    }: IDrawFromDeck) => {
-      if (
-        playerID !== userID ||
-        topCard?.suit !== suit ||
-        topCard?.value !== value
-      )
-        return;
-
-      const endID = `${playerID}hand`;
-
-      const endLocation = document
-        .getElementById(endID)
-        ?.getBoundingClientRect();
-      if (endLocation) {
-        const endX = endLocation.x;
-        const endY = endLocation.y;
-
-        moveCard({ x: endX, y: endY }, true);
-
-        setTimeout(() => {
-          roomCtx.setGameData({
-            ...roomCtx.gameData,
-            board: updatedBoard || roomCtx.gameData?.board,
-            players: updatedPlayerCards || roomCtx.gameData?.players,
-          });
-
-          setCardHasBeenPlaced(true);
-        }, 10000);
-      } else {
-        console.log("end location not found"); // eventually delete this else part
-      }
-    },
-    [roomCtx, moveCard, suit, value, userID]
-  );
-
-  const handleDeniedCardDrop = useCallback(
-    ({ playerID }: Partial<ICardDropProposal>) => {
-      if (playerID === ownerID) {
-        // red box shadow stuff here
-        moveCard({ x: 0, y: 0 }, false);
-      }
-    },
-    [moveCard, ownerID]
-  );
-
-  const handleApprovedCardDrop = useCallback(
-    ({
-      card,
-      endID,
-      squeakEndCoords, // used just to know whether or not the card is a child of the card that was dropped
-      updatedBoard,
-      updatedPlayerCards,
-      playerID,
-    }: ICardDropAccepted) => {
-      // check to see if current card is a child of the card that was dropped
-      let childOfCardThatWasDropped = false;
-      if (
-        // squeakStartLocation &&
-        // squeakEndCoords implies that it was a squeak -> squeak move
-        squeakEndCoords &&
-        value &&
-        suit
-      ) {
-        if (
-          squeakEndCoords.stackOfCardsMoved.some(
-            (card) => card.value === value && card.suit === suit
-          )
-        ) {
-          childOfCardThatWasDropped = true;
-        }
-      }
-
-      // making sure card + playerID match up to this <Card />
-      if (
-        (card &&
-          card.value === value &&
-          card.suit === suit &&
-          playerID === ownerID) ||
-        (childOfCardThatWasDropped && playerID === ownerID)
-      ) {
-        // prob can stay right here, but maybe only want to do if it's the current player's card?
-        // if (playerID === userID) {
-        //   if (origin === "deck") {
-        //     roomCtx.setHoldingADeckCard(false);
-        //   } else if (origin === "squeak") {
-        //     roomCtx.setHoldingASqueakCard(false);
-        //   }
-        // }
-
-        console.log(endID);
-
-        const endLocation = document
-          .getElementById(endID)
-          ?.getBoundingClientRect();
-        if (endLocation) {
-          const endX = endLocation.x;
-          let endY = endLocation.y;
-
-          // since the other player containers are css rotated, we need to modify the y
-          // value so that the card is placed in the correct location
-          if (squeakEndCoords) {
-            const indexWithinSqueakStack =
-              squeakEndCoords.squeakStack.findIndex(
-                (card) => card.value === value && card.suit === suit
-              );
-
-            endY +=
-              indexWithinSqueakStack === 0 ? 15 : indexWithinSqueakStack * 15;
-          } else if (endID.includes("squeakHand")) {
-            endY += 15; // should be modular
-          }
-
-          moveCard({ x: endX, y: endY }, false);
-
-          setTimeout(() => {
-            console.log("setting game data nyow");
-
-            roomCtx.setGameData({
-              ...roomCtx.gameData,
-              board: updatedBoard || roomCtx.gameData?.board,
-              players: updatedPlayerCards || roomCtx.gameData?.players,
-            });
-
-            if (ownerID !== userID && origin === "deck") {
-              setCardOffsetPosition({ x: 0, y: 0 });
-            } else {
-              setCardHasBeenPlaced(true);
-            }
-          }, 10000);
-        } else {
-          console.log("end location not found"); // eventually delete this else part
-        }
-      }
-    },
-    [moveCard, ownerID, roomCtx, suit, value, userID, origin]
-  );
-
-  useEffect(() => {
-    socket.on("cardDropApproved", (data) => handleApprovedCardDrop(data));
-    socket.on("cardDropDenied", (data) => handleDeniedCardDrop(data));
-    socket.on("cardDrawnFromSqueakDeck", (data) =>
-      handleCardDrawnFromSqueakDeck(data)
-    );
-    socket.on("playerDrawnFromDeck", (data) => handleCardDrawnFromDeck(data));
-  }, [
-    handleApprovedCardDrop,
-    handleDeniedCardDrop,
-    handleCardDrawnFromSqueakDeck,
-    handleCardDrawnFromDeck,
-  ]);
+  useCardDropDenied({
+    ownerID,
+    moveCard,
+  });
 
   function dropHandler() {
     // deck start + board end
@@ -449,18 +266,11 @@ function Card({
       value &&
       suit
     ) {
-      console.log("made it into squeak -> squeak drop handler");
-
       const idx = roomCtx.hoveredSqueakStack;
 
       const bottomSqueakStackCard =
         roomCtx.gameData?.players?.[userID!]?.squeakHand?.[idx]?.slice(-1)[0] ||
         null;
-
-      console.log(
-        "valid? ",
-        cardPlacementIsValid(bottomSqueakStackCard, value, suit, false)
-      );
 
       if (cardPlacementIsValid(bottomSqueakStackCard, value, suit, false)) {
         socket.emit("proposedCardDrop", {
@@ -482,12 +292,6 @@ function Card({
     else {
       moveCard({ x: 0, y: 0 }, false);
     }
-
-    // if (origin === "deck") {
-    //   roomCtx.setHoldingADeckCard(false);
-    // } else if (origin === "squeak") {
-    //   roomCtx.setHoldingASqueakCard(false);
-    // }
   }
 
   useEffect(() => {
