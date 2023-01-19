@@ -3,9 +3,15 @@ import {
   type IPlayerMetadata,
   type IRoomConfig,
 } from "../../components/CreateRoom/CreateRoom";
-import { type ICard } from "../../utils/generateDeckAndSqueakCards";
+import {
+  type IPlayerCards,
+  type ICard,
+} from "../../utils/generateDeckAndSqueakCards";
 import generateDeckAndSqueakCards from "../../utils/generateDeckAndSqueakCards";
 import cardPlacementIsValid from "../../utils/cardPlacementIsValid";
+import { drawFromDeckHandler } from "./handlers/drawFromDeckHandler";
+import { drawFromSqueakDeckHandler } from "./handlers/drawFromSqueakDeckHandler";
+import { proposedCardDropHandler } from "./handlers/proposedCardDropHandler";
 
 interface IRoomData {
   [code: string]: IRoomMetadata;
@@ -13,43 +19,30 @@ interface IRoomData {
 
 interface IRoomMetadata {
   room: IRoomConfig;
-  players: IPlayerMetadata[]; // may want to move over to an object to be able to access by userID
+  players: IPlayerMetadata[];
 }
 
-interface IGameData {
+export interface IGameData {
   [code: string]: IGameMetadata;
 }
 
 export interface IGameMetadata {
   board: (ICard | null)[][];
-  players: IPlayerCards;
+  players: IPlayerCardsMetadata;
 }
 
-interface IPlayerCards {
-  [code: string]: IPlayerCardMetadata;
-}
-
-export interface IPlayerCardMetadata {
-  squeakDeck: ICard[];
-  squeakHand: ICard[][];
-  deck: ICard[];
-  topCardsInDeck: (ICard | null)[];
-}
-
-export interface IPlayerDrawFromDeck {
-  topCardsInDeck: (ICard | null)[];
-  playerID: string;
-  roomCode: string;
+interface IPlayerCardsMetadata {
+  [code: string]: IPlayerCards;
 }
 
 export interface ICardDropProposal {
   card: ICard;
   deckStart?: boolean;
-  squeakStartLocation: number;
-  boardEndLocation: { row: number; col: number };
-  squeakEndLocation: number;
+  squeakStartLocation?: number;
+  boardEndLocation?: { row: number; col: number };
+  squeakEndLocation?: number;
   updatedBoard?: (ICard | null)[][];
-  updatedPlayerCards?: IPlayerCards;
+  updatedPlayerCards?: IPlayerCardsMetadata;
   playerID: string;
   roomCode: string;
 }
@@ -60,14 +53,16 @@ export interface IDrawFromSqueakDeck {
   playerID: string;
   newCard?: ICard;
   updatedBoard?: (ICard | null)[][];
-  updatedPlayerCards?: IPlayerCards;
+  updatedPlayerCards?: IPlayerCardsMetadata;
 }
 
 export interface IDrawFromDeck {
-  topCard: ICard;
+  nextTopCardInDeck: ICard | null;
+  topCardsInDeck: (ICard | null)[];
   playerID: string;
+  roomCode: string;
   updatedBoard: (ICard | null)[][];
-  updatedPlayerCards: IPlayerCards;
+  updatedPlayerCards: IPlayerCardsMetadata;
 }
 
 interface IJoinRoomConfig {
@@ -82,11 +77,8 @@ let numberOfPlayersReady = 0;
 
 // @ts-expect-error sdf
 export default function SocketHandler(req, res) {
-  console.log("server getting hit");
-
-  // It means that socket server was already initialised
+  // means that socket server was already initialised
   if (res.socket.server.io) {
-    console.log("Already set up");
     res.end();
     return;
   }
@@ -105,9 +97,6 @@ export default function SocketHandler(req, res) {
     //   socket.on("createdMessage", createdMessage);
     // };
 
-    // look more into these methods
-    // io.sockets.adapter.rooms.get(roomConfig.code)?.size
-
     // room logic
     socket.on("createRoom", (roomConfig: IRoomConfig) => {
       socket.join(roomConfig.code);
@@ -120,7 +109,6 @@ export default function SocketHandler(req, res) {
           },
         ],
       };
-      console.log("on init: ", roomData[roomConfig.code]?.room);
       io.in(roomConfig.code).emit("roomWasCreated");
     });
 
@@ -131,11 +119,6 @@ export default function SocketHandler(req, res) {
         userID: roomMetadata.userID,
       });
 
-      console.log(
-        "sending back players: ",
-        roomData[roomMetadata.code]?.players
-      );
-
       io.in(roomMetadata.code).emit(
         "connectedUsersChanged",
         roomData[roomMetadata.code]?.players
@@ -144,7 +127,7 @@ export default function SocketHandler(req, res) {
       // how to not have to extract it like this
       const currentPlayersInRoom =
         roomData[roomMetadata.code]?.room?.playersInRoom;
-      // console.log("currentPlayersInRoom: ", currentPlayersInRoom);
+
       const updatedRoomConfig = {
         ...roomData[roomMetadata.code]?.room,
 
@@ -167,7 +150,6 @@ export default function SocketHandler(req, res) {
 
     socket.on("playerReadyToReceiveInitGameData", (roomCode) => {
       numberOfPlayersReady++;
-      // console.log("number of players ready: ", numberOfPlayersReady);
 
       if (numberOfPlayersReady !== roomData[roomCode]?.players.length) return;
 
@@ -177,7 +159,7 @@ export default function SocketHandler(req, res) {
           Array.from({ length: 5 }, () => null)
         );
 
-        const playerCards: IPlayerCards = {};
+        const playerCards: IPlayerCardsMetadata = {};
         // loop through players and create + get their cards
         for (const player of currentRoomPlayers) {
           playerCards[player.userID] = generateDeckAndSqueakCards();
@@ -188,8 +170,6 @@ export default function SocketHandler(req, res) {
           players: playerCards,
         };
       }
-
-      // console.log("gameData: ", gameData[roomCode]);
 
       io.in(roomCode).emit("initGameData", gameData[roomCode]);
       numberOfPlayersReady = 0;
@@ -203,245 +183,262 @@ export default function SocketHandler(req, res) {
       }
     });
 
-    socket.on(
-      "playerDrawFromDeck",
-      ({ topCardsInDeck, playerID, roomCode }: IPlayerDrawFromDeck) => {
-        const playerCards = gameData[roomCode]?.players[playerID];
+    // socket.on("playerDrawFromDeck", ({ playerID, roomCode }: IDrawFromDeck) => {
+    //   const playerCards = gameData[roomCode]?.players[playerID];
+    //   let deckIdx = playerCards?.deckIdx;
+    //   const deck = playerCards?.deck;
+    //   let topCardsInDeck = playerCards?.topCardsInDeck;
+    //   if (!playerCards || !deck || !deckIdx || !topCardsInDeck) return;
 
-        if (playerCards) {
-          playerCards.topCardsInDeck = topCardsInDeck;
-        }
+    //   // cards are rendered with the last card in the array at the top of stack
+    //   if (deckIdx + 3 <= deck.length) {
+    //     topCardsInDeck = [
+    //       deck[deckIdx + 1] || null,
+    //       deck[deckIdx + 2] || null,
+    //       deck[deckIdx + 3] || null,
+    //     ];
 
-        io.in(roomCode).emit("playerDrawnFromDeck", {
-          updatedBoard: gameData[roomCode]?.board,
-          updatedPlayerCards: gameData[roomCode]?.players,
-        });
-      }
-    );
+    //     deckIdx + 3 === deck.length ? (deckIdx = -1) : (deckIdx = deckIdx + 3);
+    //   } else {
+    //     if (deckIdx + 2 === deck.length) {
+    //       topCardsInDeck = [
+    //         null,
+    //         deck[deckIdx + 1] || null,
+    //         deck[deckIdx + 2] || null,
+    //       ];
+    //     } else if (deckIdx + 1 === deck.length) {
+    //       topCardsInDeck = [null, null, deck[deckIdx + 1] || null];
+    //     } else {
+    //       topCardsInDeck = [null, null, null];
+    //     }
+    //     deckIdx = -1;
+    //   }
 
-    socket.on(
-      "drawFromSqueakDeck",
-      ({ indexToDrawTo, playerID, roomCode }: IDrawFromSqueakDeck) => {
-        const player = gameData[roomCode]?.players?.[playerID];
-        if (player) {
-          const card = player.squeakDeck.shift();
-          if (card) {
-            player.squeakHand?.[indexToDrawTo]?.push(card);
+    //   const currentTopCardInDeck = playerCards.nextTopCardInDeck;
 
-            io.in(roomCode).emit("cardDrawnFromSqueakDeck", {
-              playerID,
-              indexToDrawTo,
-              newCard: card,
-              updatedBoard: gameData[roomCode]?.board,
-              updatedPlayerCards: gameData[roomCode]?.players,
-            });
-          }
-        }
-      }
-    );
+    //   // updating the reference to the actual player object
+    //   playerCards.nextTopCardInDeck =
+    //     deck[deckIdx + 3] ?? deck[deckIdx + 2] ?? deck[deckIdx + 1] ?? null;
+    //   playerCards.deckIdx = deckIdx;
+    //   playerCards.topCardsInDeck = topCardsInDeck;
 
-    socket.on(
-      "proposedCardDrop",
-      ({
-        card,
-        deckStart,
-        squeakStartLocation,
-        boardEndLocation,
-        squeakEndLocation,
-        playerID,
-        roomCode,
-      }: ICardDropProposal) => {
-        console.log(
-          "card: ",
-          card,
-          "squeakS:",
-          squeakStartLocation,
-          "squeakE:",
-          squeakEndLocation
-        );
+    //   io.in(roomCode).emit("playerDrawnFromDeck", {
+    //     nextTopCardInDeck: currentTopCardInDeck,
+    //     playerID,
+    //     updatedBoard: gameData[roomCode]?.board,
+    //     updatedPlayerCards: gameData[roomCode]?.players,
+    //   });
+    // });
+    drawFromDeckHandler(io, socket, gameData);
 
-        if (deckStart && boardEndLocation) {
-          const { row, col } = boardEndLocation;
-          const cell = gameData[roomCode]?.board?.[row]?.[col] || null;
-          if (
-            cardPlacementIsValid(
-              cell,
-              card.value,
-              card.suit,
-              boardEndLocation !== undefined
-            )
-          ) {
-            // @ts-expect-error asdf
-            gameData[roomCode].board[row][col] = card;
+    // socket.on(
+    //   "drawFromSqueakDeck",
+    //   ({ indexToDrawTo, playerID, roomCode }: IDrawFromSqueakDeck) => {
+    //     const player = gameData[roomCode]?.players?.[playerID];
+    //     if (!player) return;
 
-            // shifting topCardsInDeck
-            const topCardsInDeck =
-              gameData[roomCode]?.players[playerID]?.topCardsInDeck;
+    //     const card = player.squeakDeck.shift();
+    //     if (card) {
+    //       player.squeakHand?.[indexToDrawTo]?.push(card);
 
-            if (topCardsInDeck) {
-              topCardsInDeck.pop();
-              topCardsInDeck.unshift(null);
-            }
+    //       io.in(roomCode).emit("cardDrawnFromSqueakDeck", {
+    //         playerID,
+    //         indexToDrawTo,
+    //         newCard: card,
+    //         updatedBoard: gameData[roomCode]?.board,
+    //         updatedPlayerCards: gameData[roomCode]?.players,
+    //       });
+    //     }
+    //   }
+    // );
+    drawFromSqueakDeckHandler(io, socket, gameData);
 
-            // removing card from player's deck
-            // @ts-expect-error asdf
-            gameData[roomCode].players[playerID].deck = gameData[
-              roomCode
-            ]?.players?.[playerID]?.deck.filter((c) => {
-              if (c.value === card.value) {
-                if (c.suit === card.suit) return false;
-              } else if (c.suit === card.suit) {
-                if (c.value === card.value) return false;
-              }
-              return true;
-            });
+    // socket.on(
+    //   "proposedCardDrop",
+    //   ({
+    //     card,
+    //     deckStart,
+    //     squeakStartLocation,
+    //     boardEndLocation,
+    //     squeakEndLocation,
+    //     playerID,
+    //     roomCode,
+    //   }: ICardDropProposal) => {
 
-            console.log("gameData: ", gameData[roomCode]?.board);
+    //     if (deckStart && boardEndLocation) {
+    //       const board = gameData[roomCode]?.board;
+    //       const player = gameData[roomCode]?.players?.[playerID];
 
-            io.in(roomCode).emit("cardDropApproved", {
-              card,
-              // deckStart: true,
-              // boardEndLocation,
-              endID: `cell${row}${col}`,
-              updatedBoard: gameData[roomCode]?.board,
-              updatedPlayerCards: gameData[roomCode]?.players,
-              playerID,
-            });
-          } else {
-            // ideally should limit to only sending to the player who made the drop
-            io.in(roomCode).emit("cardDropDenied", { playerID });
-          }
-        } else if (deckStart && squeakEndLocation !== null) {
-          const squeakStackLocation =
-            gameData[roomCode]?.players?.[playerID]?.squeakHand[
-              squeakEndLocation
-            ];
+    //       if (!board || !player) return;
 
-          if (squeakStackLocation) {
-            squeakStackLocation.push(card);
+    //       const { row, col } = boardEndLocation;
+    //       let cell = board[row]?.[col]; // idk why only need to ?. on col but w/e?
+    //       if (cell === undefined) return;
 
-            // shifting topCardsInDeck
-            const topCardsInDeck =
-              gameData[roomCode]?.players[playerID]?.topCardsInDeck;
+    //       if (
+    //         cardPlacementIsValid(
+    //           cell,
+    //           card.value,
+    //           card.suit,
+    //           boardEndLocation !== undefined
+    //         )
+    //       ) {
+    //         player.topCardsInDeck.pop();
+    //         player.topCardsInDeck.unshift(null);
 
-            if (topCardsInDeck) {
-              topCardsInDeck.pop();
-              topCardsInDeck.unshift(null);
-            }
+    //         player.deck = player.deck.filter((c) => {
+    //           if (c.value === card.value && c.suit === card.suit) {
+    //             console.log("card removed from deck");
 
-            // removing card from player's deck
-            // @ts-expect-error asdf
-            gameData[roomCode].players[playerID].deck = gameData[
-              roomCode
-            ]?.players?.[playerID]?.deck.filter((c) => {
-              if (c.value === card.value) {
-                if (c.suit === card.suit) return false;
-              } else if (c.suit === card.suit) {
-                if (c.value === card.value) return false;
-              }
-              return true;
-            });
+    //             player.deckIdx--;
+    //             return false;
+    //           }
+    //           // if (c.value === card.value) {                // just in case you need to fall back on this
+    //           //   if (c.suit === card.suit) return false;
+    //           // } else if (c.suit === card.suit) {
+    //           //   if (c.value === card.value) return false;
+    //           // }
+    //           return true;
+    //         });
 
-            io.in(roomCode).emit("cardDropApproved", {
-              card,
-              // deckStart: true,
-              // squeakEndCoords: {
-              //   col: squeakEndLocation,
-              //   row: squeakStackLocation.length,
-              // },
-              endID: `${playerID}squeakHand${squeakEndLocation}`,
-              updatedBoard: gameData[roomCode]?.board, // ideally shouldn't have to send this
-              updatedPlayerCards: gameData[roomCode]?.players,
-              playerID,
-            });
-          }
-        } else if (squeakStartLocation !== null && boardEndLocation) {
-          const startSqueakStackLocation =
-            gameData[roomCode]?.players?.[playerID]?.squeakHand[
-              squeakStartLocation
-            ];
+    //         // hopefully this updates the reference to the actual board object
+    //         cell = card;
 
-          const { row, col } = boardEndLocation;
-          const cell = gameData[roomCode]?.board?.[row]?.[col] || null;
-          if (
-            cardPlacementIsValid(
-              cell,
-              card.value,
-              card.suit,
-              boardEndLocation !== undefined
-            )
-          ) {
-            // @ts-expect-error asdf
-            gameData[roomCode].board[row][col] = card;
-            startSqueakStackLocation?.pop();
+    //         io.in(roomCode).emit("cardDropApproved", {
+    //           card,
+    //           endID: `cell${row}${col}`,
+    //           updatedBoard: gameData[roomCode]?.board,
+    //           updatedPlayerCards: gameData[roomCode]?.players,
+    //           playerID,
+    //         });
+    //       } else {
+    //         io.in(roomCode).emit("cardDropDenied", { playerID });
+    //       }
+    //     } else if (deckStart && squeakEndLocation != null) {
+    //       const player = gameData[roomCode]?.players?.[playerID];
+    //       const squeakStackLocation =
+    //         gameData[roomCode]?.players?.[playerID]?.squeakHand[
+    //           squeakEndLocation
+    //         ];
 
-            console.log("gameBoard:", gameData[roomCode]?.board);
+    //       if (!player || !squeakStackLocation) return;
 
-            io.in(roomCode).emit("cardDropApproved", {
-              card,
-              // squeakStartLocation,
-              // boardEndLocation,
-              endID: `cell${row}${col}`,
-              updatedBoard: gameData[roomCode]?.board,
-              updatedPlayerCards: gameData[roomCode]?.players,
-              playerID,
-            });
-          } else {
-            // ideally should limit to only sending to the player who made the drop
-            io.in(roomCode).emit("cardDropDenied", { playerID });
-          }
-        } else if (squeakStartLocation !== null && squeakEndLocation !== null) {
-          const startSqueakStackLocation =
-            gameData[roomCode]?.players?.[playerID]?.squeakHand[
-              squeakStartLocation
-            ];
+    //       squeakStackLocation.push(card);
 
-          const endSqueakStackLocation =
-            gameData[roomCode]?.players?.[playerID]?.squeakHand[
-              squeakEndLocation
-            ];
+    //       player.topCardsInDeck.pop();
+    //       player.topCardsInDeck.unshift(null);
 
-          const indexOfCardInStartStack = startSqueakStackLocation?.findIndex(
-            (c) => c.value === card.value && c.suit === card.suit
-          );
+    //       player.deck = player.deck.filter((c) => {
+    //         if (c.value === card.value && c.suit === card.suit) {
+    //           console.log("card removed from deck");
 
-          const cardsToMove = startSqueakStackLocation?.splice(
-            indexOfCardInStartStack!
-          );
+    //           player.deckIdx--;
+    //           return false;
+    //         }
+    //         // if (c.value === card.value) {
+    //         //   if (c.suit === card.suit) return false;
+    //         // } else if (c.suit === card.suit) {
+    //         //   if (c.value === card.value) return false;
+    //         // }
+    //         return true;
+    //       });
 
-          if (endSqueakStackLocation && cardsToMove) {
-            // moving all child cards below the card being moved to the new stack
-            // @ts-expect-error asqdf
-            gameData[roomCode].players[playerID].squeakHand[squeakEndLocation] =
-              endSqueakStackLocation.concat(cardsToMove);
+    //       io.in(roomCode).emit("cardDropApproved", {
+    //         card,
+    //         endID: `${playerID}squeakHand${squeakEndLocation}`,
+    //         updatedBoard: gameData[roomCode]?.board, // ideally shouldn't have to send this
+    //         updatedPlayerCards: gameData[roomCode]?.players,
+    //         playerID,
+    //       });
+    //     } else if (squeakStartLocation != null && boardEndLocation) {
+    //       const board = gameData[roomCode]?.board;
+    //       const startSqueakStackLocation =
+    //         gameData[roomCode]?.players?.[playerID]?.squeakHand[
+    //           squeakStartLocation
+    //         ];
 
-            io.in(roomCode).emit("cardDropApproved", {
-              card,
-              // squeakStartLocation,
-              squeakEndCoords: {
-                squeakStack:
-                  // @ts-expect-error asqdf
-                  gameData[roomCode].players[playerID].squeakHand[
-                    squeakEndLocation
-                  ],
-                stackOfCardsMoved: cardsToMove,
-                col: squeakEndLocation,
-                row: endSqueakStackLocation.length,
-              },
-              endID: `${playerID}squeakHand${squeakEndLocation}`,
-              updatedBoard: gameData[roomCode]?.board, // ideally shouldn't have to send this
-              updatedPlayerCards: gameData[roomCode]?.players,
-              playerID,
-            });
-          }
-        }
-      }
-    );
+    //       if (!board || !startSqueakStackLocation) return;
+
+    //       const { row, col } = boardEndLocation;
+    //       let cell = board[row]?.[col]; // idk why only need to ?. on col but w/e?
+    //       if (cell === undefined) return;
+
+    //       if (
+    //         cardPlacementIsValid(
+    //           cell,
+    //           card.value,
+    //           card.suit,
+    //           boardEndLocation !== undefined
+    //         )
+    //       ) {
+    //         startSqueakStackLocation?.pop();
+    //         // hopefully this updates the reference to the actual board object
+    //         cell = card;
+
+    //         io.in(roomCode).emit("cardDropApproved", {
+    //           card,
+    //           endID: `cell${row}${col}`,
+    //           updatedBoard: gameData[roomCode]?.board,
+    //           updatedPlayerCards: gameData[roomCode]?.players,
+    //           playerID,
+    //         });
+    //       } else {
+    //         io.in(roomCode).emit("cardDropDenied", { playerID });
+    //       }
+    //     } else if (squeakStartLocation != null && squeakEndLocation != null) {
+    //       const startSqueakStack =
+    //         gameData[roomCode]?.players?.[playerID]?.squeakHand[
+    //           squeakStartLocation
+    //         ];
+
+    //       let endSqueakStack =
+    //         gameData[roomCode]?.players?.[playerID]?.squeakHand[
+    //           squeakEndLocation
+    //         ];
+
+    //       const indexOfCardInStartStack = startSqueakStack?.findIndex(
+    //         (c) => c.value === card.value && c.suit === card.suit
+    //       );
+
+    //       if (!startSqueakStack || !endSqueakStack || !indexOfCardInStartStack)
+    //         return;
+
+    //       const cardsToMove = startSqueakStack?.splice(indexOfCardInStartStack);
+
+    //       // moving all child cards below the card being moved to the new stack
+
+    //       // gameData[roomCode].players[playerID].squeakHand[squeakEndLocation] =
+    //       //   endSqueakStack.concat(cardsToMove);
+
+    //       // hopefully this updates the reference to the actual object
+    //       endSqueakStack = endSqueakStack.concat(cardsToMove);
+
+    //       // below was squeakStack:
+    //       // gameData[roomCode].players[playerID].squeakHand[
+    //       //   squeakEndLocation
+    //       // ],
+
+    //       io.in(roomCode).emit("cardDropApproved", {
+    //         card,
+    //         squeakEndCoords: {
+    //           squeakStack: endSqueakStack,
+    //           stackOfCardsMoved: cardsToMove,
+    //           col: squeakEndLocation,
+    //           row: endSqueakStack.length,
+    //         },
+    //         endID: `${playerID}squeakHand${squeakEndLocation}`,
+    //         updatedBoard: gameData[roomCode]?.board, // ideally shouldn't have to send this
+    //         updatedPlayerCards: gameData[roomCode]?.players,
+    //         playerID,
+    //       });
+    //     }
+    //   }
+    // );
+    proposedCardDropHandler(io, socket, gameData);
   };
 
   // Define actions inside
   io.on("connection", onConnection);
 
-  console.log("Setting up socket");
   res.end();
 }
