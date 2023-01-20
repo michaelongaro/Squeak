@@ -32,16 +32,10 @@ export function deckToSqueak({
 
   player.deck = player.deck.filter((c) => {
     if (c.value === card.value && c.suit === card.suit) {
-      console.log("card removed from deck");
-
       player.deckIdx--;
       return false;
     }
-    // if (c.value === card.value) {
-    //   if (c.suit === card.suit) return false;
-    // } else if (c.suit === card.suit) {
-    //   if (c.value === card.value) return false;
-    // }
+
     return true;
   });
 
