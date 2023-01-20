@@ -28,5 +28,5 @@ export function drawFromSqueakDeckHandler(
     }
   }
 
-  socket.on("playerDrawFromSqueakDeck", drawFromSqueakDeck);
+  socket.on("drawFromSqueakDeck", drawFromSqueakDeck);
 }
