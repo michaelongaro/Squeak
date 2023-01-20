@@ -25,9 +25,7 @@ function useCardDropDenied({
 
   useEffect(() => {
     if (dataFromBackend !== null) {
-      setDataFromBackend(null); // if this doesn't work then move it to the end of the function
-
-      console.log("executing useEffect in useCardDropDenied");
+      setDataFromBackend(null);
 
       const { playerID } = dataFromBackend;
 
