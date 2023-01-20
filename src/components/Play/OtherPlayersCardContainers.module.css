@@ -1,4 +1,6 @@
-.topInnerGridContainer {
+.topInnerGridContainer,
+.leftInnerGridContainer,
+.rightInnerGridContainer {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
   grid-template-rows: 1fr 1fr;
@@ -8,47 +10,20 @@
   grid-template-areas:
     " squeakDeck squeakHand0 squeakHand1 squeakHand2 squeakHand3 "
     " . . cardBeingPlayedOnBoard . playerAvatar ";
-  width: 50%;
+  /* width: 50%; */
   /* maybe just have a max-width so things don't get too stretched out */
   /* margin: 1rem; */
+}
+
+.topInnerGridContainer {
   rotate: 180deg;
 }
 
 .leftInnerGridContainer {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
-  justify-items: center;
-  align-items: center;
-  gap: 1rem;
-  grid-template-areas:
-    " . squeakDeck "
-    " . squeakHand0 "
-    " cardBeingPlayedOnBoard squeakHand1 "
-    " . squeakHand2 "
-    " playerAvatar squeakHand3 ";
-  width: 50%;
-  /* maybe just have a max-width so things don't get too stretched out */
-  /* margin: 1rem; */
   rotate: 90deg;
 }
 
 .rightInnerGridContainer {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
-  justify-items: center;
-  align-items: center;
-  gap: 1rem;
-  grid-template-areas:
-    " squeakDeck . "
-    " squeakHand0 . "
-    " squeakHand1 cardBeingPlayedOnBoard "
-    " squeakHand2 . "
-    " squeakHand3 playerAvatar ";
-  width: 50%;
-  /* maybe just have a max-width so things don't get too stretched out */
-  /* margin: 1rem; */
   rotate: 270deg;
 }
 
@@ -79,4 +54,17 @@
 
 .playerAvatar {
   grid-area: playerAvatar;
+}
+
+/* adjustment rotations to make sure player avatars are shown upright */
+.topInnerGridContainer .playerAvatar {
+  rotate: 180deg !important;
+}
+
+.leftInnerGridContainer .playerAvatar {
+  rotate: 90deg !important;
+}
+
+.rightInnerGridContainer .playerAvatar {
+  rotate: 270deg !important;
 }
