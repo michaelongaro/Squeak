@@ -6,14 +6,14 @@ import { type IDrawFromDeck } from "../pages/api/socket";
 interface IUseCardDrawFromDeck {
   value?: string;
   suit?: string;
-  userID: string | null;
+  ownerID?: string;
   moveCard: ({ x, y }: { x: number; y: number }, flip: boolean) => void;
 }
 
 function useCardDrawFromDeck({
   value,
   suit,
-  userID,
+  ownerID,
   moveCard,
 }: IUseCardDrawFromDeck) {
   const roomCtx = useRoomContext();
@@ -41,22 +41,8 @@ function useCardDrawFromDeck({
         updatedPlayerCards,
       } = dataFromBackend;
 
-      console.log(
-        "executing useEffect in useCardDrawFromDeck",
-        playerID,
-        userID,
-        currentTopCardInDeck?.suit,
-        currentTopCardInDeck?.value,
-        suit,
-        value,
-        playerID === userID && currentTopCardInDeck === null,
-        playerID !== userID ||
-          currentTopCardInDeck?.value !== value ||
-          currentTopCardInDeck?.suit !== suit
-      );
-
       // I think this logic checks out
-      if (playerID === userID && currentTopCardInDeck === null) {
+      if (ownerID === playerID && currentTopCardInDeck === null) {
         console.log("next top card in deck was null");
 
         roomCtx.setGameData({
@@ -68,13 +54,13 @@ function useCardDrawFromDeck({
       }
 
       if (
-        playerID !== userID ||
+        ownerID !== playerID ||
         currentTopCardInDeck?.value !== value ||
         currentTopCardInDeck?.suit !== suit
       )
         return;
 
-      const endID = `${playerID}hand`;
+      const endID = `${ownerID}hand`;
 
       const endLocation = document
         .getElementById(endID)
@@ -86,15 +72,6 @@ function useCardDrawFromDeck({
         const endX = endLocation.x;
         const endY = endLocation.y;
 
-        console.log(
-          "successfully getting card ",
-          value,
-          suit,
-          " to ",
-          endX,
-          endY
-        );
-
         moveCard({ x: endX, y: endY }, true);
 
         setTimeout(() => {
@@ -103,12 +80,10 @@ function useCardDrawFromDeck({
             board: updatedBoard || roomCtx.gameData?.board,
             players: updatedPlayerCards || roomCtx.gameData?.players,
           });
-
-          // setCardHasBeenPlaced(true); // maybe need to uncomment this
         }, 250);
       }
     }
-  }, [dataFromBackend, moveCard, roomCtx, suit, userID, value]);
+  }, [dataFromBackend, moveCard, roomCtx, suit, ownerID, value]);
 }
 
 export default useCardDrawFromDeck;
