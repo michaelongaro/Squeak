@@ -19,6 +19,7 @@ interface IUseCardDropApproved {
   suit?: string;
   ownerID?: string;
   userID: string | null;
+  origin?: "deck" | "squeak";
   moveCard: ({ x, y }: { x: number; y: number }, flip: boolean) => void;
   setCardOffsetPosition: React.Dispatch<
     React.SetStateAction<{
@@ -34,6 +35,7 @@ function useCardDropApproved({
   suit,
   ownerID,
   userID,
+  origin,
   moveCard,
   setCardOffsetPosition,
   setCardHasBeenPlaced,
@@ -53,9 +55,7 @@ function useCardDropApproved({
 
   useEffect(() => {
     if (dataFromBackend !== null) {
-      setDataFromBackend(null); // if this doesn't work then move it to the end of the function
-
-      console.log("executing useEffect in useCardDropApproved");
+      setDataFromBackend(null);
 
       const {
         card,
@@ -113,8 +113,6 @@ function useCardDropApproved({
           moveCard({ x: endX, y: endY }, false);
 
           setTimeout(() => {
-            // console.log("setting game data nyow");
-
             roomCtx.setGameData({
               ...roomCtx.gameData,
               board: updatedBoard || roomCtx.gameData?.board,
@@ -137,6 +135,7 @@ function useCardDropApproved({
     suit,
     ownerID,
     value,
+    origin,
     setCardHasBeenPlaced,
     setCardOffsetPosition,
     userID,
