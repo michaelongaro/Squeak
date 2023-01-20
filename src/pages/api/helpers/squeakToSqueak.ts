@@ -24,34 +24,33 @@ export function squeakToSqueak({
   const startSqueakStack =
     gameData[roomCode]?.players?.[playerID]?.squeakHand[squeakStartLocation];
 
-  let endSqueakStack =
+  const endSqueakStack =
     gameData[roomCode]?.players?.[playerID]?.squeakHand[squeakEndLocation];
 
   const indexOfCardInStartStack = startSqueakStack?.findIndex(
     (c) => c.value === card.value && c.suit === card.suit
   );
 
-  if (!startSqueakStack || !endSqueakStack || !indexOfCardInStartStack) return;
+  if (
+    !startSqueakStack ||
+    !endSqueakStack ||
+    indexOfCardInStartStack === undefined
+  )
+    return;
 
   const cardsToMove = startSqueakStack?.splice(indexOfCardInStartStack);
 
   // moving all child cards below the card being moved to the new stack
-
-  // gameData[roomCode].players[playerID].squeakHand[squeakEndLocation] =
-  //   endSqueakStack.concat(cardsToMove);
-
-  // hopefully this updates the reference to the actual object
-  endSqueakStack = endSqueakStack.concat(cardsToMove);
-
-  // below was squeakStack:
-  // gameData[roomCode].players[playerID].squeakHand[
-  //   squeakEndLocation
-  // ],
+  // not sure how to do this without "!"s
+  gameData[roomCode]!.players[playerID]!.squeakHand[squeakEndLocation] =
+    endSqueakStack.concat(cardsToMove);
 
   io.in(roomCode).emit("cardDropApproved", {
     card,
     squeakEndCoords: {
-      squeakStack: endSqueakStack,
+      squeakStack:
+        // not sure how to do this without "!"s
+        gameData[roomCode]!.players[playerID]!.squeakHand[squeakEndLocation],
       stackOfCardsMoved: cardsToMove,
       col: squeakEndLocation,
       row: endSqueakStack.length,
