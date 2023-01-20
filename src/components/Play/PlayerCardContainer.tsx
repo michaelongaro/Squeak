@@ -73,11 +73,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                     draggable={false}
                     ownerID={userID}
                     startID={`${userID}squeakDeck`}
-                    animationConfig={{
-                      xMultiplier: 1,
-                      yMultiplier: 1,
-                      rotation: 0,
-                    }}
+                    rotation={0}
                   />
                 </div>
                 <div className="absolute top-0 left-0 h-full w-full">
@@ -90,11 +86,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                     draggable={false}
                     ownerID={userID}
                     startID={`${userID}squeakDeck`}
-                    animationConfig={{
-                      xMultiplier: 1,
-                      yMultiplier: 1,
-                      rotation: 0,
-                    }}
+                    rotation={0}
                   />
                 </div>
               </div>
@@ -162,11 +154,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                         squeakStackLocation={[cardsIdx, cardIdx]}
                         ownerID={userID}
                         startID={`${userID}squeakStack${cardsIdx}${cardIdx}`}
-                        animationConfig={{
-                          xMultiplier: 1,
-                          yMultiplier: 1,
-                          rotation: 0,
-                        }}
+                        rotation={0}
                       />
                     </div>
                   ))}
@@ -196,11 +184,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                       draggable={false}
                       ownerID={userID}
                       startID={`${userID}deck`}
-                      animationConfig={{
-                        xMultiplier: 1,
-                        yMultiplier: 1,
-                        rotation: 0,
-                      }}
+                      rotation={0}
                     />
                   </div>
                   <div className="absolute top-0 left-0 h-full w-full">
@@ -217,11 +201,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                       draggable={false}
                       ownerID={userID}
                       startID={`${userID}deck`}
-                      animationConfig={{
-                        xMultiplier: 1,
-                        yMultiplier: 1,
-                        rotation: 0,
-                      }}
+                      rotation={0}
                     />
                   </div>
                 </div>
@@ -236,11 +216,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                       draggable={false}
                       ownerID={userID}
                       startID={`${userID}deck`}
-                      animationConfig={{
-                        xMultiplier: 1,
-                        yMultiplier: 1,
-                        rotation: 0,
-                      }}
+                      rotation={0}
                     />
                   </div>
                 </div>
@@ -277,11 +253,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                         origin={"deck"}
                         ownerID={userID}
                         startID={`${userID}hand`}
-                        animationConfig={{
-                          xMultiplier: 1,
-                          yMultiplier: 1,
-                          rotation: 0,
-                        }}
+                        rotation={0}
                       />
                     </div>
                   )
