@@ -31,9 +31,7 @@ function useCardDrawFromSqueakDeck({
 
   useEffect(() => {
     if (dataFromBackend !== null) {
-      setDataFromBackend(null); // if this doesn't work then move it to the end of the function
-
-      console.log("executing useEffect in useCardDrawFromSqueakDeck");
+      setDataFromBackend(null);
 
       const {
         playerID,
