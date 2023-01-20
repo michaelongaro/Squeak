@@ -48,12 +48,7 @@ function Board({ boardClass }: IBoard) {
                 suit={cell?.suit}
                 showCardBack={false}
                 draggable={false}
-                animationConfig={{
-                  // TODO: remove needing this for Board cards
-                  xMultiplier: 1,
-                  yMultiplier: 1,
-                  rotation: 0,
-                }}
+                rotation={0}
               />
             </div>
           ))}
