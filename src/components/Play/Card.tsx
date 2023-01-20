@@ -8,11 +8,11 @@ import { socket } from "../../pages/";
 import { useRoomContext } from "../../context/RoomContext";
 import { useLocalStorageContext } from "../../context/LocalStorageContext";
 import cardPlacementIsValid from "../../utils/cardPlacementIsValid";
-import { type IAnimationConfig } from "./OtherPlayersCardContainers";
 import useCardDrawFromDeck from "../../hooks/useCardDrawFromDeck";
 import useCardDrawFromSqueakDeck from "../../hooks/useCardDrawFromSqueakDeck";
 import useCardDropApproved from "../../hooks/useCardDropApproved";
 import useCardDropDenied from "../../hooks/useCardDropDenied";
+import { adjustCoordinatesByRotation } from "../../utils/adjustCoordinatesByRotation";
 
 interface ICardComponent {
   value?: string;
@@ -23,7 +23,7 @@ interface ICardComponent {
   ownerID?: string;
   startID?: string;
   squeakStackLocation?: [number, number];
-  animationConfig: IAnimationConfig;
+  rotation: number;
 }
 
 function Card({
@@ -34,7 +34,7 @@ function Card({
   startID,
   origin,
   ownerID,
-  animationConfig,
+  rotation,
   squeakStackLocation,
 }: ICardComponent) {
   const roomCtx = useRoomContext();
@@ -51,8 +51,6 @@ function Card({
 
   const moveCard = useCallback(
     ({ x, y }: { x: number; y: number }, flip: boolean) => {
-      // console.log("moveCard called with", value, suit);
-
       if (!cardRef.current || cardIsMovingRef.current) return;
 
       cardIsMovingRef.current = true;
@@ -72,32 +70,23 @@ function Card({
         const { x: currentX, y: currentY } =
           currentCard.getBoundingClientRect();
 
-        // console.log("cardIsMoving: ", cardIsMovingRef);
-        // console.log("currentX: ", currentX, "currentY: ", currentY);
-
-        const endXCoordinate =
-          Math.floor(x - currentX) * animationConfig.xMultiplier;
-        const endYCoordinate =
-          Math.floor(y - currentY) * animationConfig.yMultiplier;
-
-        // console.log(
-        //   "endXCoordinate: ",
-        //   endXCoordinate,
-        //   "endYCoordinate: ",
-        //   endYCoordinate
-        // );
+        const { x: endXCoordinate, y: endYCoordinate } =
+          adjustCoordinatesByRotation(
+            Math.floor(x - currentX),
+            Math.floor(y - currentY),
+            rotation
+          );
 
         setCardOffsetPosition({
           x: endXCoordinate,
           y: endYCoordinate,
         });
 
-        cardRef.current.style.transform += `rotateZ(${animationConfig.rotation}deg)`;
+        cardRef.current.style.transform += `rotateZ(${rotation}deg)`;
       }
 
       if (flip) {
         if (cardRef.current) {
-          // cardRef.current.style.zIndex = "1000"; // make sure card is on top while moving over other cards
           console.log("pre transform: ", cardRef.current.style.transform);
           cardRef.current.style.transform += "rotateY(360deg)"; // could try 90 and then go back to 0 at end?
           console.log("post transform: ", cardRef.current.style.transform);
@@ -134,24 +123,20 @@ function Card({
         }
       }, 250); //150
 
-      // idk somehow maybe have if (!flip) {
-
-      //}
-
       if (origin === "deck") {
         roomCtx.setHoldingADeckCard(false);
       } else if (origin === "squeak") {
         roomCtx.setHoldingASqueakCard(false);
       }
     },
-    [origin, roomCtx, squeakStackLocation, animationConfig, startID]
+    [origin, roomCtx, squeakStackLocation, rotation, startID]
   );
 
   // hooks to handle socket emits from server
   useCardDrawFromDeck({
     value,
     suit,
-    userID,
+    ownerID,
     moveCard,
   });
 
@@ -167,6 +152,7 @@ function Card({
     suit,
     ownerID,
     userID,
+    origin,
     moveCard,
     setCardOffsetPosition,
     setCardHasBeenPlaced,
@@ -268,11 +254,11 @@ function Card({
     ) {
       const idx = roomCtx.hoveredSqueakStack;
 
-      const bottomSqueakStackCard =
+      const parentSqueakStackCard =
         roomCtx.gameData?.players?.[userID!]?.squeakHand?.[idx]?.slice(-1)[0] ||
         null;
 
-      if (cardPlacementIsValid(bottomSqueakStackCard, value, suit, false)) {
+      if (cardPlacementIsValid(parentSqueakStackCard, value, suit, false)) {
         socket.emit("proposedCardDrop", {
           card: {
             value,
