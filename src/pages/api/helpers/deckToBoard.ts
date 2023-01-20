@@ -27,7 +27,7 @@ export function deckToBoard({
   if (!board || !player) return;
 
   const { row, col } = boardEndLocation;
-  let cell = board[row]?.[col]; // idk why only need to ?. on col but w/e?
+  const cell = board[row]?.[col]; // idk why only need to ?. on col but w/e?
   if (cell === undefined) return;
 
   if (
@@ -43,23 +43,15 @@ export function deckToBoard({
 
     player.deck = player.deck.filter((c) => {
       if (c.value === card.value && c.suit === card.suit) {
-        console.log("card removed from deck");
-
         player.deckIdx--;
         return false;
       }
-      // if (c.value === card.value) {                // just in case you need to fall back on this
-      //   if (c.suit === card.suit) return false;
-      // } else if (c.suit === card.suit) {
-      //   if (c.value === card.value) return false;
-      // }
+
       return true;
     });
 
-    // hopefully this updates the reference to the actual board object
-    cell = card;
-
-    // pretty sure that this doesn't update the reference to the actual board object
+    // not sure how to properly mutate the board without this
+    gameData[roomCode]!.board[row]![col]! = card;
 
     io.in(roomCode).emit("cardDropApproved", {
       card,

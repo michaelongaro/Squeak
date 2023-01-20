@@ -30,7 +30,7 @@ export function squeakToBoard({
   if (!board || !startSqueakStackLocation) return;
 
   const { row, col } = boardEndLocation;
-  let cell = board[row]?.[col]; // idk why only need to ?. on col but w/e?
+  const cell = board[row]?.[col]; // idk why only need to ?. on col but w/e?
   if (cell === undefined) return;
 
   if (
@@ -42,8 +42,11 @@ export function squeakToBoard({
     )
   ) {
     startSqueakStackLocation?.pop();
-    // hopefully this updates the reference to the actual board object
-    cell = card;
+
+    // not sure how to properly mutate the board without this
+    gameData[roomCode]!.board[row]![col]! = card;
+
+    console.log(gameData[roomCode]?.board);
 
     io.in(roomCode).emit("cardDropApproved", {
       card,
