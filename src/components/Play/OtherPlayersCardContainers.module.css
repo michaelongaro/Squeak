@@ -9,7 +9,7 @@
   gap: 1rem;
   grid-template-areas:
     " squeakDeck squeakHand0 squeakHand1 squeakHand2 squeakHand3 "
-    " . . cardBeingPlayedOnBoard . playerAvatar ";
+    " deck . hand . playerAvatar ";
   /* width: 50%; */
   /* maybe just have a max-width so things don't get too stretched out */
   /* margin: 1rem; */
@@ -48,8 +48,12 @@
   grid-area: squeakHand3;
 }
 
-.cardBeingPlayedOnBoard {
-  grid-area: cardBeingPlayedOnBoard;
+.playerDeck {
+  grid-area: playerDeck;
+}
+
+.playerHand {
+  grid-area: playerHand;
 }
 
 .playerAvatar {
