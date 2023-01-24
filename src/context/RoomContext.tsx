@@ -10,6 +10,11 @@ interface IHeldSqueakStackLocation {
   location: { x: number; y: number };
 }
 
+interface IProposedCardBoxShadow {
+  id: string;
+  boxShadowValue: string;
+}
+
 interface IRoomContext {
   pageToRender: "home" | "createRoom" | "joinRoom" | "play";
   setPageToRender: React.Dispatch<
@@ -40,6 +45,10 @@ interface IRoomContext {
   resetHeldSqueakStackLocation: [number, number] | null;
   setResetHeldSqueakStackLocation: React.Dispatch<
     React.SetStateAction<[number, number] | null>
+  >;
+  proposedCardBoxShadow: IProposedCardBoxShadow | null;
+  setProposedCardBoxShadow: React.Dispatch<
+    React.SetStateAction<IProposedCardBoxShadow | null>
   >;
 }
 
@@ -77,6 +86,10 @@ export function RoomProvider(props: { children: React.ReactNode }) {
   const [resetHeldSqueakStackLocation, setResetHeldSqueakStackLocation] =
     useState<[number, number] | null>(null);
 
+  const [proposedCardBoxShadow, setProposedCardBoxShadow] =
+    useState<IProposedCardBoxShadow | null>(null);
+
+  const [decksAreBeingRotated, setDecksAreBeingRotated] =
   useEffect(() => {
     fetch("/api/socket");
   }, []);
@@ -104,6 +117,8 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     setHeldSqueakStackLocation,
     resetHeldSqueakStackLocation,
     setResetHeldSqueakStackLocation,
+    proposedCardBoxShadow,
+    setProposedCardBoxShadow,
   };
 
   return (

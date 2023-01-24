@@ -61,7 +61,36 @@ function Card({
       if (x === 0 && y === 0) {
         console.log("going back to 0,0");
 
+        if (roomCtx.hoveredCell) {
+          roomCtx.setProposedCardBoxShadow({
+            id: `cell${roomCtx.hoveredCell[0]}${roomCtx.hoveredCell[1]}`,
+            boxShadowValue: `0px 0px 10px 5px rgba(227, 12, 5, 1)`,
+          });
+
+          setTimeout(() => {
+            roomCtx.setProposedCardBoxShadow(null);
+          }, 250);
+        } else if (roomCtx.hoveredSqueakStack !== null) {
+          roomCtx.setProposedCardBoxShadow({
+            id: `${userID}squeakHand${roomCtx.hoveredSqueakStack}`,
+            boxShadowValue: `0px 0px 10px 5px rgba(227, 12, 5, 1)`,
+          });
+
+          setTimeout(() => {
+            roomCtx.setProposedCardBoxShadow(null);
+          }, 250);
+        }
+
         setCardOffsetPosition({ x, y });
+
+        if (squeakStackLocation) {
+          console.log("do we get # of cards in stack printed out?");
+
+          roomCtx.setHeldSqueakStackLocation({
+            squeakStack: squeakStackLocation,
+            location: { x: 0, y: 0 },
+          });
+        }
       } else if (startID) {
         const currentCard = document.getElementById(startID);
 
@@ -82,6 +111,15 @@ function Card({
           y: endYCoordinate,
         });
 
+        if (squeakStackLocation) {
+          console.log("do we get # of cards in stack printed out?");
+
+          roomCtx.setHeldSqueakStackLocation({
+            squeakStack: squeakStackLocation,
+            location: { x: endXCoordinate, y: endYCoordinate },
+          });
+        }
+
         cardRef.current.style.transform += `rotateZ(${rotation}deg)`;
       }
 
@@ -95,13 +133,6 @@ function Card({
         setTimeout(() => {
           setManuallyShowCardFront(true);
         }, 125);
-      }
-
-      if (squeakStackLocation) {
-        roomCtx.setHeldSqueakStackLocation({
-          squeakStack: squeakStackLocation,
-          location: { x, y },
-        });
       }
 
       setTimeout(() => {

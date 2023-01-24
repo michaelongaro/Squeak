@@ -1,4 +1,3 @@
-import { useRef, useEffect, useState } from "react";
 import { socket } from "../../pages";
 import { useLocalStorageContext } from "../../context/LocalStorageContext";
 import { useRoomContext } from "../../context/RoomContext";
@@ -8,11 +7,39 @@ interface IBoard {
   boardClass: string | undefined;
 }
 
+export interface IGetBoxShadowStyles {
+  id: string;
+  rowIdx?: number;
+  colIdx?: number;
+  squeakStackIdx?: number;
+}
+
 function Board({ boardClass }: IBoard) {
   const roomCtx = useRoomContext();
   const localStorageID = useLocalStorageContext();
 
   const userID = localStorageID.value; // change to ctx.userID ?? localStorageID.value
+
+  // interface to accept id, rowIdx, colIdx, squeakStackIdx
+
+  function getBoxShadowStyles({
+    id,
+    rowIdx,
+    colIdx,
+  }: IGetBoxShadowStyles): string {
+    if (roomCtx.holdingADeckCard || roomCtx.holdingASqueakCard) {
+      return `0px 0px 10px ${
+        roomCtx.hoveredCell?.[0] === rowIdx &&
+        roomCtx.hoveredCell?.[1] === colIdx
+          ? "5px"
+          : "3px"
+      } rgba(184,184,184,1)`;
+    } else if (roomCtx.proposedCardBoxShadow?.id === id) {
+      return roomCtx.proposedCardBoxShadow.boxShadowValue;
+    }
+
+    return "none";
+  }
 
   return (
     <div className={`${boardClass} grid w-full grid-cols-5 gap-1`}>
@@ -23,15 +50,11 @@ function Board({ boardClass }: IBoard) {
               id={`cell${rowIdx}${colIdx}`}
               key={`board${rowIdx}${colIdx}`}
               style={{
-                boxShadow:
-                  roomCtx.holdingADeckCard || roomCtx.holdingASqueakCard
-                    ? `0px 0px 10px ${
-                        roomCtx.hoveredCell?.[0] === rowIdx &&
-                        roomCtx.hoveredCell?.[1] === colIdx
-                          ? "5px"
-                          : "3px"
-                      } rgba(184,184,184,1)`
-                    : "none",
+                boxShadow: getBoxShadowStyles({
+                  id: `cell${rowIdx}${colIdx}`,
+                  rowIdx,
+                  colIdx,
+                }),
                 opacity:
                   roomCtx.hoveredCell?.[0] === rowIdx &&
                   roomCtx.hoveredCell?.[1] === colIdx &&

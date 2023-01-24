@@ -36,7 +36,22 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
       }
     );
 
-    return emptySqueakStackIdx;
+  function getBoxShadowStyles({
+    id,
+    squeakStackIdx,
+  }: IGetBoxShadowStyles): string {
+    if (roomCtx.holdingADeckCard || roomCtx.holdingASqueakCard) {
+      return `0px 0px 10px ${
+        roomCtx.hoveredSqueakStack &&
+        roomCtx.hoveredSqueakStack === squeakStackIdx
+          ? "5px"
+          : "3px"
+      } rgba(184,184,184,1)`;
+    } else if (roomCtx.proposedCardBoxShadow?.id === id) {
+      return roomCtx.proposedCardBoxShadow.boxShadowValue;
+    }
+
+    return "none";
   }
 
   return (
@@ -105,14 +120,19 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
               >
                 <div
                   style={{
-                    boxShadow:
-                      roomCtx.holdingADeckCard || roomCtx.holdingASqueakCard
-                        ? "0px 0px 10px 3px rgba(184,184,184,1)"
-                        : "none",
+                    boxShadow: getBoxShadowStyles({
+                      id: `${userID}squeakHand${cardsIdx}`,
+                      squeakStackIdx: -1,
+                    }),
+                    opacity:
+                      roomCtx.hoveredSqueakStack === cardsIdx &&
+                      (roomCtx.holdingADeckCard || roomCtx.holdingASqueakCard)
+                        ? 0.35 // worst case you leave it like this (was prev 0.75)
+                        : 1,
                     height:
                       cards.length === 1 ? 72 : `${cards.length * 15 + 72}px`,
                   }}
-                  className="absolute w-full"
+                  className="absolute w-full rounded-lg transition-all"
                 >
                   {cards.map((card, cardIdx) => (
                     <div
