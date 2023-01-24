@@ -112,12 +112,23 @@ function useCardDropApproved({
 
           moveCard({ x: endX, y: endY }, false);
 
+          if (playerID === userID) {
+            roomCtx.setProposedCardBoxShadow({
+              id: endID,
+              boxShadowValue: `0px 0px 10px 5px rgba(29, 232, 7, 1)`,
+            });
+          }
+
           setTimeout(() => {
             roomCtx.setGameData({
               ...roomCtx.gameData,
               board: updatedBoard || roomCtx.gameData?.board,
               players: updatedPlayerCards || roomCtx.gameData?.players,
             });
+
+            if (playerID === userID) {
+              roomCtx.setProposedCardBoxShadow(null);
+            }
 
             if (ownerID !== userID && origin === "deck") {
               setCardOffsetPosition({ x: 0, y: 0 });
