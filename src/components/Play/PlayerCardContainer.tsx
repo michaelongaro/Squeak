@@ -23,6 +23,8 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
   const localStorageID = useLocalStorageContext();
   const userID = localStorageID.value; // change to ctx.userID ?? localStorageID.value
 
+  const [hoveringOverDeck, setHoveringOverDeck] = useState(false);
+
   useTrackHoverOverSqueakStacks();
 
   function emptySqueakStackIdx() {
@@ -188,7 +190,19 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
           >
             <div
               id={`${userID}deck`}
-              className="h-full w-full cursor-pointer"
+              style={{
+                boxShadow:
+                  hoveringOverDeck && !roomCtx.holdingADeckCard
+                    ? "0px 0px 10px 3px rgba(184,184,184,1)"
+                    : "none",
+              }}
+              className="h-full w-full cursor-pointer transition-shadow"
+              onMouseEnter={() => {
+                setHoveringOverDeck(true);
+              }}
+              onMouseLeave={() => {
+                setHoveringOverDeck(false);
+              }}
               onClick={() => {
                 socket.emit("playerDrawFromDeck", {
                   playerID: userID,
