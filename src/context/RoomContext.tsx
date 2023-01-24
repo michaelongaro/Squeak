@@ -50,6 +50,8 @@ interface IRoomContext {
   setProposedCardBoxShadow: React.Dispatch<
     React.SetStateAction<IProposedCardBoxShadow | null>
   >;
+  decksAreBeingRotated: boolean;
+  setDecksAreBeingRotated: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const RoomContext = createContext<IRoomContext | null>(null);
@@ -90,6 +92,8 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     useState<IProposedCardBoxShadow | null>(null);
 
   const [decksAreBeingRotated, setDecksAreBeingRotated] =
+    useState<boolean>(false);
+
   useEffect(() => {
     fetch("/api/socket");
   }, []);
@@ -119,6 +123,8 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     setResetHeldSqueakStackLocation,
     proposedCardBoxShadow,
     setProposedCardBoxShadow,
+    decksAreBeingRotated,
+    setDecksAreBeingRotated,
   };
 
   return (
