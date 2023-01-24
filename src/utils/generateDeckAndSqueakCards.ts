@@ -61,12 +61,7 @@ function shuffleDeck(deck: ICard[]): ICard[] {
 function generateDeckAndSqueakCards(): IPlayerCards {
   const deck = createAndFormatDeck();
   const squeakDeck = deck.splice(0, 13);
-  const squeakHand = [
-    [squeakDeck.shift() as ICard],
-    [squeakDeck.shift() as ICard],
-    [squeakDeck.shift() as ICard],
-    [squeakDeck.shift() as ICard],
-  ];
+  const squeakHand = [[], [], [], []];
 
   const deckIdx = -1;
   const topCardsInDeck = [null, null, null];
