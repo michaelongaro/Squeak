@@ -7,11 +7,7 @@ interface IUseCardDropDenied {
   moveCard: ({ x, y }: { x: number; y: number }, flip: boolean) => void;
 }
 
-function useCardDropDenied({
-  ownerID,
-
-  moveCard,
-}: IUseCardDropDenied) {
+function useCardDropDenied({ ownerID, moveCard }: IUseCardDropDenied) {
   const [dataFromBackend, setDataFromBackend] =
     useState<Partial<ICardDropProposal> | null>(null);
 
@@ -30,7 +26,6 @@ function useCardDropDenied({
       const { playerID } = dataFromBackend;
 
       if (playerID === ownerID) {
-        // red box shadow stuff here
         moveCard({ x: 0, y: 0 }, false);
       }
     }
