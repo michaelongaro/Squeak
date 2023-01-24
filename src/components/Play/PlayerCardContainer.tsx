@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { socket } from "../../pages";
 import { useLocalStorageContext } from "../../context/LocalStorageContext";
 import { useRoomContext } from "../../context/RoomContext";
@@ -6,6 +7,8 @@ import { FaRedoAlt } from "react-icons/fa";
 import useTrackHoverOverSqueakStacks from "../../hooks/useTrackHoverOverSqueakStacks";
 
 import classes from "./PlayerCardContainer.module.css";
+import { type IGetBoxShadowStyles } from "./Board";
+import useRotatePlayerDecks from "../../hooks/useRotatePlayerDecks";
 
 interface IPlayerCardContainer {
   cardContainerClass: string | undefined;
@@ -26,8 +29,9 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
   const [hoveringOverDeck, setHoveringOverDeck] = useState(false);
 
   useTrackHoverOverSqueakStacks();
+  useRotatePlayerDecks();
 
-  function emptySqueakStackIdx() {
+  useEffect(() => {
     if (userID === null) return;
 
     let emptySqueakStackIdx = -1;
@@ -37,6 +41,17 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
         if (squeakStack.length === 0) emptySqueakStackIdx = squeakIdx;
       }
     );
+
+    const indexToDrawTo = emptySqueakStackIdx;
+
+    if (indexToDrawTo !== -1) {
+      socket.emit("drawFromSqueakDeck", {
+        indexToDrawTo: indexToDrawTo,
+        playerID: userID,
+        roomCode: roomCtx.roomConfig.code,
+      });
+    }
+  }, [roomCtx.gameData, roomCtx.roomConfig.code, userID]);
 
   function getBoxShadowStyles({
     id,
@@ -62,25 +77,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
         <div className={`${classes.gridContainer}`}>
           <div
             id={`${userID}squeakDeck`}
-            style={{
-              boxShadow:
-                emptySqueakStackIdx() !== -1
-                  ? "0px 0px 10px 3px rgba(184,184,184,1)"
-                  : "none",
-              cursor: emptySqueakStackIdx() !== -1 ? "pointer" : "default",
-            }}
             className={`${classes.squeakDeck} h-full w-full`}
-            onClick={() => {
-              const indexToDrawTo = emptySqueakStackIdx();
-
-              if (indexToDrawTo !== -1) {
-                socket.emit("drawFromSqueakDeck", {
-                  indexToDrawTo: indexToDrawTo,
-                  playerID: userID,
-                  roomCode: roomCtx.roomConfig.code,
-                });
-              }
-            }}
           >
             {roomCtx.gameData.players[userID]!.squeakDeck.length > 0 ? (
               <div className="relative h-full w-full">
@@ -147,12 +144,6 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                             ? 501
                             : "auto",
                         top: `${cardIdx * 15}px`,
-                      }}
-                      onMouseEnter={() => {
-                        roomCtx.setHoveredSqueakStack(cardsIdx);
-                      }}
-                      onMouseLeave={() => {
-                        roomCtx.setHoveredSqueakStack(null);
                       }}
                       onMouseDown={() => {
                         roomCtx.setOriginIndexForHeldSqueakCard(cardsIdx);
