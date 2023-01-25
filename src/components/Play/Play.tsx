@@ -8,6 +8,7 @@ import classes from "./Play.module.css";
 
 import { socket } from "../../pages";
 import OtherPlayersCardContainers from "./OtherPlayersCardContainers";
+import Scoreboard from "../modals/Scoreboard/Scoreboard";
 
 function Play() {
   const roomCtx = useRoomContext();
@@ -39,25 +40,29 @@ function Play() {
   }, [roomCtx]);
 
   return (
-    <div className={`${classes.fullBoardGrid} relative bg-green-700`}>
-      {gameStarted && (
-        <>
-          <OtherPlayersCardContainers
-            orderedClassNames={[
-              classes.topPlayerCards,
-              classes.leftPlayerCards,
-              classes.rightPlayerCards,
-            ]}
-          />
+    <>
+      <div className={`${classes.fullBoardGrid} relative bg-green-700`}>
+        {gameStarted && (
+          <>
+            <OtherPlayersCardContainers
+              orderedClassNames={[
+                classes.topPlayerCards,
+                classes.leftPlayerCards,
+                classes.rightPlayerCards,
+              ]}
+            />
 
-          <Board boardClass={classes.board} />
+            <Board boardClass={classes.board} />
 
-          <PlayerCardContainer
-            cardContainerClass={classes.currentPlayerCards}
-          />
-        </>
-      )}
-    </div>
+            <PlayerCardContainer
+              cardContainerClass={classes.currentPlayerCards}
+            />
+          </>
+        )}
+      </div>
+
+      <Scoreboard />
+    </>
   );
 }
 
