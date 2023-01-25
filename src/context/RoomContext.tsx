@@ -1,9 +1,11 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
+import { socket } from "../pages";
 import {
   type IPlayerMetadata,
   type IRoomConfig,
 } from "../components/CreateRoom/CreateRoom";
 import { type IGameMetadata } from "../pages/api/socket";
+import { type IPlayerRoundDetails } from "../pages/api/handlers/roundOverHandler";
 
 interface IHeldSqueakStackLocation {
   squeakStack: [number, number];
@@ -52,6 +54,8 @@ interface IRoomContext {
   >;
   decksAreBeingRotated: boolean;
   setDecksAreBeingRotated: React.Dispatch<React.SetStateAction<boolean>>;
+  playerIDWhoSqueaked: string | null;
+  setPlayerIDWhoSqueaked: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
 const RoomContext = createContext<IRoomContext | null>(null);
@@ -94,8 +98,25 @@ export function RoomProvider(props: { children: React.ReactNode }) {
   const [decksAreBeingRotated, setDecksAreBeingRotated] =
     useState<boolean>(false);
 
+  const [playerIDWhoSqueaked, setPlayerIDWhoSqueaked] = useState<string | null>(
+    null
+  );
+
   useEffect(() => {
     fetch("/api/socket");
+
+    setTimeout(() => {
+      socket.on(
+        "scoreboardMetadata",
+        ({ playerID: winnerID }: IPlayerRoundDetails) => {
+          setPlayerIDWhoSqueaked(winnerID);
+
+          // maybe need a timeout to set it back to null after a bit?
+          // or just reset when you go through resetting everything (minus points, etc.)
+          // before next round?
+        }
+      );
+    });
   }, []);
 
   const context: IRoomContext = {
@@ -125,6 +146,8 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     setProposedCardBoxShadow,
     decksAreBeingRotated,
     setDecksAreBeingRotated,
+    playerIDWhoSqueaked,
+    setPlayerIDWhoSqueaked,
   };
 
   return (
