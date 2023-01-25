@@ -1,6 +1,7 @@
 import { type Server } from "socket.io";
 import { type ICard } from "../../../utils/generateDeckAndSqueakCards";
 import { type IGameData } from "../socket";
+import { drawFromSqueakDeck } from "./drawFromSqueakDeck";
 
 interface ISqueakToSqueak {
   gameData: IGameData;
@@ -39,6 +40,19 @@ export function squeakToSqueak({
     return;
 
   const cardsToMove = startSqueakStack?.splice(indexOfCardInStartStack);
+
+  // automatically draw a card if the squeak stack is empty
+  if (startSqueakStack?.length === 0) {
+    setTimeout(() => {
+      drawFromSqueakDeck({
+        indexToDrawTo: squeakStartLocation,
+        playerID,
+        roomCode,
+        gameData,
+        io,
+      });
+    }, 350);
+  }
 
   // moving all child cards below the card being moved to the new stack
   // not sure how to do this without "!"s

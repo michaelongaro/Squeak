@@ -3,6 +3,7 @@ import cardPlacementIsValid from "../../../utils/cardPlacementIsValid";
 import { type Server } from "socket.io";
 import { type ICard } from "../../../utils/generateDeckAndSqueakCards";
 import { type IGameData } from "../socket";
+import { drawFromSqueakDeck } from "./drawFromSqueakDeck";
 
 interface ISqueakToBoard {
   gameData: IGameData;
@@ -42,6 +43,19 @@ export function squeakToBoard({
     )
   ) {
     startSqueakStackLocation?.pop();
+
+    // automatically draw a card if the squeak stack is empty
+    if (startSqueakStackLocation?.length === 0) {
+      setTimeout(() => {
+        drawFromSqueakDeck({
+          indexToDrawTo: squeakStartLocation,
+          playerID,
+          roomCode,
+          gameData,
+          io,
+        });
+      }, 350);
+    }
 
     // not sure how to properly mutate the board without this
     gameData[roomCode]!.board[row]![col]! = card;
