@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { socket } from "../../pages";
 import { useLocalStorageContext } from "../../context/LocalStorageContext";
 import { useRoomContext } from "../../context/RoomContext";
@@ -30,28 +30,6 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
 
   useTrackHoverOverSqueakStacks();
   useRotatePlayerDecks();
-
-  useEffect(() => {
-    if (userID === null) return;
-
-    let emptySqueakStackIdx = -1;
-
-    roomCtx.gameData?.players[userID]?.squeakHand.some(
-      (squeakStack, squeakIdx) => {
-        if (squeakStack.length === 0) emptySqueakStackIdx = squeakIdx;
-      }
-    );
-
-    const indexToDrawTo = emptySqueakStackIdx;
-
-    if (indexToDrawTo !== -1) {
-      socket.emit("drawFromSqueakDeck", {
-        indexToDrawTo: indexToDrawTo,
-        playerID: userID,
-        roomCode: roomCtx.roomConfig.code,
-      });
-    }
-  }, [roomCtx.gameData, roomCtx.roomConfig.code, userID]);
 
   function getBoxShadowStyles({
     id,
@@ -105,7 +83,24 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                 </div>
               </div>
             ) : (
-              <button>Squeak!</button>
+              <button
+                style={{
+                  boxShadow:
+                    roomCtx.playerIDWhoSqueaked === userID
+                      ? "0px 0px 20px 5px rgba(184,184,184,1)"
+                      : "none",
+                  transition: "box-shadow 0.85s ease-in-out",
+                }}
+                className="bg-green-300 p-4 transition-colors hover:bg-green-200"
+                onClick={() => {
+                  socket.emit("roundOver", {
+                    roomID: roomCtx.roomConfig.code,
+                    winner: userID,
+                  });
+                }}
+              >
+                Squeak!
+              </button>
             )}
           </div>
 
