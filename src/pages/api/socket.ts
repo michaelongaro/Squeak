@@ -13,6 +13,8 @@ import { drawFromDeckHandler } from "./handlers/drawFromDeckHandler";
 import { drawFromSqueakDeckHandler } from "./handlers/drawFromSqueakDeckHandler";
 import { proposedCardDropHandler } from "./handlers/proposedCardDropHandler";
 import { gameStuckHandler } from "./handlers/gameStuckHandler";
+import { drawFromSqueakDeck } from "./helpers/drawFromSqueakDeck";
+import { roundOverHandler } from "./handlers/roundOverHandler";
 
 interface IRoomData {
   [code: string]: IRoomMetadata;
@@ -32,7 +34,7 @@ export interface IGameMetadata {
   players: IPlayerCardsMetadata;
 }
 
-interface IPlayerCardsMetadata {
+export interface IPlayerCardsMetadata {
   [code: string]: IPlayerCards;
 }
 
@@ -137,6 +139,52 @@ export default function SocketHandler(req, res) {
     socket.on("startGame", (roomCode) => {
       io.in(roomCode).emit("navigateToPlayScreen");
 
+      // loop through all players and flip their squeak deck cards
+      const currentRoomPlayers = roomData[roomCode]?.players;
+      if (!currentRoomPlayers) return;
+
+      for (const player of currentRoomPlayers) {
+        setTimeout(() => {
+          drawFromSqueakDeck({
+            indexToDrawTo: 0,
+            playerID: player.userID,
+            roomCode,
+            gameData,
+            io,
+          });
+        }, 250);
+
+        setTimeout(() => {
+          drawFromSqueakDeck({
+            indexToDrawTo: 1,
+            playerID: player.userID,
+            roomCode,
+            gameData,
+            io,
+          });
+        }, 750);
+
+        setTimeout(() => {
+          drawFromSqueakDeck({
+            indexToDrawTo: 2,
+            playerID: player.userID,
+            roomCode,
+            gameData,
+            io,
+          });
+        }, 1250);
+
+        setTimeout(() => {
+          drawFromSqueakDeck({
+            indexToDrawTo: 3,
+            playerID: player.userID,
+            roomCode,
+            gameData,
+            io,
+          });
+        }, 1750);
+      }
+
       // start interval that checks + handles if game is stuck (no player has a valid move available)
       gameStuckInterval = setInterval(() => {
         gameStuckHandler(io, gameData, roomCode);
@@ -186,6 +234,8 @@ export default function SocketHandler(req, res) {
     drawFromSqueakDeckHandler(io, socket, gameData);
 
     proposedCardDropHandler(io, socket, gameData);
+
+    roundOverHandler(io, socket, gameData);
   };
 
   // Define actions inside
