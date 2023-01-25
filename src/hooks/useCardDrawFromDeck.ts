@@ -47,8 +47,8 @@ function useCardDrawFromDeck({
 
         roomCtx.setGameData({
           ...roomCtx.gameData,
-          board: updatedBoard || roomCtx.gameData?.board,
-          players: updatedPlayerCards || roomCtx.gameData?.players,
+          board: updatedBoard,
+          players: updatedPlayerCards,
         });
         return;
       }
@@ -77,8 +77,8 @@ function useCardDrawFromDeck({
         setTimeout(() => {
           roomCtx.setGameData({
             ...roomCtx.gameData,
-            board: updatedBoard || roomCtx.gameData?.board,
-            players: updatedPlayerCards || roomCtx.gameData?.players,
+            board: updatedBoard,
+            players: updatedPlayerCards,
           });
         }, 250);
       }
