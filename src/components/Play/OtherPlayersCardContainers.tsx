@@ -10,6 +10,7 @@ interface IOtherPlayersCardContainers {
 }
 
 import classes from "./OtherPlayersCardContainers.module.css";
+import { FaRedoAlt } from "react-icons/fa";
 
 const internalOrderedGridClassNames = [
   classes.topInnerGridContainer,
@@ -99,7 +100,19 @@ function OtherPlayersCardContainers({
                     </div>
                   </div>
                 ) : (
-                  <button disabled={true}>Squeak!</button>
+                  <button
+                    style={{
+                      boxShadow:
+                        roomCtx.playerIDWhoSqueaked === playerID
+                          ? "0px 0px 20px 5px rgba(184,184,184,1)"
+                          : "none",
+                      transition: "box-shadow 0.85s ease-in-out",
+                    }}
+                    className="bg-green-300 p-4 transition-colors hover:bg-green-200"
+                    disabled={true}
+                  >
+                    Squeak!
+                  </button>
                 )}
               </div>
 
@@ -146,27 +159,94 @@ function OtherPlayersCardContainers({
               )}
 
               <div
-                className={`${classes.cardBeingPlayedOnBoard} h-[64px] w-[48px] lg:h-[72px] lg:w-[56px]`}
-                id={`${playerID}hand`}
+                className={`${classes.playerDeck} h-[64px] w-[48px] lg:h-[72px] lg:w-[56px]`}
               >
-                <Card
-                  value={
-                    roomCtx.gameData.players[playerID]?.deck?.[
-                      roomCtx.gameData.players[playerID]!.deckIdx
-                    ]?.value
-                  }
-                  suit={
-                    roomCtx.gameData.players[playerID]?.deck?.[
-                      roomCtx.gameData.players[playerID]!.deckIdx
-                    ]?.suit
-                  }
-                  showCardBack={false}
-                  origin={"deck"} // probably only needed for current player
-                  draggable={false}
-                  ownerID={playerID}
-                  startID={`${playerID}hand`}
-                  rotation={rotationOrder[idx] as number}
-                />
+                <div id={`${playerID}deck`} className="h-full w-full">
+                  {roomCtx.gameData?.players[playerID]?.nextTopCardInDeck ? (
+                    <div className="relative h-full w-full">
+                      <div className="absolute top-0 left-0 h-full w-full">
+                        <Card
+                          showCardBack={true}
+                          draggable={false}
+                          ownerID={playerID}
+                          startID={`${playerID}deck`}
+                          rotation={0}
+                        />
+                      </div>
+                      <div
+                        className={`${classes.topBackFacingCardInDeck} absolute top-0 left-0 h-full w-full`}
+                      >
+                        <Card
+                          value={
+                            roomCtx.gameData?.players[playerID]
+                              ?.nextTopCardInDeck?.value
+                          }
+                          suit={
+                            roomCtx.gameData?.players[playerID]
+                              ?.nextTopCardInDeck?.suit
+                          }
+                          showCardBack={true} // separate state inside overrides this halfway through flip
+                          draggable={false}
+                          ownerID={playerID}
+                          startID={`${playerID}deck`}
+                          rotation={0}
+                        />
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="grid cursor-pointer grid-cols-1 items-center justify-items-center">
+                      <div className="col-start-1 row-start-1">
+                        <FaRedoAlt size={"1rem"} />
+                      </div>
+                      <div className="col-start-1 row-start-1 opacity-25">
+                        <Card
+                          showCardBack={true}
+                          draggable={false}
+                          ownerID={playerID}
+                          startID={`${playerID}deck`}
+                          rotation={0}
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div
+                id={`${playerID}hand`}
+                className={`${classes.playerHand} relative h-[64px] w-[48px] select-none lg:h-[72px] lg:w-[56px]`}
+              >
+                <>
+                  {roomCtx.gameData.players[playerID]?.topCardsInDeck.map(
+                    (card, idx) =>
+                      card !== null && ( // necessary?
+                        <div
+                          key={`${playerID}card${card?.suit}${card?.value}`}
+                          className="absolute top-0 left-0"
+                          style={{
+                            top: `${-1 * (idx * 2)}px`,
+                          }}
+                          onMouseDown={() => {
+                            roomCtx.setHoldingADeckCard(true);
+                          }}
+                          onMouseUp={() => {
+                            roomCtx.setHoldingADeckCard(false);
+                            roomCtx.setHoveredSqueakStack(null);
+                          }}
+                        >
+                          <Card
+                            value={card?.value}
+                            suit={card?.suit}
+                            draggable={true}
+                            origin={"deck"}
+                            ownerID={playerID}
+                            startID={`${playerID}hand`}
+                            rotation={0}
+                          />
+                        </div>
+                      )
+                  )}
+                </>
               </div>
 
               <div className={classes.playerAvatar}></div>
