@@ -59,8 +59,6 @@ function Card({
       cardRef.current.style.zIndex = "1000"; // make sure card is on top while moving over other cards
 
       if (x === 0 && y === 0) {
-        console.log("going back to 0,0");
-
         if (roomCtx.hoveredCell) {
           roomCtx.setProposedCardBoxShadow({
             id: `cell${roomCtx.hoveredCell[0]}${roomCtx.hoveredCell[1]}`,
@@ -84,8 +82,6 @@ function Card({
         setCardOffsetPosition({ x, y });
 
         if (squeakStackLocation) {
-          console.log("do we get # of cards in stack printed out?");
-
           roomCtx.setHeldSqueakStackLocation({
             squeakStack: squeakStackLocation,
             location: { x: 0, y: 0 },
@@ -112,8 +108,6 @@ function Card({
         });
 
         if (squeakStackLocation) {
-          console.log("do we get # of cards in stack printed out?");
-
           roomCtx.setHeldSqueakStackLocation({
             squeakStack: squeakStackLocation,
             location: { x: endXCoordinate, y: endYCoordinate },
@@ -125,9 +119,7 @@ function Card({
 
       if (flip) {
         if (cardRef.current) {
-          console.log("pre transform: ", cardRef.current.style.transform);
           cardRef.current.style.transform += "rotateY(360deg)"; // could try 90 and then go back to 0 at end?
-          console.log("post transform: ", cardRef.current.style.transform);
         }
 
         setTimeout(() => {
@@ -137,10 +129,8 @@ function Card({
 
       setTimeout(() => {
         if (cardRef.current) {
-          console.log("even getting called?");
-
           cardRef.current.style.transition = "none";
-          cardRef.current.style.zIndex = "500"; // or go back to 500?
+          cardRef.current.style.zIndex = "500";
 
           if (flip) {
             cardRef.current.style.transform = "translate(0px, 0px)";
@@ -152,7 +142,7 @@ function Card({
           }
           cardIsMovingRef.current = false;
         }
-      }, 250); //150
+      }, 250);
 
       if (origin === "deck") {
         roomCtx.setHoldingADeckCard(false);
@@ -160,7 +150,7 @@ function Card({
         roomCtx.setHoldingASqueakCard(false);
       }
     },
-    [origin, roomCtx, squeakStackLocation, rotation, startID]
+    [origin, roomCtx, squeakStackLocation, rotation, startID, userID]
   );
 
   // hooks to handle socket emits from server
