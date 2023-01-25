@@ -9,7 +9,7 @@
   gap: 1rem;
   grid-template-areas:
     " squeakDeck squeakHand0 squeakHand1 squeakHand2 squeakHand3 "
-    " deck . hand . playerAvatar ";
+    " playerDeck . playerHand . playerAvatar ";
   /* width: 50%; */
   /* maybe just have a max-width so things don't get too stretched out */
   /* margin: 1rem; */
@@ -27,7 +27,6 @@
   rotate: 270deg;
 }
 
-/* maybe can get away with just declaring them once below? */
 .squeakDeck {
   grid-area: squeakDeck;
 }
@@ -71,4 +70,29 @@
 
 .rightInnerGridContainer .playerAvatar {
   rotate: 270deg !important;
+}
+
+.topBackFacingCardInDeck {
+  animation: rotateDeck 1s linear infinite;
+  animation-play-state: paused;
+}
+
+@keyframes rotateDeck {
+  0% {
+    top: 0;
+    z-index: 1000;
+  }
+
+  35% {
+    top: -80px;
+  }
+
+  55% {
+    z-index: 1;
+  }
+
+  100% {
+    top: 0;
+    z-index: 500;
+  }
 }
