@@ -1,7 +1,11 @@
+import { IPlayerMetadata } from "./../components/CreateRoom/CreateRoom";
 import { useState, useEffect } from "react";
 import { useRoomContext } from "../context/RoomContext";
 import { socket } from "../pages";
-import { type IDrawFromSqueakDeck } from "../pages/api/socket";
+import {
+  IPlayerCardsMetadata,
+  type IDrawFromSqueakDeck,
+} from "../pages/api/socket";
 
 interface IUseCardDrawFromSqueakDeck {
   value?: string;
@@ -36,8 +40,8 @@ function useCardDrawFromSqueakDeck({
       const {
         playerID,
         indexToDrawTo,
-        updatedBoard,
         newCard,
+        updatedBoard,
         updatedPlayerCards,
       } = dataFromBackend;
 
@@ -54,17 +58,6 @@ function useCardDrawFromSqueakDeck({
         .getElementById(endID)
         ?.getBoundingClientRect();
 
-      // console.log(
-      //   "endID: ",
-      //   endID,
-      //   playerID,
-      //   ownerID,
-      //   newCard?.suit,
-      //   suit,
-      //   newCard?.value,
-      //   value
-      // );
-
       if (endLocation) {
         const endX = endLocation.x;
         const endY = endLocation.y;
@@ -72,15 +65,11 @@ function useCardDrawFromSqueakDeck({
         moveCard({ x: endX, y: endY }, true);
 
         setTimeout(() => {
-          // console.log("setting game data nyow");
-
           roomCtx.setGameData({
             ...roomCtx.gameData,
             board: updatedBoard || roomCtx.gameData?.board,
             players: updatedPlayerCards || roomCtx.gameData?.players,
           });
-
-          // setCardHasBeenPlaced(true);
         }, 250);
       }
     }
