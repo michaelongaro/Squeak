@@ -10,8 +10,6 @@ export interface IPlayerCards {
   deckIdx: number;
   topCardsInDeck: (ICard | null)[];
   nextTopCardInDeck: ICard | null;
-  totalPoints: number;
-  rankInRoom: number;
 }
 
 const suits = ["C", "S", "H", "D"];
@@ -68,8 +66,6 @@ function generateDeckAndSqueakCards(): IPlayerCards {
   const deckIdx = -1;
   const topCardsInDeck = [null, null, null];
   const nextTopCardInDeck = deck[2] || null;
-  const totalPoints = 0;
-  const rankInRoom = -1;
 
   return {
     squeakDeck,
@@ -78,8 +74,6 @@ function generateDeckAndSqueakCards(): IPlayerCards {
     deckIdx,
     topCardsInDeck,
     nextTopCardInDeck,
-    totalPoints,
-    rankInRoom,
   };
 }
 
