@@ -1,5 +1,5 @@
 import anime from "animejs";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { type ICard } from "../../../utils/generateDeckAndSqueakCards";
 import Card from "../../Play/Card";
 
@@ -10,34 +10,35 @@ interface IAnimatedCard {
 }
 
 function AnimatedCard({ card, index, playerID }: IAnimatedCard) {
+  const [animationStarted, setAnimationStarted] = useState(false); // not sure if necessary
+
   useEffect(() => {
+    if (animationStarted) return;
+
+    setAnimationStarted(true);
+
     const animatedCardContainer = document
-      .getElementById(`${playerID}scoreboardAnimatedCardContainer`)
+      .getElementById(`scoreboardAnimatedCardContainer${playerID}`)
       ?.getBoundingClientRect();
 
-    if (!animatedCardContainer) return;
+    const animatedCard = document.getElementById(
+      `scoreboardAnimatedCard${index}${playerID}`
+    );
 
-    console.log("got thsi far");
+    if (!animatedCardContainer || !animatedCard) return;
 
+    // maybe want all cards to be equally spaced out horizontally? just Math.floor(containerWidth / idx)
     const initX = Math.floor(
       Math.random() * (animatedCardContainer.width - 50) + 50
     );
-    const initY = Math.floor(Math.random() * -50);
+
+    const initY = Math.floor(Math.random() * -150) - 100;
 
     const { initXRotation, initYRotation, initZRotation } = {
-      initXRotation: Math.floor(Math.random() * 50),
+      initXRotation: Math.floor(Math.random() * 35) + 50,
       initYRotation: Math.floor(Math.random() * 50),
       initZRotation: Math.floor(Math.random() * 50),
     };
-
-    const halfwayX = Math.floor(
-      Math.random() * (animatedCardContainer.width - 50) + 50
-    );
-    const halfwayY = Math.floor(animatedCardContainer.height * 0.5);
-
-    const halfwayXRotation = Math.floor(Math.random() * 50);
-    const halfwayYRotation = Math.floor(Math.random() * 50);
-    const halfwayZRotation = Math.floor(Math.random() * 50);
 
     const finalX =
       Math.floor(Math.random() * (animatedCardContainer.width - 50)) + 50;
@@ -46,76 +47,32 @@ function AnimatedCard({ card, index, playerID }: IAnimatedCard) {
         animatedCardContainer.height
     );
 
-    const finalXRotation = Math.floor(Math.random() * 50);
+    const finalXRotation = Math.floor(Math.random() * 90);
     const finalYRotation = Math.floor(Math.random() * 50);
     const finalZRotation = Math.floor(Math.random() * 50);
 
-    console.table([
-      {
-        initX,
-        initY,
-        initXRotation,
-        initYRotation,
-        initZRotation,
-      },
-      {
-        halfwayX,
-        halfwayY,
-        halfwayXRotation,
-        halfwayYRotation,
-        halfwayZRotation,
-      },
-      {
-        finalX,
-        finalY,
-        finalXRotation,
-        finalYRotation,
-        finalZRotation,
-      },
-    ]);
-
     anime({
-      targets: `#${playerID}scoreboardAnimatedCard${index}`,
+      targets: `#scoreboardAnimatedCard${index}${playerID}`,
 
-      keyframes: [
-        {
-          top: `${initY}px`,
-          // left: `${initX}px`,
-          // rotateX: `${initXRotation}deg`,
-          // rotateY: `${initYRotation}deg`,
-          // rotateZ: `${initZRotation}deg`,
-          // opacity: 0, // maybe need to increase this to 100% quicker than 50%
-        }, // init
-        {
-          top: `${halfwayY}px`,
-          // left: `${halfwayX}px`,
-          // rotateX: `${halfwayXRotation}deg`,
-          // rotateY: `${halfwayYRotation}deg`,
-          // rotateZ: `${halfwayZRotation}deg`,
-          // opacity: 1,
-        }, // 50%
-        {
-          top: `${finalY}px`,
-          // left: `${finalX}px`,
-          // rotateX: `${finalXRotation}deg`,
-          // rotateY: `${finalYRotation}deg`,
-          // rotateZ: `${finalZRotation}deg`,
-        }, // 100%
-      ],
+      top: [`${initY}px`, `${finalY}px`],
+      left: [`${initX}px`, `${finalX}px`],
+      rotateX: [`${initXRotation}deg`, `${finalXRotation}deg`],
+      rotateY: [`${initYRotation}deg`, `${finalYRotation}deg`],
+      rotateZ: [`${initZRotation}deg`, `${finalZRotation}deg`],
 
       delay: 350,
-      duration: 1000,
+      duration: 7000,
       loop: false,
       direction: "normal",
       easing: "easeInSine", // easeInOut?,
     });
-  }, [playerID, index]);
+  }, [playerID, index, animationStarted]);
 
   return (
     <div
       key={`${playerID}scoreboardAnimatedCard${index}`}
-      id={`${playerID}scoreboardAnimatedCard${index}`}
-      className="absolute top-[-50px] left-0 h-full w-full"
+      id={`scoreboardAnimatedCard${index}${playerID}`}
+      className="absolute"
     >
       <Card
         value={card.value}
