@@ -5,8 +5,9 @@ import {
 } from "../../../utils/generateDeckAndSqueakCards";
 import {
   type IGameData,
+  type IRoomData,
+  type IGameMetadata,
   type IDrawFromDeck,
-  type IPlayerCardsMetadata,
 } from "../socket";
 
 export interface IPlayerRoundDetails {
@@ -20,21 +21,23 @@ export interface IPlayerRoundDetails {
 }
 
 export interface IScoreboardMetadata {
-  winnerID: string;
+  gameWinnerID: string | null;
+  roundWinnerID: string;
   playerRoundDetails: IPlayerRoundDetails[];
-  updatedBoard: (ICard | null)[][];
-  updatedPlayerCards: IPlayerCardsMetadata;
+  gameData: IGameMetadata;
 }
 
 export function roundOverHandler(
   io: Server,
   socket: Socket,
-  gameData: IGameData
+  gameData: IGameData,
+  roomData: IRoomData
 ) {
   function generateAndEmitScoreboard({ playerID, roomCode }: IDrawFromDeck) {
     const playerCards = gameData[roomCode]?.players;
+    const pointsToWin = roomData[roomCode]?.room.pointsToWin;
 
-    if (!playerCards) return;
+    if (!playerCards || !pointsToWin) return;
 
     const playerRoundDetails: IPlayerRoundDetails[] = [];
 
@@ -95,11 +98,24 @@ export function roundOverHandler(
       player.rankInRoom = playerRoundDetails[playerID].newRanking;
     }
 
+    let gameWinnerID = null;
+
+    // check if player has won the game
+    for (const playerID of Object.keys(playerCards)) {
+      const player = playerCards[playerID];
+
+      if (!player) return;
+
+      if (player.totalPoints >= pointsToWin) {
+        gameWinnerID = playerID;
+      }
+    }
+
     io.in(roomCode).emit("scoreboardMetadata", {
-      winnerID: playerID,
+      roundWinnerID: playerID,
+      gameWinnerID,
       playerRoundDetails,
-      updatedBoard: gameData[roomCode]?.board,
-      updatedPlayerCards: gameData[roomCode]?.players,
+      gameData: gameData[roomCode],
     });
   }
 
