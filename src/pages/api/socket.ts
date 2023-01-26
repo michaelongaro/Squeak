@@ -8,15 +8,15 @@ import {
   type ICard,
 } from "../../utils/generateDeckAndSqueakCards";
 import generateDeckAndSqueakCards from "../../utils/generateDeckAndSqueakCards";
-import cardPlacementIsValid from "../../utils/cardPlacementIsValid";
 import { drawFromDeckHandler } from "./handlers/drawFromDeckHandler";
 import { drawFromSqueakDeckHandler } from "./handlers/drawFromSqueakDeckHandler";
 import { proposedCardDropHandler } from "./handlers/proposedCardDropHandler";
 import { gameStuckHandler } from "./handlers/gameStuckHandler";
 import { drawFromSqueakDeck } from "./helpers/drawFromSqueakDeck";
 import { roundOverHandler } from "./handlers/roundOverHandler";
+import { resetGameHandler } from "./handlers/resetGameHandler";
 
-interface IRoomData {
+export interface IRoomData {
   [code: string]: IRoomMetadata;
 }
 
@@ -35,7 +35,7 @@ export interface IGameMetadata {
 }
 
 export interface IPlayerCardsMetadata {
-  [code: string]: IPlayerCards;
+  [code: string]: IPlayer;
 }
 
 export interface ICardDropProposal {
@@ -68,6 +68,16 @@ export interface IDrawFromDeck {
   updatedPlayerCards: IPlayerCardsMetadata;
 }
 
+export interface IPlayer extends IPlayerCards {
+  totalPoints: number;
+  rankInRoom: number;
+}
+
+interface IStartGame {
+  roomCode: string;
+  firstRound: boolean;
+}
+
 interface IJoinRoomConfig {
   code: string;
   username: string;
@@ -77,7 +87,7 @@ interface IJoinRoomConfig {
 const roomData: IRoomData = {};
 const gameData: IGameData = {};
 let numberOfPlayersReady = 0;
-let gameStuckInterval;
+let gameStuckInterval: ReturnType<typeof setTimeout>;
 
 // @ts-expect-error sdf
 export default function SocketHandler(req, res) {
@@ -136,8 +146,10 @@ export default function SocketHandler(req, res) {
       io.in(roomConfig.code).emit("roomConfigUpdated", roomConfig);
     });
 
-    socket.on("startGame", (roomCode) => {
-      io.in(roomCode).emit("navigateToPlayScreen");
+    socket.on("startGame", ({ roomCode, firstRound }: IStartGame) => {
+      if (firstRound) {
+        io.in(roomCode).emit("navigateToPlayScreen");
+      }
 
       // loop through all players and flip their squeak deck cards
       const currentRoomPlayers = roomData[roomCode]?.players;
@@ -185,12 +197,11 @@ export default function SocketHandler(req, res) {
         }, 1750);
       }
 
-      // start interval that checks + handles if game is stuck (no player has a valid move available)
+      // start interval that checks + handles if game is stuck
+      // (no player has a valid move available)
       gameStuckInterval = setInterval(() => {
         gameStuckHandler(io, gameData, roomCode);
       }, 15000);
-
-      // will need to destroy interval when round ends
     });
 
     // game logic
@@ -208,7 +219,11 @@ export default function SocketHandler(req, res) {
         const playerCards: IPlayerCardsMetadata = {};
         // loop through players and create + get their cards
         for (const player of currentRoomPlayers) {
-          playerCards[player.userID] = generateDeckAndSqueakCards();
+          playerCards[player.userID] = {
+            ...generateDeckAndSqueakCards(),
+            totalPoints: 0,
+            rankInRoom: -1,
+          };
         }
 
         gameData[roomCode] = {
@@ -235,7 +250,9 @@ export default function SocketHandler(req, res) {
 
     proposedCardDropHandler(io, socket, gameData);
 
-    roundOverHandler(io, socket, gameData);
+    roundOverHandler(io, socket, gameData, roomData);
+
+    resetGameHandler(io, socket, gameData, gameStuckInterval);
   };
 
   // Define actions inside
