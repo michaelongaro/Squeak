@@ -9,12 +9,16 @@ interface IAnimatedCardContainer {
 function AnimatedCardContainer({ cards, playerID }: IAnimatedCardContainer) {
   return (
     <div
-      id={`${playerID}scoreboardAnimatedCardContainer`}
-      className="absolute top-0 left-0 z-20 h-full w-full"
+      id={`scoreboardAnimatedCardContainer${playerID}`}
+      style={{
+        perspective: "450px",
+        transformStyle: "preserve-3d",
+      }}
+      className="absolute top-0 left-0 z-[2] h-full w-full "
     >
       {cards.map((card, index) => (
         <AnimatedCard
-          key={`{playerID}scoreboardAnimatedCard${index}`}
+          key={`${playerID}scoreboardAnimatedCard${index}`}
           card={card}
           playerID={playerID}
           index={index}
