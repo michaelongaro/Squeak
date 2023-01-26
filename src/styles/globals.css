@@ -9,3 +9,28 @@
 .baseVertFlex {
   @apply flex flex-col items-center justify-center;
 }
+
+.topBackFacingCardInDeck {
+  animation: rotateDeck 1s linear infinite;
+  animation-play-state: paused;
+}
+
+@keyframes rotateDeck {
+  0% {
+    top: 0;
+    z-index: 1000;
+  }
+
+  35% {
+    top: -80px;
+  }
+
+  55% {
+    z-index: 1;
+  }
+
+  100% {
+    top: 0;
+    z-index: 500;
+  }
+}

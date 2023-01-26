@@ -173,9 +173,7 @@ function OtherPlayersCardContainers({
                           rotation={0}
                         />
                       </div>
-                      <div
-                        className={`${classes.topBackFacingCardInDeck} absolute top-0 left-0 h-full w-full`}
-                      >
+                      <div className="topBackFacingCardInDeck absolute top-0 left-0 h-full w-full">
                         <Card
                           value={
                             roomCtx.gameData?.players[playerID]
