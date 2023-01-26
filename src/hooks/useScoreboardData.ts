@@ -24,16 +24,23 @@ function useScoreboardData(): Partial<IScoreboardMetadata> | null {
     if (dataFromBackend !== null) {
       setDataFromBackend(null);
 
+      const { gameWinnerID, roundWinnerID, gameData, playerRoundDetails } =
+        dataFromBackend;
+
       setScoreboardData({
-        winnerID: dataFromBackend.winnerID,
-        playerRoundDetails: dataFromBackend.playerRoundDetails,
+        gameWinnerID,
+        roundWinnerID,
+        playerRoundDetails,
       });
 
-      roomCtx.setGameData({
-        ...roomCtx.gameData,
-        board: dataFromBackend.updatedBoard,
-        players: dataFromBackend.updatedPlayerCards,
-      });
+      roomCtx.setGameData(gameData);
+
+      setTimeout(() => {
+        socket.emit("resetGame", {
+          roomCode: roomCtx.roomConfig.code,
+          gameIsFinished: gameWinnerID !== null,
+        });
+      }, 15000);
     }
   }, [dataFromBackend, roomCtx]);
 
