@@ -9,6 +9,7 @@ import classes from "./Play.module.css";
 import { socket } from "../../pages";
 import OtherPlayersCardContainers from "./OtherPlayersCardContainers";
 import Scoreboard from "../modals/Scoreboard/Scoreboard";
+import ShufflingCountdownModal from "../modals/ShufflingCountdownModal";
 
 function Play() {
   const roomCtx = useRoomContext();
@@ -60,6 +61,8 @@ function Play() {
           </>
         )}
       </div>
+
+      <ShufflingCountdownModal />
 
       <Scoreboard />
     </>
