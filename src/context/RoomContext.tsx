@@ -56,6 +56,10 @@ interface IRoomContext {
   setDecksAreBeingRotated: React.Dispatch<React.SetStateAction<boolean>>;
   playerIDWhoSqueaked: string | null;
   setPlayerIDWhoSqueaked: React.Dispatch<React.SetStateAction<string | null>>;
+  showScoreboard: boolean;
+  setShowScoreboard: React.Dispatch<React.SetStateAction<boolean>>;
+  showShufflingCountdown: boolean;
+  setShowShufflingCountdown: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const RoomContext = createContext<IRoomContext | null>(null);
@@ -101,6 +105,10 @@ export function RoomProvider(props: { children: React.ReactNode }) {
   const [playerIDWhoSqueaked, setPlayerIDWhoSqueaked] = useState<string | null>(
     null
   );
+
+  const [showScoreboard, setShowScoreboard] = useState<boolean>(true); // temp for testing - should be false
+  const [showShufflingCountdown, setShowShufflingCountdown] =
+    useState<boolean>(false);
 
   useEffect(() => {
     fetch("/api/socket");
@@ -148,6 +156,10 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     setDecksAreBeingRotated,
     playerIDWhoSqueaked,
     setPlayerIDWhoSqueaked,
+    showScoreboard,
+    setShowScoreboard,
+    showShufflingCountdown,
+    setShowShufflingCountdown,
   };
 
   return (
