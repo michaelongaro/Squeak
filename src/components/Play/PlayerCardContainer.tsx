@@ -172,7 +172,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
           )}
 
           <div
-            className={`${classes.playerDeck} h-[64px] w-[48px] lg:h-[72px] lg:w-[56px]`}
+            className={`${classes.playerDeck} z-[500] h-[64px] w-[48px] lg:h-[72px] lg:w-[56px]`}
           >
             <div
               id={`${userID}deck`}
