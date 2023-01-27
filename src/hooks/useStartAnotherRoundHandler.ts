@@ -26,8 +26,9 @@ function useStartAnotherRoundHandler() {
 
       roomCtx.setShowScoreboard(false);
 
-      // maybe delay this by 0.5 seconds or so
-      roomCtx.setShowShufflingCountdown(true);
+      setTimeout(() => {
+        roomCtx.setShowShufflingCountdown(true);
+      }, 500);
     }
   }, [dataFromBackend, roomCtx]);
 }
