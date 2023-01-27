@@ -3,6 +3,8 @@ import { trpc } from "../../utils/trpc";
 import { socket } from "../../pages";
 import { useRoomContext } from "../../context/RoomContext";
 import { useLocalStorageContext } from "../../context/LocalStorageContext";
+import { type IGameMetadata } from "../../pages/api/socket";
+import PickerTooltip from "../playerIcons/PickerTooltip";
 
 function JoinRoom() {
   const roomCtx = useRoomContext();
@@ -21,11 +23,11 @@ function JoinRoom() {
 
   useEffect(() => {
     // rough way to check whether context data has been initialized
-    if (receivedRoomConfig && roomCtx.roomConfig.code === "") {
-      console.log("joiner GOT roomConfig: ", receivedRoomConfig);
+    if (receivedRoomConfig && !roomCtx.connectedToRoom) {
       roomCtx.setRoomConfig(receivedRoomConfig);
       setSubmittedRoomCode("");
       joinRoom();
+      roomCtx.setConnectedToRoom(true);
     }
   }, [roomCtx, receivedRoomConfig]);
 
@@ -38,7 +40,23 @@ function JoinRoom() {
       roomCtx.setRoomConfig(roomConfig)
     );
 
-    socket.on("navigateToPlayScreen", () => roomCtx.setPageToRender("play"));
+    socket.on("navigateToPlayScreen", () => {
+      roomCtx.setGameData({} as IGameMetadata);
+      roomCtx.setPageToRender("play");
+    });
+
+    return () => {
+      socket.off("connectedUsersChanged", (newUsers) =>
+        roomCtx.setPlayerMetadata(newUsers)
+      );
+      socket.off("roomConfigUpdated", (roomConfig) =>
+        roomCtx.setRoomConfig(roomConfig)
+      );
+      socket.off("navigateToPlayScreen", () => {
+        roomCtx.setGameData({} as IGameMetadata);
+        roomCtx.setPageToRender("play");
+      });
+    };
   }, []);
   // might need to add roomCtx to deps here
 
@@ -60,7 +78,7 @@ function JoinRoom() {
       <button className="ml-0" onClick={() => roomCtx.setPageToRender("home")}>
         Back to home
       </button>
-      {roomCtx.roomConfig.code === "" ? (
+      {!roomCtx.connectedToRoom ? (
         <>
           Join Room
           <div className="baseVertFlex gap-2">
@@ -115,15 +133,20 @@ function JoinRoom() {
           <div className="baseFlex gap-2">
             <div>Room code:</div>
             {roomCtx.roomConfig?.code}
+            <div>Copy</div>
           </div>
           <div className="baseVertFlex gap-2">
             {`Players ${roomCtx.roomConfig?.playersInRoom}/${roomCtx.roomConfig?.maxPlayers}`}
             <div className="baseFlex gap-2">
-              {roomCtx.playerMetadata?.map((player) => (
-                <div className="baseVertFlex gap-2" key={player.userID}>
-                  <div>{player.username}</div>
+              {Object.keys(roomCtx.playerMetadata)?.map((playerID) => (
+                <div className="baseVertFlex gap-2" key={playerID}>
+                  <div>{roomCtx.playerMetadata[playerID]?.username}</div>
                 </div>
               ))}
+            </div>
+            <div className="baseFlex gap-4">
+              <PickerTooltip type={"avatar"} />
+              <PickerTooltip type={"deck"} />
             </div>
             waiting for host to start the game
           </div>

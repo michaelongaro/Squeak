@@ -4,6 +4,13 @@ import { trpc } from "../../utils/trpc";
 import { socket } from "../../pages";
 import { useRoomContext } from "../../context/RoomContext";
 import { useLocalStorageContext } from "../../context/LocalStorageContext";
+import {
+  IPlayerCardsMetadata,
+  IRoomPlayer,
+  IRoomPlayersMetadata,
+  type IGameMetadata,
+} from "../../pages/api/socket";
+import PickerTooltip from "../playerIcons/PickerTooltip";
 
 export interface IRoomConfig {
   pointsToWin: number;
@@ -16,11 +23,6 @@ export interface IRoomConfig {
   hostUserID: string;
 }
 
-export interface IPlayerMetadata {
-  username: string;
-  userID: string;
-}
-
 function CreateRoom() {
   const roomCtx = useRoomContext();
   const localStorageID = useLocalStorageContext();
@@ -30,8 +32,6 @@ function CreateRoom() {
   const utils = trpc.useContext();
 
   const createRoomInDatabase = trpc.rooms.createRoom.useMutation();
-
-  const [roomCreated, setRoomCreated] = useState<boolean>(false);
 
   useEffect(() => {
     // rough way to check whether context data has been initialized
@@ -47,12 +47,23 @@ function CreateRoom() {
         hostUserID: userID,
       });
 
-      roomCtx.setPlayerMetadata([{ username: "", userID: userID }]);
+      // I think it should be set to saved values if signed in,
+      // otherwise default to this:
+
+      roomCtx.setPlayerMetadata({
+        ...roomCtx.playerMetadata,
+        [userID]: {
+          username: "",
+          avatarPath: "/avatars/rabbit.svg",
+          color: "rgb(220, 55, 76)",
+          deckHueRotation: 232,
+        } as IRoomPlayer,
+      });
     }
   }, [roomCtx, userID]);
 
   useEffect(() => {
-    socket.on("roomWasCreated", () => setRoomCreated(true)); // have loading dots while this is waiting?
+    socket.on("roomWasCreated", () => roomCtx.setConnectedToRoom(true)); // have loading dots while this is waiting?
 
     socket.on("connectedUsersChanged", (newUsers) =>
       roomCtx?.setPlayerMetadata(newUsers)
@@ -68,17 +79,16 @@ function CreateRoom() {
 
   function createRoom() {
     if (roomCtx && roomCtx.roomConfig) {
+      roomCtx.setConnectedToRoom(true);
+
       socket.emit("createRoom", roomCtx.roomConfig);
       createRoomInDatabase.mutate(roomCtx.roomConfig);
     }
   }
 
   function updateRoomConfig(key: string, value: any) {
-    // maybe need to store prev value of roomConfig first and ref that? no big deal if yo uahve to
-    if (roomCtx === null) return;
-
     roomCtx.setRoomConfig({ ...roomCtx.roomConfig, [key]: value });
-    if (roomCreated) {
+    if (roomCtx.connectedToRoom) {
       socket.emit("updateRoomConfig", {
         ...roomCtx.roomConfig,
         [key]: value,
@@ -88,179 +98,208 @@ function CreateRoom() {
   }
 
   return (
-    <div className="baseVertFlex min-h-[100vh] gap-4 bg-green-700">
-      <div className="baseFlex">
-        <button
-          className="ml-0"
-          onClick={() => roomCtx.setPageToRender("home")}
-        >
-          Back to home
-        </button>
-        {`${
-          roomCreated
-            ? `${roomCtx.playerMetadata[0]?.username}'s Room`
-            : "Create Room"
-        }`}
-      </div>
-      <div className="baseVertFlex gap-2">
-        <div className="baseFlex gap-2">
-          <label>Username</label>
-          <input
-            type="text"
-            placeholder="username"
-            onChange={(e) => {
-              roomCtx.setPlayerMetadata((prevMetadata) => {
-                const newMetadata = [...prevMetadata];
-                newMetadata[0]!.username = e.target.value;
-                return newMetadata;
-              });
-              updateRoomConfig("hostUsername", e.target.value);
-            }}
-            value={roomCtx.playerMetadata[0]?.username}
-          />
-        </div>
-
-        <div className="baseFlex gap-2">
-          <label>Points to win:</label>
-          <div className="baseFlex gap-2">
-            <button
-              disabled={roomCtx.roomConfig.pointsToWin <= 50}
-              onClick={() =>
-                updateRoomConfig(
-                  "pointsToWin",
-                  roomCtx.roomConfig.pointsToWin - 25
-                )
-              }
-            >
-              -10
-            </button>
-            {roomCtx.roomConfig.pointsToWin}
-            <button
-              disabled={roomCtx.roomConfig.pointsToWin >= 500}
-              onClick={() =>
-                updateRoomConfig(
-                  "pointsToWin",
-                  roomCtx.roomConfig.pointsToWin + 25
-                )
-              }
-            >
-              +25
-            </button>
-          </div>
-        </div>
-
-        <div className="baseFlex gap-2">
-          <label>Max rounds:</label>
-          <div className="baseFlex gap-2">
-            <button
-              disabled={roomCtx.roomConfig.maxRounds <= 1}
-              onClick={() =>
-                updateRoomConfig("maxRounds", roomCtx.roomConfig.maxRounds - 1)
-              }
-            >
-              -1
-            </button>
-            {roomCtx.roomConfig.maxRounds}
-            <button
-              disabled={roomCtx.roomConfig.maxRounds >= 5}
-              onClick={() =>
-                updateRoomConfig("maxRounds", roomCtx.roomConfig.maxRounds + 1)
-              }
-            >
-              +1
-            </button>
-          </div>
-        </div>
-
-        <div className="baseFlex gap-2">
-          <label>Max players:</label>
-          <div className="baseFlex gap-2">
-            <button
-              disabled={roomCtx.roomConfig.maxPlayers <= 2}
-              onClick={() =>
-                updateRoomConfig(
-                  "maxPlayers",
-                  roomCtx.roomConfig.maxPlayers - 1
-                )
-              }
-            >
-              -1
-            </button>
-            {roomCtx.roomConfig.maxPlayers}
-            <button
-              onClick={() =>
-                updateRoomConfig(
-                  "maxPlayers",
-                  roomCtx.roomConfig.maxPlayers + 1
-                )
-              }
-              disabled={roomCtx.roomConfig.maxPlayers >= 8}
-            >
-              +1
-            </button>
-          </div>
-        </div>
-
-        <div className="baseFlex gap-2">
-          <label>Room visibility:</label>
+    <>
+      {userID && (
+        <div className="baseVertFlex min-h-[100vh] gap-4 bg-green-700">
           <div className="baseFlex">
             <button
-              onClick={() => updateRoomConfig("isPublic", true)}
-              style={{
-                backgroundColor: roomCtx.roomConfig.isPublic
-                  ? "rgba(255,255,255,0.5)"
-                  : "",
-              }}
+              className="ml-0"
+              onClick={() => roomCtx.setPageToRender("home")}
             >
-              Public
+              Back to home
             </button>
-            <button
-              onClick={() => updateRoomConfig("isPublic", false)}
-              style={{
-                backgroundColor: !roomCtx.roomConfig.isPublic
-                  ? "rgba(255,255,255,0.5)"
-                  : "",
-              }}
-            >
-              Private
-            </button>
+            {`${
+              roomCtx.connectedToRoom
+                ? `${roomCtx.playerMetadata[0]?.username}'s Room`
+                : "Create Room"
+            }`}
           </div>
-        </div>
-
-        <div className="baseFlex gap-2">
-          <label>Room code:</label>
-          <div className="baseFlex gap-2">
-            {roomCtx.roomConfig.code}
-            <button>Copy room code</button>
-          </div>
-        </div>
-
-        {roomCreated ? (
           <div className="baseVertFlex gap-2">
-            {`Players ${roomCtx.roomConfig?.playersInRoom}/${roomCtx.roomConfig?.maxPlayers}`}
+            {!roomCtx.connectedToRoom && (
+              <div className="baseFlex gap-2">
+                <label>Username</label>
+                <input
+                  type="text"
+                  placeholder="username"
+                  onChange={(e) => {
+                    roomCtx.setPlayerMetadata((prevMetadata) => {
+                      const newMetadata = { ...prevMetadata };
+                      const user = newMetadata[userID];
+                      if (user) {
+                        user.username = e.target.value;
+                      }
+
+                      return newMetadata;
+                    });
+                    updateRoomConfig("hostUsername", e.target.value);
+                  }}
+                  value={roomCtx.playerMetadata[0]?.username}
+                />
+              </div>
+            )}
+
             <div className="baseFlex gap-2">
-              {roomCtx.playerMetadata?.map((player) => (
-                <div className="baseVertFlex gap-2" key={player.userID}>
-                  <div>{player.username}</div>
-                </div>
-              ))}
+              <label>Points to win:</label>
+              <div className="baseFlex gap-2">
+                <button
+                  disabled={roomCtx.roomConfig.pointsToWin <= 50}
+                  onClick={() =>
+                    updateRoomConfig(
+                      "pointsToWin",
+                      roomCtx.roomConfig.pointsToWin - 25
+                    )
+                  }
+                >
+                  -10
+                </button>
+                {roomCtx.roomConfig.pointsToWin}
+                <button
+                  disabled={roomCtx.roomConfig.pointsToWin >= 500}
+                  onClick={() =>
+                    updateRoomConfig(
+                      "pointsToWin",
+                      roomCtx.roomConfig.pointsToWin + 25
+                    )
+                  }
+                >
+                  +25
+                </button>
+              </div>
             </div>
-            <button
-              onClick={() => socket.emit("startGame", roomCtx.roomConfig.code)}
-            >
-              Start game
-            </button>
+
+            <div className="baseFlex gap-2">
+              <label>Max rounds:</label>
+              <div className="baseFlex gap-2">
+                <button
+                  disabled={roomCtx.roomConfig.maxRounds <= 1}
+                  onClick={() =>
+                    updateRoomConfig(
+                      "maxRounds",
+                      roomCtx.roomConfig.maxRounds - 1
+                    )
+                  }
+                >
+                  -1
+                </button>
+                {roomCtx.roomConfig.maxRounds}
+                <button
+                  disabled={roomCtx.roomConfig.maxRounds >= 5}
+                  onClick={() =>
+                    updateRoomConfig(
+                      "maxRounds",
+                      roomCtx.roomConfig.maxRounds + 1
+                    )
+                  }
+                >
+                  +1
+                </button>
+              </div>
+            </div>
+
+            <div className="baseFlex gap-2">
+              <label>Max players:</label>
+              <div className="baseFlex gap-2">
+                <button
+                  disabled={roomCtx.roomConfig.maxPlayers <= 2}
+                  onClick={() =>
+                    updateRoomConfig(
+                      "maxPlayers",
+                      roomCtx.roomConfig.maxPlayers - 1
+                    )
+                  }
+                >
+                  -1
+                </button>
+                {roomCtx.roomConfig.maxPlayers}
+                <button
+                  onClick={() =>
+                    updateRoomConfig(
+                      "maxPlayers",
+                      roomCtx.roomConfig.maxPlayers + 1
+                    )
+                  }
+                  disabled={roomCtx.roomConfig.maxPlayers >= 8}
+                >
+                  +1
+                </button>
+              </div>
+            </div>
+
+            <div className="baseFlex gap-2">
+              <label>Room visibility:</label>
+              <div className="baseFlex">
+                <button
+                  onClick={() => updateRoomConfig("isPublic", true)}
+                  style={{
+                    backgroundColor: roomCtx.roomConfig.isPublic
+                      ? "rgba(255,255,255,0.5)"
+                      : "",
+                  }}
+                >
+                  Public
+                </button>
+                <button
+                  onClick={() => updateRoomConfig("isPublic", false)}
+                  style={{
+                    backgroundColor: !roomCtx.roomConfig.isPublic
+                      ? "rgba(255,255,255,0.5)"
+                      : "",
+                  }}
+                >
+                  Private
+                </button>
+              </div>
+            </div>
+
+            <div className="baseFlex gap-2">
+              <label>Room code:</label>
+              <div className="baseFlex gap-2">
+                {roomCtx.roomConfig.code}
+                <button>Copy room code</button>
+              </div>
+            </div>
+
+            {roomCtx.connectedToRoom ? (
+              <div className="baseVertFlex gap-2">
+                {`Players ${roomCtx.roomConfig?.playersInRoom}/${roomCtx.roomConfig?.maxPlayers}`}
+                <div className="baseFlex gap-2">
+                  {Object.keys(roomCtx.playerMetadata)?.map((playerID) => (
+                    <div className="baseVertFlex gap-2" key={playerID}>
+                      <div>{roomCtx.playerMetadata[playerID]?.username}</div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="baseFlex gap-4">
+                  <PickerTooltip type={"avatar"} />
+                  <PickerTooltip type={"deck"} />
+                </div>
+
+                <button
+                  onClick={() => {
+                    roomCtx.setGameData({} as IGameMetadata);
+
+                    socket.emit("startGame", {
+                      roomCode: roomCtx.roomConfig.code,
+                      firstRound: true,
+                    });
+                  }}
+                >
+                  Start game
+                </button>
+              </div>
+            ) : (
+              <button
+                disabled={roomCtx.playerMetadata[0]?.username.length === 0}
+                onClick={() => createRoom()}
+              >
+                Create room
+              </button>
+            )}
           </div>
-        ) : (
-          <button
-            disabled={roomCtx.playerMetadata[0]?.username.length === 0}
-            onClick={() => createRoom()}
-          >
-            Create room
-          </button>
-        )}
-      </div>
-    </div>
+        </div>
+      )}
+    </>
   );
 }
 
