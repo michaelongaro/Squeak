@@ -5,7 +5,6 @@ import { type IGameData } from "../socket";
 interface IResetGame {
   gameIsFinished: boolean;
   roomCode: string;
-  gameStuckInterval: NodeJS.Timeout;
 }
 
 export function resetGameHandler(
@@ -16,7 +15,7 @@ export function resetGameHandler(
 ) {
   function resetGame({ gameIsFinished, roomCode }: IResetGame) {
     if (gameIsFinished) {
-      clearTimeout(gameStuckInterval); // pretty sure this is necessary
+      clearInterval(gameStuckInterval); // pretty sure this is necessary
       io.in(roomCode).emit("moveBackToLobby");
       return;
     }
@@ -47,7 +46,9 @@ export function resetGameHandler(
       };
     }
 
-    clearTimeout(gameStuckInterval);
+    game.currentRound = game.currentRound + 1;
+
+    clearInterval(gameStuckInterval);
 
     io.in(roomCode).emit("startNewRound", game);
   }
