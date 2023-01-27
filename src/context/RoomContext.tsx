@@ -1,9 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { socket } from "../pages";
-import {
-  type IPlayerMetadata,
-  type IRoomConfig,
-} from "../components/CreateRoom/CreateRoom";
+import { type IRoomConfig } from "../components/CreateRoom/CreateRoom";
+import { type IRoomPlayersMetadata } from "../pages/api/socket";
 import { type IGameMetadata } from "../pages/api/socket";
 import { type IPlayerRoundDetails } from "../pages/api/handlers/roundOverHandler";
 
@@ -24,8 +22,8 @@ interface IRoomContext {
   >;
   roomConfig: IRoomConfig;
   setRoomConfig: React.Dispatch<React.SetStateAction<IRoomConfig>>;
-  playerMetadata: IPlayerMetadata[];
-  setPlayerMetadata: React.Dispatch<React.SetStateAction<IPlayerMetadata[]>>;
+  playerMetadata: IRoomPlayersMetadata;
+  setPlayerMetadata: React.Dispatch<React.SetStateAction<IRoomPlayersMetadata>>;
   gameData: IGameMetadata;
   setGameData: React.Dispatch<React.SetStateAction<IGameMetadata>>;
   hoveredCell: [number, number] | null;
@@ -60,6 +58,8 @@ interface IRoomContext {
   setShowScoreboard: React.Dispatch<React.SetStateAction<boolean>>;
   showShufflingCountdown: boolean;
   setShowShufflingCountdown: React.Dispatch<React.SetStateAction<boolean>>;
+  connectedToRoom: boolean;
+  setConnectedToRoom: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const RoomContext = createContext<IRoomContext | null>(null);
@@ -78,7 +78,9 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     hostUsername: "",
     hostUserID: "",
   });
-  const [playerMetadata, setPlayerMetadata] = useState<IPlayerMetadata[]>([]);
+  const [playerMetadata, setPlayerMetadata] = useState<IRoomPlayersMetadata>(
+    {} as IRoomPlayersMetadata
+  );
 
   // safe, because we are only ever accessing/mutating gameData when it is defined
   const [gameData, setGameData] = useState<IGameMetadata>({} as IGameMetadata);
@@ -105,6 +107,8 @@ export function RoomProvider(props: { children: React.ReactNode }) {
   const [playerIDWhoSqueaked, setPlayerIDWhoSqueaked] = useState<string | null>(
     null
   );
+
+  const [connectedToRoom, setConnectedToRoom] = useState<boolean>(false);
 
   const [showScoreboard, setShowScoreboard] = useState<boolean>(true); // temp for testing - should be false
   const [showShufflingCountdown, setShowShufflingCountdown] =
@@ -160,6 +164,8 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     setShowScoreboard,
     showShufflingCountdown,
     setShowShufflingCountdown,
+    connectedToRoom,
+    setConnectedToRoom,
   };
 
   return (
