@@ -24,6 +24,7 @@ interface ICardComponent {
   startID?: string;
   squeakStackLocation?: [number, number];
   rotation: number;
+  hueRotation?: number;
 }
 
 function Card({
@@ -36,6 +37,7 @@ function Card({
   ownerID,
   rotation,
   squeakStackLocation,
+  hueRotation,
 }: ICardComponent) {
   const roomCtx = useRoomContext();
   const localStorageID = useLocalStorageContext();
@@ -333,7 +335,7 @@ function Card({
 
   return (
     <>
-      {(showCardBack || value || suit) && !cardHasBeenPlaced && (
+      {(showCardBack || value || suit) && !cardHasBeenPlaced && userID && (
         <Draggable
           disabled={!draggable}
           onDrag={(e, data) => dragHandler(e, data)}
@@ -355,18 +357,29 @@ function Card({
             className={`relative z-[500] h-full w-full ${
               draggable && "cursor-grab active:cursor-grabbing"
             }`}
+            onClick={() => console.log("child clicked")}
           >
             <img
+              style={{
+                filter:
+                  showCardBack && !manuallyShowCardFront
+                    ? `hue-rotate(${
+                        hueRotation ||
+                        roomCtx.playerMetadata[userID]?.deckHueRotation ||
+                        "0deg"
+                      })`
+                    : "",
+              }}
               className="pointer-events-none h-[64px] w-[48px] select-none lg:h-[72px] lg:w-[56px]"
               src={
                 showCardBack && !manuallyShowCardFront
-                  ? "/cards/BackRed.png"
+                  ? "/cards/cardBack.png"
                   : `/cards/${value}${suit}.svg`
               }
               alt={
                 showCardBack && !manuallyShowCardFront
-                  ? "Back of Card"
-                  : `${value}${suit} Card`
+                  ? "Back of card"
+                  : `${value}${suit} card`
               }
               draggable="false"
             />
