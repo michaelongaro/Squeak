@@ -1,11 +1,7 @@
-import { IPlayerMetadata } from "./../components/CreateRoom/CreateRoom";
 import { useState, useEffect } from "react";
 import { useRoomContext } from "../context/RoomContext";
 import { socket } from "../pages";
-import {
-  IPlayerCardsMetadata,
-  type IDrawFromSqueakDeck,
-} from "../pages/api/socket";
+import { type IDrawFromSqueakDeck } from "../pages/api/socket";
 
 interface IUseCardDrawFromSqueakDeck {
   value?: string;
