@@ -16,10 +16,11 @@ function ShufflingCountdownModal() {
     >
       {/* prob will run into issues and will need framer motion to smoothly animate in/out */}
       {roomCtx.showShufflingCountdown && (
-        <div className="h-40 w-40 rounded-md bg-green-200 p-4">
-          <div className="baseVertFlex gap-4">
-            <div className="text-xl">Shuffling deck</div>
-            <div className="relative h-full w-full">
+        <div className="h-fit w-fit rounded-md bg-green-200 p-8 pl-16 pr-16 shadow-md">
+          <div className="baseVertFlex gap-6">
+            <div className="text-xl">Shuffling decks</div>
+
+            <div className="relative mt-16 h-[64px] w-[48px] lg:h-[72px] lg:w-[56px]">
               <div className="absolute top-0 left-0 h-full w-full">
                 <Card showCardBack={true} draggable={false} rotation={0} />
               </div>
@@ -36,7 +37,7 @@ function ShufflingCountdownModal() {
             <div className="baseFlex gap-2">
               <div>Round will begin in:</div>
               <CountUp
-                start={3}
+                start={5}
                 end={1}
                 onEnd={() => {
                   roomCtx.setShowShufflingCountdown(false);
