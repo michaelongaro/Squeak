@@ -48,7 +48,7 @@ function HomePage() {
         <>
           {roomCtx.pageToRender === "createRoom" && <CreateRoom />}
           {roomCtx.pageToRender === "joinRoom" && <JoinRoom />}
-          {roomCtx.pageToRender === "play" && roomCtx.roomConfig?.code && (
+          {roomCtx.pageToRender === "play" && roomCtx.connectedToRoom && (
             <Play />
           )}
         </>
