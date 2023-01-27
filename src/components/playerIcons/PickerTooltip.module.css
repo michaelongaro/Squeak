@@ -1,0 +1,19 @@
+.toolTip {
+  position: relative;
+
+  white-space: nowrap;
+  z-index: 400;
+}
+
+.toolTip::after {
+  border: 10px solid hsla(0, 0%, 76%, 0);
+  border-top-color: #fff;
+  bottom: 100%;
+  content: "";
+  height: 0;
+  left: 50%;
+  margin-left: -10px;
+  pointer-events: none;
+  position: absolute;
+  width: 0;
+}
