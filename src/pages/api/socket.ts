@@ -1,8 +1,5 @@
 import { Server, type Socket } from "socket.io";
-import {
-  type IPlayerMetadata,
-  type IRoomConfig,
-} from "../../components/CreateRoom/CreateRoom";
+import { type IRoomConfig } from "../../components/CreateRoom/CreateRoom";
 import {
   type IPlayerCards,
   type ICard,
@@ -21,9 +18,13 @@ export interface IRoomData {
 }
 
 interface IRoomMetadata {
-  room: IRoomConfig;
-  players: IPlayerMetadata[];
+  roomConfig: IRoomConfig;
+  players: IRoomPlayersMetadata;
 }
+
+// TODO: is there a better way to type these?
+// if not at least find a better name for them + swap IGameData and IGameMetadata
+// for consistency
 
 export interface IGameData {
   [code: string]: IGameMetadata;
@@ -32,10 +33,22 @@ export interface IGameData {
 export interface IGameMetadata {
   board: (ICard | null)[][];
   players: IPlayerCardsMetadata;
+  currentRound: number;
 }
 
 export interface IPlayerCardsMetadata {
   [code: string]: IPlayer;
+}
+
+export interface IRoomPlayersMetadata {
+  [code: string]: IRoomPlayer;
+}
+
+export interface IRoomPlayer {
+  username: string;
+  avatarPath: string;
+  color: string;
+  deckHueRotation: number;
 }
 
 export interface ICardDropProposal {
@@ -82,6 +95,9 @@ interface IJoinRoomConfig {
   code: string;
   username: string;
   userID: string;
+  avatarPath: string;
+  color: string;
+  deckHueRotation: number;
 }
 
 const roomData: IRoomData = {};
@@ -102,47 +118,73 @@ export default function SocketHandler(req, res) {
 
   const onConnection = (socket: Socket) => {
     // room logic
-    socket.on("createRoom", (roomConfig: IRoomConfig) => {
-      socket.join(roomConfig.code);
-      roomData[roomConfig.code] = {
-        room: roomConfig,
-        players: [
-          {
-            username: roomConfig.hostUsername,
-            userID: roomConfig.hostUserID,
+    socket.on(
+      "createRoom",
+      (
+        roomConfig: IRoomConfig,
+        hostAvatarPath: string,
+        hostColor: string,
+        hostDeckHueRotation: number
+      ) => {
+        socket.join(roomConfig.code);
+
+        roomData[roomConfig.code] = {
+          roomConfig,
+          players: {
+            [roomConfig.hostUserID]: {
+              username: roomConfig.hostUsername,
+              avatarPath: hostAvatarPath,
+              color: hostColor,
+              deckHueRotation: hostDeckHueRotation,
+            },
           },
-        ],
-      };
-      io.in(roomConfig.code).emit("roomWasCreated");
-    });
+        };
+        io.in(roomConfig.code).emit("roomWasCreated");
+      }
+    );
 
-    socket.on("joinRoom", (roomMetadata: IJoinRoomConfig) => {
-      socket.join(roomMetadata.code);
-      roomData[roomMetadata.code]?.players.push({
-        username: roomMetadata.username,
-        userID: roomMetadata.userID,
-      });
+    socket.on(
+      "joinRoom",
+      ({
+        code,
+        username,
+        userID,
+        avatarPath,
+        color,
+        deckHueRotation,
+      }: IJoinRoomConfig) => {
+        const players = roomData[code]?.players;
 
-      io.in(roomMetadata.code).emit(
-        "connectedUsersChanged",
-        roomData[roomMetadata.code]?.players
-      );
+        if (!players) return;
 
-      // how to not have to extract it like this
-      const currentPlayersInRoom =
-        roomData[roomMetadata.code]?.room?.playersInRoom;
+        socket.join(code);
 
-      const updatedRoomConfig = {
-        ...roomData[roomMetadata.code]?.room,
+        players[userID] = {
+          username,
+          avatarPath,
+          color,
+          deckHueRotation,
+        };
 
-        playersInRoom: currentPlayersInRoom ? currentPlayersInRoom + 1 : 1,
-      };
+        io.in(code).emit("connectedUsersChanged", roomData[code]?.players);
 
-      io.in(roomMetadata.code).emit("roomConfigUpdated", updatedRoomConfig);
-    });
+        // how to not have to extract it like this
+        const currentPlayersInRoom = roomData[code]?.roomConfig?.playersInRoom;
+
+        const updatedRoomConfig = {
+          ...roomData[code]?.roomConfig,
+
+          playersInRoom: currentPlayersInRoom ? currentPlayersInRoom + 1 : 1,
+        };
+
+        io.in(code).emit("roomConfigUpdated", updatedRoomConfig);
+      }
+    );
 
     socket.on("updateRoomConfig", (roomConfig: IRoomConfig) => {
-      roomData[roomConfig.code]!.room = roomConfig;
+      const room = roomData[roomConfig.code];
+      if (!room) return;
+      room.roomConfig = roomConfig;
       io.in(roomConfig.code).emit("roomConfigUpdated", roomConfig);
     });
 
@@ -155,11 +197,11 @@ export default function SocketHandler(req, res) {
       const currentRoomPlayers = roomData[roomCode]?.players;
       if (!currentRoomPlayers) return;
 
-      for (const player of currentRoomPlayers) {
+      for (const playerID of Object.keys(currentRoomPlayers)) {
         setTimeout(() => {
           drawFromSqueakDeck({
             indexToDrawTo: 0,
-            playerID: player.userID,
+            playerID,
             roomCode,
             gameData,
             io,
@@ -169,7 +211,7 @@ export default function SocketHandler(req, res) {
         setTimeout(() => {
           drawFromSqueakDeck({
             indexToDrawTo: 1,
-            playerID: player.userID,
+            playerID,
             roomCode,
             gameData,
             io,
@@ -179,7 +221,7 @@ export default function SocketHandler(req, res) {
         setTimeout(() => {
           drawFromSqueakDeck({
             indexToDrawTo: 2,
-            playerID: player.userID,
+            playerID,
             roomCode,
             gameData,
             io,
@@ -189,7 +231,7 @@ export default function SocketHandler(req, res) {
         setTimeout(() => {
           drawFromSqueakDeck({
             indexToDrawTo: 3,
-            playerID: player.userID,
+            playerID,
             roomCode,
             gameData,
             io,
@@ -208,29 +250,30 @@ export default function SocketHandler(req, res) {
     socket.on("playerReadyToReceiveInitGameData", (roomCode) => {
       numberOfPlayersReady++;
 
-      if (numberOfPlayersReady !== roomData[roomCode]?.players.length) return;
+      const players = roomData[roomCode]?.players;
 
-      const currentRoomPlayers = roomData[roomCode]?.players;
-      if (currentRoomPlayers) {
-        const board = Array.from({ length: 4 }, () =>
-          Array.from({ length: 5 }, () => null)
-        );
+      if (!players || numberOfPlayersReady !== Object.keys(players).length)
+        return;
 
-        const playerCards: IPlayerCardsMetadata = {};
-        // loop through players and create + get their cards
-        for (const player of currentRoomPlayers) {
-          playerCards[player.userID] = {
-            ...generateDeckAndSqueakCards(),
-            totalPoints: 0,
-            rankInRoom: -1,
-          };
-        }
+      const board = Array.from({ length: 4 }, () =>
+        Array.from({ length: 5 }, () => null)
+      );
 
-        gameData[roomCode] = {
-          board,
-          players: playerCards,
+      const playerCards: IPlayerCardsMetadata = {};
+      // loop through players and create + get their cards
+      for (const playerID of Object.keys(players)) {
+        playerCards[playerID] = {
+          ...generateDeckAndSqueakCards(),
+          totalPoints: 0,
+          rankInRoom: -1,
         };
       }
+
+      gameData[roomCode] = {
+        board,
+        players: playerCards,
+        currentRound: 1,
+      };
 
       io.in(roomCode).emit("initGameData", gameData[roomCode]);
       numberOfPlayersReady = 0;
@@ -238,7 +281,10 @@ export default function SocketHandler(req, res) {
 
     socket.on("playerFullyReady", (roomCode) => {
       numberOfPlayersReady++;
-      if (numberOfPlayersReady === roomData[roomCode]?.players.length) {
+
+      const players = roomData[roomCode]?.players;
+
+      if (players && numberOfPlayersReady === Object.keys(players).length) {
         io.in(roomCode).emit("gameStarted");
         numberOfPlayersReady = 0;
       }
