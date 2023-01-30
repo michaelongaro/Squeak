@@ -364,10 +364,11 @@ function Card({
                 filter:
                   showCardBack && !manuallyShowCardFront
                     ? `hue-rotate(${
-                        hueRotation ||
-                        roomCtx.playerMetadata[userID]?.deckHueRotation ||
-                        "0deg"
-                      })`
+                        hueRotation !== undefined
+                          ? hueRotation
+                          : roomCtx.playerMetadata[userID]?.deckHueRotation ||
+                            "0deg"
+                      }deg)`
                     : "",
               }}
               className="pointer-events-none h-[64px] w-[48px] select-none lg:h-[72px] lg:w-[56px]"
