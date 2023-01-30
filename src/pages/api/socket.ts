@@ -37,11 +37,11 @@ export interface IGameMetadata {
 }
 
 export interface IPlayerCardsMetadata {
-  [code: string]: IPlayer;
+  [userID: string]: IPlayer;
 }
 
 export interface IRoomPlayersMetadata {
-  [code: string]: IRoomPlayer;
+  [userID: string]: IRoomPlayer;
 }
 
 export interface IRoomPlayer {
@@ -86,6 +86,12 @@ export interface IPlayer extends IPlayerCards {
   rankInRoom: number;
 }
 
+export interface IUpdatePlayerMetadata {
+  newPlayerMetadata: IRoomPlayer;
+  playerID: string;
+  roomCode: string;
+}
+
 interface IStartGame {
   roomCode: string;
   firstRound: boolean;
@@ -93,11 +99,8 @@ interface IStartGame {
 
 interface IJoinRoomConfig {
   code: string;
-  username: string;
   userID: string;
-  avatarPath: string;
-  color: string;
-  deckHueRotation: number;
+  playerMetadata: IRoomPlayer;
 }
 
 const roomData: IRoomData = {};
@@ -120,55 +123,33 @@ export default function SocketHandler(req, res) {
     // room logic
     socket.on(
       "createRoom",
-      (
-        roomConfig: IRoomConfig,
-        hostAvatarPath: string,
-        hostColor: string,
-        hostDeckHueRotation: number
-      ) => {
+      (roomConfig: IRoomConfig, playerMetadata: IRoomPlayer) => {
         socket.join(roomConfig.code);
 
         roomData[roomConfig.code] = {
           roomConfig,
           players: {
-            [roomConfig.hostUserID]: {
-              username: roomConfig.hostUsername,
-              avatarPath: hostAvatarPath,
-              color: hostColor,
-              deckHueRotation: hostDeckHueRotation,
-            },
+            [roomConfig.hostUserID]: playerMetadata,
           },
         };
+
         io.in(roomConfig.code).emit("roomWasCreated");
       }
     );
 
     socket.on(
       "joinRoom",
-      ({
-        code,
-        username,
-        userID,
-        avatarPath,
-        color,
-        deckHueRotation,
-      }: IJoinRoomConfig) => {
+      ({ userID, playerMetadata, code }: IJoinRoomConfig) => {
         const players = roomData[code]?.players;
 
         if (!players) return;
 
         socket.join(code);
 
-        players[userID] = {
-          username,
-          avatarPath,
-          color,
-          deckHueRotation,
-        };
+        players[userID] = playerMetadata;
 
-        io.in(code).emit("connectedUsersChanged", roomData[code]?.players);
+        io.in(code).emit("playerMetadataUpdated", players);
 
-        // how to not have to extract it like this
         const currentPlayersInRoom = roomData[code]?.roomConfig?.playersInRoom;
 
         const updatedRoomConfig = {
@@ -187,6 +168,23 @@ export default function SocketHandler(req, res) {
       room.roomConfig = roomConfig;
       io.in(roomConfig.code).emit("roomConfigUpdated", roomConfig);
     });
+
+    socket.on(
+      "updatePlayerMetadata",
+      ({ newPlayerMetadata, playerID, roomCode }: IUpdatePlayerMetadata) => {
+        const room = roomData[roomCode];
+        const user = roomData[roomCode]?.players[playerID];
+
+        if (!room || !user) return;
+
+        user.avatarPath = newPlayerMetadata.avatarPath;
+        user.color = newPlayerMetadata.color;
+        user.deckHueRotation = newPlayerMetadata.deckHueRotation;
+        user.username = newPlayerMetadata.username;
+
+        io.in(roomCode).emit("playerMetadataUpdated", room.players);
+      }
+    );
 
     socket.on("startGame", ({ roomCode, firstRound }: IStartGame) => {
       if (firstRound) {
