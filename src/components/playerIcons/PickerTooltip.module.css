@@ -1,14 +1,13 @@
 .toolTip {
-  position: relative;
-
-  white-space: nowrap;
+  position: absolute;
+  /* white-space: nowrap; */
   z-index: 400;
 }
 
 .toolTip::after {
   border: 10px solid hsla(0, 0%, 76%, 0);
   border-top-color: #fff;
-  bottom: 100%;
+  bottom: -20px;
   content: "";
   height: 0;
   left: 50%;
@@ -17,3 +16,6 @@
   position: absolute;
   width: 0;
 }
+
+/* maybe need two basically the same but if tooltip is being shown below preview
+   then have bottom: -20px -> top: -20px? */
