@@ -11,6 +11,7 @@ interface IOtherPlayersCardContainers {
 
 import classes from "./OtherPlayersCardContainers.module.css";
 import { FaRedoAlt } from "react-icons/fa";
+import PlayerIcon from "../playerIcons/PlayerIcon";
 
 const internalOrderedGridClassNames = [
   classes.topInnerGridContainer,
@@ -247,7 +248,20 @@ function OtherPlayersCardContainers({
                 </>
               </div>
 
-              <div className={classes.playerAvatar}></div>
+              <div className={classes.playerAvatar}>
+                <PlayerIcon
+                  avatarPath={
+                    roomCtx.playerMetadata[playerID]?.avatarPath ||
+                    "/avatars/rabbit.svg"
+                  }
+                  borderColor={
+                    roomCtx.playerMetadata[playerID]?.color ||
+                    "rgb(220, 55, 76)"
+                  }
+                  username={roomCtx.playerMetadata[playerID]?.username}
+                  size={"3rem"}
+                />
+              </div>
             </div>
           </div>
         ))}
