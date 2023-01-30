@@ -4,39 +4,35 @@ interface IPlayerIcon {
   avatarPath: string;
   borderColor: string;
   size: string;
-  iconOpacity?: number;
-  showOutline?: boolean;
-  cursorType?: string;
+  username?: string;
 }
+// TODO: probably just pass through the whole player object and allow it to be undefined,
+// if so then return null
 
-function PlayerIcon({
-  avatarPath,
-  borderColor,
-  size,
-  iconOpacity = 1,
-  showOutline = true,
-  cursorType = "auto",
-}: IPlayerIcon) {
+// probably need to add opacity as a prop because you don't always want the bg-opacity-80 (tooltip)
+
+function PlayerIcon({ avatarPath, borderColor, size, username }: IPlayerIcon) {
   return (
-    <div
-      style={{
-        outline: showOutline ? `4px solid ${borderColor}` : "none",
-        cursor: cursorType,
-      }}
-      className="rounded-full bg-white bg-opacity-80"
-      onClick={() => console.log("child clicked")}
-    >
-      <img
+    <div className="baseVertFlex gap-2">
+      <div
         style={{
-          width: size,
-          height: size,
-          opacity: iconOpacity,
+          outline: `4px solid ${borderColor}`,
         }}
-        className="p-2" //h-["${size}"] w-["${size}"]
-        src={avatarPath}
-        alt={"Player Icon"}
-        draggable="false"
-      />
+        className="rounded-full bg-white bg-opacity-80"
+        onClick={() => console.log("child clicked")}
+      >
+        <img
+          style={{
+            width: size,
+            height: size,
+          }}
+          className="p-2"
+          src={avatarPath}
+          alt={"Player Icon"}
+          draggable="false"
+        />
+      </div>
+      {username ? username : null}
     </div>
   );
 }
