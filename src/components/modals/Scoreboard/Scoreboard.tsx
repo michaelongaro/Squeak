@@ -18,7 +18,7 @@ const ranking: IRanking = {
 };
 
 function Scoreboard() {
-  const roomCtx = useRoomContext();
+  const { roomConfig, showScoreboard } = useRoomContext();
 
   // const scoreboardData = useScoreboardData();
 
@@ -31,7 +31,7 @@ function Scoreboard() {
   const [onlyDoThisOnce, setOnlyDoThisOnce] = useState<boolean>(false);
 
   useEffect(() => {
-    if (!onlyDoThisOnce && roomCtx.roomConfig.code) {
+    if (!onlyDoThisOnce && roomConfig.code) {
       setOnlyDoThisOnce(true);
       setTimeout(() => {
         setShowNewRankings(true);
@@ -48,12 +48,12 @@ function Scoreboard() {
       // delete this later
       setTimeout(() => {
         socket.emit("resetGame", {
-          roomCode: roomCtx.roomConfig.code,
+          roomCode: roomConfig.code,
           gameIsFinished: true,
         });
       }, 15000);
     }
-  }, [roomCtx.roomConfig.code, onlyDoThisOnce]);
+  }, [roomConfig.code, onlyDoThisOnce]);
 
   const scoreboardData: Partial<IScoreboardMetadata> | null = {
     gameWinnerID: null,
@@ -168,8 +168,8 @@ function Scoreboard() {
   return (
     <div
       style={{
-        opacity: roomCtx.showScoreboard ? 1 : 0,
-        pointerEvents: roomCtx.showScoreboard ? "auto" : "none",
+        opacity: showScoreboard ? 1 : 0,
+        pointerEvents: showScoreboard ? "auto" : "none",
       }}
       className="baseFlex absolute top-0 left-0 z-[600] h-full w-full bg-black bg-opacity-60 transition-all"
     >

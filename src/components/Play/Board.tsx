@@ -15,7 +15,14 @@ export interface IGetBoxShadowStyles {
 }
 
 function Board({ boardClass }: IBoard) {
-  const roomCtx = useRoomContext();
+  const {
+    gameData,
+    holdingADeckCard,
+    holdingASqueakCard,
+    proposedCardBoxShadow,
+    hoveredCell,
+    setHoveredCell,
+  } = useRoomContext();
   const { value: userID } = useUserIDContext();
 
   // interface to accept id, rowIdx, colIdx, squeakStackIdx
@@ -25,15 +32,14 @@ function Board({ boardClass }: IBoard) {
     rowIdx,
     colIdx,
   }: IGetBoxShadowStyles): string {
-    if (roomCtx.holdingADeckCard || roomCtx.holdingASqueakCard) {
+    if (holdingADeckCard || holdingASqueakCard) {
       return `0px 0px 10px ${
-        roomCtx.hoveredCell?.[0] === rowIdx &&
-        roomCtx.hoveredCell?.[1] === colIdx
+        hoveredCell?.[0] === rowIdx && hoveredCell?.[1] === colIdx
           ? "5px"
           : "3px"
       } rgba(184,184,184,1)`;
-    } else if (roomCtx.proposedCardBoxShadow?.id === id) {
-      return roomCtx.proposedCardBoxShadow.boxShadowValue;
+    } else if (proposedCardBoxShadow?.id === id) {
+      return proposedCardBoxShadow.boxShadowValue;
     }
 
     return "none";
@@ -41,7 +47,7 @@ function Board({ boardClass }: IBoard) {
 
   return (
     <div className={`${boardClass} grid w-full grid-cols-5 gap-1`}>
-      {roomCtx.gameData?.board.map((row, rowIdx) => (
+      {gameData?.board.map((row, rowIdx) => (
         <>
           {row.map((cell, colIdx) => (
             <div
@@ -54,15 +60,15 @@ function Board({ boardClass }: IBoard) {
                   colIdx,
                 }),
                 opacity:
-                  roomCtx.hoveredCell?.[0] === rowIdx &&
-                  roomCtx.hoveredCell?.[1] === colIdx &&
-                  (roomCtx.holdingADeckCard || roomCtx.holdingASqueakCard)
+                  hoveredCell?.[0] === rowIdx &&
+                  hoveredCell?.[1] === colIdx &&
+                  (holdingADeckCard || holdingASqueakCard)
                     ? 0.35 // worst case you leave it like this (was prev 0.75)
                     : 1,
               }}
               className="baseFlex relative z-[600] h-[80px] min-h-fit w-[60px] min-w-fit rounded-lg p-1 transition-all"
-              onMouseEnter={() => roomCtx.setHoveredCell([rowIdx, colIdx])}
-              onMouseLeave={() => roomCtx.setHoveredCell(null)}
+              onMouseEnter={() => setHoveredCell([rowIdx, colIdx])}
+              onMouseLeave={() => setHoveredCell(null)}
             >
               <Card
                 value={cell?.value}

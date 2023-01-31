@@ -4,7 +4,8 @@ import { socket } from "../pages";
 import { type IGameMetadata } from "../pages/api/socket";
 
 function useStartAnotherRoundHandler() {
-  const roomCtx = useRoomContext();
+  const { setGameData, setShowScoreboard, setShowShufflingCountdown } =
+    useRoomContext();
 
   const [dataFromBackend, setDataFromBackend] = useState<IGameMetadata | null>(
     null
@@ -22,15 +23,20 @@ function useStartAnotherRoundHandler() {
     if (dataFromBackend !== null) {
       setDataFromBackend(null);
 
-      roomCtx.setGameData(dataFromBackend);
+      setGameData(dataFromBackend);
 
-      roomCtx.setShowScoreboard(false);
+      setShowScoreboard(false);
 
       setTimeout(() => {
-        roomCtx.setShowShufflingCountdown(true);
+        setShowShufflingCountdown(true);
       }, 500);
     }
-  }, [dataFromBackend, roomCtx]);
+  }, [
+    dataFromBackend,
+    setShowScoreboard,
+    setShowShufflingCountdown,
+    setGameData,
+  ]);
 }
 
 export default useStartAnotherRoundHandler;

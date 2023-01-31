@@ -32,20 +32,27 @@ const rotationOrder = [180, 90, 270];
 function OtherPlayersCardContainers({
   orderedClassNames,
 }: IOtherPlayersCardContainers) {
-  const roomCtx = useRoomContext();
+  const {
+    gameData,
+    setGameData,
+    playerMetadata,
+    playerIDWhoSqueaked,
+    setHoldingADeckCard,
+    setHoveredSqueakStack,
+  } = useRoomContext();
   const { value: userID } = useUserIDContext();
 
   const handleCardDrawnFromDeck = useCallback(
     ({ playerID, updatedBoard, updatedPlayerCards }: IDrawFromDeck) => {
       if (playerID === userID) return;
 
-      roomCtx.setGameData({
-        ...roomCtx.gameData,
-        board: updatedBoard || roomCtx.gameData?.board,
-        players: updatedPlayerCards || roomCtx.gameData?.players,
+      setGameData({
+        ...gameData,
+        board: updatedBoard || gameData?.board,
+        players: updatedPlayerCards || gameData?.players,
       });
     },
-    [roomCtx, userID]
+    [gameData, setGameData, userID]
   );
 
   useEffect(() => {
@@ -60,7 +67,7 @@ function OtherPlayersCardContainers({
 
   return (
     <>
-      {Object.keys(roomCtx.gameData.players)
+      {Object.keys(gameData.players)
         .filter((playerID) => playerID !== userID)
         .map((playerID, idx) => (
           <div key={playerID} className={orderedClassNames[idx]}>
@@ -69,7 +76,7 @@ function OtherPlayersCardContainers({
                 id={`${playerID}squeakDeck`}
                 className={`${classes.squeakDeck} h-[64px] w-[48px] lg:h-[72px] lg:w-[56px]`}
               >
-                {roomCtx.gameData.players[playerID]!.squeakDeck.length > 0 ? (
+                {gameData.players[playerID]!.squeakDeck.length > 0 ? (
                   <div className="relative h-full w-full">
                     <div className="absolute top-0 left-0 h-full w-full">
                       <Card
@@ -78,23 +85,19 @@ function OtherPlayersCardContainers({
                         ownerID={playerID}
                         startID={`${playerID}squeakDeck`}
                         rotation={rotationOrder[idx] as number}
+                        hueRotation={playerMetadata[playerID]?.deckHueRotation}
                       />
                     </div>
                     <div className="absolute top-0 left-0 h-full w-full">
                       <Card
-                        value={
-                          roomCtx.gameData.players[playerID]?.squeakDeck[0]!
-                            .value
-                        }
-                        suit={
-                          roomCtx.gameData.players[playerID]?.squeakDeck[0]!
-                            .suit
-                        }
+                        value={gameData.players[playerID]?.squeakDeck[0]!.value}
+                        suit={gameData.players[playerID]?.squeakDeck[0]!.suit}
                         showCardBack={true} // this would need to be changed halfway through card flip
                         draggable={false}
                         ownerID={playerID}
                         startID={`${playerID}squeakDeck`}
                         rotation={rotationOrder[idx] as number}
+                        hueRotation={playerMetadata[playerID]?.deckHueRotation}
                       />
                     </div>
                   </div>
@@ -102,7 +105,7 @@ function OtherPlayersCardContainers({
                   <button
                     style={{
                       boxShadow:
-                        roomCtx.playerIDWhoSqueaked === playerID
+                        playerIDWhoSqueaked === playerID
                           ? "0px 0px 20px 5px rgba(184,184,184,1)"
                           : "none",
                       transition: "box-shadow 0.85s ease-in-out",
@@ -115,53 +118,52 @@ function OtherPlayersCardContainers({
                 )}
               </div>
 
-              {roomCtx.gameData.players[playerID]?.squeakHand.map(
-                (cards, cardsIdx) => (
+              {gameData.players[playerID]?.squeakHand.map((cards, cardsIdx) => (
+                <div
+                  key={`${playerID}squeakStack${cardsIdx}`}
+                  id={`${playerID}squeakHand${cardsIdx}`}
+                  // @ts-expect-error asdf
+                  className={`${cardClassMap[cardsIdx]} relative h-[64px] w-[48px] lg:h-[72px] lg:w-[56px]`}
+                >
                   <div
-                    key={`${playerID}squeakStack${cardsIdx}`}
-                    id={`${playerID}squeakHand${cardsIdx}`}
-                    // @ts-expect-error asdf
-                    className={`${cardClassMap[cardsIdx]} relative h-[64px] w-[48px] lg:h-[72px] lg:w-[56px]`}
+                    style={{
+                      height:
+                        cards.length === 1 ? 72 : `${cards.length * 15 + 72}px`,
+                    }}
+                    className="absolute w-full"
                   >
-                    <div
-                      style={{
-                        height:
-                          cards.length === 1
-                            ? 72
-                            : `${cards.length * 15 + 72}px`,
-                      }}
-                      className="absolute w-full"
-                    >
-                      {cards.map((card, cardIdx) => (
-                        <div
-                          key={`${playerID}card${cardIdx}`} //${card.suit}${card.value}
-                          id={`${playerID}squeakStack${cardsIdx}${cardIdx}`}
-                          className={`absolute left-0 h-full w-full`}
-                          style={{
-                            top: `${cardIdx * 15}px`,
-                          }}
-                        >
-                          <Card
-                            value={card.value}
-                            suit={card.suit}
-                            draggable={false}
-                            origin={"squeak"}
-                            ownerID={playerID}
-                            startID={`${playerID}squeakStack${cardsIdx}${cardIdx}`}
-                            rotation={rotationOrder[idx] as number}
-                          />
-                        </div>
-                      ))}
-                    </div>
+                    {cards.map((card, cardIdx) => (
+                      <div
+                        key={`${playerID}card${cardIdx}`} //${card.suit}${card.value}
+                        id={`${playerID}squeakStack${cardsIdx}${cardIdx}`}
+                        className={`absolute left-0 h-full w-full`}
+                        style={{
+                          top: `${cardIdx * 15}px`,
+                        }}
+                      >
+                        <Card
+                          value={card.value}
+                          suit={card.suit}
+                          draggable={false}
+                          origin={"squeak"}
+                          ownerID={playerID}
+                          startID={`${playerID}squeakStack${cardsIdx}${cardIdx}`}
+                          rotation={rotationOrder[idx] as number}
+                          hueRotation={
+                            playerMetadata[playerID]?.deckHueRotation
+                          }
+                        />
+                      </div>
+                    ))}
                   </div>
-                )
-              )}
+                </div>
+              ))}
 
               <div
                 className={`${classes.playerDeck} z-[500] h-[64px] w-[48px] lg:h-[72px] lg:w-[56px]`}
               >
                 <div id={`${playerID}deck`} className="h-full w-full">
-                  {roomCtx.gameData?.players[playerID]?.nextTopCardInDeck ? (
+                  {gameData?.players[playerID]?.nextTopCardInDeck ? (
                     <div className="relative h-full w-full">
                       <div className="absolute top-0 left-0 h-full w-full">
                         <Card
@@ -170,23 +172,28 @@ function OtherPlayersCardContainers({
                           ownerID={playerID}
                           startID={`${playerID}deck`}
                           rotation={0}
+                          hueRotation={
+                            playerMetadata[playerID]?.deckHueRotation
+                          }
                         />
                       </div>
                       <div className="topBackFacingCardInDeck absolute top-0 left-0 h-full w-full">
                         <Card
                           value={
-                            roomCtx.gameData?.players[playerID]
-                              ?.nextTopCardInDeck?.value
+                            gameData?.players[playerID]?.nextTopCardInDeck
+                              ?.value
                           }
                           suit={
-                            roomCtx.gameData?.players[playerID]
-                              ?.nextTopCardInDeck?.suit
+                            gameData?.players[playerID]?.nextTopCardInDeck?.suit
                           }
                           showCardBack={true} // separate state inside overrides this halfway through flip
                           draggable={false}
                           ownerID={playerID}
                           startID={`${playerID}deck`}
                           rotation={0}
+                          hueRotation={
+                            playerMetadata[playerID]?.deckHueRotation
+                          }
                         />
                       </div>
                     </div>
@@ -202,6 +209,9 @@ function OtherPlayersCardContainers({
                           ownerID={playerID}
                           startID={`${playerID}deck`}
                           rotation={0}
+                          hueRotation={
+                            playerMetadata[playerID]?.deckHueRotation
+                          }
                         />
                       </div>
                     </div>
@@ -214,7 +224,7 @@ function OtherPlayersCardContainers({
                 className={`${classes.playerHand} relative h-[64px] w-[48px] select-none lg:h-[72px] lg:w-[56px]`}
               >
                 <>
-                  {roomCtx.gameData.players[playerID]?.topCardsInDeck.map(
+                  {gameData.players[playerID]?.topCardsInDeck.map(
                     (card, idx) =>
                       card !== null && ( // necessary?
                         <div
@@ -224,11 +234,11 @@ function OtherPlayersCardContainers({
                             top: `${-1 * (idx * 2)}px`,
                           }}
                           onMouseDown={() => {
-                            roomCtx.setHoldingADeckCard(true);
+                            setHoldingADeckCard(true);
                           }}
                           onMouseUp={() => {
-                            roomCtx.setHoldingADeckCard(false);
-                            roomCtx.setHoveredSqueakStack(null);
+                            setHoldingADeckCard(false);
+                            setHoveredSqueakStack(null);
                           }}
                         >
                           <Card
@@ -239,6 +249,9 @@ function OtherPlayersCardContainers({
                             ownerID={playerID}
                             startID={`${playerID}hand`}
                             rotation={0}
+                            hueRotation={
+                              playerMetadata[playerID]?.deckHueRotation
+                            }
                           />
                         </div>
                       )
@@ -249,14 +262,13 @@ function OtherPlayersCardContainers({
               <div className={classes.playerAvatar}>
                 <PlayerIcon
                   avatarPath={
-                    roomCtx.playerMetadata[playerID]?.avatarPath ||
+                    playerMetadata[playerID]?.avatarPath ||
                     "/avatars/rabbit.svg"
                   }
                   borderColor={
-                    roomCtx.playerMetadata[playerID]?.color ||
-                    "rgb(220, 55, 76)"
+                    playerMetadata[playerID]?.color || "rgb(220, 55, 76)"
                   }
-                  username={roomCtx.playerMetadata[playerID]?.username}
+                  username={playerMetadata[playerID]?.username}
                   size={"3rem"}
                 />
               </div>

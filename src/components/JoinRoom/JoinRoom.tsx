@@ -1,14 +1,23 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { trpc } from "../../utils/trpc";
 import { socket } from "../../pages";
 import { useRoomContext } from "../../context/RoomContext";
 import { useUserIDContext } from "../../context/UserIDContext";
-import { IRoomPlayer, type IGameMetadata } from "../../pages/api/socket";
+import { type IRoomPlayer, type IGameMetadata } from "../../pages/api/socket";
 import PickerTooltip from "../playerIcons/PickerTooltip";
 import PlayerIcon from "../playerIcons/PlayerIcon";
 
 function JoinRoom() {
-  const roomCtx = useRoomContext();
+  const {
+    roomConfig,
+    setRoomConfig,
+    playerMetadata,
+    setPlayerMetadata,
+    connectedToRoom,
+    setConnectedToRoom,
+    setGameData,
+    setPageToRender,
+  } = useRoomContext();
   const { value: userID } = useUserIDContext();
 
   const [username, setUsername] = useState<string>("");
@@ -23,11 +32,24 @@ function JoinRoom() {
   // maybe need to have roomCode be in some temp state, and then
   // when you click join room, then it updates the roomCode state -> triggers this query...
 
-  useEffect(() => {
-    if (configAndMetadataInitialized || !userID) return;
+  const joinRoom = useCallback(() => {
+    socket.emit("joinRoom", {
+      userID,
+      code: roomCode,
+      playerMetadata: {
+        ...playerMetadata[userID],
+        username: username,
+      },
+    });
+    // trpc update
+  }, [roomCode, username, userID, playerMetadata]);
 
-    roomCtx.setPlayerMetadata({
-      ...roomCtx.playerMetadata,
+  useEffect(() => {
+    console.log("setting player metadata", userID);
+    if (configAndMetadataInitialized) return;
+
+    setPlayerMetadata({
+      ...playerMetadata,
       [userID]: {
         username: "",
         avatarPath: "/avatars/rabbit.svg",
@@ -37,71 +59,63 @@ function JoinRoom() {
     });
 
     setConfigAndMetadataInitialized(true);
-  }, [roomCtx, userID, configAndMetadataInitialized]);
+  }, [
+    setPlayerMetadata,
+    setRoomConfig,
+    playerMetadata,
+    userID,
+    configAndMetadataInitialized,
+  ]);
 
   useEffect(() => {
     // rough way to check whether context data has been initialized
-    if (receivedRoomConfig && !roomCtx.connectedToRoom) {
-      roomCtx.setRoomConfig(receivedRoomConfig);
+    if (receivedRoomConfig && !connectedToRoom) {
+      setRoomConfig(receivedRoomConfig);
       setSubmittedRoomCode("");
       joinRoom();
-      roomCtx.setConnectedToRoom(true);
+      setConnectedToRoom(true);
     }
-  }, [roomCtx, receivedRoomConfig]);
+  }, [
+    connectedToRoom,
+    setConnectedToRoom,
+    joinRoom,
+    setRoomConfig,
+    receivedRoomConfig,
+  ]);
 
   useEffect(() => {
     socket.on("playerMetadataUpdated", (newUsers) =>
-      roomCtx.setPlayerMetadata(newUsers)
+      setPlayerMetadata(newUsers)
     );
 
-    socket.on("roomConfigUpdated", (roomConfig) =>
-      roomCtx.setRoomConfig(roomConfig)
-    );
+    socket.on("roomConfigUpdated", (roomConfig) => setRoomConfig(roomConfig));
 
     socket.on("navigateToPlayScreen", () => {
-      roomCtx.setGameData({} as IGameMetadata);
-      roomCtx.setPageToRender("play");
+      setGameData({} as IGameMetadata);
+      setPageToRender("play");
     });
 
     return () => {
       socket.off("playerMetadataUpdated", (newUsers) =>
-        roomCtx.setPlayerMetadata(newUsers)
+        setPlayerMetadata(newUsers)
       );
       socket.off("roomConfigUpdated", (roomConfig) =>
-        roomCtx.setRoomConfig(roomConfig)
+        setRoomConfig(roomConfig)
       );
       socket.off("navigateToPlayScreen", () => {
-        roomCtx.setGameData({} as IGameMetadata);
-        roomCtx.setPageToRender("play");
+        setGameData({} as IGameMetadata);
+        setPageToRender("play");
       });
     };
   }, []);
   // might need to add roomCtx to deps here
 
-  function checkRoomCode() {
-    setSubmittedRoomCode(roomCode);
-  }
-
-  function joinRoom() {
-    if (!userID) return;
-
-    socket.emit("joinRoom", {
-      userID,
-      code: roomCode,
-      playerMetadata: {
-        ...roomCtx.playerMetadata[userID],
-        username: username,
-      },
-    });
-    // trpc update
-  }
-
   return (
     <div className="baseVertFlex min-h-[100vh] gap-4 bg-green-700">
-      <button className="ml-0" onClick={() => roomCtx.setPageToRender("home")}>
+      <button className="ml-0" onClick={() => setPageToRender("home")}>
         Back to home
       </button>
-      {!roomCtx.connectedToRoom ? (
+      {!connectedToRoom ? (
         <>
           Join Room
           <div className="baseVertFlex gap-2">
@@ -134,7 +148,7 @@ function JoinRoom() {
 
             <button
               disabled={username.length === 0 || roomCode.length === 0}
-              onClick={() => checkRoomCode()}
+              onClick={() => setSubmittedRoomCode(roomCode)}
             >
               Join
             </button>
@@ -149,7 +163,7 @@ function JoinRoom() {
         </>
       ) : (
         <div className="baseVertFlex gap-4">
-          {`${Object.values(roomCtx.playerMetadata)[0]?.username}'s room`}
+          {`${Object.values(playerMetadata)[0]?.username}'s room`}
 
           <fieldset className="rounded-md border-2 border-white p-4">
             <legend className="pl-4 pr-4 text-left text-lg">
@@ -157,20 +171,20 @@ function JoinRoom() {
             </legend>
             <div className="grid grid-cols-2 grid-rows-5 gap-2 p-4">
               <div>Points to win:</div>
-              {roomCtx.roomConfig?.pointsToWin}
+              {roomConfig?.pointsToWin}
 
               <div>Max rounds:</div>
-              {roomCtx.roomConfig?.maxRounds}
+              {roomConfig?.maxRounds}
 
               <div>Max players:</div>
-              {roomCtx.roomConfig?.maxPlayers}
+              {roomConfig?.maxPlayers}
 
               <div>Room visibility:</div>
-              {roomCtx.roomConfig?.isPublic ? "Public" : "Private"}
+              {roomConfig?.isPublic ? "Public" : "Private"}
 
               <div>Room code:</div>
               <div className="baseFlex !justify-start gap-2">
-                {roomCtx.roomConfig?.code}
+                {roomConfig?.code}
                 <button>Copy</button>
               </div>
             </div>
@@ -178,22 +192,21 @@ function JoinRoom() {
 
           <fieldset className="rounded-md border-2 border-white p-4">
             <legend className="pl-4 pr-4 text-left text-lg">
-              {`Players ${roomCtx.roomConfig?.playersInRoom}/${roomCtx.roomConfig?.maxPlayers}`}
+              {`Players ${roomConfig?.playersInRoom}/${roomConfig?.maxPlayers}`}
             </legend>
             <div className="baseVertFlex gap-6 p-4">
               <div className="baseFlex gap-8">
-                {Object.keys(roomCtx.playerMetadata)?.map((playerID) => (
+                {Object.keys(playerMetadata)?.map((playerID) => (
                   <PlayerIcon
                     key={playerID}
                     avatarPath={
-                      roomCtx.playerMetadata[playerID]?.avatarPath ||
+                      playerMetadata[playerID]?.avatarPath ||
                       "/avatars/rabbit.svg"
                     }
                     borderColor={
-                      roomCtx.playerMetadata[playerID]?.color ||
-                      "rgb(220, 55, 76)"
+                      playerMetadata[playerID]?.color || "rgb(220, 55, 76)"
                     }
-                    username={roomCtx.playerMetadata[playerID]?.username}
+                    username={playerMetadata[playerID]?.username}
                     size={"3rem"}
                   />
                 ))}

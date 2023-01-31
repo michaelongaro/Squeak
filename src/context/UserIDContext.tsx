@@ -15,11 +15,14 @@ export function UserIDProvider(props: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (status === "unauthenticated") {
+      let userID: string;
       if (localStorage.getItem("userID") === null) {
-        const userID = cryptoRandomString({ length: 16 });
+        userID = cryptoRandomString({ length: 16 });
         localStorage.setItem("userID", userID);
-        setValue(userID);
+      } else {
+        userID = localStorage.getItem("userID") as string;
       }
+      setValue(userID);
     }
 
     if (status === "authenticated" && session.user) {

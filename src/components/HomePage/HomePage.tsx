@@ -7,13 +7,13 @@ import { useRoomContext } from "../../context/RoomContext";
 import LogIn from "../auth/LogIn";
 
 function HomePage() {
-  const roomCtx = useRoomContext();
+  const { connectedToRoom, pageToRender, setPageToRender } = useRoomContext();
   const [showTutorialModal, setShowTutorialModal] = useState<boolean>(false);
 
   return (
     // could make this into a card and have 2-3 diagonal-ish layered playing cards that are peeking out behind left and right sides of card
     <>
-      {roomCtx.pageToRender === "home" ? (
+      {pageToRender === "home" ? (
         <div className="baseVertFlex relative min-h-[100vh]  gap-8 bg-green-700">
           <div className="text-4xl sm:text-5xl">Squeak</div>
 
@@ -23,10 +23,10 @@ function HomePage() {
             <button onClick={() => setShowTutorialModal(true)}>
               How to play
             </button>
-            <button onClick={() => roomCtx.setPageToRender("createRoom")}>
+            <button onClick={() => setPageToRender("createRoom")}>
               Create room
             </button>
-            <button onClick={() => roomCtx.setPageToRender("joinRoom")}>
+            <button onClick={() => setPageToRender("joinRoom")}>
               Join room
             </button>
           </div>
@@ -44,11 +44,9 @@ function HomePage() {
         </div>
       ) : (
         <>
-          {roomCtx.pageToRender === "createRoom" && <CreateRoom />}
-          {roomCtx.pageToRender === "joinRoom" && <JoinRoom />}
-          {roomCtx.pageToRender === "play" && roomCtx.connectedToRoom && (
-            <Play />
-          )}
+          {pageToRender === "createRoom" && <CreateRoom />}
+          {pageToRender === "joinRoom" && <JoinRoom />}
+          {pageToRender === "play" && connectedToRoom && <Play />}
         </>
       )}
     </>

@@ -16,7 +16,7 @@ function useCardDrawFromDeck({
   ownerID,
   moveCard,
 }: IUseCardDrawFromDeck) {
-  const roomCtx = useRoomContext();
+  const { gameData, setGameData } = useRoomContext();
 
   const [dataFromBackend, setDataFromBackend] = useState<IDrawFromDeck | null>(
     null
@@ -45,8 +45,8 @@ function useCardDrawFromDeck({
       if (ownerID === playerID && currentTopCardInDeck === null) {
         console.log("next top card in deck was null");
 
-        roomCtx.setGameData({
-          ...roomCtx.gameData,
+        setGameData({
+          ...gameData,
           board: updatedBoard,
           players: updatedPlayerCards,
         });
@@ -75,15 +75,15 @@ function useCardDrawFromDeck({
         moveCard({ x: endX, y: endY }, true);
 
         setTimeout(() => {
-          roomCtx.setGameData({
-            ...roomCtx.gameData,
+          setGameData({
+            ...gameData,
             board: updatedBoard,
             players: updatedPlayerCards,
           });
         }, 250);
       }
     }
-  }, [dataFromBackend, moveCard, roomCtx, suit, ownerID, value]);
+  }, [dataFromBackend, moveCard, gameData, setGameData, suit, ownerID, value]);
 }
 
 export default useCardDrawFromDeck;

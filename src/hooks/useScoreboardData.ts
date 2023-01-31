@@ -4,7 +4,7 @@ import { socket } from "../pages";
 import { type IScoreboardMetadata } from "../pages/api/handlers/roundOverHandler";
 
 function useScoreboardData(): Partial<IScoreboardMetadata> | null {
-  const roomCtx = useRoomContext();
+  const { setGameData, roomConfig } = useRoomContext();
 
   const [dataFromBackend, setDataFromBackend] =
     useState<IScoreboardMetadata | null>(null);
@@ -33,16 +33,16 @@ function useScoreboardData(): Partial<IScoreboardMetadata> | null {
         playerRoundDetails,
       });
 
-      roomCtx.setGameData(gameData);
+      setGameData(gameData);
 
       setTimeout(() => {
         socket.emit("resetGame", {
-          roomCode: roomCtx.roomConfig.code,
+          roomCode: roomConfig.code,
           gameIsFinished: gameWinnerID !== null,
         });
       }, 15000);
     }
-  }, [dataFromBackend, roomCtx]);
+  }, [dataFromBackend, roomConfig, setGameData]);
 
   return scoreboardData;
 }

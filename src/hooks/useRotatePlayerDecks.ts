@@ -4,7 +4,7 @@ import { socket } from "../pages";
 import { type IGameMetadata } from "./../pages/api/socket";
 
 function useRotatePlayerDecks() {
-  const roomCtx = useRoomContext();
+  const { setGameData, setDecksAreBeingRotated } = useRoomContext();
 
   const [dataFromBackend, setDataFromBackend] = useState<IGameMetadata | null>(
     null
@@ -22,14 +22,14 @@ function useRotatePlayerDecks() {
     if (dataFromBackend !== null) {
       setDataFromBackend(null);
 
-      roomCtx.setGameData(dataFromBackend);
-      roomCtx.setDecksAreBeingRotated(true);
+      setGameData(dataFromBackend);
+      setDecksAreBeingRotated(true);
 
       setTimeout(() => {
-        roomCtx.setDecksAreBeingRotated(false);
+        setDecksAreBeingRotated(false);
       }, 1000);
     }
-  }, [dataFromBackend, roomCtx]);
+  }, [dataFromBackend, setGameData, setDecksAreBeingRotated]);
 }
 
 export default useRotatePlayerDecks;

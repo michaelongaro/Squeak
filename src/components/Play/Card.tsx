@@ -39,7 +39,23 @@ function Card({
   squeakStackLocation,
   hueRotation,
 }: ICardComponent) {
-  const roomCtx = useRoomContext();
+  const {
+    gameData,
+    roomConfig,
+    playerMetadata,
+    hoveredCell,
+    holdingADeckCard,
+    holdingASqueakCard,
+    hoveredSqueakStack,
+    originIndexForHeldSqueakCard,
+    resetHeldSqueakStackLocation,
+    heldSqueakStackLocation,
+    setResetHeldSqueakStackLocation,
+    setProposedCardBoxShadow,
+    setHeldSqueakStackLocation,
+    setHoldingADeckCard,
+    setHoldingASqueakCard,
+  } = useRoomContext();
   const { value: userID } = useUserIDContext();
 
   const [cardOffsetPosition, setCardOffsetPosition] = useState({ x: 0, y: 0 });
@@ -59,30 +75,30 @@ function Card({
       cardRef.current.style.zIndex = "1000"; // make sure card is on top while moving over other cards
 
       if (x === 0 && y === 0) {
-        if (roomCtx.hoveredCell) {
-          roomCtx.setProposedCardBoxShadow({
-            id: `cell${roomCtx.hoveredCell[0]}${roomCtx.hoveredCell[1]}`,
+        if (hoveredCell) {
+          setProposedCardBoxShadow({
+            id: `cell${hoveredCell[0]}${hoveredCell[1]}`,
             boxShadowValue: `0px 0px 10px 5px rgba(227, 12, 5, 1)`,
           });
 
           setTimeout(() => {
-            roomCtx.setProposedCardBoxShadow(null);
+            setProposedCardBoxShadow(null);
           }, 250);
-        } else if (roomCtx.hoveredSqueakStack !== null) {
-          roomCtx.setProposedCardBoxShadow({
-            id: `${userID}squeakHand${roomCtx.hoveredSqueakStack}`,
+        } else if (hoveredSqueakStack !== null) {
+          setProposedCardBoxShadow({
+            id: `${userID}squeakHand${hoveredSqueakStack}`,
             boxShadowValue: `0px 0px 10px 5px rgba(227, 12, 5, 1)`,
           });
 
           setTimeout(() => {
-            roomCtx.setProposedCardBoxShadow(null);
+            setProposedCardBoxShadow(null);
           }, 250);
         }
 
         setCardOffsetPosition({ x, y });
 
         if (squeakStackLocation) {
-          roomCtx.setHeldSqueakStackLocation({
+          setHeldSqueakStackLocation({
             squeakStack: squeakStackLocation,
             location: { x: 0, y: 0 },
           });
@@ -108,7 +124,7 @@ function Card({
         });
 
         if (squeakStackLocation) {
-          roomCtx.setHeldSqueakStackLocation({
+          setHeldSqueakStackLocation({
             squeakStack: squeakStackLocation,
             location: { x: endXCoordinate, y: endYCoordinate },
           });
@@ -145,12 +161,24 @@ function Card({
       }, 250);
 
       if (origin === "deck") {
-        roomCtx.setHoldingADeckCard(false);
+        setHoldingADeckCard(false);
       } else if (origin === "squeak") {
-        roomCtx.setHoldingASqueakCard(false);
+        setHoldingASqueakCard(false);
       }
     },
-    [origin, roomCtx, squeakStackLocation, rotation, startID, userID]
+    [
+      origin,
+      squeakStackLocation,
+      rotation,
+      startID,
+      userID,
+      hoveredCell,
+      hoveredSqueakStack,
+      setHeldSqueakStackLocation,
+      setHoldingADeckCard,
+      setHoldingASqueakCard,
+      setProposedCardBoxShadow,
+    ]
   );
 
   // hooks to handle socket emits from server
@@ -186,10 +214,10 @@ function Card({
 
   function dropHandler() {
     // deck start + board end
-    if (roomCtx.holdingADeckCard && roomCtx.hoveredCell && value && suit) {
-      const [row, col] = roomCtx.hoveredCell;
+    if (holdingADeckCard && hoveredCell && value && suit) {
+      const [row, col] = hoveredCell;
 
-      const boardCell = roomCtx.gameData?.board?.[row]?.[col] || null;
+      const boardCell = gameData?.board?.[row]?.[col] || null;
 
       if (cardPlacementIsValid(boardCell, value, suit, true)) {
         socket.emit("proposedCardDrop", {
@@ -200,7 +228,7 @@ function Card({
           deckStart: true,
           boardEndLocation: { row, col },
           playerID: userID,
-          roomCode: roomCtx.roomConfig.code,
+          roomCode: roomConfig.code,
         });
       } else {
         moveCard({ x: 0, y: 0 }, false);
@@ -208,17 +236,11 @@ function Card({
     }
 
     // deck start + squeak end
-    else if (
-      roomCtx.holdingADeckCard &&
-      roomCtx.hoveredSqueakStack !== null &&
-      value &&
-      suit
-    ) {
-      const idx = roomCtx.hoveredSqueakStack;
+    else if (holdingADeckCard && hoveredSqueakStack !== null && value && suit) {
+      const idx = hoveredSqueakStack;
 
       const bottomSqueakStackCard =
-        roomCtx.gameData?.players?.[userID!]?.squeakHand?.[idx]?.slice(-1)[0] ||
-        null;
+        gameData?.players?.[userID!]?.squeakHand?.[idx]?.slice(-1)[0] || null;
 
       if (cardPlacementIsValid(bottomSqueakStackCard, value, suit, false)) {
         socket.emit("proposedCardDrop", {
@@ -229,7 +251,7 @@ function Card({
           deckStart: true,
           squeakEndLocation: idx,
           playerID: userID,
-          roomCode: roomCtx.roomConfig.code,
+          roomCode: roomConfig.code,
         });
       } else {
         moveCard({ x: 0, y: 0 }, false);
@@ -238,15 +260,15 @@ function Card({
 
     // squeak start + board end
     else if (
-      roomCtx.holdingASqueakCard &&
-      roomCtx.hoveredCell &&
-      roomCtx.originIndexForHeldSqueakCard !== null &&
+      holdingASqueakCard &&
+      hoveredCell &&
+      originIndexForHeldSqueakCard !== null &&
       value &&
       suit
     ) {
-      const [row, col] = roomCtx.hoveredCell;
+      const [row, col] = hoveredCell;
 
-      const boardCell = roomCtx.gameData?.board?.[row]?.[col] || null;
+      const boardCell = gameData?.board?.[row]?.[col] || null;
 
       if (cardPlacementIsValid(boardCell, value, suit, true)) {
         socket.emit("proposedCardDrop", {
@@ -254,10 +276,10 @@ function Card({
             value,
             suit,
           },
-          squeakStartLocation: roomCtx.originIndexForHeldSqueakCard,
+          squeakStartLocation: originIndexForHeldSqueakCard,
           boardEndLocation: { row, col },
           playerID: userID,
-          roomCode: roomCtx.roomConfig.code,
+          roomCode: roomConfig.code,
         });
       } else {
         moveCard({ x: 0, y: 0 }, false);
@@ -267,17 +289,16 @@ function Card({
     // squeak start + squeak end (I guess you should have a check to make sure you aren't trying to drop a card
     // on the same stack it came from)
     else if (
-      roomCtx.holdingASqueakCard &&
-      roomCtx.hoveredSqueakStack !== null &&
-      roomCtx.originIndexForHeldSqueakCard !== null &&
+      holdingASqueakCard &&
+      hoveredSqueakStack !== null &&
+      originIndexForHeldSqueakCard !== null &&
       value &&
       suit
     ) {
-      const idx = roomCtx.hoveredSqueakStack;
+      const idx = hoveredSqueakStack;
 
       const parentSqueakStackCard =
-        roomCtx.gameData?.players?.[userID!]?.squeakHand?.[idx]?.slice(-1)[0] ||
-        null;
+        gameData?.players?.[userID!]?.squeakHand?.[idx]?.slice(-1)[0] || null;
 
       if (cardPlacementIsValid(parentSqueakStackCard, value, suit, false)) {
         socket.emit("proposedCardDrop", {
@@ -285,10 +306,10 @@ function Card({
             value,
             suit,
           },
-          squeakStartLocation: roomCtx.originIndexForHeldSqueakCard,
-          squeakEndLocation: roomCtx.hoveredSqueakStack,
+          squeakStartLocation: originIndexForHeldSqueakCard,
+          squeakEndLocation: hoveredSqueakStack,
           playerID: userID,
-          roomCode: roomCtx.roomConfig.code,
+          roomCode: roomConfig.code,
         });
       } else {
         moveCard({ x: 0, y: 0 }, false);
@@ -304,14 +325,14 @@ function Card({
   useEffect(() => {
     if (
       squeakStackLocation &&
-      roomCtx.resetHeldSqueakStackLocation &&
-      roomCtx.resetHeldSqueakStackLocation[0] === squeakStackLocation[0] &&
-      roomCtx.resetHeldSqueakStackLocation[1] < squeakStackLocation[1]
+      resetHeldSqueakStackLocation &&
+      resetHeldSqueakStackLocation[0] === squeakStackLocation[0] &&
+      resetHeldSqueakStackLocation[1] < squeakStackLocation[1]
     ) {
       moveCard({ x: 0, y: 0 }, false);
-      roomCtx.setResetHeldSqueakStackLocation(null);
+      setResetHeldSqueakStackLocation(null);
     }
-  }, [squeakStackLocation, roomCtx.resetHeldSqueakStackLocation, moveCard]);
+  }, [squeakStackLocation, resetHeldSqueakStackLocation, moveCard]);
 
   function dragHandler(e: DraggableEvent, data: DraggableData) {
     const { x, y } = cardOffsetPosition;
@@ -321,7 +342,7 @@ function Card({
     });
 
     if (squeakStackLocation) {
-      roomCtx.setHeldSqueakStackLocation({
+      setHeldSqueakStackLocation({
         squeakStack: squeakStackLocation,
         location: {
           x: x + data.deltaX,
@@ -340,12 +361,10 @@ function Card({
           position={
             // TODO: extract this to a state w/ an effect listener and/or refactor this
             squeakStackLocation &&
-            roomCtx.heldSqueakStackLocation &&
-            roomCtx.heldSqueakStackLocation.squeakStack[0] ===
-              squeakStackLocation[0] &&
-            roomCtx.heldSqueakStackLocation.squeakStack[1] <
-              squeakStackLocation[1]
-              ? roomCtx.heldSqueakStackLocation.location
+            heldSqueakStackLocation &&
+            heldSqueakStackLocation.squeakStack[0] === squeakStackLocation[0] &&
+            heldSqueakStackLocation.squeakStack[1] < squeakStackLocation[1]
+              ? heldSqueakStackLocation.location
               : cardOffsetPosition
           }
           onStop={() => dropHandler()}
@@ -364,8 +383,7 @@ function Card({
                     ? `hue-rotate(${
                         hueRotation !== undefined
                           ? hueRotation
-                          : roomCtx.playerMetadata[userID]?.deckHueRotation ||
-                            "0deg"
+                          : playerMetadata[userID]?.deckHueRotation || "0deg"
                       }deg)`
                     : "",
               }}

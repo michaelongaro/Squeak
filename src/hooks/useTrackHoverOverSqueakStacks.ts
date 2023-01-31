@@ -3,7 +3,8 @@ import { useUserIDContext } from "../context/UserIDContext";
 import { useRoomContext } from "../context/RoomContext";
 
 function useTrackHoverOverSqueakStacks() {
-  const roomCtx = useRoomContext();
+  const { originIndexForHeldSqueakCard, setHoveredSqueakStack } =
+    useRoomContext();
   const { value: userID } = useUserIDContext();
 
   useEffect(() => {
@@ -32,35 +33,35 @@ function useTrackHoverOverSqueakStacks() {
           e.clientX < squeakHand0.right &&
           e.clientY > squeakHand0.top &&
           e.clientY < squeakHand0.bottom &&
-          roomCtx.originIndexForHeldSqueakCard !== 0
+          originIndexForHeldSqueakCard !== 0
         ) {
-          roomCtx.setHoveredSqueakStack(0);
+          setHoveredSqueakStack(0);
         } else if (
           e.clientX > squeakHand1.left &&
           e.clientX < squeakHand1.right &&
           e.clientY > squeakHand1.top &&
           e.clientY < squeakHand1.bottom &&
-          roomCtx.originIndexForHeldSqueakCard !== 1
+          originIndexForHeldSqueakCard !== 1
         ) {
-          roomCtx.setHoveredSqueakStack(1);
+          setHoveredSqueakStack(1);
         } else if (
           e.clientX > squeakHand2.left &&
           e.clientX < squeakHand2.right &&
           e.clientY > squeakHand2.top &&
           e.clientY < squeakHand2.bottom &&
-          roomCtx.originIndexForHeldSqueakCard !== 2
+          originIndexForHeldSqueakCard !== 2
         ) {
-          roomCtx.setHoveredSqueakStack(2);
+          setHoveredSqueakStack(2);
         } else if (
           e.clientX > squeakHand3.left &&
           e.clientX < squeakHand3.right &&
           e.clientY > squeakHand3.top &&
           e.clientY < squeakHand3.bottom &&
-          roomCtx.originIndexForHeldSqueakCard !== 3
+          originIndexForHeldSqueakCard !== 3
         ) {
-          roomCtx.setHoveredSqueakStack(3);
+          setHoveredSqueakStack(3);
         } else {
-          roomCtx.setHoveredSqueakStack(null);
+          setHoveredSqueakStack(null);
         }
       }
     }
@@ -70,7 +71,7 @@ function useTrackHoverOverSqueakStacks() {
     return () => {
       window.removeEventListener("mousemove", mouseHandler);
     };
-  }, [roomCtx, userID]);
+  }, [originIndexForHeldSqueakCard, setHoveredSqueakStack, userID]);
 }
 
 export default useTrackHoverOverSqueakStacks;

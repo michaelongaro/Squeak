@@ -22,7 +22,21 @@ const cardClassMap = {
 };
 
 function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
-  const roomCtx = useRoomContext();
+  const {
+    gameData,
+    roomConfig,
+    holdingASqueakCard,
+    hoveredSqueakStack,
+    holdingADeckCard,
+    playerIDWhoSqueaked,
+    proposedCardBoxShadow,
+    originIndexForHeldSqueakCard,
+    setHoldingADeckCard,
+    setOriginIndexForHeldSqueakCard,
+    setHoldingASqueakCard,
+    setResetHeldSqueakStackLocation,
+    setHoveredSqueakStack,
+  } = useRoomContext();
   const { value: userID } = useUserIDContext();
 
   const [hoveringOverDeck, setHoveringOverDeck] = useState(false);
@@ -34,15 +48,14 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
     id,
     squeakStackIdx,
   }: IGetBoxShadowStyles): string {
-    if (roomCtx.holdingADeckCard || roomCtx.holdingASqueakCard) {
+    if (holdingADeckCard || holdingASqueakCard) {
       return `0px 0px 10px ${
-        roomCtx.hoveredSqueakStack &&
-        roomCtx.hoveredSqueakStack === squeakStackIdx
+        hoveredSqueakStack && hoveredSqueakStack === squeakStackIdx
           ? "5px"
           : "3px"
       } rgba(184,184,184,1)`;
-    } else if (roomCtx.proposedCardBoxShadow?.id === id) {
-      return roomCtx.proposedCardBoxShadow.boxShadowValue;
+    } else if (proposedCardBoxShadow?.id === id) {
+      return proposedCardBoxShadow.boxShadowValue;
     }
 
     return "none";
@@ -56,7 +69,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
             id={`${userID}squeakDeck`}
             className={`${classes.squeakDeck} h-full w-full`}
           >
-            {roomCtx.gameData.players[userID]!.squeakDeck.length > 0 ? (
+            {gameData.players[userID]!.squeakDeck.length > 0 ? (
               <div className="relative h-full w-full">
                 <div className="absolute top-0 left-0 h-full w-full">
                   <Card
@@ -69,10 +82,8 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                 </div>
                 <div className="absolute top-0 left-0 h-full w-full">
                   <Card
-                    value={
-                      roomCtx.gameData.players[userID]!.squeakDeck[0]!.value
-                    }
-                    suit={roomCtx.gameData.players[userID]!.squeakDeck[0]!.suit}
+                    value={gameData.players[userID]!.squeakDeck[0]!.value}
+                    suit={gameData.players[userID]!.squeakDeck[0]!.suit}
                     showCardBack={true} // separate state inside overrides this halfway through flip
                     draggable={false}
                     ownerID={userID}
@@ -85,7 +96,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
               <button
                 style={{
                   boxShadow:
-                    roomCtx.playerIDWhoSqueaked === userID
+                    playerIDWhoSqueaked === userID
                       ? "0px 0px 20px 5px rgba(184,184,184,1)"
                       : "none",
                   transition: "box-shadow 0.85s ease-in-out",
@@ -93,7 +104,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                 className="bg-green-300 p-4 transition-colors hover:bg-green-200"
                 onClick={() => {
                   socket.emit("roundOver", {
-                    roomID: roomCtx.roomConfig.code,
+                    roomID: roomConfig.code,
                     winner: userID,
                   });
                 }}
@@ -103,72 +114,67 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
             )}
           </div>
 
-          {roomCtx.gameData?.players[userID]?.squeakHand.map(
-            (cards, cardsIdx) => (
+          {gameData?.players[userID]?.squeakHand.map((cards, cardsIdx) => (
+            <div
+              key={`${userID}card${cardsIdx}`}
+              id={`${userID}squeakHand${cardsIdx}`}
+              // @ts-expect-error asdf
+              className={`${cardClassMap[cardsIdx]} relative h-full w-full`}
+            >
               <div
-                key={`${userID}card${cardsIdx}`}
-                id={`${userID}squeakHand${cardsIdx}`}
-                // @ts-expect-error asdf
-                className={`${cardClassMap[cardsIdx]} relative h-full w-full`}
+                style={{
+                  boxShadow: getBoxShadowStyles({
+                    id: `${userID}squeakHand${cardsIdx}`,
+                    squeakStackIdx: -1,
+                  }),
+                  opacity:
+                    hoveredSqueakStack === cardsIdx &&
+                    (holdingADeckCard || holdingASqueakCard)
+                      ? 0.35 // worst case you leave it like this (was prev 0.75)
+                      : 1,
+                  height:
+                    cards.length === 1 ? 72 : `${cards.length * 15 + 72}px`,
+                }}
+                className="absolute w-full rounded-lg transition-all"
               >
-                <div
-                  style={{
-                    boxShadow: getBoxShadowStyles({
-                      id: `${userID}squeakHand${cardsIdx}`,
-                      squeakStackIdx: -1,
-                    }),
-                    opacity:
-                      roomCtx.hoveredSqueakStack === cardsIdx &&
-                      (roomCtx.holdingADeckCard || roomCtx.holdingASqueakCard)
-                        ? 0.35 // worst case you leave it like this (was prev 0.75)
-                        : 1,
-                    height:
-                      cards.length === 1 ? 72 : `${cards.length * 15 + 72}px`,
-                  }}
-                  className="absolute w-full rounded-lg transition-all"
-                >
-                  {cards.map((card, cardIdx) => (
-                    <div
-                      key={`${userID}card${cardIdx}`}
-                      id={`${userID}squeakStack${cardsIdx}${cardIdx}`}
-                      className={`absolute left-0 h-full w-full`}
-                      style={{
-                        zIndex:
-                          roomCtx.originIndexForHeldSqueakCard === cardsIdx
-                            ? 501
-                            : "auto",
-                        top: `${cardIdx * 15}px`,
-                      }}
-                      onMouseDown={() => {
-                        roomCtx.setOriginIndexForHeldSqueakCard(cardsIdx);
-                        roomCtx.setHoldingASqueakCard(true);
-                        roomCtx.setHoveredSqueakStack(null);
-                      }}
-                      onMouseUp={() => {
-                        roomCtx.setHoldingASqueakCard(false);
-                        roomCtx.setOriginIndexForHeldSqueakCard(null);
-                        roomCtx.setResetHeldSqueakStackLocation([
-                          cardsIdx,
-                          cardIdx,
-                        ]);
-                      }}
-                    >
-                      <Card
-                        value={card.value}
-                        suit={card.suit}
-                        draggable={true}
-                        origin={"squeak"}
-                        squeakStackLocation={[cardsIdx, cardIdx]}
-                        ownerID={userID}
-                        startID={`${userID}squeakStack${cardsIdx}${cardIdx}`}
-                        rotation={0}
-                      />
-                    </div>
-                  ))}
-                </div>
+                {cards.map((card, cardIdx) => (
+                  <div
+                    key={`${userID}card${cardIdx}`}
+                    id={`${userID}squeakStack${cardsIdx}${cardIdx}`}
+                    className={`absolute left-0 h-full w-full`}
+                    style={{
+                      zIndex:
+                        originIndexForHeldSqueakCard === cardsIdx
+                          ? 501
+                          : "auto",
+                      top: `${cardIdx * 15}px`,
+                    }}
+                    onMouseDown={() => {
+                      setOriginIndexForHeldSqueakCard(cardsIdx);
+                      setHoldingASqueakCard(true);
+                      setHoveredSqueakStack(null);
+                    }}
+                    onMouseUp={() => {
+                      setHoldingASqueakCard(false);
+                      setOriginIndexForHeldSqueakCard(null);
+                      setResetHeldSqueakStackLocation([cardsIdx, cardIdx]);
+                    }}
+                  >
+                    <Card
+                      value={card.value}
+                      suit={card.suit}
+                      draggable={true}
+                      origin={"squeak"}
+                      squeakStackLocation={[cardsIdx, cardIdx]}
+                      ownerID={userID}
+                      startID={`${userID}squeakStack${cardsIdx}${cardIdx}`}
+                      rotation={0}
+                    />
+                  </div>
+                ))}
               </div>
-            )
-          )}
+            </div>
+          ))}
 
           <div
             className={`${classes.playerDeck} z-[500] h-[64px] w-[48px] lg:h-[72px] lg:w-[56px]`}
@@ -177,7 +183,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
               id={`${userID}deck`}
               style={{
                 boxShadow:
-                  hoveringOverDeck && !roomCtx.holdingADeckCard
+                  hoveringOverDeck && !holdingADeckCard
                     ? "0px 0px 10px 3px rgba(184,184,184,1)"
                     : "none",
               }}
@@ -191,11 +197,11 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
               onClick={() => {
                 socket.emit("playerDrawFromDeck", {
                   playerID: userID,
-                  roomCode: roomCtx.roomConfig.code,
+                  roomCode: roomConfig.code,
                 });
               }}
             >
-              {roomCtx.gameData?.players[userID]?.nextTopCardInDeck ? (
+              {gameData?.players[userID]?.nextTopCardInDeck ? (
                 <div className="relative h-full w-full">
                   <div className="absolute top-0 left-0 h-full w-full">
                     <Card
@@ -209,13 +215,9 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                   <div className="topBackFacingCardInDeck absolute top-0 left-0 h-full w-full">
                     <Card
                       value={
-                        roomCtx.gameData?.players[userID]?.nextTopCardInDeck
-                          ?.value
+                        gameData?.players[userID]?.nextTopCardInDeck?.value
                       }
-                      suit={
-                        roomCtx.gameData?.players[userID]?.nextTopCardInDeck
-                          ?.suit
-                      }
+                      suit={gameData?.players[userID]?.nextTopCardInDeck?.suit}
                       showCardBack={true} // separate state inside overrides this halfway through flip
                       draggable={false}
                       ownerID={userID}
@@ -248,7 +250,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
             className={`${classes.playerHand} relative h-[64px] w-[48px] select-none lg:h-[72px] lg:w-[56px]`}
           >
             <>
-              {roomCtx.gameData.players[userID]?.topCardsInDeck.map(
+              {gameData.players[userID]?.topCardsInDeck.map(
                 (card, idx) =>
                   card !== null && ( // necessary?
                     <div
@@ -258,11 +260,11 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                         top: `${-1 * (idx * 2)}px`,
                       }}
                       onMouseDown={() => {
-                        roomCtx.setHoldingADeckCard(true);
+                        setHoldingADeckCard(true);
                       }}
                       onMouseUp={() => {
-                        roomCtx.setHoldingADeckCard(false);
-                        roomCtx.setHoveredSqueakStack(null);
+                        setHoldingADeckCard(false);
+                        setHoveredSqueakStack(null);
                       }}
                     >
                       <Card

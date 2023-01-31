@@ -21,7 +21,8 @@ interface IPickerTooltip {
 }
 
 function PickerTooltip({ type }: IPickerTooltip) {
-  const roomCtx = useRoomContext();
+  const { playerMetadata, connectedToRoom, roomConfig, setPlayerMetadata } =
+    useRoomContext();
 
   const { value: userID } = useUserIDContext();
 
@@ -38,8 +39,7 @@ function PickerTooltip({ type }: IPickerTooltip) {
   useOnClickOutside({ ref: tooltipRef, setShowModal: setShowTooltip });
 
   useEffect(() => {
-    if (!userID) return;
-    const userMetadata = roomCtx.playerMetadata[userID];
+    const userMetadata = playerMetadata[userID];
 
     if (!userMetadata) return;
 
@@ -53,7 +53,7 @@ function PickerTooltip({ type }: IPickerTooltip) {
 
     setUserAvatarIndex(avatarIndex);
     setUserDeckIndex(deckIndex);
-  }, [roomCtx.playerMetadata, userID]);
+  }, [playerMetadata, userID]);
 
   function isTooltipOptionAvailable(
     type: "avatar" | "color",
@@ -62,7 +62,7 @@ function PickerTooltip({ type }: IPickerTooltip) {
     if (type === "avatar") {
       return (
         index !== userAvatarIndex &&
-        Object.values(roomCtx.playerMetadata).every(
+        Object.values(playerMetadata).every(
           (metadata) => metadata.avatarPath !== avatarPaths[index]
         )
       );
@@ -70,7 +70,7 @@ function PickerTooltip({ type }: IPickerTooltip) {
 
     return (
       index !== userDeckIndex &&
-      Object.values(roomCtx.playerMetadata).every(
+      Object.values(playerMetadata).every(
         (metadata) => metadata.deckHueRotation !== deckHueRotations[index]
       )
     );
@@ -97,25 +97,25 @@ function PickerTooltip({ type }: IPickerTooltip) {
     type: "avatar" | "color"
   ): string {
     if (type === "avatar") {
-      const playersMetadata = Object.values(roomCtx.playerMetadata);
+      const playersMetadata = Object.values(playerMetadata);
 
-      const playerMetadata = playersMetadata.find(
+      const playerWithAttribute = playersMetadata.find(
         (metadata) => metadata.avatarPath === attribute
       );
 
-      if (!playerMetadata) return "";
+      if (!playerWithAttribute) return "";
 
-      return playerMetadata.color;
+      return playerWithAttribute.color;
     } else {
-      const playersMetadata = Object.values(roomCtx.playerMetadata);
+      const playersMetadata = Object.values(playerMetadata);
 
-      const playerMetadata = playersMetadata.find(
+      const playerWithAttribute = playersMetadata.find(
         (metadata) => metadata.color === attribute
       );
 
-      if (!playerMetadata) return "";
+      if (!playerWithAttribute) return "";
 
-      return playerMetadata.avatarPath;
+      return playerWithAttribute.avatarPath;
     }
   }
 
@@ -160,19 +160,19 @@ function PickerTooltip({ type }: IPickerTooltip) {
                     onMouseLeave={() => setHoveredTooltip(null)}
                     onClick={() => {
                       // if user is connected to room
-                      if (roomCtx.connectedToRoom) {
+                      if (connectedToRoom) {
                         socket.emit("updatePlayerMetadata", {
                           newPlayerMetadata: {
-                            ...roomCtx.playerMetadata[userID],
+                            ...playerMetadata[userID],
                             avatarPath,
                           },
                           playerID: userID,
-                          roomCode: roomCtx.roomConfig.code,
+                          roomCode: roomConfig.code,
                         } as IUpdatePlayerMetadata);
                       }
                       // if user is not connected to room
                       else {
-                        roomCtx.setPlayerMetadata((prev) => ({
+                        setPlayerMetadata((prev) => ({
                           ...prev,
                           [userID]: {
                             ...prev[userID],
@@ -211,7 +211,7 @@ function PickerTooltip({ type }: IPickerTooltip) {
                           ? "pointer"
                           : "auto",
                       pointerEvents:
-                        showTooltip && isTooltipOptionAvailable("avatar", index)
+                        showTooltip && isTooltipOptionAvailable("color", index)
                           ? "auto"
                           : "none",
                     }}
@@ -220,10 +220,10 @@ function PickerTooltip({ type }: IPickerTooltip) {
                     onMouseLeave={() => setHoveredTooltip(null)}
                     onClick={() => {
                       // if user is connected to room
-                      if (roomCtx.connectedToRoom) {
+                      if (connectedToRoom) {
                         socket.emit("updatePlayerMetadata", {
                           newPlayerMetadata: {
-                            ...roomCtx.playerMetadata[userID],
+                            ...playerMetadata[userID],
                             deckHueRotation:
                               rgbToDeckHueRotations[
                                 color as keyof typeof rgbToDeckHueRotations // seems hacky
@@ -231,12 +231,12 @@ function PickerTooltip({ type }: IPickerTooltip) {
                             color,
                           },
                           playerID: userID,
-                          roomCode: roomCtx.roomConfig.code,
+                          roomCode: roomConfig.code,
                         } as IUpdatePlayerMetadata);
                       }
                       // if user is not connected to room
                       else {
-                        roomCtx.setPlayerMetadata((prev) => ({
+                        setPlayerMetadata((prev) => ({
                           ...prev,
                           [userID]: {
                             ...prev[userID],
@@ -278,7 +278,7 @@ function PickerTooltip({ type }: IPickerTooltip) {
           </div>
 
           {/* preview */}
-          {roomCtx.playerMetadata && (
+          {playerMetadata && (
             <div
               className="cursor-pointer"
               onClick={() => setShowTooltip(true)}
@@ -286,11 +286,10 @@ function PickerTooltip({ type }: IPickerTooltip) {
               {type === "avatar" ? (
                 <PlayerIcon
                   avatarPath={
-                    roomCtx.playerMetadata[userID]?.avatarPath ||
-                    "/avatars/rabbit.svg"
+                    playerMetadata[userID]?.avatarPath || "/avatars/rabbit.svg"
                   }
                   borderColor={
-                    roomCtx.playerMetadata[userID]?.color || "rgb(220, 55, 76)"
+                    playerMetadata[userID]?.color || "rgb(220, 55, 76)"
                   }
                   size="3rem"
                 />
@@ -300,9 +299,7 @@ function PickerTooltip({ type }: IPickerTooltip) {
                   rotation={0}
                   showCardBack={true}
                   ownerID={userID}
-                  hueRotation={
-                    roomCtx.playerMetadata[userID]?.deckHueRotation || 0
-                  }
+                  hueRotation={playerMetadata[userID]?.deckHueRotation || 0}
                 />
               )}
             </div>

@@ -20,7 +20,6 @@ export interface IRoomConfig {
 }
 
 function CreateRoom() {
-  const roomCtx = useRoomContext();
   const {
     roomConfig,
     setRoomConfig,
@@ -68,7 +67,13 @@ function CreateRoom() {
 
       setConfigAndMetadataInitialized(true);
     }
-  }, [roomCtx, userID, configAndMetadataInitialized]);
+  }, [
+    playerMetadata,
+    setPlayerMetadata,
+    setRoomConfig,
+    userID,
+    configAndMetadataInitialized,
+  ]);
 
   useEffect(() => {
     socket.on("roomWasCreated", () => setConnectedToRoom(true)); // have loading dots while this is waiting?

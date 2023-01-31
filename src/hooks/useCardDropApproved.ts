@@ -40,7 +40,7 @@ function useCardDropApproved({
   setCardOffsetPosition,
   setCardHasBeenPlaced,
 }: IUseCardDropApproved) {
-  const roomCtx = useRoomContext();
+  const { gameData, setGameData, setProposedCardBoxShadow } = useRoomContext();
 
   const [dataFromBackend, setDataFromBackend] =
     useState<ICardDropAccepted | null>(null);
@@ -113,21 +113,21 @@ function useCardDropApproved({
           moveCard({ x: endX, y: endY }, false);
 
           if (playerID === userID) {
-            roomCtx.setProposedCardBoxShadow({
+            setProposedCardBoxShadow({
               id: endID,
               boxShadowValue: `0px 0px 10px 5px rgba(29, 232, 7, 1)`,
             });
           }
 
           setTimeout(() => {
-            roomCtx.setGameData({
-              ...roomCtx.gameData,
-              board: updatedBoard || roomCtx.gameData?.board,
-              players: updatedPlayerCards || roomCtx.gameData?.players,
+            setGameData({
+              ...gameData,
+              board: updatedBoard || gameData?.board,
+              players: updatedPlayerCards || gameData?.players,
             });
 
             if (playerID === userID) {
-              roomCtx.setProposedCardBoxShadow(null);
+              setProposedCardBoxShadow(null);
             }
 
             if (ownerID !== userID && origin === "deck") {
@@ -142,7 +142,9 @@ function useCardDropApproved({
   }, [
     dataFromBackend,
     moveCard,
-    roomCtx,
+    gameData,
+    setGameData,
+    setProposedCardBoxShadow,
     suit,
     ownerID,
     value,

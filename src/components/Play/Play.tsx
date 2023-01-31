@@ -14,7 +14,8 @@ import useStartAnotherRoundHandler from "../../hooks/useStartAnotherRoundHandler
 import useReturnToRoomHandler from "../../hooks/useReturnToRoomHandler";
 
 function Play() {
-  const roomCtx = useRoomContext();
+  const { gameData, roomConfig, setGameData, setShowShufflingCountdown } =
+    useRoomContext();
   const { value: userID } = useUserIDContext();
 
   const [gameStarted, setGameStarted] = useState<boolean>(false);
@@ -23,17 +24,14 @@ function Play() {
   useReturnToRoomHandler();
 
   useEffect(() => {
-    if (
-      roomCtx.gameData?.board === undefined &&
-      roomCtx.gameData?.players === undefined
-    ) {
-      roomCtx.setShowShufflingCountdown(true);
+    if (gameData?.board === undefined && gameData?.players === undefined) {
+      setShowShufflingCountdown(true);
 
-      socket.emit("playerReadyToReceiveInitGameData", roomCtx.roomConfig.code);
+      socket.emit("playerReadyToReceiveInitGameData", roomConfig.code);
 
       socket.on("initGameData", (initGameData) => {
-        roomCtx.setGameData(initGameData);
-        socket.emit("playerFullyReady", roomCtx.roomConfig.code);
+        setGameData(initGameData);
+        socket.emit("playerFullyReady", roomConfig.code);
       });
 
       socket.on("gameStarted", () => {
@@ -43,8 +41,8 @@ function Play() {
 
     return () => {
       socket.off("initGameData", (initGameData) => {
-        roomCtx.setGameData(initGameData);
-        socket.emit("playerFullyReady", roomCtx.roomConfig.code);
+        setGameData(initGameData);
+        socket.emit("playerFullyReady", roomConfig.code);
       });
       socket.off("gameStarted", () => {
         setGameStarted(true);
@@ -53,7 +51,7 @@ function Play() {
 
     // maybe you need to have a disconnect function that runs
     // when the component unmounts?
-  }, [roomCtx]);
+  }, [gameData, roomConfig.code, setGameData, setShowShufflingCountdown]);
 
   return (
     <>

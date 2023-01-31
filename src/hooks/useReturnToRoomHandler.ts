@@ -5,7 +5,7 @@ import { socket } from "../pages";
 import { type IGameMetadata } from "../pages/api/socket";
 
 function useReturnToRoomHandler() {
-  const roomCtx = useRoomContext();
+  const { roomConfig, setPageToRender } = useRoomContext();
   const { value: userID } = useUserIDContext();
 
   const [dataFromBackend, setDataFromBackend] = useState<IGameMetadata | null>(
@@ -24,13 +24,13 @@ function useReturnToRoomHandler() {
     if (dataFromBackend !== null) {
       setDataFromBackend(null);
 
-      if (userID === roomCtx.roomConfig.hostUserID) {
-        roomCtx.setPageToRender("createRoom");
+      if (userID === roomConfig.hostUserID) {
+        setPageToRender("createRoom");
       } else {
-        roomCtx.setPageToRender("joinRoom");
+        setPageToRender("joinRoom");
       }
     }
-  }, [dataFromBackend, roomCtx, userID]);
+  }, [dataFromBackend, setPageToRender, roomConfig.hostUserID, userID]);
 }
 
 export default useReturnToRoomHandler;

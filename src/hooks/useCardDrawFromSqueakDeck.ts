@@ -16,7 +16,7 @@ function useCardDrawFromSqueakDeck({
   ownerID,
   moveCard,
 }: IUseCardDrawFromSqueakDeck) {
-  const roomCtx = useRoomContext();
+  const { gameData, setGameData } = useRoomContext();
 
   const [dataFromBackend, setDataFromBackend] =
     useState<IDrawFromSqueakDeck | null>(null);
@@ -61,15 +61,15 @@ function useCardDrawFromSqueakDeck({
         moveCard({ x: endX, y: endY }, true);
 
         setTimeout(() => {
-          roomCtx.setGameData({
-            ...roomCtx.gameData,
-            board: updatedBoard || roomCtx.gameData?.board,
-            players: updatedPlayerCards || roomCtx.gameData?.players,
+          setGameData({
+            ...gameData,
+            board: updatedBoard || gameData?.board,
+            players: updatedPlayerCards || gameData?.players,
           });
         }, 250);
       }
     }
-  }, [dataFromBackend, moveCard, roomCtx, suit, ownerID, value]);
+  }, [dataFromBackend, moveCard, gameData, setGameData, suit, ownerID, value]);
 }
 
 export default useCardDrawFromSqueakDeck;

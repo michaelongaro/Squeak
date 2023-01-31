@@ -4,18 +4,23 @@ import Card from "../Play/Card";
 import CountUp from "react-countup";
 
 function ShufflingCountdownModal() {
-  const roomCtx = useRoomContext();
+  const {
+    roomConfig,
+    gameData,
+    showShufflingCountdown,
+    setShowShufflingCountdown,
+  } = useRoomContext();
 
   return (
     <div
       style={{
-        opacity: roomCtx.showShufflingCountdown ? 1 : 0,
-        pointerEvents: roomCtx.showShufflingCountdown ? "auto" : "none",
+        opacity: showShufflingCountdown ? 1 : 0,
+        pointerEvents: showShufflingCountdown ? "auto" : "none",
       }}
       className="baseFlex absolute top-0 left-0 z-[600] h-full w-full bg-black bg-opacity-60 transition-all"
     >
       {/* prob will run into issues and will need framer motion to smoothly animate in/out */}
-      {roomCtx.showShufflingCountdown && (
+      {showShufflingCountdown && (
         <div className="h-fit w-fit rounded-md bg-green-200 p-8 pl-16 pr-16 shadow-md">
           <div className="baseVertFlex gap-6">
             <div className="text-xl">Shuffling decks</div>
@@ -40,11 +45,11 @@ function ShufflingCountdownModal() {
                 start={5}
                 end={1}
                 onEnd={() => {
-                  roomCtx.setShowShufflingCountdown(false);
+                  setShowShufflingCountdown(false);
                   setTimeout(() => {
                     socket.emit("startGame", {
-                      roomCode: roomCtx.roomConfig.code,
-                      firstRound: roomCtx.gameData.currentRound === 1,
+                      roomCode: roomConfig.code,
+                      firstRound: gameData.currentRound === 1,
                     });
                   }, 1000);
                 }}
