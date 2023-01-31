@@ -1,6 +1,6 @@
 import { trpc } from "../utils/trpc";
 import { SessionProvider } from "next-auth/react";
-import { LocalStorageProvider } from "../context/LocalStorageContext";
+import { UserIDProvider } from "../context/UserIDContext";
 import { RoomProvider } from "../context/RoomContext";
 
 import { type AppType } from "next/app";
@@ -13,13 +13,13 @@ const MyApp: AppType<{ session: Session | null }> = ({
   pageProps: { session, ...pageProps },
 }) => {
   return (
-    <LocalStorageProvider>
-      <RoomProvider>
-        <SessionProvider session={session}>
+    <SessionProvider session={session}>
+      <UserIDProvider>
+        <RoomProvider>
           <Component {...pageProps} />
-        </SessionProvider>
-      </RoomProvider>
-    </LocalStorageProvider>
+        </RoomProvider>
+      </UserIDProvider>
+    </SessionProvider>
   );
 };
 

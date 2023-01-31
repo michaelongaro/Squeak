@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useLocalStorageContext } from "../../context/LocalStorageContext";
+import { useUserIDContext } from "../../context/UserIDContext";
 import { useRoomContext } from "../../context/RoomContext";
 import Board from "./Board";
 import PlayerCardContainer from "./PlayerCardContainer";
@@ -15,9 +15,8 @@ import useReturnToRoomHandler from "../../hooks/useReturnToRoomHandler";
 
 function Play() {
   const roomCtx = useRoomContext();
-  const localStorageID = useLocalStorageContext();
+  const { value: userID } = useUserIDContext();
 
-  const userID = localStorageID.value; // change to ctx.userID ?? localStorageID.value
   const [gameStarted, setGameStarted] = useState<boolean>(false);
 
   useStartAnotherRoundHandler();

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useLocalStorageContext } from "../../context/LocalStorageContext";
+import { useUserIDContext } from "../../context/UserIDContext";
 import { useRoomContext } from "../../context/RoomContext";
 import { socket } from "../../pages";
 import Card from "../Play/Card";
@@ -23,8 +23,7 @@ interface IPickerTooltip {
 function PickerTooltip({ type }: IPickerTooltip) {
   const roomCtx = useRoomContext();
 
-  const localStorageID = useLocalStorageContext();
-  const userID = localStorageID.value; // change to ctx.userID ?? localStorageID.value
+  const { value: userID } = useUserIDContext();
 
   const [showTooltip, setShowTooltip] = useState<boolean>(false);
   const [hoveredTooltip, setHoveredTooltip] = useState<

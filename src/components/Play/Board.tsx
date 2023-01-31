@@ -1,5 +1,5 @@
 import { socket } from "../../pages";
-import { useLocalStorageContext } from "../../context/LocalStorageContext";
+import { useUserIDContext } from "../../context/UserIDContext";
 import { useRoomContext } from "../../context/RoomContext";
 import Card from "./Card";
 
@@ -16,9 +16,7 @@ export interface IGetBoxShadowStyles {
 
 function Board({ boardClass }: IBoard) {
   const roomCtx = useRoomContext();
-  const localStorageID = useLocalStorageContext();
-
-  const userID = localStorageID.value; // change to ctx.userID ?? localStorageID.value
+  const { value: userID } = useUserIDContext();
 
   // interface to accept id, rowIdx, colIdx, squeakStackIdx
 

@@ -4,6 +4,7 @@ import JoinRoom from "../JoinRoom/JoinRoom";
 import Play from "../Play/Play";
 import TutorialModal from "../modals/TutorialModal";
 import { useRoomContext } from "../../context/RoomContext";
+import LogIn from "../auth/LogIn";
 
 function HomePage() {
   const roomCtx = useRoomContext();
@@ -16,10 +17,7 @@ function HomePage() {
         <div className="baseVertFlex relative min-h-[100vh]  gap-8 bg-green-700">
           <div className="text-4xl sm:text-5xl">Squeak</div>
 
-          <div className="baseFlex gap-4">
-            <button>Sign up</button>
-            <button>Log in</button>
-          </div>
+          <LogIn gap={"2rem"} />
 
           <div className="baseVertFlex gap-4">
             <button onClick={() => setShowTutorialModal(true)}>

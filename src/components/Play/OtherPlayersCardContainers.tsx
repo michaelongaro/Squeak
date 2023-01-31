@@ -1,6 +1,6 @@
 import { useEffect, useCallback } from "react";
 import { socket } from "../../pages/";
-import { useLocalStorageContext } from "../../context/LocalStorageContext";
+import { useUserIDContext } from "../../context/UserIDContext";
 import { useRoomContext } from "../../context/RoomContext";
 import { type IDrawFromDeck } from "../../pages/api/socket";
 import Card from "./Card";
@@ -33,9 +33,7 @@ function OtherPlayersCardContainers({
   orderedClassNames,
 }: IOtherPlayersCardContainers) {
   const roomCtx = useRoomContext();
-  const localStorageID = useLocalStorageContext();
-
-  const userID = localStorageID.value; // change to ctx.userID ?? localStorageID.value
+  const { value: userID } = useUserIDContext();
 
   const handleCardDrawnFromDeck = useCallback(
     ({ playerID, updatedBoard, updatedPlayerCards }: IDrawFromDeck) => {

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { socket } from "../../pages";
-import { useLocalStorageContext } from "../../context/LocalStorageContext";
+import { useUserIDContext } from "../../context/UserIDContext";
 import { useRoomContext } from "../../context/RoomContext";
 import Card from "./Card";
 import { FaRedoAlt } from "react-icons/fa";
@@ -23,8 +23,7 @@ const cardClassMap = {
 
 function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
   const roomCtx = useRoomContext();
-  const localStorageID = useLocalStorageContext();
-  const userID = localStorageID.value; // change to ctx.userID ?? localStorageID.value
+  const { value: userID } = useUserIDContext();
 
   const [hoveringOverDeck, setHoveringOverDeck] = useState(false);
 

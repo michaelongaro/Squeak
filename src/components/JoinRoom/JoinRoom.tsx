@@ -2,16 +2,14 @@ import { useState, useEffect } from "react";
 import { trpc } from "../../utils/trpc";
 import { socket } from "../../pages";
 import { useRoomContext } from "../../context/RoomContext";
-import { useLocalStorageContext } from "../../context/LocalStorageContext";
+import { useUserIDContext } from "../../context/UserIDContext";
 import { IRoomPlayer, type IGameMetadata } from "../../pages/api/socket";
 import PickerTooltip from "../playerIcons/PickerTooltip";
 import PlayerIcon from "../playerIcons/PlayerIcon";
 
 function JoinRoom() {
   const roomCtx = useRoomContext();
-  const localStorageID = useLocalStorageContext();
-
-  const userID = localStorageID.value; // add ctx.userID ?? localStorageID.value
+  const { value: userID } = useUserIDContext();
 
   const [username, setUsername] = useState<string>("");
   const [roomCode, setRoomCode] = useState<string>("");

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import CountUp from "react-countup";
+import { socket } from "../../../pages";
 import { useRoomContext } from "../../../context/RoomContext";
 import useScoreboardData from "../../../hooks/useScoreboardData";
 import { IScoreboardMetadata } from "../../../pages/api/handlers/roundOverHandler";
@@ -26,19 +27,33 @@ function Scoreboard() {
     useState<boolean>(false);
   const [showCountdownTimer, setShowCountdownTimer] = useState<boolean>(false);
 
+  // delete after testing
+  const [onlyDoThisOnce, setOnlyDoThisOnce] = useState<boolean>(false);
+
   useEffect(() => {
-    setTimeout(() => {
-      setShowNewRankings(true);
-    }, 3000);
+    if (!onlyDoThisOnce && roomCtx.roomConfig.code) {
+      setOnlyDoThisOnce(true);
+      setTimeout(() => {
+        setShowNewRankings(true);
+      }, 3000);
 
-    setTimeout(() => {
-      setShowWinningPlayerMessage(true);
-    }, 6000);
+      setTimeout(() => {
+        setShowWinningPlayerMessage(true);
+      }, 6000);
 
-    setTimeout(() => {
-      setShowCountdownTimer(true);
-    }, 9000);
-  }, []);
+      setTimeout(() => {
+        setShowCountdownTimer(true);
+      }, 9000);
+
+      // delete this later
+      setTimeout(() => {
+        socket.emit("resetGame", {
+          roomCode: roomCtx.roomConfig.code,
+          gameIsFinished: true,
+        });
+      }, 15000);
+    }
+  }, [roomCtx.roomConfig.code, onlyDoThisOnce]);
 
   const scoreboardData: Partial<IScoreboardMetadata> | null = {
     gameWinnerID: null,
@@ -214,7 +229,7 @@ function Scoreboard() {
               ))}
             </div>
 
-            {/* get avatar + username from IPlayerMetadata in ctx */}
+            {/* get avatar + username from IRoomPlayersMetadata in ctx */}
             {/* have this fade in after scores are animated, with timeouts */}
             <div
               style={{

@@ -6,7 +6,7 @@ import Draggable, {
 } from "react-draggable";
 import { socket } from "../../pages/";
 import { useRoomContext } from "../../context/RoomContext";
-import { useLocalStorageContext } from "../../context/LocalStorageContext";
+import { useUserIDContext } from "../../context/UserIDContext";
 import cardPlacementIsValid from "../../utils/cardPlacementIsValid";
 import useCardDrawFromDeck from "../../hooks/useCardDrawFromDeck";
 import useCardDrawFromSqueakDeck from "../../hooks/useCardDrawFromSqueakDeck";
@@ -40,9 +40,7 @@ function Card({
   hueRotation,
 }: ICardComponent) {
   const roomCtx = useRoomContext();
-  const localStorageID = useLocalStorageContext();
-
-  const userID = localStorageID.value; // change to ctx.userID ?? localStorageID.value
+  const { value: userID } = useUserIDContext();
 
   const [cardOffsetPosition, setCardOffsetPosition] = useState({ x: 0, y: 0 });
   const [cardHasBeenPlaced, setCardHasBeenPlaced] = useState(false);
