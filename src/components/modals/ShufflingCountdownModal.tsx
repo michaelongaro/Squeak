@@ -14,6 +14,8 @@ function ShufflingCountdownModal() {
   return (
     <div
       style={{
+        // prob move this to motion.div and have show && (component) with AnimatePresence handle
+        // need for opacity and then pointerEvents won't be necessary because it won't be rendered
         opacity: showShufflingCountdown ? 1 : 0,
         pointerEvents: showShufflingCountdown ? "auto" : "none",
       }}
