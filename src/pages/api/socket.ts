@@ -261,7 +261,7 @@ export default function SocketHandler(req, res) {
             gameData,
             io,
           });
-        }, 250);
+        }, 500);
 
         setTimeout(() => {
           drawFromSqueakDeck({
@@ -271,7 +271,7 @@ export default function SocketHandler(req, res) {
             gameData,
             io,
           });
-        }, 750);
+        }, 1000);
 
         setTimeout(() => {
           drawFromSqueakDeck({
@@ -281,7 +281,7 @@ export default function SocketHandler(req, res) {
             gameData,
             io,
           });
-        }, 1250);
+        }, 1500);
 
         setTimeout(() => {
           drawFromSqueakDeck({
@@ -291,7 +291,7 @@ export default function SocketHandler(req, res) {
             gameData,
             io,
           });
-        }, 1750);
+        }, 2000);
       }
 
       // start interval that checks + handles if game is stuck
