@@ -36,6 +36,8 @@ export const roomsRouter = router({
   findRoomByCode: publicProcedure
     .input(z.string())
     .query(async ({ ctx, input }) => {
+      if (input === "") return null;
+
       try {
         const room = await ctx.prisma.room.findUnique({
           where: {
