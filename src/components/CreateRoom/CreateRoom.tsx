@@ -32,8 +32,6 @@ function CreateRoom() {
   } = useRoomContext();
   const { value: userID } = useUserIDContext();
 
-  const utils = trpc.useContext();
-
   const createRoomInDatabase = trpc.rooms.createRoom.useMutation();
 
   const [configAndMetadataInitialized, setConfigAndMetadataInitialized] =
@@ -41,29 +39,12 @@ function CreateRoom() {
 
   useEffect(() => {
     if (!configAndMetadataInitialized && userID) {
-      setRoomConfig({
-        pointsToWin: 100,
-        maxRounds: 3,
-        maxPlayers: 4,
-        playersInRoom: 1,
-        isPublic: true,
+      setRoomConfig((prevRoomConfig) => ({
+        ...prevRoomConfig,
         code: cryptoRandomString({ length: 6 }),
-        hostUsername: "",
+        hostUsername: playerMetadata[userID]?.username || "",
         hostUserID: userID,
-      });
-
-      // I think it should be set to saved values if signed in,
-      // otherwise default to this:
-
-      setPlayerMetadata({
-        ...playerMetadata,
-        [userID]: {
-          username: "",
-          avatarPath: "/avatars/rabbit.svg",
-          color: "rgb(220, 55, 76)",
-          deckHueRotation: 232,
-        } as IRoomPlayer,
-      });
+      }));
 
       setConfigAndMetadataInitialized(true);
     }
@@ -144,18 +125,16 @@ function CreateRoom() {
                     type="text"
                     placeholder="username"
                     onChange={(e) => {
-                      setPlayerMetadata((prevMetadata) => {
-                        const newMetadata = { ...prevMetadata };
-                        const user = newMetadata[userID];
-                        if (user) {
-                          user.username = e.target.value;
-                        }
-
-                        return newMetadata;
-                      });
+                      setPlayerMetadata((prevMetadata) => ({
+                        ...prevMetadata,
+                        [userID]: {
+                          ...prevMetadata[userID],
+                          username: e.target.value,
+                        } as IRoomPlayer,
+                      }));
                       updateRoomConfig("hostUsername", e.target.value);
                     }}
-                    value={playerMetadata[0]?.username}
+                    value={playerMetadata[userID]?.username}
                   />
                 </div>
 

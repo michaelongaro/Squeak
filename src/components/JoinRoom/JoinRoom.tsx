@@ -24,9 +24,6 @@ function JoinRoom() {
   const [roomCode, setRoomCode] = useState<string>("");
   const [submittedRoomCode, setSubmittedRoomCode] = useState<string>("");
 
-  const [configAndMetadataInitialized, setConfigAndMetadataInitialized] =
-    useState<boolean>(false);
-
   const { data: receivedRoomConfig } =
     trpc.rooms.findRoomByCode.useQuery(submittedRoomCode);
   // maybe need to have roomCode be in some temp state, and then
@@ -36,36 +33,10 @@ function JoinRoom() {
     socket.emit("joinRoom", {
       userID,
       code: roomCode,
-      playerMetadata: {
-        ...playerMetadata[userID],
-        username: username,
-      },
+      playerMetadata: playerMetadata[userID],
     });
     // trpc update
-  }, [roomCode, username, userID, playerMetadata]);
-
-  useEffect(() => {
-    console.log("setting player metadata", userID);
-    if (configAndMetadataInitialized) return;
-
-    setPlayerMetadata({
-      ...playerMetadata,
-      [userID]: {
-        username: "",
-        avatarPath: "/avatars/rabbit.svg",
-        color: "rgb(220, 55, 76)",
-        deckHueRotation: 232,
-      } as IRoomPlayer,
-    });
-
-    setConfigAndMetadataInitialized(true);
-  }, [
-    setPlayerMetadata,
-    setRoomConfig,
-    playerMetadata,
-    userID,
-    configAndMetadataInitialized,
-  ]);
+  }, [roomCode, userID, playerMetadata]);
 
   useEffect(() => {
     // rough way to check whether context data has been initialized
@@ -125,8 +96,16 @@ function JoinRoom() {
                 <input
                   type="text"
                   placeholder="username"
-                  onChange={(e) => setUsername(e.target.value)}
-                  value={username}
+                  onChange={(e) => {
+                    setPlayerMetadata((prevMetadata) => ({
+                      ...prevMetadata,
+                      [userID]: {
+                        ...prevMetadata[userID],
+                        username: e.target.value,
+                      } as IRoomPlayer,
+                    }));
+                  }}
+                  value={playerMetadata[userID]?.username}
                 />
               </div>
 
@@ -147,7 +126,10 @@ function JoinRoom() {
             </div>
 
             <button
-              disabled={username.length === 0 || roomCode.length === 0}
+              disabled={
+                playerMetadata[userID]?.username.length === 0 ||
+                roomCode.length === 0
+              }
               onClick={() => setSubmittedRoomCode(roomCode)}
             >
               Join
