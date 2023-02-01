@@ -5,10 +5,12 @@ import Play from "../Play/Play";
 import TutorialModal from "../modals/TutorialModal";
 import { useRoomContext } from "../../context/RoomContext";
 import LogIn from "../auth/LogIn";
+import UserSettingsAndStatsModal from "../modals/SettingsAndStats/UserSettingsAndStatsModal";
 
 function HomePage() {
   const { connectedToRoom, pageToRender, setPageToRender } = useRoomContext();
   const [showTutorialModal, setShowTutorialModal] = useState<boolean>(false);
+  const [showSettingsModal, setShowSettingsModal] = useState<boolean>(false);
 
   return (
     // could make this into a card and have 2-3 diagonal-ish layered playing cards that are peeking out behind left and right sides of card
@@ -38,9 +40,19 @@ function HomePage() {
             {/* maybe make these buttons in future, but be cautious because you will probably have primary/secondary button
               styles, and I don't think these want those styles */}
             <div>Volume</div>
-            <div>Settings</div>
+            <button
+              onClick={() => {
+                setShowSettingsModal(true);
+              }}
+            >
+              Settings
+            </button>
           </div>
           <div className="absolute top-12 right-4">Friends</div>
+
+          {showSettingsModal && (
+            <UserSettingsAndStatsModal setShowModal={setShowSettingsModal} />
+          )}
         </div>
       ) : (
         <>
