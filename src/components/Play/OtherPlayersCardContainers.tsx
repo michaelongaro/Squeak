@@ -85,7 +85,6 @@ function OtherPlayersCardContainers({
                         ownerID={playerID}
                         startID={`${playerID}squeakDeck`}
                         rotation={rotationOrder[idx] as number}
-                        hueRotation={playerMetadata[playerID]?.deckHueRotation}
                       />
                     </div>
                     <div className="absolute top-0 left-0 h-full w-full">
@@ -97,7 +96,6 @@ function OtherPlayersCardContainers({
                         ownerID={playerID}
                         startID={`${playerID}squeakDeck`}
                         rotation={rotationOrder[idx] as number}
-                        hueRotation={playerMetadata[playerID]?.deckHueRotation}
                       />
                     </div>
                   </div>
@@ -149,9 +147,6 @@ function OtherPlayersCardContainers({
                           ownerID={playerID}
                           startID={`${playerID}squeakStack${cardsIdx}${cardIdx}`}
                           rotation={rotationOrder[idx] as number}
-                          hueRotation={
-                            playerMetadata[playerID]?.deckHueRotation
-                          }
                         />
                       </div>
                     ))}
@@ -172,9 +167,6 @@ function OtherPlayersCardContainers({
                           ownerID={playerID}
                           startID={`${playerID}deck`}
                           rotation={0}
-                          hueRotation={
-                            playerMetadata[playerID]?.deckHueRotation
-                          }
                         />
                       </div>
                       <div className="topBackFacingCardInDeck absolute top-0 left-0 h-full w-full">
@@ -191,9 +183,6 @@ function OtherPlayersCardContainers({
                           ownerID={playerID}
                           startID={`${playerID}deck`}
                           rotation={0}
-                          hueRotation={
-                            playerMetadata[playerID]?.deckHueRotation
-                          }
                         />
                       </div>
                     </div>
@@ -209,9 +198,6 @@ function OtherPlayersCardContainers({
                           ownerID={playerID}
                           startID={`${playerID}deck`}
                           rotation={0}
-                          hueRotation={
-                            playerMetadata[playerID]?.deckHueRotation
-                          }
                         />
                       </div>
                     </div>
@@ -249,9 +235,6 @@ function OtherPlayersCardContainers({
                             ownerID={playerID}
                             startID={`${playerID}hand`}
                             rotation={0}
-                            hueRotation={
-                              playerMetadata[playerID]?.deckHueRotation
-                            }
                           />
                         </div>
                       )
