@@ -12,6 +12,9 @@ import { gameStuckHandler } from "./handlers/gameStuckHandler";
 import { drawFromSqueakDeck } from "./helpers/drawFromSqueakDeck";
 import { roundOverHandler } from "./handlers/roundOverHandler";
 import { resetGameHandler } from "./handlers/resetGameHandler";
+import { avatarPaths } from "../../utils/avatarPaths";
+import { deckHueRotations } from "../../utils/deckHueRotations";
+import { rgbToDeckHueRotations } from "../../utils/rgbToDeckHueRotations";
 
 export interface IRoomData {
   [code: string]: IRoomMetadata;
@@ -145,6 +148,60 @@ export default function SocketHandler(req, res) {
         if (!players) return;
 
         socket.join(code);
+
+        // checking to see if the playerMetadata is available,
+        // if not it will auto select random available settings
+
+        for (const player of Object.values(players)) {
+          if (player.avatarPath === playerMetadata.avatarPath) {
+            playerMetadata.avatarPath = getAvailableAttribute(
+              "avatarPath",
+              players
+            );
+          }
+
+          if (player.color === playerMetadata.color) {
+            playerMetadata.color = getAvailableAttribute("color", players);
+          }
+
+          playerMetadata.deckHueRotation =
+            rgbToDeckHueRotations[
+              playerMetadata.color as keyof typeof rgbToDeckHueRotations
+            ];
+        }
+
+        function getAvailableAttribute(
+          attribute: "avatarPath" | "color",
+          players: IRoomPlayersMetadata
+        ): string {
+          if (attribute === "avatarPath") {
+            const usedAttributes = Object.values(players).map(
+              (player) => player.avatarPath
+            );
+
+            const availableAttributes = [
+              ...usedAttributes,
+              ...avatarPaths,
+            ].filter((avatarPath) => !usedAttributes.includes(avatarPath));
+
+            return availableAttributes[
+              Math.floor(Math.random() * availableAttributes.length)
+            ]!;
+          }
+
+          const usedAttributes = Object.values(players).map(
+            (player) => player.color
+          );
+
+          const availableAttributes = [
+            ...usedAttributes,
+            ...Object.keys(rgbToDeckHueRotations),
+          ].filter((color) => !usedAttributes.includes(color));
+
+          return availableAttributes[
+            Math.floor(Math.random() * availableAttributes.length)
+          ]!;
+        }
 
         players[userID] = playerMetadata;
 
