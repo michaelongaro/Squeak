@@ -205,15 +205,20 @@ function PickerTooltip({
                       borderColor={"transparent"}
                       size="4rem"
                     />
-                    <div
-                      style={{
-                        backgroundColor: getMetadataOfPlayerByAttribute(
-                          avatarPath,
-                          "avatar"
-                        ),
-                      }}
-                      className="absolute bottom-[-0.75rem] right-[-0.75rem] h-4 w-4 rounded-full"
-                    ></div>
+                    {getMetadataOfPlayerByAttribute(avatarPath, "avatar") !==
+                      playerMetadata[userID]?.color &&
+                      getMetadataOfPlayerByAttribute(avatarPath, "avatar") !==
+                        "" && (
+                        <div
+                          style={{
+                            backgroundColor: getMetadataOfPlayerByAttribute(
+                              avatarPath,
+                              "avatar"
+                            ),
+                          }}
+                          className="absolute bottom-[-0.75rem] right-[-0.75rem] h-4 w-4 rounded-full"
+                        ></div>
+                      )}
                   </div>
                 ))
               : Object.keys(rgbToDeckHueRotations).map((color, index) => (
@@ -280,16 +285,18 @@ function PickerTooltip({
                     />
                     <div className="absolute bottom-[-0.75rem] right-[-0.75rem] z-[999] h-12 w-12 rounded-full">
                       {getMetadataOfPlayerByAttribute(color, "color") !==
-                        "" && (
-                        <PlayerIcon
-                          avatarPath={getMetadataOfPlayerByAttribute(
-                            color,
-                            "color"
-                          )}
-                          borderColor={"transparent"}
-                          size="3rem"
-                        />
-                      )}
+                        playerMetadata[userID]?.avatarPath &&
+                        getMetadataOfPlayerByAttribute(color, "color") !==
+                          "" && (
+                          <PlayerIcon
+                            avatarPath={getMetadataOfPlayerByAttribute(
+                              color,
+                              "color"
+                            )}
+                            borderColor={"transparent"}
+                            size="3rem"
+                          />
+                        )}
                     </div>
                   </div>
                 ))}
