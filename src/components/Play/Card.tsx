@@ -62,8 +62,22 @@ function Card({
   const [cardHasBeenPlaced, setCardHasBeenPlaced] = useState(false);
   const [manuallyShowCardFront, setManuallyShowCardFront] = useState(false);
 
+  const [hueRotationDegrees, setHueRotationDegrees] = useState(0);
+
   const cardRef = useRef<HTMLDivElement>(null);
   const cardIsMovingRef = useRef(false);
+
+  useEffect(() => {
+    const ownerMetadata = ownerID ? playerMetadata[ownerID] : undefined;
+
+    if (hueRotation) {
+      setHueRotationDegrees(hueRotation);
+    } else if (ownerMetadata) {
+      setHueRotationDegrees(ownerMetadata.deckHueRotation);
+    } else {
+      setHueRotationDegrees(0);
+    }
+  }, [hueRotation, ownerID, playerMetadata]);
 
   const moveCard = useCallback(
     ({ x, y }: { x: number; y: number }, flip: boolean) => {
@@ -380,12 +394,8 @@ function Card({
               style={{
                 filter:
                   showCardBack && !manuallyShowCardFront
-                    ? `hue-rotate(${
-                        hueRotation !== undefined
-                          ? hueRotation
-                          : playerMetadata[userID]?.deckHueRotation || "0deg"
-                      }deg)`
-                    : "",
+                    ? `hue-rotate(${hueRotationDegrees}deg)`
+                    : "none",
               }}
               className="pointer-events-none h-[64px] w-[48px] select-none lg:h-[72px] lg:w-[56px]"
               src={
