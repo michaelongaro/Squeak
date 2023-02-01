@@ -1,9 +1,15 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { socket } from "../pages";
 import { type IRoomConfig } from "../components/CreateRoom/CreateRoom";
-import { type IRoomPlayersMetadata } from "../pages/api/socket";
+import {
+  type IRoomPlayer,
+  type IRoomPlayersMetadata,
+} from "../pages/api/socket";
 import { type IGameMetadata } from "../pages/api/socket";
 import { type IPlayerRoundDetails } from "../pages/api/handlers/roundOverHandler";
+import { useSession } from "next-auth/react";
+import { useUserIDContext } from "./UserIDContext";
+import { trpc } from "../utils/trpc";
 
 interface IHeldSqueakStackLocation {
   squeakStack: [number, number];
@@ -65,6 +71,12 @@ interface IRoomContext {
 const RoomContext = createContext<IRoomContext | null>(null);
 
 export function RoomProvider(props: { children: React.ReactNode }) {
+  const { data: session, status } = useSession();
+  const { value: userID } = useUserIDContext();
+
+  // probably want to remove the default "refetch on page focus" behavior
+  const { data: user } = trpc.users.getUserByID.useQuery(userID);
+
   const [pageToRender, setPageToRender] = useState<
     "home" | "createRoom" | "joinRoom" | "play"
   >("home");
@@ -130,6 +142,27 @@ export function RoomProvider(props: { children: React.ReactNode }) {
       );
     });
   }, []);
+
+  useEffect(() => {
+    if (
+      playerMetadata[userID] !== undefined ||
+      status === "loading" ||
+      user === undefined ||
+      userID === ""
+    )
+      return;
+
+    // initializing player metadata w/ their database values (if authenticated)
+    setPlayerMetadata((prev) => ({
+      ...prev,
+      [userID]: {
+        username: user ? user.username : "",
+        avatarPath: user ? user.avatarPath : "/avatars/rabbit.svg",
+        color: user ? user.color : "rgb(220, 55, 76)",
+        deckHueRotation: user ? user.deckHueRotation : 232,
+      } as IRoomPlayer,
+    }));
+  }, [userID, user, playerMetadata, session, status]);
 
   const context: IRoomContext = {
     pageToRender,
