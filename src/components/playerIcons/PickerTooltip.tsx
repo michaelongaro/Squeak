@@ -9,6 +9,7 @@ import { avatarPaths } from "../../utils/avatarPaths";
 import { deckHueRotations } from "../../utils/deckHueRotations";
 import { rgbToDeckHueRotations } from "../../utils/rgbToDeckHueRotations";
 import {
+  type IRoomPlayersMetadata,
   type IRoomPlayer,
   type IUpdatePlayerMetadata,
 } from "../../pages/api/socket";
@@ -18,11 +19,28 @@ import classes from "./PickerTooltip.module.css";
 
 interface IPickerTooltip {
   type: "avatar" | "color";
+  localPlayerMetadata?: IRoomPlayersMetadata;
+  setLocalPlayerMetadata?: React.Dispatch<
+    React.SetStateAction<IRoomPlayersMetadata>
+  >;
 }
 
-function PickerTooltip({ type }: IPickerTooltip) {
-  const { playerMetadata, connectedToRoom, roomConfig, setPlayerMetadata } =
-    useRoomContext();
+function PickerTooltip({
+  type,
+  localPlayerMetadata,
+  setLocalPlayerMetadata,
+}: IPickerTooltip) {
+  const {
+    playerMetadata: ctxPlayerMetadata,
+    connectedToRoom: ctxConnectedToRoom,
+    roomConfig,
+    setPlayerMetadata: ctxSetPlayerMetadata,
+  } = useRoomContext();
+
+  // dynamic values depending on if parent is being used in <Settings /> or not
+  const playerMetadata = localPlayerMetadata || ctxPlayerMetadata;
+  const setPlayerMetadata = setLocalPlayerMetadata || ctxSetPlayerMetadata;
+  const connectedToRoom = localPlayerMetadata ? false : ctxConnectedToRoom;
 
   const { value: userID } = useUserIDContext();
 
