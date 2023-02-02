@@ -14,7 +14,7 @@ import { roundOverHandler } from "./handlers/roundOverHandler";
 import { resetGameHandler } from "./handlers/resetGameHandler";
 import { avatarPaths } from "../../utils/avatarPaths";
 import { deckHueRotations } from "../../utils/deckHueRotations";
-import { rgbToDeckHueRotations } from "../../utils/rgbToDeckHueRotations";
+import { hslToDeckHueRotations } from "../../utils/hslToDeckHueRotations";
 
 export interface IRoomData {
   [code: string]: IRoomMetadata;
@@ -165,8 +165,8 @@ export default function SocketHandler(req, res) {
           }
 
           playerMetadata.deckHueRotation =
-            rgbToDeckHueRotations[
-              playerMetadata.color as keyof typeof rgbToDeckHueRotations
+            hslToDeckHueRotations[
+              playerMetadata.color as keyof typeof hslToDeckHueRotations
             ];
         }
 
@@ -195,7 +195,7 @@ export default function SocketHandler(req, res) {
 
           const availableAttributes = [
             ...usedAttributes,
-            ...Object.keys(rgbToDeckHueRotations),
+            ...Object.keys(hslToDeckHueRotations),
           ].filter((color) => !usedAttributes.includes(color));
 
           return availableAttributes[
