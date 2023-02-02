@@ -24,10 +24,27 @@ interface IUserSettingsAndStatsModalProps {
 function UserSettingsAndStatsModal({
   setShowModal,
 }: IUserSettingsAndStatsModalProps) {
-  const { playerMetadata } = useRoomContext();
+  const { playerMetadata, setPlayerMetadata, connectedToRoom } =
+    useRoomContext();
   const { value: userID } = useUserIDContext();
 
+  const utils = trpc.useContext();
   const { data: user } = trpc.users.getUserByID.useQuery(userID);
+  const updateUser = trpc.users.updateUser.useMutation({
+    onMutate: () => {
+      utils.users.getUserByID.cancel();
+      const optimisticUpdate = utils.users.getUserByID.getData("userData");
+
+      if (optimisticUpdate) {
+        // does this implementation of "userData" as a query string work?
+        utils.users.getUserByID.setData("userData", optimisticUpdate);
+      }
+    },
+    onSettled: () => {
+      utils.users.getUserByID.invalidate();
+      // setUpdateInProgress(false); // used for showing loading circle next to save button text
+    },
+  });
 
   // if not showing settings, stats are being shown instead
   const [showSettings, setShowSettings] = useState<boolean>(true);
@@ -82,8 +99,38 @@ function UserSettingsAndStatsModal({
     setAbleToSave(false);
   }, [localPlayerMetadata, userID, user, localPlayerSettings]);
 
+  function updateUserHandler() {
+    const updatedMetadata = localPlayerMetadata[userID];
+    if (user === undefined || user === null || updatedMetadata === undefined)
+      return;
+
+    updateUser.mutate({
+      id: userID,
+      username: updatedMetadata.username,
+      avatarPath: updatedMetadata.avatarPath,
+      color: updatedMetadata.color,
+      deckHueRotation: updatedMetadata.deckHueRotation,
+      squeakPileOnLeft: localPlayerSettings.squeakPileOnLeft,
+      desktopNotifications: localPlayerSettings.desktopNotifications,
+    });
+
+    // cannot update while connected to room because it could show incorrect/out of date
+    // metadata compared to what the server has
+    if (!connectedToRoom) {
+      setPlayerMetadata({
+        ...playerMetadata,
+        [userID]: {
+          username: updatedMetadata.username,
+          avatarPath: updatedMetadata.avatarPath,
+          color: updatedMetadata.color,
+          deckHueRotation: updatedMetadata.deckHueRotation,
+        },
+      });
+    }
+  }
+
   return (
-    <div className="fixed top-0 left-0 z-[500] flex min-h-[100vh] min-w-[100vw] items-center justify-center bg-green-700/90 transition-all">
+    <div className="fixed top-0 left-0 z-[500] flex min-h-[100vh] min-w-[100vw] items-center justify-center bg-black/30 transition-all">
       <div
         ref={modalRef}
         className="baseVertFlex rounded-md border-2 border-white shadow-md"
@@ -136,18 +183,19 @@ function UserSettingsAndStatsModal({
           >
             Log out
           </button>
-          <button
-            disabled={!ableToSave}
-            style={{
-              filter: ableToSave ? "none" : "grayscale(100%)",
-            }}
-            onClick={() => {
-              setShowSettings(false);
-            }}
-          >
-            Save
-          </button>
-          <div className="absolute top-2 right-2">X</div>
+          {showSettings && (
+            <button
+              disabled={!ableToSave}
+              style={{
+                filter: ableToSave ? "none" : "grayscale(100%)",
+              }}
+              onClick={() => {
+                updateUserHandler();
+              }}
+            >
+              Save
+            </button>
+          )}
         </div>
       </div>
     </div>
