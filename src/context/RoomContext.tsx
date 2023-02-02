@@ -26,6 +26,8 @@ interface IRoomContext {
   setPageToRender: React.Dispatch<
     React.SetStateAction<"home" | "createRoom" | "joinRoom" | "play">
   >;
+  showSettingsModal: boolean;
+  setShowSettingsModal: React.Dispatch<React.SetStateAction<boolean>>;
   roomConfig: IRoomConfig;
   setRoomConfig: React.Dispatch<React.SetStateAction<IRoomConfig>>;
   playerMetadata: IRoomPlayersMetadata;
@@ -80,6 +82,8 @@ export function RoomProvider(props: { children: React.ReactNode }) {
   const [pageToRender, setPageToRender] = useState<
     "home" | "createRoom" | "joinRoom" | "play"
   >("home");
+  const [showSettingsModal, setShowSettingsModal] = useState<boolean>(false);
+
   const [roomConfig, setRoomConfig] = useState<IRoomConfig>({
     pointsToWin: 100,
     maxRounds: 3,
@@ -167,6 +171,8 @@ export function RoomProvider(props: { children: React.ReactNode }) {
   const context: IRoomContext = {
     pageToRender,
     setPageToRender,
+    showSettingsModal,
+    setShowSettingsModal,
     roomConfig,
     setRoomConfig,
     playerMetadata,
