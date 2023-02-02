@@ -60,11 +60,11 @@ function AnimatedCard({ card, index, playerID }: IAnimatedCard) {
       rotateY: [`${initYRotation}deg`, `${finalYRotation}deg`],
       rotateZ: [`${initZRotation}deg`, `${finalZRotation}deg`],
 
-      delay: 350,
-      duration: 7000,
+      delay: index * 100,
+      duration: 4000,
       loop: false,
       direction: "normal",
-      easing: "easeInSine", // easeInOut?,
+      easing: "easeOutQuad", // easeInOut?,
     });
   }, [playerID, index, animationStarted]);
 
