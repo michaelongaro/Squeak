@@ -1,8 +1,8 @@
 import { z } from "zod";
-import { router, publicProcedure } from "../trpc";
+import { router, publicProcedure, protectedProcedure } from "../trpc";
 
 export const usersRouter = router({
-  getUserByID: publicProcedure
+  getUserByID: publicProcedure // maybe go protected if it still will return null on "" input
     .input(z.string())
     .query(async ({ ctx, input }) => {
       if (input === "") return null;
@@ -19,5 +19,37 @@ export const usersRouter = router({
       }
 
       return null;
+    }),
+
+  updateUser: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        username: z.string(),
+        avatarPath: z.string(),
+        color: z.string(),
+        deckHueRotation: z.number(),
+        squeakPileOnLeft: z.boolean(),
+        desktopNotifications: z.boolean(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      try {
+        await ctx.prisma.user.update({
+          where: {
+            id: input.id,
+          },
+          data: {
+            username: input.username,
+            avatarPath: input.avatarPath,
+            color: input.color,
+            deckHueRotation: input.deckHueRotation,
+            squeakPileOnLeft: input.squeakPileOnLeft,
+            desktopNotifications: input.desktopNotifications,
+          },
+        });
+      } catch (error) {
+        console.log(error);
+      }
     }),
 });
