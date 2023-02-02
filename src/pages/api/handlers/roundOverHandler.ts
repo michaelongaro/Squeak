@@ -35,7 +35,7 @@ export function roundOverHandler(
 ) {
   function generateAndEmitScoreboard({ playerID, roomCode }: IDrawFromDeck) {
     const playerCards = gameData[roomCode]?.players;
-    const pointsToWin = roomData[roomCode]?.room.pointsToWin;
+    const pointsToWin = roomData[roomCode]?.roomConfig.pointsToWin;
 
     if (!playerCards || !pointsToWin) return;
 
