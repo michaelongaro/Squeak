@@ -7,6 +7,7 @@ import { useUserIDContext } from "../../context/UserIDContext";
 import { type IRoomPlayer, type IGameMetadata } from "../../pages/api/socket";
 import PickerTooltip from "../playerIcons/PickerTooltip";
 import PlayerIcon from "../playerIcons/PlayerIcon";
+import TopRightControls from "../TopRightControls/TopRightControls";
 
 export interface IRoomConfig {
   pointsToWin: number;
@@ -103,39 +104,168 @@ function CreateRoom() {
   }
 
   return (
-    <>
-      {userID && (
-        <div className="baseVertFlex min-h-[100vh] gap-4 bg-green-700">
-          <div className="baseFlex">
-            <button className="ml-0" onClick={() => setPageToRender("home")}>
-              Back to home
-            </button>
-            {`${
-              connectedToRoom
-                ? `${Object.values(playerMetadata)[0]?.username}'s room`
-                : "Create Room"
-            }`}
+    <div className="baseVertFlex relative min-h-[100vh] gap-4 bg-green-700">
+      <div className="baseFlex">
+        <button className="ml-0" onClick={() => setPageToRender("home")}>
+          Back to home
+        </button>
+        {`${
+          connectedToRoom
+            ? `${Object.values(playerMetadata)[0]?.username}'s room`
+            : "Create Room"
+        }`}
+      </div>
+      <div className="baseVertFlex gap-2">
+        {!connectedToRoom && (
+          <div className="baseVertFlex gap-4">
+            <div className="baseFlex gap-2">
+              <label>Username</label>
+              <input
+                type="text"
+                placeholder="username"
+                onChange={(e) => {
+                  setPlayerMetadata((prevMetadata) => ({
+                    ...prevMetadata,
+                    [userID]: {
+                      ...prevMetadata[userID],
+                      username: e.target.value,
+                    } as IRoomPlayer,
+                  }));
+                  updateRoomConfig("hostUsername", e.target.value);
+                }}
+                value={playerMetadata[userID]?.username}
+              />
+            </div>
+
+            <div className="baseFlex gap-12">
+              <PickerTooltip type={"avatar"} />
+              <PickerTooltip type={"color"} />
+            </div>
           </div>
-          <div className="baseVertFlex gap-2">
-            {!connectedToRoom && (
-              <div className="baseVertFlex gap-4">
-                <div className="baseFlex gap-2">
-                  <label>Username</label>
-                  <input
-                    type="text"
-                    placeholder="username"
-                    onChange={(e) => {
-                      setPlayerMetadata((prevMetadata) => ({
-                        ...prevMetadata,
-                        [userID]: {
-                          ...prevMetadata[userID],
-                          username: e.target.value,
-                        } as IRoomPlayer,
-                      }));
-                      updateRoomConfig("hostUsername", e.target.value);
-                    }}
-                    value={playerMetadata[userID]?.username}
-                  />
+        )}
+
+        <fieldset className="rounded-md border-2 border-white p-4">
+          <legend className="pl-4 pr-4 text-left text-lg">Room settings</legend>
+
+          <div className="grid grid-cols-2 grid-rows-5 gap-2 p-4">
+            <label>Points to win:</label>
+            <div className="baseFlex gap-2">
+              <button
+                disabled={roomConfig.pointsToWin <= 50}
+                onClick={() =>
+                  updateRoomConfig("pointsToWin", roomConfig.pointsToWin - 25)
+                }
+              >
+                -10
+              </button>
+              {roomConfig.pointsToWin}
+              <button
+                disabled={roomConfig.pointsToWin >= 500}
+                onClick={() =>
+                  updateRoomConfig("pointsToWin", roomConfig.pointsToWin + 25)
+                }
+              >
+                +25
+              </button>
+            </div>
+
+            <label>Max rounds:</label>
+            <div className="baseFlex gap-2">
+              <button
+                disabled={roomConfig.maxRounds <= 1}
+                onClick={() =>
+                  updateRoomConfig("maxRounds", roomConfig.maxRounds - 1)
+                }
+              >
+                -1
+              </button>
+              {roomConfig.maxRounds}
+              <button
+                disabled={roomConfig.maxRounds >= 5}
+                onClick={() =>
+                  updateRoomConfig("maxRounds", roomConfig.maxRounds + 1)
+                }
+              >
+                +1
+              </button>
+            </div>
+
+            <label>Max players:</label>
+            <div className="baseFlex gap-2">
+              <button
+                disabled={roomConfig.maxPlayers <= 2}
+                onClick={() =>
+                  updateRoomConfig("maxPlayers", roomConfig.maxPlayers - 1)
+                }
+              >
+                -1
+              </button>
+              {roomConfig.maxPlayers}
+              <button
+                onClick={() =>
+                  updateRoomConfig("maxPlayers", roomConfig.maxPlayers + 1)
+                }
+                disabled={roomConfig.maxPlayers >= 8}
+              >
+                +1
+              </button>
+            </div>
+
+            <label>Room visibility:</label>
+            <div className="baseFlex gap-2">
+              <button
+                onClick={() => updateRoomConfig("isPublic", true)}
+                style={{
+                  backgroundColor: roomConfig.isPublic
+                    ? "rgba(255,255,255,0.5)"
+                    : "",
+                }}
+              >
+                Public
+              </button>
+              <button
+                onClick={() => updateRoomConfig("isPublic", false)}
+                style={{
+                  backgroundColor: !roomConfig.isPublic
+                    ? "rgba(255,255,255,0.5)"
+                    : "",
+                }}
+              >
+                Private
+              </button>
+            </div>
+
+            <label>Room code:</label>
+            <div className="baseFlex gap-2">
+              {roomConfig.code}
+              <button>Copy room code</button>
+            </div>
+          </div>
+        </fieldset>
+
+        {connectedToRoom ? (
+          <div className="baseVertFlex gap-4">
+            <fieldset className="rounded-md border-2 border-white p-4">
+              <legend className="pl-4 pr-4 text-left text-lg">
+                {`Players ${roomConfig.playersInRoom}/${roomConfig.maxPlayers}`}
+              </legend>
+              <div className="baseVertFlex gap-6 p-4">
+                <div className="baseFlex gap-8">
+                  {Object.keys(playerMetadata)?.map((playerID) => (
+                    <PlayerIcon
+                      key={playerID}
+                      avatarPath={
+                        playerMetadata[playerID]?.avatarPath ||
+                        "/avatars/rabbit.svg"
+                      }
+                      borderColor={
+                        playerMetadata[playerID]?.color ||
+                        "hsl(352deg, 69%, 61%)"
+                      }
+                      username={playerMetadata[playerID]?.username}
+                      size={"3rem"}
+                    />
+                  ))}
                 </div>
 
                 <div className="baseFlex gap-12">
@@ -143,172 +273,33 @@ function CreateRoom() {
                   <PickerTooltip type={"color"} />
                 </div>
               </div>
-            )}
-
-            <fieldset className="rounded-md border-2 border-white p-4">
-              <legend className="pl-4 pr-4 text-left text-lg">
-                Room settings
-              </legend>
-
-              <div className="grid grid-cols-2 grid-rows-5 gap-2 p-4">
-                <label>Points to win:</label>
-                <div className="baseFlex gap-2">
-                  <button
-                    disabled={roomConfig.pointsToWin <= 50}
-                    onClick={() =>
-                      updateRoomConfig(
-                        "pointsToWin",
-                        roomConfig.pointsToWin - 25
-                      )
-                    }
-                  >
-                    -10
-                  </button>
-                  {roomConfig.pointsToWin}
-                  <button
-                    disabled={roomConfig.pointsToWin >= 500}
-                    onClick={() =>
-                      updateRoomConfig(
-                        "pointsToWin",
-                        roomConfig.pointsToWin + 25
-                      )
-                    }
-                  >
-                    +25
-                  </button>
-                </div>
-
-                <label>Max rounds:</label>
-                <div className="baseFlex gap-2">
-                  <button
-                    disabled={roomConfig.maxRounds <= 1}
-                    onClick={() =>
-                      updateRoomConfig("maxRounds", roomConfig.maxRounds - 1)
-                    }
-                  >
-                    -1
-                  </button>
-                  {roomConfig.maxRounds}
-                  <button
-                    disabled={roomConfig.maxRounds >= 5}
-                    onClick={() =>
-                      updateRoomConfig("maxRounds", roomConfig.maxRounds + 1)
-                    }
-                  >
-                    +1
-                  </button>
-                </div>
-
-                <label>Max players:</label>
-                <div className="baseFlex gap-2">
-                  <button
-                    disabled={roomConfig.maxPlayers <= 2}
-                    onClick={() =>
-                      updateRoomConfig("maxPlayers", roomConfig.maxPlayers - 1)
-                    }
-                  >
-                    -1
-                  </button>
-                  {roomConfig.maxPlayers}
-                  <button
-                    onClick={() =>
-                      updateRoomConfig("maxPlayers", roomConfig.maxPlayers + 1)
-                    }
-                    disabled={roomConfig.maxPlayers >= 8}
-                  >
-                    +1
-                  </button>
-                </div>
-
-                <label>Room visibility:</label>
-                <div className="baseFlex gap-2">
-                  <button
-                    onClick={() => updateRoomConfig("isPublic", true)}
-                    style={{
-                      backgroundColor: roomConfig.isPublic
-                        ? "rgba(255,255,255,0.5)"
-                        : "",
-                    }}
-                  >
-                    Public
-                  </button>
-                  <button
-                    onClick={() => updateRoomConfig("isPublic", false)}
-                    style={{
-                      backgroundColor: !roomConfig.isPublic
-                        ? "rgba(255,255,255,0.5)"
-                        : "",
-                    }}
-                  >
-                    Private
-                  </button>
-                </div>
-
-                <label>Room code:</label>
-                <div className="baseFlex gap-2">
-                  {roomConfig.code}
-                  <button>Copy room code</button>
-                </div>
-              </div>
             </fieldset>
 
-            {connectedToRoom ? (
-              <div className="baseVertFlex gap-4">
-                <fieldset className="rounded-md border-2 border-white p-4">
-                  <legend className="pl-4 pr-4 text-left text-lg">
-                    {`Players ${roomConfig?.playersInRoom}/${roomConfig?.maxPlayers}`}
-                  </legend>
-                  <div className="baseVertFlex gap-6 p-4">
-                    <div className="baseFlex gap-8">
-                      {Object.keys(playerMetadata)?.map((playerID) => (
-                        <PlayerIcon
-                          key={playerID}
-                          avatarPath={
-                            playerMetadata[playerID]?.avatarPath ||
-                            "/avatars/rabbit.svg"
-                          }
-                          borderColor={
-                            playerMetadata[playerID]?.color ||
-                        "hsl(352deg, 69%, 61%)"
-                          }
-                          username={playerMetadata[playerID]?.username}
-                          size={"3rem"}
-                        />
-                      ))}
-                    </div>
+            <button
+              disabled={roomConfig.playersInRoom < 2}
+              onClick={() => {
+                setGameData({} as IGameMetadata);
 
-                    <div className="baseFlex gap-12">
-                      <PickerTooltip type={"avatar"} />
-                      <PickerTooltip type={"color"} />
-                    </div>
-                  </div>
-                </fieldset>
-
-                <button
-                  onClick={() => {
-                    setGameData({} as IGameMetadata);
-
-                    socket.emit("startGame", {
-                      roomCode: roomConfig.code,
-                      firstRound: true,
-                    });
-                  }}
-                >
-                  Start game
-                </button>
-              </div>
-            ) : (
-              <button
-                disabled={playerMetadata[0]?.username.length === 0}
-                onClick={() => createRoom()}
-              >
-                Create room
-              </button>
-            )}
+                socket.emit("startGame", {
+                  roomCode: roomConfig.code,
+                  firstRound: true,
+                });
+              }}
+            >
+              Start game
+            </button>
           </div>
-        </div>
-      )}
-    </>
+        ) : (
+          <button
+            disabled={playerMetadata[0]?.username.length === 0}
+            onClick={() => createRoom()}
+          >
+            Create room
+          </button>
+        )}
+      </div>
+      <TopRightControls />
+    </div>
   );
 }
 

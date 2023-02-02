@@ -6,6 +6,7 @@ import { useUserIDContext } from "../../context/UserIDContext";
 import { type IRoomPlayer, type IGameMetadata } from "../../pages/api/socket";
 import PickerTooltip from "../playerIcons/PickerTooltip";
 import PlayerIcon from "../playerIcons/PlayerIcon";
+import TopRightControls from "../TopRightControls/TopRightControls";
 
 function JoinRoom() {
   const {
@@ -82,7 +83,7 @@ function JoinRoom() {
   // might need to add roomCtx to deps here
 
   return (
-    <div className="baseVertFlex min-h-[100vh] gap-4 bg-green-700">
+    <div className="baseVertFlex relative min-h-[100vh] gap-4 bg-green-700">
       <button className="ml-0" onClick={() => setPageToRender("home")}>
         Back to home
       </button>
@@ -202,6 +203,8 @@ function JoinRoom() {
           </fieldset>
         </div>
       )}
+
+      <TopRightControls />
     </div>
   );
 }
