@@ -7,7 +7,7 @@ import PlayerIcon from "./PlayerIcon";
 
 import { avatarPaths } from "../../utils/avatarPaths";
 import { deckHueRotations } from "../../utils/deckHueRotations";
-import { rgbToDeckHueRotations } from "../../utils/rgbToDeckHueRotations";
+import { hslToDeckHueRotations } from "../../utils/hslToDeckHueRotations";
 import {
   type IRoomPlayersMetadata,
   type IRoomPlayer,
@@ -221,7 +221,7 @@ function PickerTooltip({
                       )}
                   </div>
                 ))
-              : Object.keys(rgbToDeckHueRotations).map((color, index) => (
+              : Object.keys(hslToDeckHueRotations).map((color, index) => (
                   <div
                     key={`${color}-${index}`}
                     style={{
@@ -248,8 +248,8 @@ function PickerTooltip({
                           newPlayerMetadata: {
                             ...playerMetadata[userID],
                             deckHueRotation:
-                              rgbToDeckHueRotations[
-                                color as keyof typeof rgbToDeckHueRotations // seems hacky
+                              hslToDeckHueRotations[
+                                color as keyof typeof hslToDeckHueRotations // seems hacky
                               ],
                             color,
                           },
@@ -265,8 +265,8 @@ function PickerTooltip({
                             ...prev[userID],
                             color,
                             deckHueRotation:
-                              rgbToDeckHueRotations[
-                                color as keyof typeof rgbToDeckHueRotations // seems hacky
+                              hslToDeckHueRotations[
+                                color as keyof typeof hslToDeckHueRotations // seems hacky
                               ],
                           } as IRoomPlayer,
                         }));
@@ -278,8 +278,8 @@ function PickerTooltip({
                       draggable={false}
                       rotation={0}
                       hueRotation={
-                        rgbToDeckHueRotations[
-                          color as keyof typeof rgbToDeckHueRotations // seems hacky
+                        hslToDeckHueRotations[
+                          color as keyof typeof hslToDeckHueRotations // seems hacky
                         ]
                       }
                     />
@@ -314,7 +314,7 @@ function PickerTooltip({
                     playerMetadata[userID]?.avatarPath || "/avatars/rabbit.svg"
                   }
                   borderColor={
-                    playerMetadata[userID]?.color || "rgb(220, 55, 76)"
+                    playerMetadata[userID]?.color || "hsl(352deg, 69%, 61%)"
                   }
                   size="3rem"
                 />

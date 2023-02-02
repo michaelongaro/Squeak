@@ -69,7 +69,7 @@ model User {
   image                String?
   username             String    @default("")
   avatarPath           String    @default("/avatars/rabbit.svg")
-  color                String    @default("rgb(220, 55, 76)")
+  color                String    @default("hsl(352deg, 69%, 61%)")
   deckHueRotation      Int       @default(0)
   squeakPileOnLeft     Boolean   @default(true)
   desktopNotifications Boolean   @default(false)

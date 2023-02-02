@@ -158,7 +158,7 @@ export function RoomProvider(props: { children: React.ReactNode }) {
       [userID]: {
         username: user ? user.username : "",
         avatarPath: user ? user.avatarPath : "/avatars/rabbit.svg",
-        color: user ? user.color : "rgb(220, 55, 76)",
+        color: user ? user.color : "hsl(352deg, 69%, 61%)",
         deckHueRotation: user ? user.deckHueRotation : 232,
       } as IRoomPlayer,
     }));

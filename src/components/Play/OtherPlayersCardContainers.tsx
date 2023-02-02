@@ -249,7 +249,7 @@ function OtherPlayersCardContainers({
                     "/avatars/rabbit.svg"
                   }
                   borderColor={
-                    playerMetadata[playerID]?.color || "rgb(220, 55, 76)"
+                    playerMetadata[playerID]?.color || "hsl(352deg, 69%, 61%)"
                   }
                   username={playerMetadata[playerID]?.username}
                   size={"3rem"}

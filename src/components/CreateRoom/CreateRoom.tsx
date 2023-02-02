@@ -269,7 +269,7 @@ function CreateRoom() {
                           }
                           borderColor={
                             playerMetadata[playerID]?.color ||
-                            "rgb(220, 55, 76)"
+                        "hsl(352deg, 69%, 61%)"
                           }
                           username={playerMetadata[playerID]?.username}
                           size={"3rem"}
