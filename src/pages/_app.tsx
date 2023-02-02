@@ -6,6 +6,7 @@ import { RoomProvider } from "../context/RoomContext";
 import { type AppType } from "next/app";
 import { type Session } from "next-auth";
 
+import "react-awesome-animated-number/dist/index.css";
 import "../styles/globals.css";
 
 const MyApp: AppType<{ session: Session | null }> = ({
