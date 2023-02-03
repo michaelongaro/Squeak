@@ -10,6 +10,11 @@
   @apply flex flex-col items-center justify-center;
 }
 
+body {
+  background-image: url("/backgroundTexture/backgroundTexture.png");
+  background-repeat: repeat;
+}
+
 .topBackFacingCardInDeck {
   animation: rotateDeck 1s linear infinite;
   animation-play-state: paused;
