@@ -8,6 +8,12 @@ import { type IRoomPlayer, type IGameMetadata } from "../../pages/api/socket";
 import PickerTooltip from "../playerIcons/PickerTooltip";
 import PlayerIcon from "../playerIcons/PlayerIcon";
 import TopRightControls from "../TopRightControls/TopRightControls";
+import SecondaryButton from "../Buttons/SecondaryButton";
+import Radio from "../Buttons/Radio";
+import { MdCopyAll } from "react-icons/md";
+import PrimaryButton from "../Buttons/PrimaryButton";
+import { BiArrowBack } from "react-icons/bi";
+import { FiCheck } from "react-icons/fi";
 
 export interface IRoomConfig {
   pointsToWin: number;
@@ -37,6 +43,7 @@ function CreateRoom() {
 
   const [configAndMetadataInitialized, setConfigAndMetadataInitialized] =
     useState<boolean>(false);
+  const [showCheckmark, setShowCheckmark] = useState<boolean>(false);
 
   useEffect(() => {
     if (!configAndMetadataInitialized && userID) {
@@ -104,25 +111,38 @@ function CreateRoom() {
   }
 
   return (
-    <div className="baseVertFlex relative min-h-[100vh] gap-4 bg-green-700">
-      <div className="baseFlex">
-        <button className="ml-0" onClick={() => setPageToRender("home")}>
-          Back to home
-        </button>
-        {`${
-          connectedToRoom
-            ? `${Object.values(playerMetadata)[0]?.username}'s room`
-            : "Create Room"
-        }`}
-      </div>
-      <div className="baseVertFlex gap-2">
+    <div className="baseVertFlex relative min-h-[100vh]">
+      <div className="baseVertFlex relative gap-2 ">
+        <div className="absolute top-0 left-0">
+          <SecondaryButton
+            icon={<BiArrowBack size={"1.5rem"} />}
+            extraPadding={false}
+            onClickFunction={() => setPageToRender("home")}
+          />
+        </div>
+
+        <div className="text-xl text-green-300">
+          {`${
+            connectedToRoom
+              ? `${Object.values(playerMetadata)[0]?.username}'s room`
+              : "Create Room"
+          }`}
+        </div>
+
         {!connectedToRoom && (
-          <div className="baseVertFlex gap-4">
+          <div className="baseVertFlex mt-4 gap-4 rounded-md border-2 border-white bg-green-800 p-4">
             <div className="baseFlex gap-2">
-              <label>Username</label>
+              <label
+                style={{
+                  color: "hsl(120deg 100% 86%)",
+                }}
+              >
+                Username
+              </label>
               <input
                 type="text"
                 placeholder="username"
+                className=" rounded-sm pl-2 text-green-800"
                 onChange={(e) => {
                   setPlayerMetadata((prevMetadata) => ({
                     ...prevMetadata,
@@ -144,108 +164,126 @@ function CreateRoom() {
           </div>
         )}
 
-        <fieldset className="rounded-md border-2 border-white p-4">
-          <legend className="pl-4 pr-4 text-left text-lg">Room settings</legend>
+        <fieldset className="mt-4 rounded-md border-2 border-white bg-green-800 p-4">
+          <legend
+            style={{
+              color: "hsl(120deg 100% 86%)",
+            }}
+            className="pl-4 pr-4 text-left text-lg"
+          >
+            Room settings
+          </legend>
 
-          <div className="grid grid-cols-2 grid-rows-5 gap-2 p-4">
+          <div
+            style={{
+              color: "hsl(120deg 100% 86%)",
+            }}
+            className="grid grid-cols-2 grid-rows-5 items-center gap-2 p-4"
+          >
             <label>Points to win:</label>
-            <div className="baseFlex gap-2">
-              <button
+            <div className=" baseFlex !justify-between gap-2 pl-4 pr-4">
+              <SecondaryButton
+                innerText={"-25"}
                 disabled={roomConfig.pointsToWin <= 50}
-                onClick={() =>
+                extraPadding={false}
+                width={"3rem"}
+                height={"3rem"}
+                onClickFunction={() =>
                   updateRoomConfig("pointsToWin", roomConfig.pointsToWin - 25)
                 }
-              >
-                -10
-              </button>
-              {roomConfig.pointsToWin}
-              <button
+              />
+
+              <div className=" text-green-300">{roomConfig.pointsToWin}</div>
+
+              <SecondaryButton
+                innerText={"+25"}
                 disabled={roomConfig.pointsToWin >= 500}
-                onClick={() =>
+                extraPadding={false}
+                width={"3rem"}
+                height={"3rem"}
+                onClickFunction={() =>
                   updateRoomConfig("pointsToWin", roomConfig.pointsToWin + 25)
                 }
-              >
-                +25
-              </button>
+              />
             </div>
 
             <label>Max rounds:</label>
-            <div className="baseFlex gap-2">
-              <button
+            <div className="baseFlex !justify-between gap-2 pl-4 pr-4">
+              <SecondaryButton
+                innerText={"-1"}
                 disabled={roomConfig.maxRounds <= 1}
-                onClick={() =>
+                extraPadding={false}
+                width={"3rem"}
+                height={"3rem"}
+                onClickFunction={() =>
                   updateRoomConfig("maxRounds", roomConfig.maxRounds - 1)
                 }
-              >
-                -1
-              </button>
-              {roomConfig.maxRounds}
-              <button
+              />
+
+              <div className=" text-green-300">{roomConfig.maxRounds}</div>
+
+              <SecondaryButton
+                innerText={"+1"}
                 disabled={roomConfig.maxRounds >= 5}
-                onClick={() =>
+                extraPadding={false}
+                width={"3rem"}
+                height={"3rem"}
+                onClickFunction={() =>
                   updateRoomConfig("maxRounds", roomConfig.maxRounds + 1)
                 }
-              >
-                +1
-              </button>
+              />
             </div>
 
-            <label>Max players:</label>
-            <div className="baseFlex gap-2">
-              <button
-                disabled={roomConfig.maxPlayers <= 2}
-                onClick={() =>
-                  updateRoomConfig("maxPlayers", roomConfig.maxPlayers - 1)
-                }
-              >
-                -1
-              </button>
-              {roomConfig.maxPlayers}
-              <button
-                onClick={() =>
-                  updateRoomConfig("maxPlayers", roomConfig.maxPlayers + 1)
-                }
-                disabled={roomConfig.maxPlayers >= 8}
-              >
-                +1
-              </button>
-            </div>
+            <label>Players:</label>
+
+            <Radio
+              values={[2, 3, 4]}
+              onClickFunctions={[
+                () => updateRoomConfig("maxPlayers", 2),
+                () => updateRoomConfig("maxPlayers", 3),
+                () => updateRoomConfig("maxPlayers", 4),
+              ]}
+            />
 
             <label>Room visibility:</label>
-            <div className="baseFlex gap-2">
-              <button
-                onClick={() => updateRoomConfig("isPublic", true)}
-                style={{
-                  backgroundColor: roomConfig.isPublic
-                    ? "rgba(255,255,255,0.5)"
-                    : "",
-                }}
-              >
-                Public
-              </button>
-              <button
-                onClick={() => updateRoomConfig("isPublic", false)}
-                style={{
-                  backgroundColor: !roomConfig.isPublic
-                    ? "rgba(255,255,255,0.5)"
-                    : "",
-                }}
-              >
-                Private
-              </button>
-            </div>
+            <Radio
+              values={["Public", "Private"]}
+              onClickFunctions={[
+                () => updateRoomConfig("isPublic", true),
+                () => updateRoomConfig("isPublic", false),
+              ]}
+            />
 
             <label>Room code:</label>
             <div className="baseFlex gap-2">
-              {roomConfig.code}
-              <button>Copy room code</button>
+              <div className=" text-green-300">{roomConfig.code}</div>
+              <SecondaryButton
+                icon={
+                  showCheckmark ? (
+                    <FiCheck size={"1.5rem"} />
+                  ) : (
+                    <MdCopyAll size={"1.5rem"} />
+                  )
+                }
+                extraPadding={false}
+                onClickFunction={() => {
+                  navigator.clipboard.writeText(roomConfig.code);
+                  setShowCheckmark(true);
+                  setTimeout(() => setShowCheckmark(false), 1000);
+                }}
+              />
             </div>
           </div>
         </fieldset>
 
         {connectedToRoom ? (
-          <div className="baseVertFlex gap-4">
-            <fieldset className="rounded-md border-2 border-white p-4">
+          <div
+            style={{
+              color: "hsl(120deg 100% 86%)",
+            }}
+            className="baseVertFlex gap-4"
+          >
+            <fieldset className="rounded-md border-2 border-white bg-green-800 p-4">
               <legend className="pl-4 pr-4 text-left text-lg">
                 {`Players ${roomConfig.playersInRoom}/${roomConfig.maxPlayers}`}
               </legend>
@@ -268,6 +306,8 @@ function CreateRoom() {
                   ))}
                 </div>
 
+                <div className="h-[2px] w-full rounded-md bg-white"></div>
+
                 <div className="baseFlex gap-12">
                   <PickerTooltip type={"avatar"} />
                   <PickerTooltip type={"color"} />
@@ -275,9 +315,9 @@ function CreateRoom() {
               </div>
             </fieldset>
 
-            <button
-              disabled={roomConfig.playersInRoom < 2}
-              onClick={() => {
+            <PrimaryButton
+              innerText={"Start game"}
+              onClickFunction={() => {
                 setGameData({} as IGameMetadata);
 
                 socket.emit("startGame", {
@@ -285,17 +325,14 @@ function CreateRoom() {
                   firstRound: true,
                 });
               }}
-            >
-              Start game
-            </button>
+            />
           </div>
         ) : (
-          <button
+          <PrimaryButton
+            innerText={"Create"}
             disabled={playerMetadata[0]?.username.length === 0}
-            onClick={() => createRoom()}
-          >
-            Create room
-          </button>
+            onClickFunction={() => createRoom()}
+          />
         )}
       </div>
       <TopRightControls />

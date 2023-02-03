@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 
 import { AnimatePresence } from "framer-motion";
 import OAuthSignInButtons from "./OAuthSignInButtons";
+import SecondaryButton from "../Buttons/SecondaryButton";
+import PrimaryButton from "../Buttons/PrimaryButton";
 
 interface ILogIn {
   gap: string;
@@ -13,20 +15,20 @@ function LogIn({ gap }: ILogIn) {
   return (
     <>
       <div style={{ gap: gap }} className="flex items-center justify-center">
-        <button
-          className="primaryBtn"
-          aria-label="Sign Up"
-          onClick={() => setShowModal(true)}
-        >
-          Sign Up
-        </button>
-        <button
-          className="secondaryBtn"
-          aria-label="Log In"
-          onClick={() => setShowModal(true)}
-        >
-          Log In
-        </button>
+        <PrimaryButton
+          innerText={"Sign Up"}
+          width={"8rem"}
+          height={"2rem"}
+          onClickFunction={() => setShowModal(true)}
+        />
+
+        <SecondaryButton
+          innerText={"Log In"}
+          extraPadding={false}
+          width={"8rem"}
+          height={"2.5rem"}
+          onClickFunction={() => setShowModal(true)}
+        />
       </div>
       <AnimatePresence
         initial={false}

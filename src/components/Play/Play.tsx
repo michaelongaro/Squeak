@@ -55,7 +55,7 @@ function Play() {
 
   return (
     <>
-      <div className={`${classes.fullBoardGrid} relative bg-green-700`}>
+      <div className={`${classes.fullBoardGrid} relative `}>
         {gameStarted && (
           <>
             <OtherPlayersCardContainers

@@ -11,6 +11,16 @@ import {
 import { useRoomContext } from "../../../context/RoomContext";
 import { useUserIDContext } from "../../../context/UserIDContext";
 import { trpc } from "../../../utils/trpc";
+import { motion } from "framer-motion";
+import SecondaryButton from "../../Buttons/SecondaryButton";
+import {
+  IoSettingsSharp,
+  IoStatsChart,
+  IoClose,
+  IoLogOutOutline,
+  IoSave,
+} from "react-icons/io5";
+import PrimaryButton from "../../Buttons/PrimaryButton";
 
 export interface ILocalPlayerSettings {
   squeakPileOnLeft: boolean;
@@ -130,37 +140,49 @@ function UserSettingsAndStatsModal({
   }
 
   return (
-    <div className="fixed top-0 left-0 z-[500] flex min-h-[100vh] min-w-[100vw] items-center justify-center bg-black/30 transition-all">
+    <motion.div
+      key={"settingsModal"}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.15 }}
+      className="baseFlex fixed top-0 left-0 z-[500] min-h-[100vh] min-w-[100vw] bg-black/50 transition-all"
+    >
       <div
         ref={modalRef}
         className="baseVertFlex rounded-md border-2 border-white shadow-md"
       >
-        <div className="baseFlex relative w-full gap-4 rounded-t-md bg-green-800 pt-4 pb-4 pl-12 pr-12">
+        <div className="baseFlex relative w-full gap-4 rounded-t-md bg-green-900 pt-4 pb-4 pl-20 pr-20">
           {/* determine what type/family of icons to use */}
-          <button
-            className="baseFlex gap-2"
-            onClick={() => {
-              setShowSettings(true);
+
+          <SecondaryButton
+            innerText="Settings"
+            icon={<IoSettingsSharp size={"1.25rem"} />}
+            extraPadding={true}
+            forceHover={showSettings}
+            onClickFunction={() => setShowSettings(true)}
+          />
+
+          <SecondaryButton
+            innerText="Statistics"
+            icon={<IoStatsChart size={"1.25rem"} />}
+            extraPadding={true}
+            forceHover={!showSettings}
+            onClickFunction={() => setShowSettings(false)}
+          />
+
+          <SecondaryButton
+            icon={<IoClose size={"1.5rem"} />}
+            extraPadding={false}
+            onClickFunction={() => setShowModal(false)}
+            width={"2.5rem"}
+            height={"2.5rem"}
+            style={{
+              position: "absolute",
+              top: "0.5rem",
+              right: "0.5rem",
             }}
-          >
-            Settings CogIcon
-          </button>
-          <button
-            className="baseFlex gap-2"
-            onClick={() => {
-              setShowSettings(false);
-            }}
-          >
-            Stats statsIcon
-          </button>
-          <button
-            className="absolute top-2 right-2"
-            onClick={() => {
-              setShowModal(false);
-            }}
-          >
-            X
-          </button>
+          />
         </div>
 
         {showSettings && (
@@ -174,31 +196,31 @@ function UserSettingsAndStatsModal({
 
         {!showSettings && <Stats />}
 
-        <div className="baseFlex w-full gap-4 rounded-b-md bg-green-800 pb-4 pt-4 pl-12 pr-12">
+        <div className="baseFlex w-full gap-4 rounded-b-md bg-green-900 pb-4 pt-4 pl-12 pr-12">
           {/* determine what type/family of icons to use */}
-          <button
-            onClick={() => {
-              signOut();
-            }}
-          >
-            Log out
-          </button>
+
+          <SecondaryButton
+            innerText="Log out"
+            icon={<IoLogOutOutline size={"1.25rem"} />}
+            extraPadding={false}
+            width={"8rem"}
+            height={"3rem"}
+            onClickFunction={() => signOut()}
+          />
+
           {showSettings && (
-            <button
+            <PrimaryButton
+              innerText="Save"
+              icon={<IoSave size={"1.25rem"} />}
+              width={"8rem"}
+              height={"3rem"}
               disabled={!ableToSave}
-              style={{
-                filter: ableToSave ? "none" : "grayscale(100%)",
-              }}
-              onClick={() => {
-                updateUserHandler();
-              }}
-            >
-              Save
-            </button>
+              onClickFunction={() => updateUserHandler()}
+            />
           )}
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 

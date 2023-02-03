@@ -1,5 +1,4 @@
 import React from "react";
-import { useRoomContext } from "../../../context/RoomContext";
 import { useUserIDContext } from "../../../context/UserIDContext";
 import {
   type IRoomPlayersMetadata,
@@ -25,20 +24,22 @@ function Settings({
   localPlayerSettings,
   setLocalPlayerSettings,
 }: ISettings) {
-  // local static prev ctx metadata state
-
   const { value: userID } = useUserIDContext();
-
-  // const { playerMetadata, setPlayerMetadata } = useRoomContext();
 
   return (
     // play around with with the width, maybe not best to have hardcoded 700px?
-    <div className="baseVertFlex w-[700px] gap-4 bg-green-600 p-8">
+    <div
+      style={{
+        color: "hsl(120deg 100% 86%)",
+      }}
+      className="baseVertFlex w-[700px] gap-4 bg-green-800 p-8"
+    >
       <div className="baseFlex gap-2">
         <label>Username</label>
         <input
           type="text"
           placeholder="username"
+          className=" text-green-800"
           onChange={(e) => {
             setLocalPlayerMetadata((prevMetadata) => ({
               ...prevMetadata,
