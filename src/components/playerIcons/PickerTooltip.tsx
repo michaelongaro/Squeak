@@ -305,7 +305,10 @@ function PickerTooltip({
           {/* preview */}
           {playerMetadata && (
             <div
-              className="cursor-pointer"
+              style={{
+                color: "hsl(120deg 100% 86%)",
+              }}
+              className="baseVertFlex cursor-pointer gap-2"
               onClick={() => setShowTooltip(true)}
             >
               {type === "avatar" ? (
@@ -327,6 +330,7 @@ function PickerTooltip({
                   hueRotation={playerMetadata[userID]?.deckHueRotation || 0}
                 />
               )}
+              {type === "avatar" ? <div>Avatar</div> : <div>Color</div>}
             </div>
           )}
         </div>
