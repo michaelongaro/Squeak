@@ -41,7 +41,7 @@ export function gameStuckHandler(
       board.map((row) => {
         row.map((cell) => {
           if (cardPlacementIsValid(cell, card.value, card.suit, true)) {
-            console.log("valid card found, deck -> board");
+            // console.log("valid card found, deck -> board");
             validCardFound = true;
 
             // does not look like these returns are jumping you out of WHOLE function,
@@ -57,7 +57,7 @@ export function gameStuckHandler(
           bottomCard &&
           cardPlacementIsValid(bottomCard, card.value, card.suit, false)
         ) {
-          console.log("valid card found, deck -> squeak");
+          // console.log("valid card found, deck -> squeak");
           validCardFound = true;
         }
       });
@@ -73,7 +73,7 @@ export function gameStuckHandler(
           if (
             cardPlacementIsValid(cell, bottomCard.value, bottomCard.suit, true)
           ) {
-            console.log("valid card found, squeak -> board");
+            // console.log("valid card found, squeak -> board");
             validCardFound = true;
           }
         });
@@ -94,7 +94,7 @@ export function gameStuckHandler(
               bottomCard &&
               cardPlacementIsValid(bottomCard, card.value, card.suit, false)
             ) {
-              console.log("valid card found, squeak -> squeak");
+              // console.log("valid card found, squeak -> squeak");
               validCardFound = true;
             }
           }
