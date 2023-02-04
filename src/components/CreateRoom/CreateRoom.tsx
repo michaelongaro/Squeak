@@ -317,6 +317,7 @@ function CreateRoom() {
 
             <PrimaryButton
               innerText={"Start game"}
+              disabled={roomConfig.playersInRoom < 2}
               onClickFunction={() => {
                 setGameData({} as IGameMetadata);
 
