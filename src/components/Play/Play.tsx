@@ -16,7 +16,6 @@ import useReturnToRoomHandler from "../../hooks/useReturnToRoomHandler";
 function Play() {
   const { gameData, roomConfig, setGameData, setShowShufflingCountdown } =
     useRoomContext();
-  const { value: userID } = useUserIDContext();
 
   const [gameStarted, setGameStarted] = useState<boolean>(false);
 
