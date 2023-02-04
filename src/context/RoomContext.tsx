@@ -87,7 +87,7 @@ export function RoomProvider(props: { children: React.ReactNode }) {
   const [roomConfig, setRoomConfig] = useState<IRoomConfig>({
     pointsToWin: 100,
     maxRounds: 3,
-    maxPlayers: 4,
+    maxPlayers: 2,
     playersInRoom: 1,
     isPublic: true,
     code: "",
@@ -126,7 +126,7 @@ export function RoomProvider(props: { children: React.ReactNode }) {
 
   const [connectedToRoom, setConnectedToRoom] = useState<boolean>(false);
 
-  const [showScoreboard, setShowScoreboard] = useState<boolean>(true); // temp for testing - should be false
+  const [showScoreboard, setShowScoreboard] = useState<boolean>(false); // temp for testing - should be false
   const [showShufflingCountdown, setShowShufflingCountdown] =
     useState<boolean>(false);
 
