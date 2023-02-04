@@ -252,7 +252,10 @@ export default function SocketHandler(req, res) {
       const currentRoomPlayers = roomData[roomCode]?.players;
       if (!currentRoomPlayers) return;
 
-      for (const playerID of Object.keys(currentRoomPlayers)) {
+      for (const index in Object.keys(currentRoomPlayers)) {
+        const playerID = Object.keys(currentRoomPlayers)[parseInt(index)];
+        if (playerID === undefined) return;
+
         setTimeout(() => {
           drawFromSqueakDeck({
             indexToDrawTo: 0,
@@ -261,7 +264,7 @@ export default function SocketHandler(req, res) {
             gameData,
             io,
           });
-        }, 500);
+        }, 500 + parseInt(index) * 50);
 
         setTimeout(() => {
           drawFromSqueakDeck({
@@ -271,7 +274,7 @@ export default function SocketHandler(req, res) {
             gameData,
             io,
           });
-        }, 1000);
+        }, 1000 + parseInt(index) * 50);
 
         setTimeout(() => {
           drawFromSqueakDeck({
@@ -281,7 +284,7 @@ export default function SocketHandler(req, res) {
             gameData,
             io,
           });
-        }, 1500);
+        }, 1500 + parseInt(index) * 50);
 
         setTimeout(() => {
           drawFromSqueakDeck({
@@ -291,7 +294,7 @@ export default function SocketHandler(req, res) {
             gameData,
             io,
           });
-        }, 2000);
+        }, 2000 + parseInt(index) * 50);
       }
 
       // start interval that checks + handles if game is stuck
@@ -347,7 +350,9 @@ export default function SocketHandler(req, res) {
 
     drawFromDeckHandler(io, socket, gameData);
 
-    drawFromSqueakDeckHandler(io, socket, gameData);
+    // wasn't actually being used, instead extracted function was being
+    // called directly
+    // drawFromSqueakDeckHandler(io, socket, gameData);
 
     proposedCardDropHandler(io, socket, gameData);
 
