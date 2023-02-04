@@ -1,7 +1,9 @@
+import { useEffect, useState } from "react";
 import { socket } from "../../pages/";
 import { useRoomContext } from "../../context/RoomContext";
 import Card from "../Play/Card";
-import CountUp from "react-countup";
+import AnimatedNumber from "react-awesome-animated-number";
+import { useUserIDContext } from "../../context/UserIDContext";
 
 function ShufflingCountdownModal() {
   const {
@@ -10,6 +12,51 @@ function ShufflingCountdownModal() {
     showShufflingCountdown,
     setShowShufflingCountdown,
   } = useRoomContext();
+  const { value: userID } = useUserIDContext();
+
+  const [timersInitiated, setTimersInitiated] = useState<boolean>(false);
+  const [countdownTimerValue, setCountdownTimerValue] = useState<number>(3);
+
+  useEffect(() => {
+    if (timersInitiated || !showShufflingCountdown || !gameData.currentRound)
+      return;
+
+    setTimersInitiated(true);
+
+    // timers are offset by 500ms to allow for the animation to play out
+    setTimeout(() => {
+      setCountdownTimerValue(2);
+    }, 1500);
+
+    setTimeout(() => {
+      setCountdownTimerValue(1);
+    }, 2500);
+
+    if (gameData.currentRound !== 1) {
+      setTimeout(() => {
+        console.log(
+          "started game from shuffle, currentRound is",
+          gameData.currentRound
+        );
+
+        socket.emit("startGame", {
+          roomCode: roomConfig.code,
+          firstRound: gameData.currentRound === 1,
+        });
+      }, 3500);
+    }
+
+    setTimeout(() => {
+      setShowShufflingCountdown(false);
+      setTimersInitiated(false);
+    }, 4000);
+  }, [
+    gameData.currentRound,
+    roomConfig.code,
+    timersInitiated,
+    showShufflingCountdown,
+    setShowShufflingCountdown,
+  ]);
 
   return (
     <div
@@ -29,7 +76,12 @@ function ShufflingCountdownModal() {
 
             <div className="relative mt-16 h-[64px] w-[48px] lg:h-[72px] lg:w-[56px]">
               <div className="absolute top-0 left-0 h-full w-full">
-                <Card showCardBack={true} draggable={false} rotation={0} />
+                <Card
+                  showCardBack={true}
+                  draggable={false}
+                  rotation={0}
+                  ownerID={userID}
+                />
               </div>
               <div
                 style={{
@@ -37,24 +89,23 @@ function ShufflingCountdownModal() {
                 }}
                 className={`topBackFacingCardInDeck absolute top-0 left-0 h-full w-full`}
               >
-                <Card showCardBack={true} draggable={false} rotation={0} />
+                <Card
+                  showCardBack={true}
+                  draggable={false}
+                  rotation={0}
+                  ownerID={userID}
+                />
               </div>
             </div>
 
             <div className="baseFlex gap-2">
               <div>Round will begin in:</div>
-              <CountUp
-                start={5}
-                end={1}
-                onEnd={() => {
-                  setShowShufflingCountdown(false);
-                  setTimeout(() => {
-                    socket.emit("startGame", {
-                      roomCode: roomConfig.code,
-                      firstRound: gameData.currentRound === 1,
-                    });
-                  }, 1000);
-                }}
+
+              <AnimatedNumber
+                value={countdownTimerValue}
+                duration={1500}
+                hasComma={true}
+                size={20}
               />
             </div>
           </div>
