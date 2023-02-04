@@ -55,7 +55,7 @@ function Scoreboard() {
   const [onlyDoThisOnce, setOnlyDoThisOnce] = useState<boolean>(false);
 
   useEffect(() => {
-    if (!onlyDoThisOnce && roomConfig.code) {
+    if (showScoreboard && !onlyDoThisOnce && roomConfig.code) {
       setOnlyDoThisOnce(true);
 
       setTimeout(() => {
@@ -134,7 +134,7 @@ function Scoreboard() {
       //   });
       // }, 15000);
     }
-  }, [roomConfig.code, onlyDoThisOnce]);
+  }, [showScoreboard, roomConfig.code, onlyDoThisOnce]);
 
   const scoreboardData: Partial<IScoreboardMetadata> | null = {
     gameWinnerID: null,
