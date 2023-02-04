@@ -39,7 +39,7 @@ function Settings({
         <input
           type="text"
           placeholder="username"
-          className=" text-green-800"
+          className=" rounded-sm pl-2 text-green-800"
           onChange={(e) => {
             setLocalPlayerMetadata((prevMetadata) => ({
               ...prevMetadata,
@@ -66,10 +66,10 @@ function Settings({
         />
       </div>
 
-      <div className="baseFlex gap-2">
+      <div className="baseFlex mt-6 gap-2">
         <label>Show Squeak Pile on left</label>
         <input
-          className="h-[1.25rem] w-[1.25rem] cursor-pointer"
+          className="h-[1.15rem] w-[1.15rem] cursor-pointer"
           aria-label="toggle squeak pile location between left and right"
           type="checkbox"
           checked={localPlayerSettings.squeakPileOnLeft}
@@ -85,7 +85,7 @@ function Settings({
       <div className="baseFlex gap-2">
         <label>Enable desktop notifications</label>
         <input
-          className="h-[1.25rem] w-[1.25rem] cursor-pointer"
+          className="h-[1.15rem] w-[1.15rem] cursor-pointer"
           aria-label="toggle desktop notifications"
           type="checkbox"
           checked={localPlayerSettings.desktopNotifications}
