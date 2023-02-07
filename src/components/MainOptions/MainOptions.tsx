@@ -80,7 +80,7 @@ function MainOptions() {
 
       {showTutorialModal && <TutorialModal />}
 
-      <TopRightControls />
+      <TopRightControls forPlayScreen={false} />
     </div>
   );
 }
