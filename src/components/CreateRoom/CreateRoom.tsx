@@ -56,13 +56,7 @@ function CreateRoom() {
 
       setConfigAndMetadataInitialized(true);
     }
-  }, [
-    playerMetadata,
-    setPlayerMetadata,
-    setRoomConfig,
-    userID,
-    configAndMetadataInitialized,
-  ]);
+  }, [playerMetadata, setRoomConfig, userID, configAndMetadataInitialized]);
 
   useEffect(() => {
     socket.on("roomWasCreated", () => setConnectedToRoom(true)); // have loading dots while this is waiting?
@@ -143,6 +137,7 @@ function CreateRoom() {
                 type="text"
                 placeholder="username"
                 className=" rounded-sm pl-2 text-green-800"
+                maxLength={16}
                 onChange={(e) => {
                   setPlayerMetadata((prevMetadata) => ({
                     ...prevMetadata,
@@ -331,12 +326,12 @@ function CreateRoom() {
         ) : (
           <PrimaryButton
             innerText={"Create"}
-            disabled={playerMetadata[0]?.username.length === 0}
+            disabled={Object.values(playerMetadata)[0]?.username.length === 0}
             onClickFunction={() => createRoom()}
           />
         )}
       </div>
-      <TopRightControls />
+      <TopRightControls forPlayScreen={false} />
     </div>
   );
 }
