@@ -12,6 +12,7 @@ import Scoreboard from "../modals/Scoreboard/Scoreboard";
 import ShufflingCountdownModal from "../modals/ShufflingCountdownModal";
 import useStartAnotherRoundHandler from "../../hooks/useStartAnotherRoundHandler";
 import useReturnToRoomHandler from "../../hooks/useReturnToRoomHandler";
+import TopRightControls from "../TopRightControls/TopRightControls";
 
 function Play() {
   const { gameData, roomConfig, setGameData, setShowShufflingCountdown } =
@@ -72,6 +73,8 @@ function Play() {
             />
           </>
         )}
+
+        <TopRightControls forPlayScreen={true} />
       </div>
 
       <ShufflingCountdownModal />
