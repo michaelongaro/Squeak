@@ -13,7 +13,12 @@ function PlayerIcon({ avatarPath, borderColor, size, username }: IPlayerIcon) {
   return (
     <>
       {avatarPath && borderColor ? (
-        <div className="baseVertFlex gap-2">
+        <div
+          style={{
+            color: "hsl(120deg 100% 86%)",
+          }}
+          className="baseVertFlex gap-2"
+        >
           <div
             style={{
               outline: `4px solid ${borderColor}`,
