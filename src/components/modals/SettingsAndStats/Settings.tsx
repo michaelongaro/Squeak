@@ -40,6 +40,7 @@ function Settings({
           type="text"
           placeholder="username"
           className=" rounded-sm pl-2 text-green-800"
+          maxLength={16}
           onChange={(e) => {
             setLocalPlayerMetadata((prevMetadata) => ({
               ...prevMetadata,
