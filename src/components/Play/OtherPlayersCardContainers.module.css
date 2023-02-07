@@ -1,18 +1,38 @@
 .topInnerGridContainer,
 .leftInnerGridContainer,
 .rightInnerGridContainer {
+  position: relative;
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  grid-template-columns: repeat(6, 1fr);
   grid-template-rows: 1fr 1fr;
   justify-items: center;
   align-items: center;
   gap: 1rem;
   grid-template-areas:
-    " squeakDeck squeakHand0 squeakHand1 squeakHand2 squeakHand3 "
-    " playerDeck . playerHand . playerAvatar ";
-  /* width: 50%; */
-  /* maybe just have a max-width so things don't get too stretched out */
-  /* margin: 1rem; */
+    ". squeakDeck squeakHand0 squeakHand1 squeakHand2 squeakHand3"
+    "playerDeck playerHand . . . .";
+  background-color: rgb(22 101 52);
+  padding: 0.5rem;
+  border-radius: 0.375rem;
+  border: 2px solid hsl(120deg 100% 86%);
+  max-width: 70%;
+}
+
+.leftInnerGridContainer,
+.rightInnerGridContainer {
+  min-width: min-content;
+}
+
+@media (max-height: 768px) or (max-width: 1500px) {
+
+  .topInnerGridContainer,
+  .leftInnerGridContainer,
+  .rightInnerGridContainer {
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-rows: 1fr;
+    grid-template-areas: "playerDeck playerHand . squeakDeck squeakHand0 squeakHand1 squeakHand2 squeakHand3";
+    max-width: 100%;
+  }
 }
 
 .topInnerGridContainer {
@@ -56,7 +76,9 @@
 }
 
 .playerAvatar {
-  grid-area: playerAvatar;
+  position: absolute;
+  right: -4.5rem;
+  bottom: 0.5rem;
 }
 
 /* adjustment rotations to make sure player avatars are shown upright */
@@ -65,9 +87,9 @@
 }
 
 .leftInnerGridContainer .playerAvatar {
-  rotate: 90deg !important;
+  rotate: 270deg !important;
 }
 
 .rightInnerGridContainer .playerAvatar {
-  rotate: 270deg !important;
+  rotate: 90deg !important;
 }

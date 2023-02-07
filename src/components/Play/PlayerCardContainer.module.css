@@ -1,15 +1,25 @@
 .gridContainer {
+  position: relative;
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: repeat(6, 1fr);
   grid-template-rows: 1fr 1fr;
   justify-items: center;
   align-items: center;
   gap: 1rem;
   grid-template-areas:
-    ". . squeakDeck squeakHand0 squeakHand1 squeakHand2 squeakHand3"
-    "playerDeck playerHand . . . . .";
-  width: 70%;
-  /* margin: 1rem; was warping grid pretty heavily for some reason */
+    ". squeakDeck squeakHand0 squeakHand1 squeakHand2 squeakHand3"
+    "playerDeck playerHand . . . .";
+  max-width: 70%;
+  background-color: rgb(22 101 52);
+  padding: 0.5rem;
+  border-radius: 0.375rem;
+  border: 2px solid hsl(120deg 100% 86%);
+}
+
+@media (max-height: 768px) or (max-width: 1500px) {
+  .gridContainer {
+    max-width: 100%;
+  }
 }
 
 .squeakDeck {
@@ -38,4 +48,10 @@
 
 .playerHand {
   grid-area: playerHand;
+}
+
+.playerAvatar {
+  position: absolute;
+  right: -4rem;
+  bottom: 0;
 }

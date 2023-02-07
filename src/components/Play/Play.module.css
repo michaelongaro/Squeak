@@ -1,15 +1,24 @@
 .fullBoardGrid {
   width: 100vw;
-  /*^ try 100% if overflow occurs*/
   height: 100vh;
   display: grid;
   grid-template-rows: 0.25fr 0.5fr 0.25fr;
   grid-template-columns: 0.25fr 0.5fr 0.25fr;
   grid-template-areas:
-    ". topPlayerCards settings"
+    "leftPlayerCards topPlayerCards rightPlayerCards"
     "leftPlayerCards board rightPlayerCards"
-    ". currentPlayerCards .";
+    "leftPlayerCards currentPlayerCards rightPlayerCards";
   gap: 1rem;
+}
+
+/* keeps proportions when playing with less than 4 players */
+.fullBoardGrid>div {
+  min-width: 100%;
+}
+
+.leftPlayerCards,
+.rightPlayerCards {
+  position: relative;
 }
 
 .currentPlayerCards,
@@ -25,6 +34,8 @@
   grid-area: topPlayerCards;
 }
 
+
+/* maybe have this be positioned absolutely in top right? */
 .settings {
   grid-area: settings;
 }
