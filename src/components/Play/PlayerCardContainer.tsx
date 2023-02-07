@@ -9,6 +9,8 @@ import useTrackHoverOverSqueakStacks from "../../hooks/useTrackHoverOverSqueakSt
 import classes from "./PlayerCardContainer.module.css";
 import { type IGetBoxShadowStyles } from "./Board";
 import useRotatePlayerDecks from "../../hooks/useRotatePlayerDecks";
+import PlayerIcon from "../playerIcons/PlayerIcon";
+import useResponsiveCardDimensions from "../../hooks/useResponsiveCardDimensions";
 
 interface IPlayerCardContainer {
   cardContainerClass: string | undefined;
@@ -25,6 +27,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
   const {
     gameData,
     roomConfig,
+    playerMetadata,
     holdingASqueakCard,
     hoveredSqueakStack,
     holdingADeckCard,
@@ -43,6 +46,8 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
 
   useTrackHoverOverSqueakStacks();
   useRotatePlayerDecks();
+
+  const cardDimensions = useResponsiveCardDimensions();
 
   function getBoxShadowStyles({
     id,
@@ -117,11 +122,11 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
           {gameData?.players[userID]?.squeakHand.map((cards, cardsIdx) => (
             <div
               key={`${userID}card${cardsIdx}`}
-              id={`${userID}squeakHand${cardsIdx}`}
               // @ts-expect-error asdf
               className={`${cardClassMap[cardsIdx]} relative h-full w-full`}
             >
               <div
+                id={`${userID}squeakHand${cardsIdx}`}
                 style={{
                   boxShadow: getBoxShadowStyles({
                     id: `${userID}squeakHand${cardsIdx}`,
@@ -133,7 +138,11 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                       ? 0.35 // worst case you leave it like this (was prev 0.75)
                       : 1,
                   height:
-                    cards.length === 1 ? 72 : `${cards.length * 15 + 72}px`,
+                    cards.length === 1
+                      ? cardDimensions.height
+                      : `${
+                          cards.length * (15 - cardsIdx) + cardDimensions.height
+                        }px`,
                 }}
                 className="absolute w-full rounded-lg transition-all"
               >
@@ -147,7 +156,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                         originIndexForHeldSqueakCard === cardsIdx
                           ? 501
                           : "auto",
-                      top: `${cardIdx * 15}px`,
+                      top: `${(15 - cards.length) * cardIdx}px`, //was just: cardsIdx * 15
                     }}
                     onMouseDown={() => {
                       setOriginIndexForHeldSqueakCard(cardsIdx);
@@ -229,7 +238,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
               ) : (
                 <div className="grid cursor-pointer grid-cols-1 items-center justify-items-center">
                   <div className="col-start-1 row-start-1">
-                    <FaRedoAlt size={"1rem"} />
+                    <FaRedoAlt size={"1.5rem"} />
                   </div>
                   <div className="col-start-1 row-start-1 opacity-25">
                     <Card
@@ -280,6 +289,31 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                   )
               )}
             </>
+          </div>
+
+          <div
+            style={{
+              right: document.getElementById(`${userID}icon`)
+                ? (document
+                    .getElementById(`${userID}icon`)!
+                    .getBoundingClientRect().width +
+                    15) *
+                  -1
+                : 50,
+            }}
+            id={`${userID}icon`}
+            className={classes.playerAvatar}
+          >
+            <PlayerIcon
+              avatarPath={
+                playerMetadata[userID]?.avatarPath || "/avatars/rabbit.svg"
+              }
+              borderColor={
+                playerMetadata[userID]?.color || "hsl(352deg, 69%, 61%)"
+              }
+              username={playerMetadata[userID]?.username}
+              size={"3rem"}
+            />
           </div>
         </div>
       )}
