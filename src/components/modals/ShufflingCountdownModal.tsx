@@ -66,7 +66,7 @@ function ShufflingCountdownModal() {
         opacity: showShufflingCountdown ? 1 : 0,
         pointerEvents: showShufflingCountdown ? "auto" : "none",
       }}
-      className="baseFlex absolute top-0 left-0 z-[600] h-full w-full bg-black bg-opacity-60 transition-all"
+      className="baseFlex absolute top-0 left-0 z-[999] h-full w-full bg-black bg-opacity-60 transition-all"
     >
       {/* prob will run into issues and will need framer motion to smoothly animate in/out */}
       {showShufflingCountdown && (
