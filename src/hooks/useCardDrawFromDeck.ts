@@ -7,7 +7,11 @@ interface IUseCardDrawFromDeck {
   value?: string;
   suit?: string;
   ownerID?: string;
-  moveCard: ({ x, y }: { x: number; y: number }, flip: boolean) => void;
+  moveCard: (
+    { x, y }: { x: number; y: number },
+    flip: boolean,
+    rotate: boolean
+  ) => void;
 }
 
 function useCardDrawFromDeck({
@@ -72,7 +76,7 @@ function useCardDrawFromDeck({
         const endX = endLocation.x;
         const endY = endLocation.y;
 
-        moveCard({ x: endX, y: endY }, true);
+        moveCard({ x: endX, y: endY }, true, false);
 
         setTimeout(() => {
           setGameData({
@@ -80,7 +84,7 @@ function useCardDrawFromDeck({
             board: updatedBoard,
             players: updatedPlayerCards,
           });
-        }, 250);
+        }, 260);
       }
     }
   }, [dataFromBackend, moveCard, gameData, setGameData, suit, ownerID, value]);

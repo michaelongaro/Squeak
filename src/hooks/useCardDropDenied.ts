@@ -4,7 +4,11 @@ import { type ICardDropProposal } from "../pages/api/socket";
 
 interface IUseCardDropDenied {
   ownerID?: string;
-  moveCard: ({ x, y }: { x: number; y: number }, flip: boolean) => void;
+  moveCard: (
+    { x, y }: { x: number; y: number },
+    flip: boolean,
+    rotate: false
+  ) => void;
 }
 
 function useCardDropDenied({ ownerID, moveCard }: IUseCardDropDenied) {
@@ -26,7 +30,7 @@ function useCardDropDenied({ ownerID, moveCard }: IUseCardDropDenied) {
       const { playerID } = dataFromBackend;
 
       if (playerID === ownerID) {
-        moveCard({ x: 0, y: 0 }, false);
+        moveCard({ x: 0, y: 0 }, false, false);
       }
     }
   }, [dataFromBackend, moveCard, ownerID]);

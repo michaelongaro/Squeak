@@ -20,7 +20,11 @@ interface IUseCardDropApproved {
   ownerID?: string;
   userID: string | null;
   origin?: "deck" | "squeak";
-  moveCard: ({ x, y }: { x: number; y: number }, flip: boolean) => void;
+  moveCard: (
+    { x, y }: { x: number; y: number },
+    flip: boolean,
+    rotate: boolean
+  ) => void;
   setCardOffsetPosition: React.Dispatch<
     React.SetStateAction<{
       x: number;
@@ -105,12 +109,15 @@ function useCardDropApproved({
               );
 
             endY +=
-              indexWithinSqueakStack === 0 ? 15 : indexWithinSqueakStack * 15;
+              indexWithinSqueakStack === 0
+                ? 15 // hmm maybe should be zero?
+                : indexWithinSqueakStack *
+                  (15 - squeakEndCoords.squeakStack.length);
           } else if (endID.includes("squeakHand")) {
-            endY += 15; // should be modular
+            endY += 15; // tired brain: not exactly sure which case this fires on
           }
 
-          moveCard({ x: endX, y: endY }, false);
+          moveCard({ x: endX, y: endY }, false, endID.includes("cell"));
 
           if (playerID === userID) {
             setProposedCardBoxShadow({
@@ -135,7 +142,7 @@ function useCardDropApproved({
             } else {
               setCardHasBeenPlaced(true);
             }
-          }, 250);
+          }, 260);
         }
       }
     }

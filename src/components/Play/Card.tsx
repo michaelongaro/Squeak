@@ -65,6 +65,7 @@ function Card({
   const [hueRotationDegrees, setHueRotationDegrees] = useState(0);
 
   const cardRef = useRef<HTMLDivElement>(null);
+  const imageRef = useRef<HTMLImageElement>(null);
   const cardIsMovingRef = useRef(false);
 
   useEffect(() => {
@@ -80,13 +81,18 @@ function Card({
   }, [hueRotation, ownerID, playerMetadata]);
 
   const moveCard = useCallback(
-    ({ x, y }: { x: number; y: number }, flip: boolean) => {
-      if (!cardRef.current || cardIsMovingRef.current) return;
+    ({ x, y }: { x: number; y: number }, flip: boolean, rotate: boolean) => {
+      if (!cardRef.current || !imageRef.current || cardIsMovingRef.current)
+        return;
 
       cardIsMovingRef.current = true;
 
       cardRef.current.style.transition = "all 0.25s linear"; // ease-in-out
-      cardRef.current.style.zIndex = "1000"; // make sure card is on top while moving over other cards
+      // make sure card is on top, but below shuffling modal while moving over other cards
+      cardRef.current.style.zIndex = "998";
+      imageRef.current.style.transition = "transform 0.125s linear"; // ease-in-out
+
+      const currentTransform = imageRef.current.style.transform;
 
       if (x === 0 && y === 0) {
         if (hoveredCell) {
@@ -144,35 +150,48 @@ function Card({
           });
         }
 
-        cardRef.current.style.transform += `rotateZ(${rotation}deg)`;
+        // cards are symmetrical across y-axis so need to rotate when card is already
+        // in correct orientation relative to how it will look on the board
+        if (rotate) {
+          imageRef.current.style.transform =
+            currentTransform + ` rotateZ(${rotation}deg)`;
+        }
       }
 
       if (flip) {
-        if (cardRef.current) {
-          cardRef.current.style.transform += "rotateY(360deg)"; // could try 90 and then go back to 0 at end?
-        }
+        if (!cardRef.current) return;
+
+        imageRef.current.style.transform = currentTransform + " rotateY(90deg)";
 
         setTimeout(() => {
+          if (!imageRef.current) return;
+
+          imageRef.current.style.transform = currentTransform.replace(
+            "rotateY(90deg)",
+            "rotateY(0deg)"
+          );
+
           setManuallyShowCardFront(true);
         }, 125);
       }
 
       setTimeout(() => {
-        if (cardRef.current) {
-          cardRef.current.style.transition = "none";
-          cardRef.current.style.zIndex = "500";
+        if (!cardRef.current || !imageRef.current) return;
+        cardRef.current.style.transition = "none";
+        cardRef.current.style.zIndex = "500";
+        imageRef.current.style.transition = "none";
 
-          if (flip) {
-            cardRef.current.style.transform = "translate(0px, 0px)";
-            setCardOffsetPosition({
-              x: 0,
-              y: 0,
-            });
-            setManuallyShowCardFront(false);
-          }
-          cardIsMovingRef.current = false;
+        if (flip) {
+          cardRef.current.style.transform = "translate(0px, 0px)";
+          imageRef.current.style.transform = "";
+          setCardOffsetPosition({
+            x: 0,
+            y: 0,
+          });
+          setManuallyShowCardFront(false);
         }
-      }, 250);
+        cardIsMovingRef.current = false;
+      }, 280);
 
       if (origin === "deck") {
         setHoldingADeckCard(false);
@@ -245,7 +264,7 @@ function Card({
           roomCode: roomConfig.code,
         });
       } else {
-        moveCard({ x: 0, y: 0 }, false);
+        moveCard({ x: 0, y: 0 }, false, false);
       }
     }
 
@@ -268,7 +287,7 @@ function Card({
           roomCode: roomConfig.code,
         });
       } else {
-        moveCard({ x: 0, y: 0 }, false);
+        moveCard({ x: 0, y: 0 }, false, false);
       }
     }
 
@@ -296,7 +315,7 @@ function Card({
           roomCode: roomConfig.code,
         });
       } else {
-        moveCard({ x: 0, y: 0 }, false);
+        moveCard({ x: 0, y: 0 }, false, false);
       }
     }
 
@@ -326,13 +345,13 @@ function Card({
           roomCode: roomConfig.code,
         });
       } else {
-        moveCard({ x: 0, y: 0 }, false);
+        moveCard({ x: 0, y: 0 }, false, false);
       }
     }
 
     // dropping card over anywhere else
     else {
-      moveCard({ x: 0, y: 0 }, false);
+      moveCard({ x: 0, y: 0 }, false, false);
     }
   }
 
@@ -343,7 +362,7 @@ function Card({
       resetHeldSqueakStackLocation[0] === squeakStackLocation[0] &&
       resetHeldSqueakStackLocation[1] < squeakStackLocation[1]
     ) {
-      moveCard({ x: 0, y: 0 }, false);
+      moveCard({ x: 0, y: 0 }, false, false);
       setResetHeldSqueakStackLocation(null);
     }
   }, [squeakStackLocation, resetHeldSqueakStackLocation, moveCard]);
@@ -385,12 +404,12 @@ function Card({
         >
           <div
             ref={cardRef}
-            className={`relative z-[500] h-full w-full ${
+            className={`baseFlex relative z-[500] h-full w-full !items-start ${
               draggable && "cursor-grab active:cursor-grabbing"
             }`}
-            onClick={() => console.log("child clicked")}
           >
             <img
+              ref={imageRef}
               style={{
                 filter:
                   showCardBack && !manuallyShowCardFront

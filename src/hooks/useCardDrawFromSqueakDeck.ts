@@ -7,7 +7,11 @@ interface IUseCardDrawFromSqueakDeck {
   value?: string;
   suit?: string;
   ownerID?: string;
-  moveCard: ({ x, y }: { x: number; y: number }, flip: boolean) => void;
+  moveCard: (
+    { x, y }: { x: number; y: number },
+    flip: boolean,
+    rotate: boolean
+  ) => void;
 }
 
 function useCardDrawFromSqueakDeck({
@@ -58,7 +62,7 @@ function useCardDrawFromSqueakDeck({
         const endX = endLocation.x;
         const endY = endLocation.y;
 
-        moveCard({ x: endX, y: endY }, true);
+        moveCard({ x: endX, y: endY }, true, false);
 
         setTimeout(() => {
           setGameData({
@@ -66,7 +70,7 @@ function useCardDrawFromSqueakDeck({
             board: updatedBoard || gameData?.board,
             players: updatedPlayerCards || gameData?.players,
           });
-        }, 250);
+        }, 260);
       }
     }
   }, [dataFromBackend, moveCard, gameData, setGameData, suit, ownerID, value]);
