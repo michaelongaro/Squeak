@@ -74,7 +74,7 @@ function ShufflingCountdownModal() {
           <div className="baseVertFlex gap-6">
             <div className="text-xl">Shuffling decks</div>
 
-            <div className="relative mt-16 h-[64px] w-[48px] lg:h-[72px] lg:w-[56px]">
+            <div className="relative mt-16 h-[64px] w-[48px] tall:h-[87px] tall:w-[67px]">
               <div className="absolute top-0 left-0 h-full w-full">
                 <Card
                   showCardBack={true}

@@ -177,7 +177,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
           ))}
 
           <div
-            className={`${classes.playerDeck} z-[500] h-[64px] w-[48px] lg:h-[72px] lg:w-[56px]`}
+            className={`${classes.playerDeck} z-[500] h-[64px] w-[48px] tall:h-[87px] tall:w-[67px]`}
           >
             <div
               id={`${userID}deck`}
@@ -247,7 +247,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
 
           <div
             id={`${userID}hand`}
-            className={`${classes.playerHand} relative h-[64px] w-[48px] select-none lg:h-[72px] lg:w-[56px]`}
+            className={`${classes.playerHand} relative z-[20] h-[64px] w-[48px] select-none tall:h-[87px] tall:w-[67px]`}
           >
             <>
               {gameData.players[userID]?.topCardsInDeck.map(

@@ -397,7 +397,7 @@ function Card({
                     ? `hue-rotate(${hueRotationDegrees}deg)`
                     : "none",
               }}
-              className="pointer-events-none h-[64px] w-[48px] select-none lg:h-[72px] lg:w-[56px]"
+              className="pointer-events-none h-[64px] w-[48px] select-none tall:h-[87px] tall:w-[67px]"
               src={
                 showCardBack && !manuallyShowCardFront
                   ? "/cards/cardBack.png"

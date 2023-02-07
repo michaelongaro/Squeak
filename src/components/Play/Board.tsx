@@ -66,7 +66,7 @@ function Board({ boardClass }: IBoard) {
                     ? 0.35 // worst case you leave it like this (was prev 0.75)
                     : 1,
               }}
-              className="baseFlex relative z-[600] h-[80px] min-h-fit w-[60px] min-w-fit rounded-lg p-1 transition-all"
+              className="baseFlex relative z-[600] h-[64px] min-h-fit w-[48px] min-w-fit rounded-lg p-1 transition-all tall:h-[90px] tall:w-[70px]"
               onMouseEnter={() => setHoveredCell([rowIdx, colIdx])}
               onMouseLeave={() => setHoveredCell(null)}
             >

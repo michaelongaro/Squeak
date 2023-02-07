@@ -74,7 +74,7 @@ function OtherPlayersCardContainers({
             <div className={internalOrderedGridClassNames[idx]}>
               <div
                 id={`${playerID}squeakDeck`}
-                className={`${classes.squeakDeck} h-[64px] w-[48px] lg:h-[72px] lg:w-[56px]`}
+                className={`${classes.squeakDeck} h-[64px] w-[48px] tall:h-[87px] tall:w-[67px]`}
               >
                 {gameData.players[playerID]!.squeakDeck.length > 0 ? (
                   <div className="relative h-full w-full">
@@ -121,7 +121,7 @@ function OtherPlayersCardContainers({
                   key={`${playerID}squeakStack${cardsIdx}`}
                   id={`${playerID}squeakHand${cardsIdx}`}
                   // @ts-expect-error asdf
-                  className={`${cardClassMap[cardsIdx]} relative h-[64px] w-[48px] lg:h-[72px] lg:w-[56px]`}
+                  className={`${cardClassMap[cardsIdx]} relative h-[64px] w-[48px] tall:h-[87px] tall:w-[67px]`}
                 >
                   <div
                     style={{
@@ -155,7 +155,7 @@ function OtherPlayersCardContainers({
               ))}
 
               <div
-                className={`${classes.playerDeck} z-[500] h-[64px] w-[48px] lg:h-[72px] lg:w-[56px]`}
+                className={`${classes.playerDeck} z-[500] h-[64px] w-[48px] tall:h-[87px] tall:w-[67px]`}
               >
                 <div id={`${playerID}deck`} className="h-full w-full">
                   {gameData?.players[playerID]?.nextTopCardInDeck ? (
@@ -207,7 +207,7 @@ function OtherPlayersCardContainers({
 
               <div
                 id={`${playerID}hand`}
-                className={`${classes.playerHand} relative h-[64px] w-[48px] select-none lg:h-[72px] lg:w-[56px]`}
+                className={`${classes.playerHand} relative z-[20] h-[64px] w-[48px] select-none tall:h-[87px] tall:w-[67px]`}
               >
                 <>
                   {gameData.players[playerID]?.topCardsInDeck.map(
