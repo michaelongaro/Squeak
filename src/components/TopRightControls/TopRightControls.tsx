@@ -8,27 +8,37 @@ import {
   BsFillVolumeUpFill,
   BsFillVolumeDownFill,
 } from "react-icons/bs";
-import { IoSettingsSharp } from "react-icons/io5";
+import { IoSettingsSharp, IoLogOutOutline } from "react-icons/io5";
 import { FaUserFriends } from "react-icons/fa";
 import { AnimatePresence } from "framer-motion";
 
-function TopRightControls() {
+interface ITopRightControls {
+  forPlayScreen: boolean;
+}
+
+function TopRightControls({ forPlayScreen }: ITopRightControls) {
   const { status } = useSession();
   const { showSettingsModal, setShowSettingsModal } = useRoomContext();
 
   // volume state
 
   return (
-    <div className="baseVertFlex absolute top-4 right-4 gap-2 sm:gap-4">
-      <SecondaryButton
-        icon={<IoSettingsSharp size={"1.5rem"} />}
-        extraPadding={false}
-        onClickFunction={() => {
-          if (status === "authenticated") {
-            setShowSettingsModal(true);
-          }
-        }}
-      />
+    <div
+      className={`${
+        forPlayScreen ? "baseFlex" : "baseVertFlex"
+      } absolute top-4 right-4 !min-w-fit gap-2 sm:gap-4`}
+    >
+      {!forPlayScreen && (
+        <SecondaryButton
+          icon={<IoSettingsSharp size={"1.5rem"} />}
+          extraPadding={false}
+          onClickFunction={() => {
+            if (status === "authenticated") {
+              setShowSettingsModal(true);
+            }
+          }}
+        />
+      )}
 
       <SecondaryButton
         icon={<BsFillVolumeMuteFill size={"1.5rem"} />}
@@ -36,10 +46,19 @@ function TopRightControls() {
         extraPadding={false}
       />
 
-      <SecondaryButton
-        icon={<FaUserFriends size={"1.5rem"} />}
-        extraPadding={false}
-      />
+      {forPlayScreen && (
+        <SecondaryButton
+          icon={<IoLogOutOutline size={"1.5rem"} />}
+          extraPadding={false}
+        />
+      )}
+
+      {!forPlayScreen && (
+        <SecondaryButton
+          icon={<FaUserFriends size={"1.5rem"} />}
+          extraPadding={false}
+        />
+      )}
 
       <AnimatePresence
         initial={false}
