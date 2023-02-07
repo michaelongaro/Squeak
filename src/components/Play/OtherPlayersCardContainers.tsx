@@ -1,23 +1,19 @@
-import { useEffect, useCallback } from "react";
-import { socket } from "../../pages/";
 import { useUserIDContext } from "../../context/UserIDContext";
 import { useRoomContext } from "../../context/RoomContext";
-import { type IDrawFromDeck } from "../../pages/api/socket";
+import useResponsiveCardDimensions from "../../hooks/useResponsiveCardDimensions";
 import Card from "./Card";
+import PlayerIcon from "../playerIcons/PlayerIcon";
+import { FaRedoAlt } from "react-icons/fa";
+import classes from "./OtherPlayersCardContainers.module.css";
 
 interface IOtherPlayersCardContainers {
   orderedClassNames: (string | undefined)[];
 }
 
-import classes from "./OtherPlayersCardContainers.module.css";
-import { FaRedoAlt } from "react-icons/fa";
-import PlayerIcon from "../playerIcons/PlayerIcon";
-
 const internalOrderedGridClassNames = [
   classes.topInnerGridContainer,
   classes.leftInnerGridContainer,
   classes.rightInnerGridContainer,
-  // add more later
 ];
 
 const cardClassMap = {
@@ -32,38 +28,10 @@ const rotationOrder = [180, 90, 270];
 function OtherPlayersCardContainers({
   orderedClassNames,
 }: IOtherPlayersCardContainers) {
-  const {
-    gameData,
-    setGameData,
-    playerMetadata,
-    playerIDWhoSqueaked,
-    setHoldingADeckCard,
-    setHoveredSqueakStack,
-  } = useRoomContext();
+  const { gameData, playerMetadata, playerIDWhoSqueaked } = useRoomContext();
   const { value: userID } = useUserIDContext();
 
-  const handleCardDrawnFromDeck = useCallback(
-    ({ playerID, updatedBoard, updatedPlayerCards }: IDrawFromDeck) => {
-      if (playerID === userID) return;
-
-      setGameData({
-        ...gameData,
-        board: updatedBoard || gameData?.board,
-        players: updatedPlayerCards || gameData?.players,
-      });
-    },
-    [gameData, setGameData, userID]
-  );
-
-  useEffect(() => {
-    socket.on("playerDrawnFromDeck", (data) => handleCardDrawnFromDeck(data));
-
-    return () => {
-      socket.off("playerDrawnFromDeck", (data) =>
-        handleCardDrawnFromDeck(data)
-      );
-    };
-  }, [handleCardDrawnFromDeck]);
+  const cardDimensions = useResponsiveCardDimensions();
 
   return (
     <>
@@ -119,16 +87,21 @@ function OtherPlayersCardContainers({
               {gameData.players[playerID]?.squeakHand.map((cards, cardsIdx) => (
                 <div
                   key={`${playerID}squeakStack${cardsIdx}`}
-                  id={`${playerID}squeakHand${cardsIdx}`}
                   // @ts-expect-error asdf
                   className={`${cardClassMap[cardsIdx]} relative h-[64px] w-[48px] tall:h-[87px] tall:w-[67px]`}
                 >
                   <div
+                    id={`${playerID}squeakHand${cardsIdx}`}
                     style={{
                       height:
-                        cards.length === 1 ? 72 : `${cards.length * 15 + 72}px`,
+                        cards.length === 1
+                          ? cardDimensions.height
+                          : `${
+                              cards.length * (15 - cardsIdx) +
+                              cardDimensions.height
+                            }px`,
                     }}
-                    className="absolute w-full"
+                    className="absolute h-full w-full"
                   >
                     {cards.map((card, cardIdx) => (
                       <div
@@ -136,7 +109,7 @@ function OtherPlayersCardContainers({
                         id={`${playerID}squeakStack${cardsIdx}${cardIdx}`}
                         className={`absolute left-0 h-full w-full`}
                         style={{
-                          top: `${cardIdx * 15}px`,
+                          top: `${(15 - cards.length) * cardIdx}px`,
                         }}
                       >
                         <Card
@@ -166,7 +139,7 @@ function OtherPlayersCardContainers({
                           draggable={false}
                           ownerID={playerID}
                           startID={`${playerID}deck`}
-                          rotation={0}
+                          rotation={rotationOrder[idx] as number}
                         />
                       </div>
                       <div className="topBackFacingCardInDeck absolute top-0 left-0 h-full w-full">
@@ -182,14 +155,14 @@ function OtherPlayersCardContainers({
                           draggable={false}
                           ownerID={playerID}
                           startID={`${playerID}deck`}
-                          rotation={0}
+                          rotation={rotationOrder[idx] as number}
                         />
                       </div>
                     </div>
                   ) : (
-                    <div className="grid cursor-pointer grid-cols-1 items-center justify-items-center">
+                    <div className="grid grid-cols-1 items-center justify-items-center">
                       <div className="col-start-1 row-start-1">
-                        <FaRedoAlt size={"1rem"} />
+                        <FaRedoAlt size={"1.5rem"} />
                       </div>
                       <div className="col-start-1 row-start-1 opacity-25">
                         <Card
@@ -197,7 +170,7 @@ function OtherPlayersCardContainers({
                           draggable={false}
                           ownerID={playerID}
                           startID={`${playerID}deck`}
-                          rotation={0}
+                          rotation={rotationOrder[idx] as number}
                         />
                       </div>
                     </div>
@@ -211,20 +184,13 @@ function OtherPlayersCardContainers({
               >
                 <>
                   {gameData.players[playerID]?.topCardsInDeck.map(
-                    (card, idx) =>
+                    (card, topCardsIdx) =>
                       card !== null && ( // necessary?
                         <div
                           key={`${playerID}card${card?.suit}${card?.value}`}
                           className="absolute top-0 left-0"
                           style={{
-                            top: `${-1 * (idx * 2)}px`,
-                          }}
-                          onMouseDown={() => {
-                            setHoldingADeckCard(true);
-                          }}
-                          onMouseUp={() => {
-                            setHoldingADeckCard(false);
-                            setHoveredSqueakStack(null);
+                            top: `${-1 * (topCardsIdx * 2)}px`,
                           }}
                         >
                           <Card
@@ -234,7 +200,7 @@ function OtherPlayersCardContainers({
                             origin={"deck"}
                             ownerID={playerID}
                             startID={`${playerID}hand`}
-                            rotation={0}
+                            rotation={rotationOrder[idx] as number}
                           />
                         </div>
                       )
@@ -242,7 +208,19 @@ function OtherPlayersCardContainers({
                 </>
               </div>
 
-              <div className={classes.playerAvatar}>
+              <div
+                style={{
+                  right: document.getElementById(`${playerID}icon`)
+                    ? (document
+                        .getElementById(`${playerID}icon`)!
+                        .getBoundingClientRect().width +
+                        15) *
+                      -1
+                    : 50,
+                }}
+                id={`${playerID}icon`}
+                className={`${classes.playerAvatar} !items-end`}
+              >
                 <PlayerIcon
                   avatarPath={
                     playerMetadata[playerID]?.avatarPath ||
