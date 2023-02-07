@@ -119,6 +119,7 @@ function JoinRoom() {
                   type="text"
                   placeholder="username"
                   className=" rounded-sm pl-2 text-green-800"
+                  maxLength={16}
                   onChange={(e) => {
                     setPlayerMetadata((prevMetadata) => ({
                       ...prevMetadata,
@@ -247,7 +248,7 @@ function JoinRoom() {
         )}
       </div>
 
-      <TopRightControls />
+      <TopRightControls forPlayScreen={false} />
     </div>
   );
 }
