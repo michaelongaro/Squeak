@@ -102,9 +102,9 @@ function OtherPlayersCardContainers({
                     style={{
                       height:
                         cards.length === 1
-                          ? cardDimensions.height
+                          ? `${cardDimensions.height}px`
                           : `${
-                              cards.length * (15 - cardsIdx) +
+                              (cards.length - 1) * (15 - cardsIdx) +
                               cardDimensions.height
                             }px`,
                     }}

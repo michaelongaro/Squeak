@@ -141,9 +141,10 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                       : 1,
                   height:
                     cards.length === 1
-                      ? cardDimensions.height
+                      ? `${cardDimensions.height}px`
                       : `${
-                          cards.length * (15 - cardsIdx) + cardDimensions.height
+                          (cards.length - 1) * (15 - cardsIdx) +
+                          cardDimensions.height
                         }px`,
                 }}
                 className="absolute w-full rounded-lg transition-all"

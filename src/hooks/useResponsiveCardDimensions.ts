@@ -1,19 +1,19 @@
 import { useState, useEffect } from "react";
 
 function useResponsiveCardDimensions() {
-  const [width, setWidth] = useState<string>("0px");
-  const [height, setHeight] = useState<string>("0px");
+  const [width, setWidth] = useState<number>(0);
+  const [height, setHeight] = useState<number>(0);
 
   useEffect(() => {
     updateDimensions();
 
     function updateDimensions() {
       if (window.innerWidth < 1024 || window.innerHeight < 768) {
-        setWidth("48px");
-        setHeight("64px");
+        setWidth(48);
+        setHeight(64);
       } else {
-        setWidth("67px");
-        setHeight("87px");
+        setWidth(67);
+        setHeight(87);
       }
     }
 
