@@ -5,6 +5,7 @@ import Card from "./Card";
 import PlayerIcon from "../playerIcons/PlayerIcon";
 import { FaRedoAlt } from "react-icons/fa";
 import classes from "./OtherPlayersCardContainers.module.css";
+import useRotatePlayerDecks from "../../hooks/useRotatePlayerDecks";
 
 interface IOtherPlayersCardContainers {
   orderedClassNames: (string | undefined)[];
@@ -28,10 +29,16 @@ const rotationOrder = [180, 90, 270];
 function OtherPlayersCardContainers({
   orderedClassNames,
 }: IOtherPlayersCardContainers) {
-  const { gameData, playerMetadata, playerIDWhoSqueaked } = useRoomContext();
+  const {
+    gameData,
+    playerMetadata,
+    decksAreBeingRotated,
+    playerIDWhoSqueaked,
+  } = useRoomContext();
   const { value: userID } = useUserIDContext();
 
   const cardDimensions = useResponsiveCardDimensions();
+  useRotatePlayerDecks();
 
   return (
     <>
@@ -142,7 +149,14 @@ function OtherPlayersCardContainers({
                           rotation={rotationOrder[idx] as number}
                         />
                       </div>
-                      <div className="topBackFacingCardInDeck absolute top-0 left-0 h-full w-full">
+                      <div
+                        style={{
+                          animationPlayState: decksAreBeingRotated
+                            ? "running"
+                            : "paused",
+                        }}
+                        className="topBackFacingCardInDeck absolute top-0 left-0 h-full w-full"
+                      >
                         <Card
                           value={
                             gameData?.players[playerID]?.nextTopCardInDeck

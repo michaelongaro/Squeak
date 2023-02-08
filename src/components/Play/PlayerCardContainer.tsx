@@ -11,6 +11,7 @@ import { type IGetBoxShadowStyles } from "./Board";
 import useRotatePlayerDecks from "../../hooks/useRotatePlayerDecks";
 import PlayerIcon from "../playerIcons/PlayerIcon";
 import useResponsiveCardDimensions from "../../hooks/useResponsiveCardDimensions";
+import { AnimatePresence, motion } from "framer-motion";
 
 interface IPlayerCardContainer {
   cardContainerClass: string | undefined;
@@ -33,6 +34,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
     holdingADeckCard,
     playerIDWhoSqueaked,
     proposedCardBoxShadow,
+    decksAreBeingRotated,
     originIndexForHeldSqueakCard,
     setHoldingADeckCard,
     setOriginIndexForHeldSqueakCard,
@@ -221,7 +223,14 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                       rotation={0}
                     />
                   </div>
-                  <div className="topBackFacingCardInDeck absolute top-0 left-0 h-full w-full">
+                  <div
+                    style={{
+                      animationPlayState: decksAreBeingRotated
+                        ? "running"
+                        : "paused",
+                    }}
+                    className="topBackFacingCardInDeck absolute top-0 left-0 h-full w-full"
+                  >
                     <Card
                       value={
                         gameData?.players[userID]?.nextTopCardInDeck?.value
@@ -290,6 +299,30 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
               )}
             </>
           </div>
+
+          <AnimatePresence
+            initial={false}
+            mode={"wait"}
+            onExitComplete={() => null}
+          >
+            {decksAreBeingRotated && (
+              <motion.div
+                key={"decksAreBeingRotatedTooltip"}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.1 }}
+                style={{
+                  color: "hsl(120deg 100% 86%)",
+                  borderColor: "hsl(120deg 100% 86%)",
+                }}
+                className="baseVertFlex absolute left-[-20rem] bottom-4 gap-2 rounded-sm border-2 bg-green-800 p-2"
+              >
+                <div>No player has valid moves,</div>
+                <div>rotating each player&apos;s deck by one card.</div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           <div
             style={{
