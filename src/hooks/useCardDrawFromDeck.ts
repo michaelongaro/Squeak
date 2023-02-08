@@ -11,6 +11,7 @@ interface IUseCardDrawFromDeck {
     { x, y }: { x: number; y: number },
     flip: boolean,
     rotate: boolean
+    // revertZIndex: boolean
   ) => void;
 }
 
@@ -70,13 +71,20 @@ function useCardDrawFromDeck({
         .getElementById(endID)
         ?.getBoundingClientRect();
 
-      console.log("endLocation", endLocation);
-
       if (endLocation) {
         const endX = endLocation.x;
         const endY = endLocation.y;
 
-        moveCard({ x: endX, y: endY }, true, false);
+        // damn damn damn, I think you do have to delay the actual set timeout because
+        // when it updates ctx with new gameData, it physically removes the <Card /> that was
+        // supposed to opacity 0...
+
+        moveCard(
+          { x: endX, y: endY },
+          true,
+          false
+          // , true);
+        );
 
         setTimeout(() => {
           setGameData({

@@ -13,6 +13,7 @@ import useCardDrawFromSqueakDeck from "../../hooks/useCardDrawFromSqueakDeck";
 import useCardDropApproved from "../../hooks/useCardDropApproved";
 import useCardDropDenied from "../../hooks/useCardDropDenied";
 import { adjustCoordinatesByRotation } from "../../utils/adjustCoordinatesByRotation";
+// import useHandleKingPlaced from "../../hooks/useHandleKingPlaced";
 
 interface ICardComponent {
   value?: string;
@@ -61,6 +62,7 @@ function Card({
   const [cardOffsetPosition, setCardOffsetPosition] = useState({ x: 0, y: 0 });
   const [cardHasBeenPlaced, setCardHasBeenPlaced] = useState(false);
   const [manuallyShowCardFront, setManuallyShowCardFront] = useState(false);
+  // const [manuallyShowCardBack, setManuallyShowCardBack] = useState(false);
 
   const [hueRotationDegrees, setHueRotationDegrees] = useState(0);
 
@@ -80,8 +82,41 @@ function Card({
     }
   }, [hueRotation, ownerID, playerMetadata]);
 
+  // const flipKing = useCallback(() => {
+  //   if (!imageRef.current) return;
+
+  //   // can add but I think the transition time is already set above
+
+  //   const currentTransform = imageRef.current.style.transform;
+
+  //   imageRef.current.style.transform = currentTransform + " rotateY(90deg)";
+
+  //   setTimeout(() => {
+  //     if (!imageRef.current) return;
+
+  //     imageRef.current.style.transform = currentTransform.replace(
+  //       "rotateY(90deg)",
+  //       "rotateY(0deg)"
+  //     );
+
+  //     setManuallyShowCardBack(true);
+  //   }, 125);
+
+  //   setTimeout(() => {
+  //     if (!imageRef.current) return;
+
+  //     console.log("setting opacity to 0");
+  //     imageRef.current.style.opacity = "0";
+  //   }, 280);
+  // }, []);
+
   const moveCard = useCallback(
-    ({ x, y }: { x: number; y: number }, flip: boolean, rotate: boolean) => {
+    (
+      { x, y }: { x: number; y: number },
+      flip: boolean,
+      rotate: boolean
+      // revertZIndex: boolean
+    ) => {
       if (!cardRef.current || !imageRef.current || cardIsMovingRef.current)
         return;
 
@@ -193,6 +228,8 @@ function Card({
         cardIsMovingRef.current = false;
       }, 280);
 
+      // maybe need check to make sure this only happens when it is current user's card
+      // that is being moved
       if (origin === "deck") {
         setHoldingADeckCard(false);
       } else if (origin === "squeak") {
@@ -207,6 +244,7 @@ function Card({
       userID,
       hoveredCell,
       hoveredSqueakStack,
+      // flipKing,
       setHeldSqueakStackLocation,
       setHoldingADeckCard,
       setHoldingASqueakCard,
@@ -244,6 +282,13 @@ function Card({
     ownerID,
     moveCard,
   });
+
+  // useHandleKingPlaced({
+  //   value,
+  //   suit,
+  //   ownerID,
+  //   flipKing,
+  // });
 
   function dropHandler() {
     // deck start + board end
@@ -413,18 +458,21 @@ function Card({
               style={{
                 filter:
                   showCardBack && !manuallyShowCardFront
-                    ? `hue-rotate(${hueRotationDegrees}deg)`
+                    ? // || manuallyShowCardBack
+                      `hue-rotate(${hueRotationDegrees}deg)`
                     : "none",
               }}
               className="pointer-events-none h-[64px] w-[48px] select-none tall:h-[87px] tall:w-[67px]"
               src={
                 showCardBack && !manuallyShowCardFront
-                  ? "/cards/cardBack.png"
+                  ? // || manuallyShowCardBack
+                    "/cards/cardBack.png"
                   : `/cards/${value}${suit}.svg`
               }
               alt={
                 showCardBack && !manuallyShowCardFront
-                  ? "Back of card"
+                  ? // || manuallyShowCardBack
+                    "Back of card"
                   : `${value}${suit} card`
               }
               draggable="false"

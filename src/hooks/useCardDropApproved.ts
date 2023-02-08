@@ -24,6 +24,7 @@ interface IUseCardDropApproved {
     { x, y }: { x: number; y: number },
     flip: boolean,
     rotate: boolean
+    // revertZIndex: boolean
   ) => void;
   setCardOffsetPosition: React.Dispatch<
     React.SetStateAction<{
@@ -117,7 +118,13 @@ function useCardDropApproved({
             endY += 15; // tired brain: not exactly sure which case this fires on
           }
 
-          moveCard({ x: endX, y: endY }, false, endID.includes("cell"));
+          moveCard(
+            { x: endX, y: endY },
+            false,
+            endID.includes("cell")
+            // value === "K" ? false : true
+            // false // temp
+          );
 
           if (playerID === userID) {
             setProposedCardBoxShadow({

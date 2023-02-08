@@ -51,7 +51,7 @@ export function deckToBoard({
     });
 
     // not sure how to properly mutate the board without this
-    gameData[roomCode]!.board[row]![col]! = card;
+    gameData[roomCode]!.board[row]![col] = card.value === "K" ? null : card;
 
     io.in(roomCode).emit("cardDropApproved", {
       card,
@@ -60,6 +60,11 @@ export function deckToBoard({
       updatedPlayerCards: gameData[roomCode]?.players,
       playerID,
     });
+
+    // io.in(roomCode).emit("kingWasPlaced", {
+    //   card,
+    //   playerID,
+    // });
   } else {
     io.in(roomCode).emit("cardDropDenied", { playerID });
   }

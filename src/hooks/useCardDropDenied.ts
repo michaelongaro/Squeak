@@ -8,6 +8,7 @@ interface IUseCardDropDenied {
     { x, y }: { x: number; y: number },
     flip: boolean,
     rotate: false
+    // revertZIndex: boolean
   ) => void;
 }
 
@@ -30,7 +31,12 @@ function useCardDropDenied({ ownerID, moveCard }: IUseCardDropDenied) {
       const { playerID } = dataFromBackend;
 
       if (playerID === ownerID) {
-        moveCard({ x: 0, y: 0 }, false, false);
+        moveCard(
+          { x: 0, y: 0 },
+          false,
+          false
+          // , true);
+        );
       }
     }
   }, [dataFromBackend, moveCard, ownerID]);
