@@ -68,6 +68,7 @@ interface IRoomContext {
   setShowShufflingCountdown: React.Dispatch<React.SetStateAction<boolean>>;
   connectedToRoom: boolean;
   setConnectedToRoom: React.Dispatch<React.SetStateAction<boolean>>;
+  leaveRoom: (moveBackToHome: boolean) => void;
 }
 
 const RoomContext = createContext<IRoomContext | null>(null);
@@ -168,6 +169,45 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     }));
   }, [userID, user, playerMetadata, session, status]);
 
+  function leaveRoom(moveBackToHome: boolean) {
+    if (moveBackToHome) {
+      setPageToRender("home");
+    }
+    setRoomConfig({
+      pointsToWin: 100,
+      maxRounds: 3,
+      maxPlayers: 2,
+      playersInRoom: 1,
+      isPublic: true,
+      code: "",
+      hostUsername: "",
+      hostUserID: "",
+    });
+    setPlayerMetadata({} as IRoomPlayersMetadata);
+    setGameData({} as IGameMetadata);
+
+    if (connectedToRoom) {
+      setConnectedToRoom(false);
+      socket.emit("leaveRoom", { playerID: userID, roomCode: roomConfig.code });
+      // prisma update here to remove player from room
+    }
+
+    // necessary to reset all of these? maybe in future when leaving from a game that has finished
+    // and this data would actually have values to reset
+    // setHoveredCell(null);
+    // setHoveredSqueakStack(null);
+    // setHoldingADeckCard(false);
+    // setHoldingASqueakCard(false);
+    // setOriginIndexForHeldSqueakCard(null);
+    // setHeldSqueakStackLocation(null);
+    // setResetHeldSqueakStackLocation(null);
+    // setProposedCardBoxShadow(null);
+    // setDecksAreBeingRotated(false);
+    // setPlayerIDWhoSqueaked(null);
+    // setShowScoreboard(false);
+    // setShowShufflingCountdown(false);
+  }
+
   const context: IRoomContext = {
     pageToRender,
     setPageToRender,
@@ -205,6 +245,7 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     setShowShufflingCountdown,
     connectedToRoom,
     setConnectedToRoom,
+    leaveRoom,
   };
 
   return (
