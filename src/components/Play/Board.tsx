@@ -1,7 +1,8 @@
-import { socket } from "../../pages";
+import { Fragment } from "react";
 import { useUserIDContext } from "../../context/UserIDContext";
 import { useRoomContext } from "../../context/RoomContext";
 import Card from "./Card";
+import { AnimatePresence, motion } from "framer-motion";
 
 interface IBoard {
   boardClass: string | undefined;
@@ -48,11 +49,11 @@ function Board({ boardClass }: IBoard) {
   return (
     <div className={`${boardClass} grid w-full grid-cols-5 gap-1`}>
       {gameData?.board.map((row, rowIdx) => (
-        <>
+        <Fragment key={`boardRow${rowIdx}`}>
           {row.map((cell, colIdx) => (
             <div
-              id={`cell${rowIdx}${colIdx}`}
               key={`board${rowIdx}${colIdx}`}
+              id={`cell${rowIdx}${colIdx}`}
               style={{
                 boxShadow: getBoxShadowStyles({
                   id: `cell${rowIdx}${colIdx}`,
@@ -70,16 +71,26 @@ function Board({ boardClass }: IBoard) {
               onMouseEnter={() => setHoveredCell([rowIdx, colIdx])}
               onMouseLeave={() => setHoveredCell(null)}
             >
-              <Card
-                value={cell?.value}
-                suit={cell?.suit}
-                showCardBack={false}
-                draggable={false}
-                rotation={0}
-              />
+              <AnimatePresence>
+                {cell?.value && cell?.suit && (
+                  <motion.div
+                    key={`board${rowIdx}${colIdx}AnimatedCell`}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.55 }}
+                  >
+                    <Card
+                      value={cell?.value}
+                      suit={cell?.suit}
+                      showCardBack={false}
+                      draggable={false}
+                      rotation={0}
+                    />
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           ))}
-        </>
+        </Fragment>
       ))}
     </div>
   );
