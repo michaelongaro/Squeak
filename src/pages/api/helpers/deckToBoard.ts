@@ -60,11 +60,6 @@ export function deckToBoard({
       updatedPlayerCards: gameData[roomCode]?.players,
       playerID,
     });
-
-    // io.in(roomCode).emit("kingWasPlaced", {
-    //   card,
-    //   playerID,
-    // });
   } else {
     io.in(roomCode).emit("cardDropDenied", { playerID });
   }

@@ -13,7 +13,6 @@ import useCardDrawFromSqueakDeck from "../../hooks/useCardDrawFromSqueakDeck";
 import useCardDropApproved from "../../hooks/useCardDropApproved";
 import useCardDropDenied from "../../hooks/useCardDropDenied";
 import { adjustCoordinatesByRotation } from "../../utils/adjustCoordinatesByRotation";
-// import useHandleKingPlaced from "../../hooks/useHandleKingPlaced";
 
 interface ICardComponent {
   value?: string;
@@ -62,7 +61,6 @@ function Card({
   const [cardOffsetPosition, setCardOffsetPosition] = useState({ x: 0, y: 0 });
   const [cardHasBeenPlaced, setCardHasBeenPlaced] = useState(false);
   const [manuallyShowCardFront, setManuallyShowCardFront] = useState(false);
-  // const [manuallyShowCardBack, setManuallyShowCardBack] = useState(false);
 
   const [hueRotationDegrees, setHueRotationDegrees] = useState(0);
 
@@ -81,34 +79,6 @@ function Card({
       setHueRotationDegrees(0);
     }
   }, [hueRotation, ownerID, playerMetadata]);
-
-  // const flipKing = useCallback(() => {
-  //   if (!imageRef.current) return;
-
-  //   // can add but I think the transition time is already set above
-
-  //   const currentTransform = imageRef.current.style.transform;
-
-  //   imageRef.current.style.transform = currentTransform + " rotateY(90deg)";
-
-  //   setTimeout(() => {
-  //     if (!imageRef.current) return;
-
-  //     imageRef.current.style.transform = currentTransform.replace(
-  //       "rotateY(90deg)",
-  //       "rotateY(0deg)"
-  //     );
-
-  //     setManuallyShowCardBack(true);
-  //   }, 125);
-
-  //   setTimeout(() => {
-  //     if (!imageRef.current) return;
-
-  //     console.log("setting opacity to 0");
-  //     imageRef.current.style.opacity = "0";
-  //   }, 280);
-  // }, []);
 
   const moveCard = useCallback(
     (
@@ -283,13 +253,6 @@ function Card({
     moveCard,
   });
 
-  // useHandleKingPlaced({
-  //   value,
-  //   suit,
-  //   ownerID,
-  //   flipKing,
-  // });
-
   function dropHandler() {
     // deck start + board end
     if (holdingADeckCard && hoveredCell && value && suit) {
@@ -458,21 +421,18 @@ function Card({
               style={{
                 filter:
                   showCardBack && !manuallyShowCardFront
-                    ? // || manuallyShowCardBack
-                      `hue-rotate(${hueRotationDegrees}deg)`
+                    ? `hue-rotate(${hueRotationDegrees}deg)`
                     : "none",
               }}
               className="pointer-events-none h-[64px] w-[48px] select-none tall:h-[87px] tall:w-[67px]"
               src={
                 showCardBack && !manuallyShowCardFront
-                  ? // || manuallyShowCardBack
-                    "/cards/cardBack.png"
+                  ? "/cards/cardBack.png"
                   : `/cards/${value}${suit}.svg`
               }
               alt={
                 showCardBack && !manuallyShowCardFront
-                  ? // || manuallyShowCardBack
-                    "Back of card"
+                  ? "Back of card"
                   : `${value}${suit} card`
               }
               draggable="false"

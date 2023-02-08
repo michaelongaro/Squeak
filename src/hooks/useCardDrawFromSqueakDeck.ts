@@ -11,7 +11,6 @@ interface IUseCardDrawFromSqueakDeck {
     { x, y }: { x: number; y: number },
     flip: boolean,
     rotate: boolean
-    // revertZIndex: boolean
   ) => void;
 }
 
@@ -63,12 +62,7 @@ function useCardDrawFromSqueakDeck({
         const endX = endLocation.x;
         const endY = endLocation.y;
 
-        moveCard(
-          { x: endX, y: endY },
-          true,
-          false
-          // , true);
-        );
+        moveCard({ x: endX, y: endY }, true, false);
 
         setTimeout(() => {
           setGameData({
