@@ -281,16 +281,23 @@ function Scoreboard() {
       }}
       className="baseFlex absolute top-0 left-0 z-[600] h-full w-full bg-black bg-opacity-60 transition-all"
     >
-      <div className="h-[75%] w-[75%] rounded-lg bg-green-200 p-4">
+      <div
+        style={{
+          color: "hsl(120deg 100% 86%)",
+          backgroundColor: "hsl(120deg 100% 18%)",
+          borderColor: "hsl(120deg 100% 86%)",
+        }}
+        className="h-[95%] w-[95%] rounded-lg border-2 p-4 shadow-md tall:h-[75%] tall:w-[75%]"
+      >
         {scoreboardData?.playerRoundDetails && (
-          <div className="baseVertFlex h-full gap-12">
+          <div className="baseVertFlex h-full gap-2 tall:gap-12">
             <div className="text-2xl">Scoreboard</div>
 
             <div className="baseFlex h-full w-full gap-4">
               {scoreboardData.playerRoundDetails.map((player) => (
                 <div
                   key={player.playerID}
-                  className="baseVertFlex h-full w-full rounded-md border-2 border-black shadow-md"
+                  className="baseVertFlex h-full w-full shadow-md"
                 >
                   {/* avatar + username */}
                   <div
@@ -299,7 +306,7 @@ function Scoreboard() {
                         playerColorVariants[player.playerID]?.baseColor ??
                         "white",
                     }}
-                    className="baseVertFlex h-36 w-full gap-2 border-b-2 border-black"
+                    className="baseVertFlex h-36 w-full gap-2 rounded-t-md pt-2"
                   >
                     <PlayerIcon
                       avatarPath={
@@ -425,7 +432,7 @@ function Scoreboard() {
                         playerColorVariants[player.playerID]?.textColor ??
                         "black",
                     }}
-                    className="baseFlex w-full gap-2 rounded-b-md border-t-2 border-black p-2"
+                    className="baseFlex w-full gap-2 rounded-b-md p-2"
                   >
                     {showNewRankings
                       ? ranking[player.newRanking]
