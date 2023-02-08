@@ -321,6 +321,7 @@ function CreateRoom() {
                   firstRound: true,
                 });
               }}
+              showLoadingSpinnerOnClick={true}
             />
           </div>
         ) : (
@@ -328,6 +329,7 @@ function CreateRoom() {
             innerText={"Create"}
             disabled={Object.values(playerMetadata)[0]?.username.length === 0}
             onClickFunction={() => createRoom()}
+            showLoadingSpinnerOnClick={true}
           />
         )}
       </div>

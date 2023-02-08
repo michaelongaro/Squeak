@@ -216,6 +216,7 @@ function UserSettingsAndStatsModal({
               height={"3rem"}
               disabled={!ableToSave}
               onClickFunction={() => updateUserHandler()}
+              showLoadingSpinnerOnClick={true}
             />
           )}
         </div>

@@ -158,6 +158,7 @@ function JoinRoom() {
                 roomCode.length === 0
               }
               onClickFunction={() => setSubmittedRoomCode(roomCode)}
+              showLoadingSpinnerOnClick={true}
             />
 
             <fieldset className="rounded-md border-2 border-white p-4">
@@ -244,6 +245,7 @@ function JoinRoom() {
               </div>
             </fieldset>
             waiting for host to start the game
+            {/* starting game + spinner */}
           </div>
         )}
       </div>

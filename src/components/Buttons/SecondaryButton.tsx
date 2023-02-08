@@ -5,6 +5,7 @@ interface ISecondaryButton {
   extraPadding: boolean;
   innerText?: string;
   onClickFunction?: () => void;
+  showLoadingSpinnerOnClick?: boolean;
   width?: string;
   height?: string;
   forceHover?: boolean;
@@ -17,6 +18,7 @@ interface ISecondaryButton {
 function SecondaryButton({
   innerText,
   disabled = false,
+  showLoadingSpinnerOnClick = false,
   width,
   height,
   forceHover,
@@ -27,8 +29,9 @@ function SecondaryButton({
   onClickFunction,
 }: ISecondaryButton) {
   const [hoveringOnButton, setHoveringOnButton] = useState<boolean>(false);
-
-  // maybe still show some kind of darkening when hovering over a disabled button
+  const [brightness, setBrightness] = useState<number>(1);
+  const [showLoadingSpinner, setShowLoadingSpinner] = useState<boolean>(false);
+  const [tempDisabled, setTempDisabled] = useState<boolean>(false);
 
   return (
     <button
@@ -46,19 +49,37 @@ function SecondaryButton({
           hoveringOnButton || forceHover
             ? "hsl(120deg 100% 18%)"
             : "hsl(120deg 100% 86%)",
+        filter: `brightness(${brightness})`,
         padding: extraPadding ? "1.15rem 1.5rem" : "0.5rem",
         width: width ?? "100%",
         height: height ?? "100%",
-        cursor: disabled ? "not-allowed" : "pointer",
-        opacity: disabled ? 0.25 : 1,
+        cursor: disabled || tempDisabled ? "not-allowed" : "pointer",
+        opacity: disabled || tempDisabled ? 0.25 : 1,
       }}
       className="baseFlex relative h-full w-full gap-2 rounded-md border-2 transition-all"
       onMouseEnter={() => setHoveringOnButton(true)}
-      onMouseLeave={() => setHoveringOnButton(false)}
+      onMouseLeave={() => {
+        setHoveringOnButton(false);
+        setBrightness(1);
+      }}
+      onMouseDown={() => setBrightness(0.75)}
+      onMouseUp={() => setBrightness(1)}
       onClick={() => {
         if (disabled) return;
-        onClickFunction?.();
-      }} // prob will have an issue with "() =>"
+
+        if (showLoadingSpinnerOnClick) {
+          setShowLoadingSpinner(true);
+          setTempDisabled(true);
+
+          setTimeout(() => {
+            setShowLoadingSpinner(false);
+            setTempDisabled(false);
+            onClickFunction?.();
+          }, 1500);
+        } else {
+          onClickFunction?.();
+        }
+      }}
     >
       {extraPadding && (
         <>
@@ -111,7 +132,28 @@ function SecondaryButton({
 
       {iconOnLeft && icon}
       {innerText}
-      {!iconOnLeft && icon}
+      {!iconOnLeft && !showLoadingSpinner && icon}
+      {showLoadingSpinner && (
+        <div
+          style={{
+            width: "1.5rem",
+            height: "1.5rem",
+            borderTop: `0.35rem solid hsla(120deg, 100%, ${
+              hoveringOnButton ? "18%" : "86%"
+            }, 40%)`,
+            borderRight: `0.35rem solid hsla(120deg, 100%, ${
+              hoveringOnButton ? "18%" : "86%"
+            }, 40%)`,
+            borderBottom: `0.35rem solid hsla(120deg, 100%, ${
+              hoveringOnButton ? "18%" : "86%"
+            }, 40%)`,
+            borderLeft: `0.35rem solid hsl(120deg 100% ${
+              hoveringOnButton ? "18%" : "86%"
+            })`,
+          }}
+          className="loadingSpinner"
+        ></div>
+      )}
     </button>
   );
 }
