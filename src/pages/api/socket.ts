@@ -350,10 +350,6 @@ export default function SocketHandler(req, res) {
 
     drawFromDeckHandler(io, socket, gameData);
 
-    // wasn't actually being used, instead extracted function was being
-    // called directly
-    // drawFromSqueakDeckHandler(io, socket, gameData);
-
     proposedCardDropHandler(io, socket, gameData);
 
     roundOverHandler(io, socket, gameData, roomData);
