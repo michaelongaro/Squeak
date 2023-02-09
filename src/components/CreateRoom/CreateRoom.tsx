@@ -36,6 +36,7 @@ function CreateRoom() {
     setConnectedToRoom,
     setGameData,
     setPageToRender,
+    leaveRoom,
   } = useRoomContext();
   const { value: userID } = useUserIDContext();
 
@@ -45,8 +46,10 @@ function CreateRoom() {
     useState<boolean>(false);
   const [showCheckmark, setShowCheckmark] = useState<boolean>(false);
 
+  // needs !connectedToRoom for when player inherits ownership of room after host leaves,
+  // otherwise they would be overwriting the current room config
   useEffect(() => {
-    if (!configAndMetadataInitialized && userID) {
+    if (!configAndMetadataInitialized && userID && !connectedToRoom) {
       setRoomConfig((prevRoomConfig) => ({
         ...prevRoomConfig,
         code: cryptoRandomString({ length: 6 }),
@@ -56,7 +59,13 @@ function CreateRoom() {
 
       setConfigAndMetadataInitialized(true);
     }
-  }, [playerMetadata, setRoomConfig, userID, configAndMetadataInitialized]);
+  }, [
+    playerMetadata,
+    setRoomConfig,
+    userID,
+    configAndMetadataInitialized,
+    connectedToRoom,
+  ]);
 
   useEffect(() => {
     socket.on("roomWasCreated", () => setConnectedToRoom(true)); // have loading dots while this is waiting?
