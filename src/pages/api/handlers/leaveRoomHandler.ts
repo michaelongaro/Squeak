@@ -23,20 +23,12 @@ export function leaveRoomHandler(
     const previousHostID = room?.roomConfig.hostUserID;
     let newHostID = "";
 
-    console.log("emitting to server to leave 1");
-
     if (!room) return;
-
-    console.log("emitting to server to leave 2");
 
     if (!game) {
       // remove player from room
-      console.log("starting players count", room.roomConfig.playersInRoom);
-
       delete room.players[playerID];
       room.roomConfig.playersInRoom--;
-      console.log("new players count", room.roomConfig.playersInRoom);
-
       room.roomConfig.hostUserID = Object.keys(room.players)[0] || "";
       room.roomConfig.hostUsername =
         Object.values(room.players)[0]?.username || "";
@@ -46,8 +38,6 @@ export function leaveRoomHandler(
       // remove player from game
       game.playerIDsThatLeftMidgame.push(playerID);
     }
-
-    console.dir(room.players, { depth: null });
 
     const earliestJoinedPlayerInRoom = Object.keys(room.players)[0];
 
@@ -69,8 +59,6 @@ export function leaveRoomHandler(
     // leaving before emitting so that player who left doesn't receive the event
     // primarily just to update players who are still in the room when this happens
     socket.leave(roomCode);
-
-    console.log("emitting to server to leave 3");
 
     const emitData: IPlayerHasLeftRoom = {
       roomConfig: room.roomConfig,
