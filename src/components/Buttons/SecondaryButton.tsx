@@ -12,6 +12,7 @@ interface ISecondaryButton {
   disabled?: boolean;
   icon?: JSX.Element;
   iconOnLeft?: boolean;
+  rotateIcon?: boolean;
   style?: React.CSSProperties;
 }
 
@@ -24,6 +25,7 @@ function SecondaryButton({
   forceHover,
   icon,
   iconOnLeft,
+  rotateIcon,
   extraPadding,
   style,
   onClickFunction,
@@ -130,9 +132,27 @@ function SecondaryButton({
         </>
       )}
 
-      {iconOnLeft && icon}
+      {iconOnLeft && (
+        <div
+          style={{
+            transform: rotateIcon ? "rotate(540deg)" : "rotate(0deg)",
+            transition: "transform 0.5s ease-in-out",
+          }}
+        >
+          {icon}
+        </div>
+      )}
       {innerText}
-      {!iconOnLeft && !showLoadingSpinner && icon}
+      {!iconOnLeft && !showLoadingSpinner && (
+        <div
+          style={{
+            transform: rotateIcon ? "rotate(540deg)" : "rotate(0deg)",
+            transition: "transform 0.5s ease-in-out",
+          }}
+        >
+          {icon}
+        </div>
+      )}
       {showLoadingSpinner && (
         <div
           style={{
