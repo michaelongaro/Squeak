@@ -1,18 +1,16 @@
 import { useState, useEffect } from "react";
-import { useUserIDContext } from "../../context/UserIDContext";
 import { useRoomContext } from "../../context/RoomContext";
+import { socket } from "../../pages";
 import Board from "./Board";
 import PlayerCardContainer from "./PlayerCardContainer";
-
-import classes from "./Play.module.css";
-
-import { socket } from "../../pages";
 import OtherPlayersCardContainers from "./OtherPlayersCardContainers";
 import Scoreboard from "../modals/Scoreboard/Scoreboard";
 import ShufflingCountdownModal from "../modals/ShufflingCountdownModal";
 import useStartAnotherRoundHandler from "../../hooks/useStartAnotherRoundHandler";
 import useReturnToRoomHandler from "../../hooks/useReturnToRoomHandler";
 import { motion } from "framer-motion";
+
+import classes from "./Play.module.css";
 
 function Play() {
   const { gameData, roomConfig, setGameData, setShowShufflingCountdown } =
@@ -79,8 +77,6 @@ function Play() {
             />
           </>
         )}
-
-        <TopRightControls forPlayScreen={true} />
       </div>
 
       <ShufflingCountdownModal />
