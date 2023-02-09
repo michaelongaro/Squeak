@@ -12,7 +12,7 @@ import Scoreboard from "../modals/Scoreboard/Scoreboard";
 import ShufflingCountdownModal from "../modals/ShufflingCountdownModal";
 import useStartAnotherRoundHandler from "../../hooks/useStartAnotherRoundHandler";
 import useReturnToRoomHandler from "../../hooks/useReturnToRoomHandler";
-import TopRightControls from "../TopRightControls/TopRightControls";
+import { motion } from "framer-motion";
 
 function Play() {
   const { gameData, roomConfig, setGameData, setShowShufflingCountdown } =
@@ -54,7 +54,13 @@ function Play() {
   }, [gameData, roomConfig.code, setGameData, setShowShufflingCountdown]);
 
   return (
-    <>
+    <motion.div
+      key={"play"}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.15 }}
+    >
       <div className={`${classes.fullBoardGrid} relative `}>
         {gameStarted && (
           <>
@@ -80,7 +86,7 @@ function Play() {
       <ShufflingCountdownModal />
 
       <Scoreboard />
-    </>
+    </motion.div>
   );
 }
 

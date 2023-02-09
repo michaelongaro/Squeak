@@ -71,7 +71,11 @@ function Board({ boardClass }: IBoard) {
               onMouseEnter={() => setHoveredCell([rowIdx, colIdx])}
               onMouseLeave={() => setHoveredCell(null)}
             >
-              <AnimatePresence>
+              <AnimatePresence
+                initial={false}
+                mode={"wait"}
+                onExitComplete={() => null}
+              >
                 {cell?.value && cell?.suit && (
                   <motion.div
                     key={`board${rowIdx}${colIdx}AnimatedCell`}

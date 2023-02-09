@@ -14,6 +14,7 @@ import { useSession } from "next-auth/react";
 import PlayerIcon from "../playerIcons/PlayerIcon";
 import { useUserIDContext } from "../../context/UserIDContext";
 import { trpc } from "../../utils/trpc";
+import { motion } from "framer-motion";
 
 function MainOptions() {
   const { data: session, status } = useSession();
@@ -26,7 +27,14 @@ function MainOptions() {
   const [showTutorialModal, setShowTutorialModal] = useState<boolean>(false);
 
   return (
-    <div className="baseFlex relative min-h-[100vh]">
+    <motion.div
+      key={"mainOptions"}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.15 }}
+      className="baseFlex relative min-h-[100vh]"
+    >
       {status !== "loading" && (
         <div className="baseVertFlex min-w-[22.25rem] gap-8 rounded-md border-2 border-white bg-green-800 p-8 shadow-lg">
           <div className="text-4xl text-green-300 sm:text-5xl">Squeak</div>
@@ -79,9 +87,7 @@ function MainOptions() {
       )}
 
       {showTutorialModal && <TutorialModal />}
-
-      <TopRightControls forPlayScreen={false} />
-    </div>
+    </motion.div>
   );
 }
 

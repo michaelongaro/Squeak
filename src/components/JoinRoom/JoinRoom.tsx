@@ -12,6 +12,7 @@ import { BiArrowBack } from "react-icons/bi";
 import PrimaryButton from "../Buttons/PrimaryButton";
 import { MdCopyAll } from "react-icons/md";
 import { FiCheck } from "react-icons/fi";
+import { motion } from "framer-motion";
 
 function JoinRoom() {
   const {
@@ -88,7 +89,14 @@ function JoinRoom() {
   // might need to add roomCtx to deps here
 
   return (
-    <div className="baseVertFlex relative min-h-[100vh]">
+    <motion.div
+      key={"joinRoom"}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.15 }}
+      className="baseVertFlex relative min-h-[100vh]"
+    >
       <div className="baseVertFlex relative gap-2 ">
         <div className="absolute top-0 left-0">
           <SecondaryButton
@@ -249,9 +257,7 @@ function JoinRoom() {
           </div>
         )}
       </div>
-
-      <TopRightControls forPlayScreen={false} />
-    </div>
+    </motion.div>
   );
 }
 

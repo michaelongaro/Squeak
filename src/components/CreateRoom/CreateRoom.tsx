@@ -13,6 +13,7 @@ import { MdCopyAll } from "react-icons/md";
 import PrimaryButton from "../Buttons/PrimaryButton";
 import { BiArrowBack } from "react-icons/bi";
 import { FiCheck } from "react-icons/fi";
+import { motion } from "framer-motion";
 
 export interface IRoomConfig {
   pointsToWin: number;
@@ -104,7 +105,14 @@ function CreateRoom() {
   }
 
   return (
-    <div className="baseVertFlex relative min-h-[100vh]">
+    <motion.div
+      key={"createRoom"}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.15 }}
+      className="baseVertFlex relative min-h-[100vh]"
+    >
       <div className="baseVertFlex relative gap-2 ">
         <div className="absolute top-0 left-0">
           <SecondaryButton
@@ -336,8 +344,7 @@ function CreateRoom() {
           />
         )}
       </div>
-      <TopRightControls forPlayScreen={false} />
-    </div>
+    </motion.div>
   );
 }
 

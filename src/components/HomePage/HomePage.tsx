@@ -10,8 +10,11 @@ function HomePage() {
   const { connectedToRoom, pageToRender } = useRoomContext();
 
   return (
-    // could make this into a card and have 2-3 diagonal-ish layered playing cards that are peeking out behind left and right sides of card
-    <AnimatePresence>
+      <AnimatePresence
+        initial={false}
+        mode={"wait"}
+        onExitComplete={() => null}
+      >
       {pageToRender === "home" && <MainOptions />}
       {pageToRender === "createRoom" && <CreateRoom />}
       {pageToRender === "joinRoom" && <JoinRoom />}
