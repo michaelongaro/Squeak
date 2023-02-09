@@ -15,6 +15,7 @@ import { resetGameHandler } from "./handlers/resetGameHandler";
 import { avatarPaths } from "../../utils/avatarPaths";
 import { deckHueRotations } from "../../utils/deckHueRotations";
 import { hslToDeckHueRotations } from "../../utils/hslToDeckHueRotations";
+import { leaveRoomHandler } from "./handlers/leaveRoomHandler";
 
 export interface IRoomData {
   [code: string]: IRoomMetadata;
@@ -37,6 +38,7 @@ export interface IGameMetadata {
   board: (ICard | null)[][];
   players: IPlayerCardsMetadata;
   currentRound: number;
+  playerIDsThatLeftMidgame: string[];
 }
 
 export interface IPlayerCardsMetadata {
@@ -95,6 +97,19 @@ export interface IUpdatePlayerMetadata {
   roomCode: string;
 }
 
+export interface IMoveBackToLobby {
+  roomConfig: IRoomConfig;
+  players: IRoomPlayersMetadata;
+  gameData: IGameMetadata;
+}
+
+export interface IPlayerHasLeftRoom {
+  roomConfig: IRoomConfig;
+  players: IRoomPlayersMetadata;
+  gameData: IGameMetadata;
+  newHostID: string;
+}
+
 interface IStartGame {
   roomCode: string;
   firstRound: boolean;
@@ -143,9 +158,10 @@ export default function SocketHandler(req, res) {
     socket.on(
       "joinRoom",
       ({ userID, playerMetadata, code }: IJoinRoomConfig) => {
+        const room = roomData[code];
         const players = roomData[code]?.players;
 
-        if (!players) return;
+        if (!room || !players) return;
 
         socket.join(code);
 
@@ -207,15 +223,9 @@ export default function SocketHandler(req, res) {
 
         io.in(code).emit("playerMetadataUpdated", players);
 
-        const currentPlayersInRoom = roomData[code]?.roomConfig?.playersInRoom;
+        room.roomConfig.playersInRoom++;
 
-        const updatedRoomConfig = {
-          ...roomData[code]?.roomConfig,
-
-          playersInRoom: currentPlayersInRoom ? currentPlayersInRoom + 1 : 1,
-        };
-
-        io.in(code).emit("roomConfigUpdated", updatedRoomConfig);
+        io.in(code).emit("roomConfigUpdated", room.roomConfig);
       }
     );
 
@@ -331,6 +341,7 @@ export default function SocketHandler(req, res) {
         board,
         players: playerCards,
         currentRound: 1,
+        playerIDsThatLeftMidgame: [],
       };
 
       io.in(roomCode).emit("initGameData", gameData[roomCode]);
@@ -354,7 +365,9 @@ export default function SocketHandler(req, res) {
 
     roundOverHandler(io, socket, gameData, roomData);
 
-    resetGameHandler(io, socket, gameData, gameStuckInterval);
+    resetGameHandler(io, socket, gameData, roomData, gameStuckInterval);
+
+    leaveRoomHandler(io, socket, gameData, roomData);
   };
 
   // Define actions inside
