@@ -32,7 +32,7 @@ function Settings({
       style={{
         color: "hsl(120deg 100% 86%)",
       }}
-      className="baseVertFlex w-[700px] gap-4 bg-green-800 p-8"
+      className="baseVertFlex w-[700px] gap-8 bg-green-800 p-8"
     >
       <div className="baseFlex gap-2">
         <label>Username</label>
@@ -67,7 +67,7 @@ function Settings({
         />
       </div>
 
-      <div className="baseFlex mt-6 gap-2">
+      <div className="baseFlex mt-4 gap-2">
         <label>Show Squeak Pile on left</label>
         <input
           className="h-[1.15rem] w-[1.15rem] cursor-pointer"
