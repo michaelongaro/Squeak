@@ -353,7 +353,7 @@ function PickerTooltip({
                   borderColor={
                     playerMetadata[userID]?.color || "hsl(352deg, 69%, 61%)"
                   }
-                  size="3rem"
+                  size="3.25rem" // hopefully doesn't mess up positioning near player container on play
                 />
               ) : (
                 <Card
