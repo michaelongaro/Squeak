@@ -23,12 +23,14 @@ interface IPickerTooltip {
   setLocalPlayerMetadata?: React.Dispatch<
     React.SetStateAction<IRoomPlayersMetadata>
   >;
+  openAbove?: boolean;
 }
 
 function PickerTooltip({
   type,
   localPlayerMetadata,
   setLocalPlayerMetadata,
+  openAbove = false,
 }: IPickerTooltip) {
   const {
     playerMetadata: ctxPlayerMetadata,
@@ -52,6 +54,12 @@ function PickerTooltip({
   const [userAvatarIndex, setUserAvatarIndex] = useState<number>(-1);
   const [userDeckIndex, setUserDeckIndex] = useState<number>(-1);
 
+  const [relativeOffset, setRelativeOffset] = useState<{
+    left: string;
+    top: string | undefined;
+    bottom: string | undefined;
+  }>({ left: "0px", top: "0px", bottom: "0px" });
+
   const tooltipRef = useRef<HTMLDivElement>(null);
 
   useOnClickOutside({ ref: tooltipRef, setShowModal: setShowTooltip });
@@ -72,6 +80,31 @@ function PickerTooltip({
     setUserAvatarIndex(avatarIndex);
     setUserDeckIndex(deckIndex);
   }, [playerMetadata, userID]);
+
+  useEffect(() => {
+    let left = "0px";
+    let top = undefined;
+    let bottom = undefined;
+
+    if (type === "avatar") {
+      left = "-137px";
+
+      if (openAbove) {
+        top = "-340px";
+      } else {
+        bottom = "-340px";
+      }
+    } else {
+      left = "-177px";
+      if (openAbove) {
+        top = "-300px";
+      } else {
+        bottom = "-300px";
+      }
+    }
+
+    setRelativeOffset({ left, top, bottom });
+  }, [type, openAbove]);
 
   function isTooltipOptionAvailable(
     type: "avatar" | "color",
@@ -145,15 +178,20 @@ function PickerTooltip({
           <div
             ref={tooltipRef}
             style={{
-              left: "-137px",
-              top: "-340px", // prob have prop for whether to show tooltip above or below the preview
+              left: relativeOffset.left,
+              top: relativeOffset.top,
+              bottom: relativeOffset.bottom,
+              height: type === "avatar" ? "20rem" : "18rem",
+              width: type === "avatar" ? "20rem" : "25rem",
               opacity: showTooltip ? 1 : 0,
               pointerEvents: showTooltip ? "auto" : "none",
               gridTemplateColumns:
                 type === "avatar" ? "1fr 1fr 1fr" : "1fr 1fr 1fr 1fr",
               gridTemplateRows: type === "avatar" ? "1fr 1fr 1fr" : "1fr 1fr",
             }}
-            className={`${classes.toolTip} absolute grid h-[20rem] w-[20rem] place-items-center gap-4 rounded-md bg-white p-4 shadow-lg transition-all`}
+            className={`${
+              openAbove ? classes.toolTipAbove : classes.toolTipBelow
+            } grid place-items-center gap-4 rounded-md bg-white p-4 shadow-lg transition-all`}
           >
             {type === "avatar"
               ? avatarPaths.map((avatarPath, index) => (
@@ -161,9 +199,6 @@ function PickerTooltip({
                     key={`${avatarPath}-${index}`}
                     style={{
                       outline: calculateOutline("avatar", index),
-                      // opacity: isTooltipOptionAvailable("avatar", index)
-                      //   ? 1
-                      //   : 0.2,
                       cursor:
                         showTooltip && isTooltipOptionAvailable("avatar", index)
                           ? "pointer"
@@ -226,9 +261,6 @@ function PickerTooltip({
                     key={`${color}-${index}`}
                     style={{
                       outline: calculateOutline("color", index),
-                      // opacity: isTooltipOptionAvailable("color", index)
-                      //   ? 1
-                      //   : 0.2,
                       cursor:
                         showTooltip && isTooltipOptionAvailable("color", index)
                           ? "pointer"
@@ -277,6 +309,8 @@ function PickerTooltip({
                       showCardBack={true}
                       draggable={false}
                       rotation={0}
+                      width={"4rem"}
+                      height={"5.5rem"}
                       hueRotation={
                         hslToDeckHueRotations[
                           color as keyof typeof hslToDeckHueRotations // seems hacky
@@ -327,6 +361,8 @@ function PickerTooltip({
                   rotation={0}
                   showCardBack={true}
                   ownerID={userID}
+                  width={"3rem"} // roughly correct for ratio of a card
+                  height={"4rem"}
                   hueRotation={playerMetadata[userID]?.deckHueRotation || 0}
                 />
               )}

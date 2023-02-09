@@ -307,8 +307,8 @@ function CreateRoom() {
                 <div className="h-[2px] w-full rounded-md bg-white"></div>
 
                 <div className="baseFlex gap-12">
-                  <PickerTooltip type={"avatar"} />
-                  <PickerTooltip type={"color"} />
+                  <PickerTooltip type={"avatar"} openAbove={true} />
+                  <PickerTooltip type={"color"} openAbove={true} />
                 </div>
               </div>
             </fieldset>
