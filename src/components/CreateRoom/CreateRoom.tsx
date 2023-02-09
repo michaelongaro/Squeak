@@ -7,7 +7,6 @@ import { useUserIDContext } from "../../context/UserIDContext";
 import { type IRoomPlayer, type IGameMetadata } from "../../pages/api/socket";
 import PickerTooltip from "../playerIcons/PickerTooltip";
 import PlayerIcon from "../playerIcons/PlayerIcon";
-import TopRightControls from "../TopRightControls/TopRightControls";
 import SecondaryButton from "../Buttons/SecondaryButton";
 import Radio from "../Buttons/Radio";
 import { MdCopyAll } from "react-icons/md";
@@ -233,6 +232,7 @@ function CreateRoom() {
 
             <Radio
               values={[2, 3, 4]}
+              currentValueIndex={[2, 3, 4].indexOf(roomConfig.maxPlayers)}
               onClickFunctions={[
                 () => updateRoomConfig("maxPlayers", 2),
                 () => updateRoomConfig("maxPlayers", 3),
@@ -243,6 +243,9 @@ function CreateRoom() {
             <label>Room visibility:</label>
             <Radio
               values={["Public", "Private"]}
+              currentValueIndex={["Public", "Private"].indexOf(
+                roomConfig.isPublic ? "Public" : "Private"
+              )}
               onClickFunctions={[
                 () => updateRoomConfig("isPublic", true),
                 () => updateRoomConfig("isPublic", false),
