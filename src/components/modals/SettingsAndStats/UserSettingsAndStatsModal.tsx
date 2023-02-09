@@ -153,8 +153,6 @@ function UserSettingsAndStatsModal({
         className="baseVertFlex rounded-md border-2 border-white shadow-md"
       >
         <div className="baseFlex relative w-full gap-4 rounded-t-md bg-green-900 pt-4 pb-4 pl-20 pr-20">
-          {/* determine what type/family of icons to use */}
-
           <SecondaryButton
             innerText="Settings"
             icon={<IoSettingsSharp size={"1.25rem"} />}
