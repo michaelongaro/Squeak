@@ -1,6 +1,10 @@
 import { type Server, type Socket } from "socket.io";
 import generateDeckAndSqueakCards from "../../../utils/generateDeckAndSqueakCards";
-import { type IGameData } from "../socket";
+import {
+  type IMoveBackToLobby,
+  type IGameData,
+  type IRoomData,
+} from "../socket";
 
 interface IResetGame {
   gameIsFinished: boolean;
@@ -11,12 +15,37 @@ export function resetGameHandler(
   io: Server,
   socket: Socket,
   gameData: IGameData,
+  roomData: IRoomData,
   gameStuckInterval: NodeJS.Timeout
 ) {
   function resetGame({ gameIsFinished, roomCode }: IResetGame) {
     if (gameIsFinished) {
       clearInterval(gameStuckInterval); // pretty sure this is necessary
-      io.in(roomCode).emit("moveBackToLobby");
+
+      const room = roomData[roomCode];
+      const game = gameData[roomCode];
+
+      if (!room || !game) return;
+
+      for (const playerID of game.playerIDsThatLeftMidgame) {
+        // remove player from room
+        delete room.players[playerID];
+        room.roomConfig.playersInRoom = room.roomConfig.playersInRoom - 1;
+        room.roomConfig.hostUserID = Object.keys(room.players)[0] || "";
+        room.roomConfig.hostUsername =
+          Object.values(room.players)[0]?.username || "";
+
+        // remove player from game
+        delete game.players[playerID]; // maybe not needed? probably already starts with correct players when new game starts
+      }
+
+      const emitData: IMoveBackToLobby = {
+        roomConfig: room.roomConfig,
+        players: room.players,
+        gameData: game,
+      };
+
+      io.in(roomCode).emit("moveBackToLobby", emitData);
       return;
     }
 
