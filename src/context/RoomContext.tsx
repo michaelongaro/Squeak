@@ -183,29 +183,36 @@ export function RoomProvider(props: { children: React.ReactNode }) {
       hostUsername: "",
       hostUserID: "",
     });
-    setPlayerMetadata({} as IRoomPlayersMetadata);
+    setPlayerMetadata({
+      [userID]: {
+        username: user ? user.username : "",
+        avatarPath: user ? user.avatarPath : "/avatars/rabbit.svg",
+        color: user ? user.color : "hsl(352deg, 69%, 61%)",
+        deckHueRotation: user ? user.deckHueRotation : 232,
+      } as IRoomPlayer,
+    } as IRoomPlayersMetadata);
     setGameData({} as IGameMetadata);
 
     if (connectedToRoom) {
       setConnectedToRoom(false);
-      socket.emit("leaveRoom", { playerID: userID, roomCode: roomConfig.code });
-      // prisma update here to remove player from room
-    }
+      // necessary to reset all of these? maybe in future when leaving from a game that has finished
+      // and this data would actually have values to reset
+      setHoveredCell(null);
+      setHoveredSqueakStack(null);
+      setHoldingADeckCard(false);
+      setHoldingASqueakCard(false);
+      setOriginIndexForHeldSqueakCard(null);
+      setHeldSqueakStackLocation(null);
+      setResetHeldSqueakStackLocation(null);
+      setProposedCardBoxShadow(null);
+      setDecksAreBeingRotated(false);
+      setPlayerIDWhoSqueaked(null);
+      setShowScoreboard(false);
+      setShowShufflingCountdown(false);
 
-    // necessary to reset all of these? maybe in future when leaving from a game that has finished
-    // and this data would actually have values to reset
-    // setHoveredCell(null);
-    // setHoveredSqueakStack(null);
-    // setHoldingADeckCard(false);
-    // setHoldingASqueakCard(false);
-    // setOriginIndexForHeldSqueakCard(null);
-    // setHeldSqueakStackLocation(null);
-    // setResetHeldSqueakStackLocation(null);
-    // setProposedCardBoxShadow(null);
-    // setDecksAreBeingRotated(false);
-    // setPlayerIDWhoSqueaked(null);
-    // setShowScoreboard(false);
-    // setShowShufflingCountdown(false);
+      socket.emit("leaveRoom", { playerID: userID, roomCode: roomConfig.code });
+      // prisma update here to remove player from room / delete the room if it's empty
+    }
   }
 
   const context: IRoomContext = {
