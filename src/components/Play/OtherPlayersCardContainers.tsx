@@ -45,8 +45,15 @@ function OtherPlayersCardContainers({
       {Object.keys(gameData.players)
         .filter((playerID) => playerID !== userID)
         .map((playerID, idx) => (
-          <div key={playerID} className={orderedClassNames[idx]}>
-            <div className={internalOrderedGridClassNames[idx]}>
+          <div key={playerID} className={`${orderedClassNames[idx]} relative`}>
+            <div
+              style={{
+                opacity: gameData.playerIDsThatLeftMidgame.includes(playerID)
+                  ? 0.25
+                  : 1,
+              }}
+              className={internalOrderedGridClassNames[idx]}
+            >
               <div
                 id={`${playerID}squeakDeck`}
                 className={`${classes.squeakDeck} h-[64px] w-[48px] tall:h-[87px] tall:w-[67px]`}
@@ -248,6 +255,19 @@ function OtherPlayersCardContainers({
                 />
               </div>
             </div>
+
+            {gameData.playerIDsThatLeftMidgame.includes(playerID) && (
+              <img
+                style={{
+                  top: "50%",
+                  left: "50%",
+                  transform: "translate(-50%, -50%)",
+                }}
+                src={"/disconnect/disconnect.svg"}
+                alt={"player has disconnected icon"}
+                className="absolute z-[999] h-14 w-14"
+              />
+            )}
           </div>
         ))}
     </>
