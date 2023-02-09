@@ -13,13 +13,13 @@ datasource db {
 model Room {
   id            String  @id @default(cuid())
   pointsToWin   Int     @default(100)
-  maxRounds     Int     @default(3)
   maxPlayers    Int     @default(4)
   playersInRoom Int     @default(1)
   isPublic      Boolean @default(true)
   code          String  @unique
   hostUsername  String
   hostUserID    String
+  gameStarted   Boolean @default(false)
 }
 
 model Stats {
