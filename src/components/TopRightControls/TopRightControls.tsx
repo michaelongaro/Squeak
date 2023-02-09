@@ -18,7 +18,8 @@ interface ITopRightControls {
 
 function TopRightControls({ forPlayScreen }: ITopRightControls) {
   const { status } = useSession();
-  const { showSettingsModal, setShowSettingsModal } = useRoomContext();
+  const { showSettingsModal, setShowSettingsModal, leaveRoom } =
+    useRoomContext();
 
   // volume state
 
@@ -50,6 +51,7 @@ function TopRightControls({ forPlayScreen }: ITopRightControls) {
         <SecondaryButton
           icon={<IoLogOutOutline size={"1.5rem"} />}
           extraPadding={false}
+          onClickFunction={() => leaveRoom(true)}
         />
       )}
 

@@ -68,7 +68,7 @@ function CreateRoom() {
   ]);
 
   useEffect(() => {
-    socket.on("roomWasCreated", () => setConnectedToRoom(true)); // have loading dots while this is waiting?
+    socket.on("roomWasCreated", () => setConnectedToRoom(true));
 
     socket.on("playerMetadataUpdated", (newUsers) => {
       console.log("received new data", newUsers);
@@ -127,7 +127,10 @@ function CreateRoom() {
           <SecondaryButton
             icon={<BiArrowBack size={"1.5rem"} />}
             extraPadding={false}
-            onClickFunction={() => setPageToRender("home")}
+            onClickFunction={() => {
+              setConfigAndMetadataInitialized(false);
+              leaveRoom(connectedToRoom ? false : true);
+            }}
           />
         </div>
 

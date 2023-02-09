@@ -6,7 +6,6 @@ import { useUserIDContext } from "../../context/UserIDContext";
 import { type IRoomPlayer, type IGameMetadata } from "../../pages/api/socket";
 import PickerTooltip from "../playerIcons/PickerTooltip";
 import PlayerIcon from "../playerIcons/PlayerIcon";
-import TopRightControls from "../TopRightControls/TopRightControls";
 import SecondaryButton from "../Buttons/SecondaryButton";
 import { BiArrowBack } from "react-icons/bi";
 import PrimaryButton from "../Buttons/PrimaryButton";
@@ -24,6 +23,7 @@ function JoinRoom() {
     setConnectedToRoom,
     setGameData,
     setPageToRender,
+    leaveRoom,
   } = useRoomContext();
   const { value: userID } = useUserIDContext();
 
@@ -102,7 +102,7 @@ function JoinRoom() {
           <SecondaryButton
             icon={<BiArrowBack size={"1.5rem"} />}
             extraPadding={false}
-            onClickFunction={() => setPageToRender("home")}
+            onClickFunction={() => leaveRoom(connectedToRoom ? false : true)}
           />
         </div>
 
