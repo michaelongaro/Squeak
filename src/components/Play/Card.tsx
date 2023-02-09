@@ -25,6 +25,8 @@ interface ICardComponent {
   squeakStackLocation?: [number, number];
   rotation: number;
   hueRotation?: number;
+  width?: string;
+  height?: string;
 }
 
 function Card({
@@ -38,6 +40,8 @@ function Card({
   rotation,
   squeakStackLocation,
   hueRotation,
+  width,
+  height,
 }: ICardComponent) {
   const {
     gameData,
@@ -419,6 +423,8 @@ function Card({
             <img
               ref={imageRef}
               style={{
+                width: width,
+                height: height,
                 filter:
                   showCardBack && !manuallyShowCardFront
                     ? `hue-rotate(${hueRotationDegrees}deg)`
