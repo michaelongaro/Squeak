@@ -187,7 +187,7 @@ function JoinRoom() {
               <legend className="pl-4 pr-4 text-left text-lg">
                 Room settings
               </legend>
-              <div className="grid grid-cols-2 grid-rows-5 items-center gap-x-24 gap-y-0 p-4">
+              <div className="grid grid-cols-2 grid-rows-4 items-center gap-x-24 gap-y-0 p-4">
                 <div>Points to win:</div>
                 {roomConfig?.pointsToWin}
 

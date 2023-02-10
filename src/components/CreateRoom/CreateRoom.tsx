@@ -192,7 +192,7 @@ function CreateRoom() {
             style={{
               color: "hsl(120deg 100% 86%)",
             }}
-            className="grid grid-cols-2 grid-rows-5 items-center gap-2 p-4"
+            className="grid grid-cols-2 grid-rows-4 items-center gap-2 p-4"
           >
             <label>Points to win:</label>
             <div className=" baseFlex !justify-between gap-2 pl-4 pr-4">
@@ -211,7 +211,7 @@ function CreateRoom() {
 
               <SecondaryButton
                 innerText={"+25"}
-                disabled={roomConfig.pointsToWin >= 500}
+                disabled={roomConfig.pointsToWin >= 300}
                 extraPadding={false}
                 width={"3rem"}
                 height={"3rem"}
