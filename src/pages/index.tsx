@@ -3,7 +3,9 @@ import Head from "next/head";
 import HomePage from "../components/HomePage/HomePage";
 
 import { io } from "socket.io-client";
-export const socket = io();
+export const socket = io({
+  closeOnBeforeunload: false,
+});
 
 const Home: NextPage = () => {
   return (
