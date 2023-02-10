@@ -34,13 +34,7 @@ function usePlayerLeftRoom() {
     if (dataFromBackend !== null) {
       setDataFromBackend(null);
 
-      console.log("received in hook");
-
       const { roomConfig, gameData, players, newHostID } = dataFromBackend;
-
-      console.table(roomConfig);
-      console.table(players);
-      console.log("new host id: ", newHostID);
 
       setRoomConfig(roomConfig);
       setPlayerMetadata(players);
