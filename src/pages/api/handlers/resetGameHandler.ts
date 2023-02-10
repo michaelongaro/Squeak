@@ -39,6 +39,8 @@ export function resetGameHandler(
         delete game.players[playerID]; // maybe not needed? probably already starts with correct players when new game starts
       }
 
+      room.roomConfig.gameStarted = false;
+
       const emitData: IMoveBackToLobby = {
         roomConfig: room.roomConfig,
         players: room.players,

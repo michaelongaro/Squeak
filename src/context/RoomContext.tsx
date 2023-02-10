@@ -84,16 +84,17 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     "home" | "createRoom" | "joinRoom" | "play"
   >("home");
   const [showSettingsModal, setShowSettingsModal] = useState<boolean>(false);
+  const deleteRoomInDatabase = trpc.rooms.deleteRoom.useMutation();
 
   const [roomConfig, setRoomConfig] = useState<IRoomConfig>({
     pointsToWin: 100,
-    maxRounds: 3,
     maxPlayers: 2,
     playersInRoom: 1,
     isPublic: true,
     code: "",
     hostUsername: "",
     hostUserID: "",
+    gameStarted: false,
   });
   const [playerMetadata, setPlayerMetadata] = useState<IRoomPlayersMetadata>(
     {} as IRoomPlayersMetadata
@@ -149,6 +150,39 @@ export function RoomProvider(props: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
+    function leaveRoomBeforeUnload(event: BeforeUnloadEvent) {
+      if (!connectedToRoom) return;
+
+      event.preventDefault();
+
+      if (connectedToRoom) {
+        socket.emit("leaveRoom", {
+          playerID: userID,
+          roomCode: roomConfig.code,
+        });
+
+        if (roomConfig.playersInRoom === 1) {
+          deleteRoomInDatabase.mutate(roomConfig.code);
+        }
+      }
+      return (event.returnValue = "");
+      // event.returnValue = null;
+    }
+
+    window.addEventListener("beforeunload", leaveRoomBeforeUnload);
+
+    // return () => {
+    //   window.removeEventListener("beforeunload", leaveRoomBeforeUnload);
+    // };
+  }, [
+    userID,
+    roomConfig.code,
+    roomConfig.playersInRoom,
+    connectedToRoom,
+    deleteRoomInDatabase,
+  ]);
+
+  useEffect(() => {
     if (
       playerMetadata[userID] !== undefined ||
       status === "loading" ||
@@ -175,13 +209,13 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     }
     setRoomConfig({
       pointsToWin: 100,
-      maxRounds: 3,
       maxPlayers: 2,
       playersInRoom: 1,
       isPublic: true,
       code: "",
       hostUsername: "",
       hostUserID: "",
+      gameStarted: false,
     });
     setPlayerMetadata({
       [userID]: {
@@ -197,21 +231,25 @@ export function RoomProvider(props: { children: React.ReactNode }) {
       setConnectedToRoom(false);
       // necessary to reset all of these? maybe in future when leaving from a game that has finished
       // and this data would actually have values to reset
-      setHoveredCell(null);
-      setHoveredSqueakStack(null);
-      setHoldingADeckCard(false);
-      setHoldingASqueakCard(false);
-      setOriginIndexForHeldSqueakCard(null);
-      setHeldSqueakStackLocation(null);
-      setResetHeldSqueakStackLocation(null);
-      setProposedCardBoxShadow(null);
-      setDecksAreBeingRotated(false);
-      setPlayerIDWhoSqueaked(null);
-      setShowScoreboard(false);
-      setShowShufflingCountdown(false);
+      // setHoveredCell(null);
+      // setHoveredSqueakStack(null);
+      // setHoldingADeckCard(false);
+      // setHoldingASqueakCard(false);
+      // setOriginIndexForHeldSqueakCard(null);
+      // setHeldSqueakStackLocation(null);
+      // setResetHeldSqueakStackLocation(null);
+      // setProposedCardBoxShadow(null);
+      // setDecksAreBeingRotated(false);
+      // setPlayerIDWhoSqueaked(null);
+      // setShowScoreboard(false);
+      // setShowShufflingCountdown(false);
 
       socket.emit("leaveRoom", { playerID: userID, roomCode: roomConfig.code });
       // prisma update here to remove player from room / delete the room if it's empty
+
+      if (roomConfig.playersInRoom === 1) {
+        deleteRoomInDatabase.mutate(roomConfig.code);
+      }
     }
   }
 

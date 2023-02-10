@@ -24,6 +24,7 @@ export interface IRoomConfig {
   code: string;
   hostUsername: string;
   hostUserID: string;
+  gameStarted: boolean;
 }
 
 function CreateRoom() {
