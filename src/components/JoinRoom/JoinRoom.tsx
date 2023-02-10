@@ -11,7 +11,7 @@ import { BiArrowBack } from "react-icons/bi";
 import PrimaryButton from "../Buttons/PrimaryButton";
 import { MdCopyAll } from "react-icons/md";
 import { FiCheck } from "react-icons/fi";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 
 function JoinRoom() {
   const {
@@ -145,7 +145,7 @@ function JoinRoom() {
                 <label>Room code</label>
                 <input
                   type="text"
-                  placeholder="code"
+                  placeholder="optional"
                   className=" rounded-sm pl-2 text-green-800"
                   maxLength={6}
                   onChange={(e) => setRoomCode(e.target.value)}
@@ -165,16 +165,13 @@ function JoinRoom() {
                 playerMetadata[userID]?.username.length === 0 ||
                 roomCode.length === 0
               }
+              width={"20rem"}
+              height={"4rem"}
               onClickFunction={() => setSubmittedRoomCode(roomCode)}
               showLoadingSpinnerOnClick={true}
             />
 
-            <fieldset className="rounded-md border-2 border-white p-4">
-              <legend className="pl-4 pr-4 text-left text-lg">
-                Public rooms
-              </legend>
-              {/* <PublicRooms /> */}
-            </fieldset>
+            <PublicRooms />
           </>
         ) : (
           <div
