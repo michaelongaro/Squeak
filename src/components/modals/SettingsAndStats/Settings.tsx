@@ -1,11 +1,14 @@
-import React from "react";
 import { useUserIDContext } from "../../../context/UserIDContext";
 import {
   type IRoomPlayersMetadata,
   type IRoomPlayer,
 } from "../../../pages/api/socket";
 import PickerTooltip from "../../playerIcons/PickerTooltip";
+import { AnimatePresence, motion } from "framer-motion";
 import { type ILocalPlayerSettings } from "./UserSettingsAndStatsModal";
+import Filter from "bad-words";
+
+const filter = new Filter();
 
 interface ISettings {
   localPlayerMetadata: IRoomPlayersMetadata;
@@ -16,6 +19,8 @@ interface ISettings {
   setLocalPlayerSettings: React.Dispatch<
     React.SetStateAction<ILocalPlayerSettings>
   >;
+  usernameIsProfane: boolean;
+  setUsernameIsProfane: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 function Settings({
@@ -23,6 +28,8 @@ function Settings({
   setLocalPlayerMetadata,
   localPlayerSettings,
   setLocalPlayerSettings,
+  usernameIsProfane,
+  setUsernameIsProfane,
 }: ISettings) {
   const { value: userID } = useUserIDContext();
 
@@ -36,22 +43,50 @@ function Settings({
     >
       <div className="baseFlex gap-2">
         <label>Username</label>
-        <input
-          type="text"
-          placeholder="username"
-          className=" rounded-sm pl-2 text-green-800"
-          maxLength={16}
-          onChange={(e) => {
-            setLocalPlayerMetadata((prevMetadata) => ({
-              ...prevMetadata,
-              [userID]: {
-                ...prevMetadata?.[userID],
-                username: e.target.value,
-              } as IRoomPlayer,
-            }));
-          }}
-          value={localPlayerMetadata?.[userID]?.username}
-        />
+        <div className="relative">
+          <input
+            type="text"
+            placeholder="username"
+            className=" rounded-sm pl-2 text-green-800"
+            maxLength={16}
+            onChange={(e) => {
+              setUsernameIsProfane(filter.isProfane(e.target.value));
+
+              setLocalPlayerMetadata((prevMetadata) => ({
+                ...prevMetadata,
+                [userID]: {
+                  ...prevMetadata?.[userID],
+                  username: e.target.value,
+                } as IRoomPlayer,
+              }));
+            }}
+            value={localPlayerMetadata?.[userID]?.username}
+          />
+
+          <div className="absolute top-[-0.25rem] right-1 text-xl text-red-600">
+            *
+          </div>
+
+          <AnimatePresence>
+            {usernameIsProfane && (
+              <motion.div
+                key={"joinRoomProfanityWarning"}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.15 }}
+                style={{
+                  right: "-252px",
+                  color: "hsl(120deg 100% 86%)",
+                }}
+                className="baseVertFlex absolute top-0 gap-2 rounded-md border-2 border-red-700 bg-green-700 pt-2 pb-2 pr-1 pl-1 shadow-md"
+              >
+                <div>Profanity detected,</div>
+                <div className="text-center">please change your username</div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
 
       <div className="baseFlex gap-12">

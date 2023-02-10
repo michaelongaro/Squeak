@@ -64,6 +64,7 @@ function UserSettingsAndStatsModal({
   const [localPlayerSettings, setLocalPlayerSettings] =
     useState<ILocalPlayerSettings>({} as ILocalPlayerSettings);
   const [ableToSave, setAbleToSave] = useState<boolean>(false);
+  const [usernameIsProfane, setUsernameIsProfane] = useState<boolean>(false);
 
   const modalRef = useRef<HTMLDivElement>(null);
 
@@ -189,6 +190,8 @@ function UserSettingsAndStatsModal({
             setLocalPlayerMetadata={setLocalPlayerMetadata}
             localPlayerSettings={localPlayerSettings}
             setLocalPlayerSettings={setLocalPlayerSettings}
+            usernameIsProfane={usernameIsProfane}
+            setUsernameIsProfane={setUsernameIsProfane}
           />
         )}
 
@@ -212,7 +215,7 @@ function UserSettingsAndStatsModal({
               icon={<IoSave size={"1.25rem"} />}
               width={"8rem"}
               height={"3rem"}
-              disabled={!ableToSave}
+              disabled={!ableToSave || usernameIsProfane}
               onClickFunction={() => updateUserHandler()}
               showLoadingSpinnerOnClick={true}
             />

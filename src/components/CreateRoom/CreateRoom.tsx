@@ -13,11 +13,13 @@ import { MdCopyAll } from "react-icons/md";
 import PrimaryButton from "../Buttons/PrimaryButton";
 import { BiArrowBack } from "react-icons/bi";
 import { FiCheck } from "react-icons/fi";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
+import Filter from "bad-words";
+
+const filter = new Filter();
 
 export interface IRoomConfig {
   pointsToWin: number;
-  maxRounds: number;
   maxPlayers: number;
   playersInRoom: number;
   isPublic: boolean;
@@ -47,6 +49,7 @@ function CreateRoom() {
   const [configAndMetadataInitialized, setConfigAndMetadataInitialized] =
     useState<boolean>(false);
   const [showCheckmark, setShowCheckmark] = useState<boolean>(false);
+  const [usernameIsProfane, setUsernameIsProfane] = useState<boolean>(false);
 
   // needs !connectedToRoom for when player inherits ownership of room after host leaves,
   // otherwise they would be overwriting the current room config
@@ -73,8 +76,6 @@ function CreateRoom() {
     socket.on("roomWasCreated", () => setConnectedToRoom(true));
 
     socket.on("playerMetadataUpdated", (newUsers) => {
-      console.log("received new data", newUsers);
-
       setPlayerMetadata(newUsers);
     });
 
@@ -172,23 +173,52 @@ function CreateRoom() {
               >
                 Username
               </label>
-              <input
-                type="text"
-                placeholder="username"
-                className=" rounded-sm pl-2 text-green-800"
-                maxLength={16}
-                onChange={(e) => {
-                  setPlayerMetadata((prevMetadata) => ({
-                    ...prevMetadata,
-                    [userID]: {
-                      ...prevMetadata[userID],
-                      username: e.target.value,
-                    } as IRoomPlayer,
-                  }));
-                  updateRoomConfig("hostUsername", e.target.value);
-                }}
-                value={playerMetadata[userID]?.username}
-              />
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="username"
+                  className=" rounded-sm pl-2 text-green-800"
+                  maxLength={16}
+                  onChange={(e) => {
+                    setUsernameIsProfane(filter.isProfane(e.target.value));
+
+                    setPlayerMetadata((prevMetadata) => ({
+                      ...prevMetadata,
+                      [userID]: {
+                        ...prevMetadata[userID],
+                        username: e.target.value,
+                      } as IRoomPlayer,
+                    }));
+                    updateRoomConfig("hostUsername", e.target.value);
+                  }}
+                  value={playerMetadata[userID]?.username}
+                />
+                <div className="absolute top-[-0.25rem] right-1 text-xl text-red-600">
+                  *
+                </div>
+
+                <AnimatePresence>
+                  {usernameIsProfane && (
+                    <motion.div
+                      key={"createRoomProfanityWarning"}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.15 }}
+                      style={{
+                        right: "-252px",
+                        color: "hsl(120deg 100% 86%)",
+                      }}
+                      className="baseVertFlex absolute top-0 gap-2 rounded-md border-2 border-red-700 bg-green-700 pt-2 pb-2 pr-1 pl-1 shadow-md"
+                    >
+                      <div>Profanity detected,</div>
+                      <div className="text-center">
+                        please change your username
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             </div>
 
             <div className="baseFlex gap-12">
@@ -237,33 +267,6 @@ function CreateRoom() {
                 height={"3rem"}
                 onClickFunction={() =>
                   updateRoomConfig("pointsToWin", roomConfig.pointsToWin + 25)
-                }
-              />
-            </div>
-
-            <label>Max rounds:</label>
-            <div className="baseFlex !justify-between gap-2 pl-4 pr-4">
-              <SecondaryButton
-                innerText={"-1"}
-                disabled={roomConfig.maxRounds <= 1}
-                extraPadding={false}
-                width={"3rem"}
-                height={"3rem"}
-                onClickFunction={() =>
-                  updateRoomConfig("maxRounds", roomConfig.maxRounds - 1)
-                }
-              />
-
-              <div className=" text-green-300">{roomConfig.maxRounds}</div>
-
-              <SecondaryButton
-                innerText={"+1"}
-                disabled={roomConfig.maxRounds >= 5}
-                extraPadding={false}
-                width={"3rem"}
-                height={"3rem"}
-                onClickFunction={() =>
-                  updateRoomConfig("maxRounds", roomConfig.maxRounds + 1)
                 }
               />
             </div>
@@ -375,7 +378,10 @@ function CreateRoom() {
         ) : (
           <PrimaryButton
             innerText={"Create"}
-            disabled={Object.values(playerMetadata)[0]?.username.length === 0}
+            disabled={
+              Object.values(playerMetadata)[0]?.username.length === 0 ||
+              usernameIsProfane
+            }
             onClickFunction={() => createRoom()}
             showLoadingSpinnerOnClick={true}
           />

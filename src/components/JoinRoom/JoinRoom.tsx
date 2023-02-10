@@ -12,6 +12,10 @@ import PrimaryButton from "../Buttons/PrimaryButton";
 import { MdCopyAll } from "react-icons/md";
 import { FiCheck } from "react-icons/fi";
 import { AnimatePresence, motion } from "framer-motion";
+import PublicRooms from "./PublicRooms";
+import Filter from "bad-words";
+
+const filter = new Filter();
 
 function JoinRoom() {
   const {
@@ -30,6 +34,7 @@ function JoinRoom() {
   const [roomCode, setRoomCode] = useState<string>("");
   const [submittedRoomCode, setSubmittedRoomCode] = useState<string>("");
   const [showCheckmark, setShowCheckmark] = useState<boolean>(false);
+  const [usernameIsProfane, setUsernameIsProfane] = useState<boolean>(false);
 
   const { data: receivedRoomConfig } =
     trpc.rooms.findRoomByCode.useQuery(submittedRoomCode);
@@ -123,22 +128,51 @@ function JoinRoom() {
             >
               <div className="baseFlex w-full !justify-between gap-2">
                 <label>Username</label>
-                <input
-                  type="text"
-                  placeholder="username"
-                  className=" rounded-sm pl-2 text-green-800"
-                  maxLength={16}
-                  onChange={(e) => {
-                    setPlayerMetadata((prevMetadata) => ({
-                      ...prevMetadata,
-                      [userID]: {
-                        ...prevMetadata[userID],
-                        username: e.target.value,
-                      } as IRoomPlayer,
-                    }));
-                  }}
-                  value={playerMetadata[userID]?.username}
-                />
+                <div className="relative">
+                  <input
+                    type="text"
+                    placeholder="username"
+                    className=" rounded-sm pl-2 text-green-800"
+                    maxLength={16}
+                    onChange={(e) => {
+                      setUsernameIsProfane(filter.isProfane(e.target.value));
+
+                      setPlayerMetadata((prevMetadata) => ({
+                        ...prevMetadata,
+                        [userID]: {
+                          ...prevMetadata[userID],
+                          username: e.target.value,
+                        } as IRoomPlayer,
+                      }));
+                    }}
+                    value={playerMetadata[userID]?.username}
+                  />
+                  <div className="absolute top-[-0.25rem] right-1 text-xl text-red-600">
+                    *
+                  </div>
+
+                  <AnimatePresence>
+                    {usernameIsProfane && (
+                      <motion.div
+                        key={"joinRoomProfanityWarning"}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.15 }}
+                        style={{
+                          right: "-252px",
+                          color: "hsl(120deg 100% 86%)",
+                        }}
+                        className="baseVertFlex absolute top-0 gap-2 rounded-md border-2 border-red-700 bg-green-700 pt-2 pb-2 pr-1 pl-1 shadow-md"
+                      >
+                        <div>Profanity detected,</div>
+                        <div className="text-center">
+                          please change your username
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
               </div>
 
               <div className="baseFlex w-full !justify-between gap-2">
@@ -163,7 +197,8 @@ function JoinRoom() {
               innerText={"Join"}
               disabled={
                 playerMetadata[userID]?.username.length === 0 ||
-                roomCode.length === 0
+                roomCode.length === 0 ||
+                usernameIsProfane
               }
               width={"20rem"}
               height={"4rem"}
@@ -187,9 +222,6 @@ function JoinRoom() {
               <div className="grid grid-cols-2 grid-rows-4 items-center gap-x-24 gap-y-0 p-4">
                 <div>Points to win:</div>
                 {roomConfig?.pointsToWin}
-
-                <div>Max rounds:</div>
-                {roomConfig?.maxRounds}
 
                 <div>Players:</div>
                 {roomConfig?.maxPlayers}
