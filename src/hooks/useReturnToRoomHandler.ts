@@ -3,6 +3,7 @@ import { useUserIDContext } from "../context/UserIDContext";
 import { useRoomContext } from "../context/RoomContext";
 import { socket } from "../pages";
 import { type IMoveBackToLobby } from "../pages/api/socket";
+import { trpc } from "../utils/trpc";
 
 function useReturnToRoomHandler() {
   const {
@@ -13,6 +14,7 @@ function useReturnToRoomHandler() {
     setGameData,
   } = useRoomContext();
   const { value: userID } = useUserIDContext();
+  const updateRoomInDatabase = trpc.rooms.updateRoomConfig.useMutation();
 
   const [dataFromBackend, setDataFromBackend] =
     useState<IMoveBackToLobby | null>(null);
@@ -35,6 +37,8 @@ function useReturnToRoomHandler() {
       setPlayerMetadata(players);
       setGameData(gameData);
 
+      updateRoomInDatabase.mutate(newRoomConfig);
+
       if (userID === newRoomConfig.hostUserID) {
         setPageToRender("createRoom");
       } else {
@@ -46,6 +50,7 @@ function useReturnToRoomHandler() {
     setPageToRender,
     roomConfig.hostUserID,
     userID,
+    updateRoomInDatabase,
     setGameData,
     setPlayerMetadata,
     setRoomConfig,

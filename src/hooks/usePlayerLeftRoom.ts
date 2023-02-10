@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useRoomContext } from "../context/RoomContext";
 import { useUserIDContext } from "../context/UserIDContext";
 import { socket } from "../pages";
+import { trpc } from "../utils/trpc";
 import { type IPlayerHasLeftRoom } from "./../pages/api/socket";
 
 function usePlayerLeftRoom() {
@@ -13,6 +14,8 @@ function usePlayerLeftRoom() {
     connectedToRoom,
   } = useRoomContext();
   const { value: userID } = useUserIDContext();
+
+  const updateRoomInDatabase = trpc.rooms.updateRoomConfig.useMutation();
 
   const [dataFromBackend, setDataFromBackend] =
     useState<IPlayerHasLeftRoom | null>(null);
@@ -43,6 +46,8 @@ function usePlayerLeftRoom() {
       setPlayerMetadata(players);
       setGameData(gameData);
 
+      updateRoomInDatabase.mutate(roomConfig);
+
       if (newHostID === userID) {
         setPageToRender("createRoom");
       }
@@ -51,6 +56,7 @@ function usePlayerLeftRoom() {
     dataFromBackend,
     setGameData,
     setPlayerMetadata,
+    updateRoomInDatabase,
     setRoomConfig,
     setPageToRender,
     userID,

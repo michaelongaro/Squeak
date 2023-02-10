@@ -42,6 +42,7 @@ function CreateRoom() {
   const { value: userID } = useUserIDContext();
 
   const createRoomInDatabase = trpc.rooms.createRoom.useMutation();
+  const updateRoomInDatabase = trpc.rooms.updateRoomConfig.useMutation();
 
   const [configAndMetadataInitialized, setConfigAndMetadataInitialized] =
     useState<boolean>(false);
@@ -77,7 +78,10 @@ function CreateRoom() {
       setPlayerMetadata(newUsers);
     });
 
-    socket.on("roomConfigUpdated", (roomConfig) => setRoomConfig(roomConfig));
+    // here db update
+    socket.on("roomConfigUpdated", (roomConfig) =>
+      updateContextAndDatabaseRoomConfig(roomConfig)
+    );
 
     socket.on("navigateToPlayScreen", () => setPageToRender("play"));
 
@@ -87,7 +91,7 @@ function CreateRoom() {
         setPlayerMetadata(newUsers)
       );
       socket.off("roomConfigUpdated", (roomConfig) =>
-        setRoomConfig(roomConfig)
+        updateContextAndDatabaseRoomConfig(roomConfig)
       );
       socket.off("navigateToPlayScreen", () => setPageToRender("play"));
     };
@@ -101,6 +105,21 @@ function CreateRoom() {
       socket.emit("createRoom", roomConfig, playerMetadata[userID]);
       createRoomInDatabase.mutate(roomConfig);
     }
+  }
+
+  // separate this out into a hook?
+  function updateContextAndDatabaseRoomConfig(newRoomConfig: IRoomConfig) {
+    setRoomConfig(newRoomConfig);
+    updateRoomInDatabase.mutate({
+      pointsToWin: newRoomConfig.pointsToWin,
+      maxPlayers: newRoomConfig.maxPlayers,
+      isPublic: newRoomConfig.isPublic,
+      code: newRoomConfig.code,
+      hostUsername: newRoomConfig.hostUsername,
+      hostUserID: newRoomConfig.hostUserID,
+      playersInRoom: newRoomConfig.playersInRoom,
+      gameStarted: newRoomConfig.gameStarted,
+    });
   }
 
   function updateRoomConfig(key: string, value: any) {
@@ -343,6 +362,11 @@ function CreateRoom() {
                 socket.emit("startGame", {
                   roomCode: roomConfig.code,
                   firstRound: true,
+                });
+
+                updateRoomInDatabase.mutate({
+                  ...roomConfig,
+                  gameStarted: true,
                 });
               }}
               showLoadingSpinnerOnClick={true}
