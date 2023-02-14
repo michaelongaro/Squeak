@@ -21,6 +21,24 @@ export const usersRouter = router({
       return null;
     }),
 
+  getUsersFromIDList: publicProcedure
+    .input(z.array(z.string()))
+    .query(async ({ ctx, input }) => {
+      if (input.length === 0) return [];
+
+      try {
+        const users = ctx.prisma.user.findMany({
+          where: {
+            id: { in: input },
+          },
+        });
+
+        return users;
+      } catch (error) {
+        console.log(error);
+      }
+    }),
+
   updateUser: protectedProcedure
     .input(
       z.object({
