@@ -6,16 +6,27 @@ import {
 } from "../../utils/generateDeckAndSqueakCards";
 import generateDeckAndSqueakCards from "../../utils/generateDeckAndSqueakCards";
 import { drawFromDeckHandler } from "./handlers/drawFromDeckHandler";
-import { drawFromSqueakDeckHandler } from "./handlers/drawFromSqueakDeckHandler";
 import { proposedCardDropHandler } from "./handlers/proposedCardDropHandler";
 import { gameStuckHandler } from "./handlers/gameStuckHandler";
 import { drawFromSqueakDeck } from "./helpers/drawFromSqueakDeck";
 import { roundOverHandler } from "./handlers/roundOverHandler";
 import { resetGameHandler } from "./handlers/resetGameHandler";
 import { avatarPaths } from "../../utils/avatarPaths";
-import { deckHueRotations } from "../../utils/deckHueRotations";
 import { hslToDeckHueRotations } from "../../utils/hslToDeckHueRotations";
 import { leaveRoomHandler } from "./handlers/leaveRoomHandler";
+import { initializeAuthorizedPlayerInFriendsObject } from "./handlers/initializeAuthorizedPlayerInFriendsObject";
+import { modifyFriendDataHandler } from "./handlers/modifyFriendDataHandler";
+
+// TODO: is there a better way to type these?
+export interface IFriendsData {
+  [userID: string]: IFriendsMetadata;
+}
+
+export interface IFriendsMetadata {
+  friendIDs: string[];
+  friendInviteIDs: string[];
+  roomInviteIDs: string[];
+}
 
 export interface IRoomData {
   [code: string]: IRoomMetadata;
@@ -25,10 +36,6 @@ interface IRoomMetadata {
   roomConfig: IRoomConfig;
   players: IRoomPlayersMetadata;
 }
-
-// TODO: is there a better way to type these?
-// if not at least find a better name for them + swap IGameData and IGameMetadata
-// for consistency
 
 export interface IGameData {
   [code: string]: IGameMetadata;
@@ -54,6 +61,23 @@ export interface IRoomPlayer {
   avatarPath: string;
   color: string;
   deckHueRotation: number;
+}
+
+export interface IModifyFriendData {
+  action:
+    | "sendFriendInvite"
+    | "acceptFriendInvite"
+    | "declineFriendInvite"
+    | "sendRoomInvite"
+    | "acceptRoomInvite"
+    | "declineRoomInvite"
+    | "createRoom"
+    | "joinRoom"
+    | "leaveRoom" // this also should be called when a player is kicked from a room
+    | "removeFriend";
+  initiatorID: string;
+  targetID?: string;
+  roomCode?: string;
 }
 
 export interface ICardDropProposal {
@@ -97,6 +121,11 @@ export interface IUpdatePlayerMetadata {
   roomCode: string;
 }
 
+export interface IReceiveFriendData {
+  playerID: string;
+  friendData: IFriendsMetadata;
+}
+
 export interface IMoveBackToLobby {
   roomConfig: IRoomConfig;
   players: IRoomPlayersMetadata;
@@ -124,6 +153,7 @@ interface IJoinRoomConfig {
 
 const roomData: IRoomData = {};
 const gameData: IGameData = {};
+const friendsData: IFriendsData = {};
 let numberOfPlayersReady = 0;
 let gameStuckInterval: ReturnType<typeof setTimeout>;
 
@@ -363,6 +393,8 @@ export default function SocketHandler(req, res) {
     socket.on("directlyLeaveRoom", (roomCode) => {
       socket.leave(roomCode);
     });
+
+    // game/room handlers
     drawFromDeckHandler(io, socket, gameData);
 
     proposedCardDropHandler(io, socket, gameData);
@@ -372,6 +404,11 @@ export default function SocketHandler(req, res) {
     resetGameHandler(io, socket, gameData, roomData, gameStuckInterval);
 
     leaveRoomHandler(io, socket, gameData, roomData);
+
+    // friends handlers
+    initializeAuthorizedPlayerInFriendsObject(io, socket, friendsData);
+
+    modifyFriendDataHandler(io, socket, friendsData);
   };
 
   // Define actions inside
