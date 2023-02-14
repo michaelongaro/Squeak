@@ -33,7 +33,7 @@ function FriendsList() {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.15 }}
-      className="baseVertFlex absolute right-0 top-44 w-[400px] !items-start gap-2 rounded-md border-2 border-white bg-green-800 p-4"
+      className="baseVertFlex absolute right-0 top-4 w-[400px] !items-start gap-2 rounded-md border-2 border-white bg-green-800 p-4"
     >
       <div className="baseVertFlex !items-start gap-2">
         <div
