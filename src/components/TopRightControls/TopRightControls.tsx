@@ -59,7 +59,7 @@ function TopRightControls({ forPlayScreen }: ITopRightControls) {
       )}
 
       {!forPlayScreen && (
-        <div>
+        <div className="relative">
           <SecondaryButton
             icon={<FaUserFriends size={"1.5rem"} />}
             extraPadding={false}
