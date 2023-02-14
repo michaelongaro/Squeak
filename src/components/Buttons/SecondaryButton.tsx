@@ -132,7 +132,7 @@ function SecondaryButton({
         </>
       )}
 
-      {iconOnLeft && (
+      {iconOnLeft && icon && (
         <div
           style={{
             transform: rotateIcon ? "rotate(540deg)" : "rotate(0deg)",
@@ -143,7 +143,7 @@ function SecondaryButton({
         </div>
       )}
       {innerText}
-      {!iconOnLeft && !showLoadingSpinner && (
+      {!iconOnLeft && !showLoadingSpinner && icon && (
         <div
           style={{
             transform: rotateIcon ? "rotate(540deg)" : "rotate(0deg)",
