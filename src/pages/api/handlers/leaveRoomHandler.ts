@@ -56,14 +56,11 @@ export function leaveRoomHandler(
       delete gameData[roomCode];
     }
 
-    // leaving before emitting so that player who left doesn't receive the event
-    // primarily just to update players who are still in the room when this happens
-    socket.leave(roomCode);
-
     const emitData: IPlayerHasLeftRoom = {
       roomConfig: room.roomConfig,
       players: room.players,
       gameData: game ?? ({} as IGameMetadata),
+      playerWhoLeftID: playerID,
       newHostID,
     };
 

@@ -108,6 +108,7 @@ export interface IPlayerHasLeftRoom {
   players: IRoomPlayersMetadata;
   gameData: IGameMetadata;
   newHostID: string;
+  playerWhoLeftID: string;
 }
 
 interface IStartGame {
