@@ -11,6 +11,7 @@ import {
 import { IoSettingsSharp, IoLogOutOutline } from "react-icons/io5";
 import { FaUserFriends } from "react-icons/fa";
 import { AnimatePresence } from "framer-motion";
+import FriendsList from "../modals/FriendsList";
 
 interface ITopRightControls {
   forPlayScreen: boolean;
@@ -18,8 +19,10 @@ interface ITopRightControls {
 
 function TopRightControls({ forPlayScreen }: ITopRightControls) {
   const { status } = useSession();
+
   const { showSettingsModal, setShowSettingsModal, leaveRoom } =
     useRoomContext();
+  const [showFriendsList, setShowFriendsList] = React.useState<boolean>(false);
 
   // volume state
 
@@ -56,10 +59,20 @@ function TopRightControls({ forPlayScreen }: ITopRightControls) {
       )}
 
       {!forPlayScreen && (
-        <SecondaryButton
-          icon={<FaUserFriends size={"1.5rem"} />}
-          extraPadding={false}
-        />
+        <div>
+          <SecondaryButton
+            icon={<FaUserFriends size={"1.5rem"} />}
+            extraPadding={false}
+            onClickFunction={() => setShowFriendsList(!showFriendsList)}
+          />
+          <AnimatePresence
+            initial={false}
+            mode={"wait"}
+            onExitComplete={() => null}
+          >
+            {showFriendsList && <FriendsList />}
+          </AnimatePresence>
+        </div>
       )}
 
       <AnimatePresence
