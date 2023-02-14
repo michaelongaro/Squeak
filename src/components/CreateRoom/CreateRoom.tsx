@@ -342,7 +342,10 @@ function CreateRoom() {
                         "hsl(352deg, 69%, 61%)"
                       }
                       username={playerMetadata[playerID]?.username}
+                      playerID={playerID}
                       size={"3rem"}
+                      showAddFriendButton={userID !== playerID}
+                      showRemovePlayerFromRoomButton={userID !== playerID}
                     />
                   ))}
                 </div>

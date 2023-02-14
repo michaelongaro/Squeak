@@ -267,6 +267,8 @@ function JoinRoom() {
                         playerMetadata[playerID]?.color ||
                         "hsl(352deg, 69%, 61%)"
                       }
+                      playerID={playerID}
+                      showAddFriendButton={userID !== playerID}
                       username={playerMetadata[playerID]?.username}
                       size={"3rem"}
                     />
