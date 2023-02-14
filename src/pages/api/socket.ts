@@ -359,6 +359,9 @@ export default function SocketHandler(req, res) {
       }
     });
 
+    socket.on("directlyLeaveRoom", (roomCode) => {
+      socket.leave(roomCode);
+    });
     drawFromDeckHandler(io, socket, gameData);
 
     proposedCardDropHandler(io, socket, gameData);

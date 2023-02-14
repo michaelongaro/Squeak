@@ -12,6 +12,7 @@ function usePlayerLeftRoom() {
     setPlayerMetadata,
     setPageToRender,
     connectedToRoom,
+    leaveRoom,
   } = useRoomContext();
   const { value: userID } = useUserIDContext();
 
@@ -34,7 +35,15 @@ function usePlayerLeftRoom() {
     if (dataFromBackend !== null) {
       setDataFromBackend(null);
 
-      const { roomConfig, gameData, players, newHostID } = dataFromBackend;
+      const { roomConfig, gameData, players, newHostID, playerWhoLeftID } =
+        dataFromBackend;
+
+      if (playerWhoLeftID === userID) {
+        leaveRoom(false);
+
+        socket.emit("directlyLeaveRoom", roomConfig.code);
+        return;
+      }
 
       setRoomConfig(roomConfig);
       setPlayerMetadata(players);
@@ -54,6 +63,7 @@ function usePlayerLeftRoom() {
     setRoomConfig,
     setPageToRender,
     userID,
+    leaveRoom,
   ]);
 }
 
