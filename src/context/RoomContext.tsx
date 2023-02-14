@@ -4,6 +4,7 @@ import { type IRoomConfig } from "../components/CreateRoom/CreateRoom";
 import {
   type IRoomPlayer,
   type IRoomPlayersMetadata,
+  type IFriendsMetadata,
 } from "../pages/api/socket";
 import { type IGameMetadata } from "../pages/api/socket";
 import { type IPlayerRoundDetails } from "../pages/api/handlers/roundOverHandler";
@@ -34,6 +35,8 @@ interface IRoomContext {
   setPlayerMetadata: React.Dispatch<React.SetStateAction<IRoomPlayersMetadata>>;
   gameData: IGameMetadata;
   setGameData: React.Dispatch<React.SetStateAction<IGameMetadata>>;
+  friendData: IFriendsMetadata;
+  setFriendData: React.Dispatch<React.SetStateAction<IFriendsMetadata>>;
   hoveredCell: [number, number] | null;
   setHoveredCell: React.Dispatch<React.SetStateAction<[number, number] | null>>;
   hoveredSqueakStack: number | null;
@@ -102,6 +105,10 @@ export function RoomProvider(props: { children: React.ReactNode }) {
 
   // safe, because we are only ever accessing/mutating gameData when it is defined
   const [gameData, setGameData] = useState<IGameMetadata>({} as IGameMetadata);
+  const [friendData, setFriendData] = useState<IFriendsMetadata>(
+    {} as IFriendsMetadata
+  );
+
   const [hoveredCell, setHoveredCell] = useState<[number, number] | null>(null);
   const [hoveredSqueakStack, setHoveredSqueakStack] = useState<number | null>(
     null
@@ -148,6 +155,12 @@ export function RoomProvider(props: { children: React.ReactNode }) {
       );
     });
   }, []);
+
+  useEffect(() => {
+    if (userID && friendData && Object.keys(friendData).length === 0) {
+      socket.emit("initializeAuthorizedPlayer", userID);
+    }
+  }, [userID, friendData]);
 
   useEffect(() => {
     function leaveRoomBeforeUnload(event: BeforeUnloadEvent) {
@@ -229,23 +242,8 @@ export function RoomProvider(props: { children: React.ReactNode }) {
 
     if (connectedToRoom) {
       setConnectedToRoom(false);
-      // necessary to reset all of these? maybe in future when leaving from a game that has finished
-      // and this data would actually have values to reset
-      // setHoveredCell(null);
-      // setHoveredSqueakStack(null);
-      // setHoldingADeckCard(false);
-      // setHoldingASqueakCard(false);
-      // setOriginIndexForHeldSqueakCard(null);
-      // setHeldSqueakStackLocation(null);
-      // setResetHeldSqueakStackLocation(null);
-      // setProposedCardBoxShadow(null);
-      // setDecksAreBeingRotated(false);
-      // setPlayerIDWhoSqueaked(null);
-      // setShowScoreboard(false);
-      // setShowShufflingCountdown(false);
 
       socket.emit("leaveRoom", { playerID: userID, roomCode: roomConfig.code });
-      // prisma update here to remove player from room / delete the room if it's empty
 
       if (roomConfig.playersInRoom === 1) {
         deleteRoomInDatabase.mutate(roomConfig.code);
@@ -264,6 +262,8 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     setPlayerMetadata,
     gameData,
     setGameData,
+    friendData,
+    setFriendData,
     hoveredCell,
     setHoveredCell,
     hoveredSqueakStack,
