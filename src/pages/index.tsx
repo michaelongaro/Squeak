@@ -1,13 +1,16 @@
 import { type NextPage } from "next";
 import Head from "next/head";
 import HomePage from "../components/HomePage/HomePage";
-
 import { io } from "socket.io-client";
+import useReceiveFriendData from "../hooks/useReceiveFriendData";
+
 export const socket = io({
   closeOnBeforeunload: false,
 });
 
 const Home: NextPage = () => {
+  useReceiveFriendData();
+
   return (
     <>
       <Head>
