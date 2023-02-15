@@ -14,6 +14,7 @@ import { FiCheck } from "react-icons/fi";
 import { AnimatePresence, motion } from "framer-motion";
 import PublicRooms from "./PublicRooms";
 import Filter from "bad-words";
+import { useSession } from "next-auth/react";
 
 const filter = new Filter();
 
@@ -23,6 +24,7 @@ function JoinRoom() {
     setRoomConfig,
     playerMetadata,
     setPlayerMetadata,
+    friendData,
     connectedToRoom,
     setConnectedToRoom,
     setGameData,
@@ -30,6 +32,7 @@ function JoinRoom() {
     leaveRoom,
   } = useRoomContext();
   const { value: userID } = useUserIDContext();
+  const { data: session, status } = useSession();
 
   const [roomCode, setRoomCode] = useState<string>("");
   const [submittedRoomCode, setSubmittedRoomCode] = useState<string>("");
@@ -38,8 +41,6 @@ function JoinRoom() {
 
   const { data: receivedRoomConfig } =
     trpc.rooms.findRoomByCode.useQuery(submittedRoomCode);
-  // maybe need to have roomCode be in some temp state, and then
-  // when you click join room, then it updates the roomCode state -> triggers this query...
 
   const joinRoom = useCallback(() => {
     socket.emit("joinRoom", {
@@ -47,8 +48,16 @@ function JoinRoom() {
       code: roomCode,
       playerMetadata: playerMetadata[userID],
     });
-    // trpc update
-  }, [roomCode, userID, playerMetadata]);
+
+    if (!receivedRoomConfig || status !== "authenticated") return;
+
+    socket.emit("modifyFriendData", {
+      action: "joinRoom",
+      initiatorID: userID,
+      roomCode: roomCode,
+      currentRoomIsPublic: receivedRoomConfig.isPublic,
+    });
+  }, [roomCode, userID, playerMetadata, receivedRoomConfig, status]);
 
   useEffect(() => {
     // rough way to check whether context data has been initialized
@@ -91,7 +100,6 @@ function JoinRoom() {
       });
     };
   }, []);
-  // might need to add roomCtx to deps here
 
   return (
     <motion.div
@@ -268,7 +276,10 @@ function JoinRoom() {
                         "hsl(352deg, 69%, 61%)"
                       }
                       playerID={playerID}
-                      showAddFriendButton={userID !== playerID}
+                      showAddFriendButton={
+                        userID !== playerID &&
+                        friendData?.friendIDs?.indexOf(playerID) === -1
+                      }
                       username={playerMetadata[playerID]?.username}
                       size={"3rem"}
                     />

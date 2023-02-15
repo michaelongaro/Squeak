@@ -15,6 +15,7 @@ import { BiArrowBack } from "react-icons/bi";
 import { FiCheck } from "react-icons/fi";
 import { AnimatePresence, motion } from "framer-motion";
 import Filter from "bad-words";
+import { useSession } from "next-auth/react";
 
 const filter = new Filter();
 
@@ -35,6 +36,7 @@ function CreateRoom() {
     setRoomConfig,
     playerMetadata,
     setPlayerMetadata,
+    friendData,
     connectedToRoom,
     setConnectedToRoom,
     setGameData,
@@ -42,6 +44,7 @@ function CreateRoom() {
     leaveRoom,
   } = useRoomContext();
   const { value: userID } = useUserIDContext();
+  const { data: session, status } = useSession();
 
   const createRoomInDatabase = trpc.rooms.createRoom.useMutation();
   const updateRoomInDatabase = trpc.rooms.updateRoomConfig.useMutation();
@@ -104,6 +107,16 @@ function CreateRoom() {
       setConnectedToRoom(true);
 
       socket.emit("createRoom", roomConfig, playerMetadata[userID]);
+
+      if (status === "authenticated") {
+        socket.emit("modifyFriendData", {
+          action: "createRoom",
+          initiatorID: userID,
+          roomCode: roomConfig.code,
+          currentRoomIsPublic: roomConfig.isPublic,
+        });
+      }
+
       createRoomInDatabase.mutate(roomConfig);
     }
   }
@@ -131,7 +144,6 @@ function CreateRoom() {
         [key]: value,
       });
     }
-    // trpc mutation to update room in database
   }
 
   return (
@@ -344,7 +356,10 @@ function CreateRoom() {
                       username={playerMetadata[playerID]?.username}
                       playerID={playerID}
                       size={"3rem"}
-                      showAddFriendButton={userID !== playerID}
+                      showAddFriendButton={
+                        userID !== playerID &&
+                        friendData?.friendIDs?.indexOf(playerID) === -1
+                      }
                       showRemovePlayerFromRoomButton={userID !== playerID}
                     />
                   ))}
