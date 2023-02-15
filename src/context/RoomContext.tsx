@@ -159,13 +159,18 @@ export function RoomProvider(props: { children: React.ReactNode }) {
   useEffect(() => {
     if (userID && friendData && Object.keys(friendData).length === 0) {
       socket.emit("initializeAuthorizedPlayer", userID);
+
+      setTimeout(() => {
+        socket.emit("modifyFriendData", {
+          action: "goOnline",
+          initiatorID: userID,
+        });
+      }, 2500);
     }
   }, [userID, friendData]);
 
   useEffect(() => {
     function leaveRoomBeforeUnload(event: BeforeUnloadEvent) {
-      if (!connectedToRoom) return;
-
       event.preventDefault();
 
       if (connectedToRoom) {
@@ -178,6 +183,16 @@ export function RoomProvider(props: { children: React.ReactNode }) {
           deleteRoomInDatabase.mutate(roomConfig.code);
         }
       }
+
+      if (status === "authenticated") {
+        console.log("going offline");
+
+        socket.emit("modifyFriendData", {
+          action: "goOffline",
+          initiatorID: userID,
+        });
+      }
+
       return (event.returnValue = "");
       // event.returnValue = null;
     }
@@ -193,6 +208,7 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     roomConfig.playersInRoom,
     connectedToRoom,
     deleteRoomInDatabase,
+    status,
   ]);
 
   useEffect(() => {
@@ -244,6 +260,13 @@ export function RoomProvider(props: { children: React.ReactNode }) {
       setConnectedToRoom(false);
 
       socket.emit("leaveRoom", { playerID: userID, roomCode: roomConfig.code });
+
+      if (status === "authenticated") {
+        socket.emit("modifyFriendData", {
+          action: "leaveRoom",
+          initiatorID: userID,
+        });
+      }
 
       if (roomConfig.playersInRoom === 1) {
         deleteRoomInDatabase.mutate(roomConfig.code);
