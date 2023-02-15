@@ -20,15 +20,18 @@ model Room {
 }
 
 model Stats {
-  id                    String @id @default(cuid())
-  squeaks               Int    @default(0)
-  averageFinishingPlace Float  @default(0)
-  averageLeftInSqueak   Float  @default(0)
-  lowestScore           Int    @default(0)
-  highestScore          Int    @default(0)
-  totalGamesPlayed      Int    @default(0)
-  user                  User   @relation(fields: [userID], references: [id], onDelete: Cascade)
-  userID                String @unique
+  id                      String @id @default(cuid())
+  squeaks                 Int    @default(0)
+  averageFinishingPlace   Float  @default(0)
+  allFinishedPlacesValues Int[]  @default([])
+  averageLeftInSqueak     Float  @default(0)
+  allLeftInSqueakValues   Int[]  @default([])
+  lowestScore             Int    @default(0)
+  highestScore            Int    @default(0)
+  totalGamesPlayed        Int    @default(0)
+  totalRoundsPlayed       Int    @default(0)
+  user                    User   @relation(fields: [userID], references: [id], onDelete: Cascade)
+  userID                  String @unique
 }
 
 // Necessary for Next auth
@@ -79,13 +82,14 @@ model User {
 
   // just storing IDs for simplicity, client handles querying for relevant User data that
   // can be found from these IDs.
-  friendIDs       String[] // @default([]) necessary/useful?
-  friendInviteIDs String[] // @default([]) necessary/useful?
-  roomInviteIDs   String[] // @default([]) necessary/useful?
+  friendIDs       String[] @default([])
+  friendInviteIDs String[] @default([])
+  roomInviteIDs   String[] @default([])
 
-  online   Boolean @default(true)
-  status   String  @default("on home screen")
-  roomCode String?
+  online              Boolean  @default(true)
+  status              String   @default("on home screen")
+  roomCode            String?
+  currentRoomIsPublic Boolean?
 }
 
 model VerificationToken {
