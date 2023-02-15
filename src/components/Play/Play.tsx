@@ -11,10 +11,12 @@ import useReturnToRoomHandler from "../../hooks/useReturnToRoomHandler";
 import { motion } from "framer-motion";
 
 import classes from "./Play.module.css";
+import { useUserIDContext } from "../../context/UserIDContext";
 
 function Play() {
   const { gameData, roomConfig, setGameData, setShowShufflingCountdown } =
     useRoomContext();
+  const { value: userID } = useUserIDContext();
 
   const [gameStarted, setGameStarted] = useState<boolean>(false);
 
@@ -35,6 +37,11 @@ function Play() {
       socket.on("gameStarted", () => {
         setGameStarted(true);
       });
+
+      socket.emit("modifyFriendData", {
+        action: "startGame",
+        initiatorID: userID,
+      });
     }
 
     return () => {
@@ -46,10 +53,13 @@ function Play() {
         setGameStarted(true);
       });
     };
-
-    // maybe you need to have a disconnect function that runs
-    // when the component unmounts?
-  }, [gameData, roomConfig.code, setGameData, setShowShufflingCountdown]);
+  }, [
+    gameData,
+    roomConfig.code,
+    setGameData,
+    setShowShufflingCountdown,
+    userID,
+  ]);
 
   return (
     <motion.div
