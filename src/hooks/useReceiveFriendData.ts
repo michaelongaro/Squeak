@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRoomContext } from "../context/RoomContext";
 import { useUserIDContext } from "../context/UserIDContext";
 import { socket } from "../pages";
@@ -9,28 +9,22 @@ function useReceiveFriendData() {
 
   const { setFriendData } = useRoomContext();
 
-  const [dataFromBackend, setDataFromBackend] =
-    useState<IReceiveFriendData | null>(null);
-
-  useEffect(() => {
-    socket.on("friendDataUpdated", (data) => setDataFromBackend(data));
-
-    return () => {
-      socket.off("friendDataUpdated", (data) => setDataFromBackend(data));
-    };
-  }, []);
-
-  useEffect(() => {
-    if (dataFromBackend !== null) {
-      setDataFromBackend(null);
-
-      const { playerID, friendData } = dataFromBackend;
-
+  const handleFriendData = useCallback(
+    ({ friendData, playerID }: IReceiveFriendData) => {
       if (playerID === userID) {
         setFriendData(friendData);
       }
-    }
-  }, [dataFromBackend, userID, setFriendData]);
+    },
+    [userID, setFriendData]
+  );
+
+  useEffect(() => {
+    socket.on("friendDataUpdated", (data) => handleFriendData(data));
+
+    return () => {
+      socket.off("friendDataUpdated", (data) => handleFriendData(data));
+    };
+  }, [userID, setFriendData, handleFriendData]);
 }
 
 export default useReceiveFriendData;
