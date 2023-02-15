@@ -38,7 +38,6 @@ function SecondaryButton({
   return (
     <button
       style={{
-        ...style,
         borderColor:
           hoveringOnButton || forceHover
             ? "hsl(120deg 100% 18%)"
@@ -57,6 +56,7 @@ function SecondaryButton({
         height: height ?? "100%",
         cursor: disabled || tempDisabled ? "not-allowed" : "pointer",
         opacity: disabled || tempDisabled ? 0.25 : 1,
+        ...style,
       }}
       className="baseFlex relative h-full w-full gap-2 rounded-md border-2 transition-all"
       onMouseEnter={() => setHoveringOnButton(true)}

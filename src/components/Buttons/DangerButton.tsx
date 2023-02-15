@@ -34,7 +34,6 @@ function DangerButton({
   return (
     <button
       style={{
-        ...style,
         // can replace below with tailwind classes (hover: active:)
         borderColor: hoveringOnButton ? "hsl(0, 84%, 50%)" : "hsl(0, 84%, 60%)",
         backgroundColor: hoveringOnButton
@@ -44,8 +43,9 @@ function DangerButton({
         filter: `brightness(${brightness})`,
         width: width ?? "100%",
         height: height ?? "100%",
+        ...style,
       }}
-      className="baseFlex relative h-full w-full cursor-pointer gap-2 rounded-md border-2 p-2 transition-all"
+      className="baseFlex relative cursor-pointer gap-2 rounded-md border-2 p-2 transition-all"
       onMouseEnter={() => {
         if (!showTooltip) {
           setHoveringOnButton(true);
