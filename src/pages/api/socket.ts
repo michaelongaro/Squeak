@@ -73,11 +73,15 @@ export interface IModifyFriendData {
     | "declineRoomInvite"
     | "createRoom"
     | "joinRoom"
-    | "leaveRoom" // this also should be called when a player is kicked from a room
-    | "removeFriend";
+    | "startGame"
+    | "leaveRoom" // this is also called when a player is kicked from a room
+    | "removeFriend"
+    | "goOffline"
+    | "goOnline";
   initiatorID: string;
   targetID?: string;
   roomCode?: string;
+  currentRoomIsPublic?: boolean;
 }
 
 export interface ICardDropProposal {
