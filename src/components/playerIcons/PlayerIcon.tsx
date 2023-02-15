@@ -14,6 +14,7 @@ interface IPlayerIcon {
   playerID?: string;
   showAddFriendButton?: boolean;
   showRemovePlayerFromRoomButton?: boolean;
+  onlineStatus?: boolean;
 }
 // TODO: probably just pass through the whole player object and allow it to be undefined,
 // if so then just show loading skeleton?
@@ -26,6 +27,7 @@ function PlayerIcon({
   showAddFriendButton,
   playerID,
   showRemovePlayerFromRoomButton,
+  onlineStatus,
 }: IPlayerIcon) {
   const { roomConfig } = useRoomContext();
   const { value: userID } = useUserIDContext();
@@ -102,6 +104,17 @@ function PlayerIcon({
                   borderRadius: "50%",
                 }}
               />
+            )}
+
+            {onlineStatus !== undefined && (
+              <div
+                style={{
+                  backgroundColor: onlineStatus
+                    ? "hsl(120deg 100% 35%)"
+                    : "hsl(0deg 100% 40%)",
+                }}
+                className="absolute right-[-0.25rem] bottom-0 h-4 w-4 rounded-full"
+              ></div>
             )}
           </div>
           {username ? username : null}
