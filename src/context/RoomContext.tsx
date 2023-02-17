@@ -22,6 +22,14 @@ interface IProposedCardBoxShadow {
   boxShadowValue: string;
 }
 
+export interface ISoundStates {
+  currentPlayer: boolean;
+  otherPlayers: {
+    [playerID: string]: boolean;
+  };
+  squeakSound: boolean;
+}
+
 interface IRoomContext {
   pageToRender: "home" | "createRoom" | "joinRoom" | "play";
   setPageToRender: React.Dispatch<
@@ -72,6 +80,10 @@ interface IRoomContext {
   connectedToRoom: boolean;
   setConnectedToRoom: React.Dispatch<React.SetStateAction<boolean>>;
   leaveRoom: (moveBackToHome: boolean) => void;
+  soundPlayStates: ISoundStates;
+  setSoundPlayStates: React.Dispatch<React.SetStateAction<ISoundStates>>;
+  currentVolume: number;
+  setCurrentVolume: React.Dispatch<React.SetStateAction<number>>;
 }
 
 const RoomContext = createContext<IRoomContext | null>(null);
@@ -133,11 +145,30 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     null
   );
 
+  const [currentVolume, setCurrentVolume] = useState<number>(0);
+
+  const [soundPlayStates, setSoundPlayStates] = useState<ISoundStates>({
+    currentPlayer: false,
+    otherPlayers: {},
+    squeakSound: false,
+  });
+
   const [connectedToRoom, setConnectedToRoom] = useState<boolean>(false);
 
   const [showScoreboard, setShowScoreboard] = useState<boolean>(false); // temp for testing - should be false
   const [showShufflingCountdown, setShowShufflingCountdown] =
     useState<boolean>(false);
+
+  // might want to move into a hook eventually
+  useEffect(() => {
+    setTimeout(() => {
+      const storedVolume = localStorage.getItem("volume");
+
+      if (storedVolume) {
+        setCurrentVolume(parseFloat(storedVolume));
+      }
+    }, 1500);
+  }, []);
 
   useEffect(() => {
     fetch("/api/socket");
@@ -314,6 +345,10 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     connectedToRoom,
     setConnectedToRoom,
     leaveRoom,
+    soundPlayStates,
+    setSoundPlayStates,
+    currentVolume,
+    setCurrentVolume,
   };
 
   return (

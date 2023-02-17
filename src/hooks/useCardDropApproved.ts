@@ -44,7 +44,12 @@ function useCardDropApproved({
   setCardOffsetPosition,
   setCardHasBeenPlaced,
 }: IUseCardDropApproved) {
-  const { gameData, setGameData, setProposedCardBoxShadow } = useRoomContext();
+  const {
+    gameData,
+    setGameData,
+    setProposedCardBoxShadow,
+    setSoundPlayStates,
+  } = useRoomContext();
 
   const [dataFromBackend, setDataFromBackend] =
     useState<ICardDropAccepted | null>(null);
@@ -120,10 +125,25 @@ function useCardDropApproved({
           moveCard({ x: endX, y: endY }, false, endID.includes("cell"));
 
           if (playerID === userID) {
+            if (endID.includes("cell")) {
+              setSoundPlayStates((prevState) => ({
+                ...prevState,
+                currentPlayer: true,
+              }));
+            }
+
             setProposedCardBoxShadow({
               id: endID,
               boxShadowValue: `0px 0px 10px 5px rgba(29, 232, 7, 1)`,
             });
+          } else if (playerID && endID.includes("cell")) {
+            setSoundPlayStates((prevState) => ({
+              ...prevState,
+              otherPlayers: {
+                ...prevState.otherPlayers,
+                [playerID]: true,
+              },
+            }));
           }
 
           setTimeout(() => {
