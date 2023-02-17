@@ -10,11 +10,13 @@ import {
   AiOutlinePlusCircle,
   AiOutlineInfoCircle,
 } from "react-icons/ai";
+import { IoStatsChart } from "react-icons/io5";
 import { useSession } from "next-auth/react";
 import PlayerIcon from "../playerIcons/PlayerIcon";
 import { useUserIDContext } from "../../context/UserIDContext";
 import { trpc } from "../../utils/trpc";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
+import LeaderboardModal from "../modals/LeaderboardModal";
 
 function MainOptions() {
   const { data: session, status } = useSession();
@@ -24,7 +26,8 @@ function MainOptions() {
   const { data: user } = trpc.users.getUserByID.useQuery(userID);
   const { setPageToRender } = useRoomContext();
 
-  const [showTutorialModal, setShowTutorialModal] = useState<boolean>(false);
+  const [showTutorialModal, setShowTutorialModal] = useState(false);
+  const [showLeaderboardModal, setShowLeaderboardModal] = useState(false);
 
   return (
     <motion.div
@@ -36,8 +39,12 @@ function MainOptions() {
       className="baseFlex relative min-h-[100vh]"
     >
       {status !== "loading" && (
-        <div className="baseVertFlex min-w-[22.25rem] gap-8 rounded-md border-2 border-white bg-green-800 p-8 shadow-lg">
-          <div className="text-4xl text-green-300 sm:text-5xl">Squeak</div>
+        <div className="baseVertFlex min-w-[22.25rem] gap-4 rounded-md border-2 border-white bg-green-800 p-8 shadow-lg">
+          <img
+            src="/logo/squeakLogo.svg"
+            alt="Squeak logo"
+            className="h-48 w-48 tall:h-[300px] tall:w-[300px]"
+          />
 
           {status === "authenticated" ? (
             <div className="baseFlex gap-4">
@@ -56,7 +63,7 @@ function MainOptions() {
             <LogIn gap={"2rem"} />
           )}
 
-          <div className="baseVertFlex gap-4">
+          <div className="baseVertFlex mt-4 gap-4">
             <SecondaryButton
               innerText={"How to play"}
               icon={<AiOutlineInfoCircle size={"1.5rem"} />}
@@ -81,12 +88,36 @@ function MainOptions() {
               onClickFunction={() => setPageToRender("joinRoom")}
             />
 
-            {/* leaderboard */}
+            <SecondaryButton
+              innerText={"Leaderboard"}
+              icon={<IoStatsChart size={"1.5rem"} />}
+              iconOnLeft={true}
+              extraPadding={true}
+              onClickFunction={() => setShowLeaderboardModal(true)}
+            />
           </div>
         </div>
       )}
 
-      {showTutorialModal && <TutorialModal />}
+      <AnimatePresence
+        initial={false}
+        mode={"wait"}
+        onExitComplete={() => null}
+      >
+        {showTutorialModal && (
+          <TutorialModal setShowModal={setShowTutorialModal} />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence
+        initial={false}
+        mode={"wait"}
+        onExitComplete={() => null}
+      >
+        {showLeaderboardModal && (
+          <LeaderboardModal setShowModal={setShowLeaderboardModal} />
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }
