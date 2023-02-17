@@ -38,6 +38,7 @@ function usePlayerLeftRoom() {
       const { roomConfig, gameData, players, newHostID, playerWhoLeftID } =
         dataFromBackend;
 
+      // gets called if current user was kicked from room by host
       if (playerWhoLeftID === userID) {
         leaveRoom(false);
 
