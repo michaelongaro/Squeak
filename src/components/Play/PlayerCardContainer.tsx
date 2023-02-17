@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { socket } from "../../pages";
 import { useUserIDContext } from "../../context/UserIDContext";
 import { useRoomContext } from "../../context/RoomContext";
@@ -12,6 +12,7 @@ import useRotatePlayerDecks from "../../hooks/useRotatePlayerDecks";
 import PlayerIcon from "../playerIcons/PlayerIcon";
 import useResponsiveCardDimensions from "../../hooks/useResponsiveCardDimensions";
 import { AnimatePresence, motion } from "framer-motion";
+import Buzzer from "./Buzzer";
 
 interface IPlayerCardContainer {
   cardContainerClass: string | undefined;
@@ -32,9 +33,11 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
     holdingASqueakCard,
     hoveredSqueakStack,
     holdingADeckCard,
-    playerIDWhoSqueaked,
     proposedCardBoxShadow,
     decksAreBeingRotated,
+    soundPlayStates,
+    setSoundPlayStates,
+    currentVolume,
     originIndexForHeldSqueakCard,
     setHoldingADeckCard,
     setOriginIndexForHeldSqueakCard,
@@ -46,10 +49,35 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
 
   const [hoveringOverDeck, setHoveringOverDeck] = useState(false);
 
+  const [showFirstDummyCardBeneathDeck, setShowFirstDummyCardBeneathDeck] =
+    useState(false);
+
+  const [showSecondDummyCardBeneathDeck, setShowSecondDummyCardBeneathDeck] =
+    useState(false);
+
   useTrackHoverOverSqueakStacks();
   useRotatePlayerDecks();
 
   const cardDimensions = useResponsiveCardDimensions();
+
+  const audioRef = useRef<HTMLAudioElement>(null);
+
+  useEffect(() => {
+    if (soundPlayStates.currentPlayer && audioRef.current) {
+      audioRef.current.volume = currentVolume * 0.01;
+      audioRef.current.play();
+      setSoundPlayStates({ ...soundPlayStates, currentPlayer: false });
+    }
+  }, [soundPlayStates, currentVolume, setSoundPlayStates]);
+
+  useEffect(() => {
+    const player = gameData.players[userID];
+
+    if (!player) return;
+
+    setShowSecondDummyCardBeneathDeck(player.deck.length - player.deckIdx >= 2);
+    setShowFirstDummyCardBeneathDeck(player.deck.length - player.deckIdx >= 1);
+  }, [gameData.players, userID]);
 
   function getBoxShadowStyles({
     id,
@@ -70,6 +98,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
 
   return (
     <div className={`${cardContainerClass}`}>
+      <audio ref={audioRef} src="/sounds/firstSuccessfulMove.wav" />
       {userID && (
         <div className={`${classes.gridContainer}`}>
           <div
@@ -78,15 +107,31 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
           >
             {gameData.players[userID]!.squeakDeck.length > 0 ? (
               <div className="relative h-full w-full">
-                <div className="absolute top-0 left-0 h-full w-full">
-                  <Card
-                    showCardBack={true}
-                    draggable={false}
-                    ownerID={userID}
-                    startID={`${userID}squeakDeck`}
-                    rotation={0}
-                  />
-                </div>
+                {/* dummy cards to show "depth" of deck visually */}
+                {gameData.players[userID]!.squeakDeck.length > 2 && (
+                  <div className="absolute top-[2px] left-0 h-full w-full">
+                    <Card
+                      showCardBack={true}
+                      draggable={false}
+                      ownerID={userID}
+                      startID={`${userID}squeakDeck`}
+                      rotation={0}
+                    />
+                  </div>
+                )}
+
+                {gameData.players[userID]!.squeakDeck.length > 1 && (
+                  <div className="absolute top-[1px] left-0 h-full w-full">
+                    <Card
+                      showCardBack={true}
+                      draggable={false}
+                      ownerID={userID}
+                      startID={`${userID}squeakDeck`}
+                      rotation={0}
+                    />
+                  </div>
+                )}
+
                 <div className="absolute top-0 left-0 h-full w-full">
                   <Card
                     value={gameData.players[userID]!.squeakDeck[0]!.value}
@@ -100,24 +145,16 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                 </div>
               </div>
             ) : (
-              <button
-                style={{
-                  boxShadow:
-                    playerIDWhoSqueaked === userID
-                      ? "0px 0px 20px 5px rgba(184,184,184,1)"
-                      : "none",
-                  transition: "box-shadow 0.85s ease-in-out",
-                }}
-                className="bg-green-300 p-4 transition-colors hover:bg-green-200"
-                onClick={() => {
+              <Buzzer
+                playerID={userID}
+                interactive={true}
+                onClickFunction={() => {
                   socket.emit("roundOver", {
                     roomID: roomConfig.code,
                     winner: userID,
                   });
                 }}
-              >
-                Squeak!
-              </button>
+              />
             )}
           </div>
 
@@ -215,15 +252,31 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
             >
               {gameData?.players[userID]?.nextTopCardInDeck ? (
                 <div className="relative h-full w-full">
-                  <div className="absolute top-0 left-0 h-full w-full">
-                    <Card
-                      showCardBack={true}
-                      draggable={false}
-                      ownerID={userID}
-                      startID={`${userID}deck`}
-                      rotation={0}
-                    />
-                  </div>
+                  {/* dummy cards to show "depth" of deck visually */}
+                  {showSecondDummyCardBeneathDeck && (
+                    <div className="absolute top-[2px] left-0 h-full w-full">
+                      <Card
+                        showCardBack={true}
+                        draggable={false}
+                        ownerID={userID}
+                        startID={`${userID}deck`}
+                        rotation={0}
+                      />
+                    </div>
+                  )}
+
+                  {showFirstDummyCardBeneathDeck && (
+                    <div className="absolute top-[1px] left-0 h-full w-full">
+                      <Card
+                        showCardBack={true}
+                        draggable={false}
+                        ownerID={userID}
+                        startID={`${userID}deck`}
+                        rotation={0}
+                      />
+                    </div>
+                  )}
+
                   <div
                     style={{
                       animationPlayState: decksAreBeingRotated
