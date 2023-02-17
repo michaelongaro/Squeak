@@ -3,6 +3,7 @@ import Head from "next/head";
 import HomePage from "../components/HomePage/HomePage";
 import { io } from "socket.io-client";
 import useReceiveFriendData from "../hooks/useReceiveFriendData";
+import useInitializeUserStats from "../hooks/useInitializeUserStats";
 
 export const socket = io({
   closeOnBeforeunload: false,
@@ -10,6 +11,7 @@ export const socket = io({
 
 const Home: NextPage = () => {
   useReceiveFriendData();
+  useInitializeUserStats();
 
   return (
     <>
