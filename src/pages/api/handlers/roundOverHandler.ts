@@ -3,6 +3,7 @@ import {
   createAndFormatDeck,
   type ICard,
 } from "../../../utils/generateDeckAndSqueakCards";
+import { updatePlayerStatsAfterRound } from "../helpers/updatePlayerStatsAfterRound";
 import {
   type IGameData,
   type IRoomData,
@@ -27,6 +28,10 @@ export interface IScoreboardMetadata {
   gameData: IGameMetadata;
 }
 
+export interface IPlayerRankings {
+  [playerID: string]: number;
+}
+
 export function roundOverHandler(
   io: Server,
   socket: Socket,
@@ -40,6 +45,8 @@ export function roundOverHandler(
     if (!playerCards || !pointsToWin) return;
 
     const playerRoundDetails: IPlayerRoundDetails[] = [];
+
+    let playerScoresForThisRound: [string, number][] = [];
 
     for (const playerID of Object.keys(playerCards)) {
       const player = playerCards[playerID];
@@ -61,6 +68,8 @@ export function roundOverHandler(
       const oldRanking = player.rankInRoom;
       const newRanking = oldRanking;
 
+      playerScoresForThisRound.push([playerID, newScore]);
+
       playerRoundDetails.push({
         playerID,
         cardsPlayed,
@@ -70,6 +79,17 @@ export function roundOverHandler(
         oldRanking,
         newRanking,
       });
+    }
+
+    // sort playerScoresForThisRound into IPlayerRankings
+    const playerRankings: IPlayerRankings = {};
+
+    // sorts playerRoundDetails by newScore and assigns newRanking
+    playerScoresForThisRound = playerScoresForThisRound.sort((a, b) => {
+      return a[1] - b[1];
+    });
+    for (const player of playerScoresForThisRound) {
+      playerRankings[player[0]] = player[1];
     }
 
     // sort playerRoundDetails by newScore
@@ -109,6 +129,16 @@ export function roundOverHandler(
       if (player.totalPoints >= pointsToWin) {
         gameWinnerID = playerID;
       }
+    }
+
+    // updating stats for each user in the room
+    for (const player of playerRoundDetails) {
+      updatePlayerStatsAfterRound({
+        playerRoundDetails: player,
+        roundWinnerID: playerID,
+        gameWinnerID,
+        playerRankingsForThisRound: playerRankings,
+      });
     }
 
     io.in(roomCode).emit("scoreboardMetadata", {
