@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useUserIDContext } from "../../../context/UserIDContext";
 import {
   type IRoomPlayersMetadata,
@@ -33,6 +34,8 @@ function Settings({
 }: ISettings) {
   const { value: userID } = useUserIDContext();
 
+  const [focusedInInput, setFocusedInInput] = useState<boolean>(false);
+
   return (
     // play around with with the width, maybe not best to have hardcoded 700px?
     <div
@@ -49,6 +52,8 @@ function Settings({
             placeholder="username"
             className=" rounded-sm pl-2 text-green-800"
             maxLength={16}
+            onFocus={() => setFocusedInInput(true)}
+            onBlur={() => setFocusedInInput(false)}
             onChange={(e) => {
               setUsernameIsProfane(filter.isProfane(e.target.value));
 
@@ -63,7 +68,12 @@ function Settings({
             value={localPlayerMetadata?.[userID]?.username}
           />
 
-          <div className="absolute top-[-0.25rem] right-1 text-xl text-red-600">
+          <div
+            style={{
+              opacity: focusedInInput ? 1 : 0,
+            }}
+            className="absolute top-[-0.25rem] right-1 text-xl text-red-600 transition-all"
+          >
             *
           </div>
 

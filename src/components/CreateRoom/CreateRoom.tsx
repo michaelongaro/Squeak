@@ -52,6 +52,7 @@ function CreateRoom() {
   const [configAndMetadataInitialized, setConfigAndMetadataInitialized] =
     useState<boolean>(false);
   const [showCheckmark, setShowCheckmark] = useState<boolean>(false);
+  const [focusedInInput, setFocusedInInput] = useState<boolean>(false);
   const [usernameIsProfane, setUsernameIsProfane] = useState<boolean>(false);
 
   // needs !connectedToRoom for when player inherits ownership of room after host leaves,
@@ -191,6 +192,8 @@ function CreateRoom() {
                   placeholder="username"
                   className=" rounded-sm pl-2 text-green-800"
                   maxLength={16}
+                  onFocus={() => setFocusedInInput(true)}
+                  onBlur={() => setFocusedInInput(false)}
                   onChange={(e) => {
                     setUsernameIsProfane(filter.isProfane(e.target.value));
 
@@ -205,7 +208,12 @@ function CreateRoom() {
                   }}
                   value={playerMetadata[userID]?.username}
                 />
-                <div className="absolute top-[-0.25rem] right-1 text-xl text-red-600">
+                <div
+                  style={{
+                    opacity: focusedInInput ? 1 : 0,
+                  }}
+                  className="absolute top-[-0.25rem] right-1 text-xl text-red-600 transition-all"
+                >
                   *
                 </div>
 
