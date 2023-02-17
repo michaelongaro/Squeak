@@ -25,6 +25,11 @@ export function leaveRoomHandler(
 
     if (!room) return;
 
+    // workaround because I couldn't get "leaveRoom" emit to work properly on client
+    // without calling it multiple times, this gate keeps it from running more than once
+    // per player who called it
+    if (!room.players[playerID]) return;
+
     if (!game) {
       // remove player from room
       delete room.players[playerID];
@@ -36,18 +41,19 @@ export function leaveRoomHandler(
 
     if (game) {
       // remove player from game
+      if (game.playerIDsThatLeftMidgame.includes(playerID)) return;
       game.playerIDsThatLeftMidgame.push(playerID);
     }
 
-    const earliestJoinedPlayerInRoom = Object.keys(room.players)[0];
+    const earliestJoinedPlayerIDInRoom = Object.keys(room.players)[0];
 
     // assign a new host if the host left
     if (
       playerID === previousHostID &&
       room.roomConfig.playersInRoom !== 0 &&
-      earliestJoinedPlayerInRoom
+      earliestJoinedPlayerIDInRoom
     ) {
-      newHostID = earliestJoinedPlayerInRoom;
+      newHostID = earliestJoinedPlayerIDInRoom;
     }
 
     // if there are no players left in the room, delete the room
