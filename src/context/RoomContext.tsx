@@ -201,9 +201,7 @@ export function RoomProvider(props: { children: React.ReactNode }) {
   }, [userID, friendData]);
 
   useEffect(() => {
-    function leaveRoomBeforeUnload(event: BeforeUnloadEvent) {
-      event.preventDefault();
-
+    function leaveRoomOnPageClose() {
       if (connectedToRoom) {
         socket.emit("leaveRoom", {
           playerID: userID,
@@ -216,23 +214,14 @@ export function RoomProvider(props: { children: React.ReactNode }) {
       }
 
       if (status === "authenticated") {
-        console.log("going offline");
-
         socket.emit("modifyFriendData", {
           action: "goOffline",
           initiatorID: userID,
         });
       }
-
-      return (event.returnValue = "");
-      // event.returnValue = null;
     }
 
-    window.addEventListener("beforeunload", leaveRoomBeforeUnload);
-
-    // return () => {
-    //   window.removeEventListener("beforeunload", leaveRoomBeforeUnload);
-    // };
+    window.addEventListener("unload", leaveRoomOnPageClose);
   }, [
     userID,
     roomConfig.code,
