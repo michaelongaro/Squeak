@@ -197,7 +197,7 @@ function UserSettingsAndStatsModal({
 
         {!showSettings && <Stats />}
 
-        <div className="baseFlex w-full gap-4 rounded-b-md bg-green-900 pb-4 pt-4 pl-12 pr-12">
+        <div className="baseFlex w-full gap-16 rounded-b-md bg-green-900 pb-4 pt-4 pl-12 pr-12">
           {/* determine what type/family of icons to use */}
 
           <SecondaryButton
