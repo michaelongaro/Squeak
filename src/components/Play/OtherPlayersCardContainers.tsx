@@ -5,6 +5,7 @@ import useResponsiveCardDimensions from "../../hooks/useResponsiveCardDimensions
 import Card from "./Card";
 import PlayerIcon from "../playerIcons/PlayerIcon";
 import { FaRedoAlt } from "react-icons/fa";
+import isEqual from "lodash.isequal";
 import classes from "./OtherPlayersCardContainers.module.css";
 import useRotatePlayerDecks from "../../hooks/useRotatePlayerDecks";
 
@@ -70,7 +71,9 @@ function OtherPlayersCardContainers({
       }
     }
 
-    setShowDummyDeckCardStates(tempDummyDeckCardStates);
+    if (!isEqual(tempDummyDeckCardStates, showDummyDeckCardStates)) {
+      setShowDummyDeckCardStates(tempDummyDeckCardStates);
+    }
   }, [gameData.players, otherPlayerIDs, showDummyDeckCardStates]);
 
   const audioRef0 = useRef<HTMLAudioElement>(null);
