@@ -90,8 +90,8 @@ function Card({
     (
       { x, y }: { x: number; y: number },
       flip: boolean,
-      rotate: boolean
-      // revertZIndex: boolean
+      rotate: boolean,
+      callbackFunction?: () => void
     ) => {
       if (!cardRef.current || !imageRef.current || cardIsMovingRef.current)
         return;
@@ -218,7 +218,9 @@ function Card({
           setManuallyShowCardFront(false);
         }
         cardIsMovingRef.current = false;
-      }, 280);
+
+        callbackFunction?.();
+      }, 280); // should maybe be 250 again?
 
       // maybe need check to make sure this only happens when it is current user's card
       // that is being moved
@@ -235,6 +237,7 @@ function Card({
       startID,
       userID,
       hoveredCell,
+      ownerID,
       hoveredSqueakStack,
       // flipKing,
       setHeldSqueakStackLocation,

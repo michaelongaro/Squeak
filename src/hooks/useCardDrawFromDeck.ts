@@ -10,7 +10,8 @@ interface IUseCardDrawFromDeck {
   moveCard: (
     { x, y }: { x: number; y: number },
     flip: boolean,
-    rotate: boolean
+    rotate: boolean,
+    callbackFunction?: () => void
   ) => void;
 }
 
@@ -74,15 +75,13 @@ function useCardDrawFromDeck({
         const endX = endLocation.x;
         const endY = endLocation.y;
 
-        moveCard({ x: endX, y: endY }, true, false);
-
-        setTimeout(() => {
+        moveCard({ x: endX, y: endY }, true, false, () => {
           setGameData({
             ...gameData,
             board: updatedBoard,
             players: updatedPlayerCards,
           });
-        }, 260);
+        });
       }
     }
   }, [dataFromBackend, moveCard, gameData, setGameData, suit, ownerID, value]);

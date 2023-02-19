@@ -6,10 +6,11 @@ import { type ICard } from "../utils/generateDeckAndSqueakCards";
 
 interface ICardDropAccepted extends Partial<ICardDropProposal> {
   squeakEndCoords?: {
-    squeakStack: ICard[];
-    stackOfCardsMoved: ICard[];
-    col: number;
-    row: number;
+    // squeakStack: ICard[];
+    offsetHeight: number;
+    stackOfCardsMoved?: ICard[];
+    // col: number;
+    // row: number;
   };
   endID: string; // have this here or on main interface?
 }
@@ -23,7 +24,8 @@ interface IUseCardDropApproved {
   moveCard: (
     { x, y }: { x: number; y: number },
     flip: boolean,
-    rotate: boolean
+    rotate: boolean,
+    callbackFunction?: () => void
   ) => void;
   setCardOffsetPosition: React.Dispatch<
     React.SetStateAction<{
@@ -84,7 +86,7 @@ function useCardDropApproved({
         suit
       ) {
         if (
-          squeakEndCoords.stackOfCardsMoved.some(
+          squeakEndCoords.stackOfCardsMoved?.some(
             (card) => card.value === value && card.suit === suit
           )
         ) {
@@ -105,24 +107,27 @@ function useCardDropApproved({
           ?.getBoundingClientRect();
         if (endLocation) {
           const endX = endLocation.x;
-          let endY = endLocation.y;
+          const endY = squeakEndCoords
+            ? endLocation.y + squeakEndCoords.offsetHeight
+            : endLocation.y;
 
-          if (squeakEndCoords) {
-            const indexWithinSqueakStack =
-              squeakEndCoords.squeakStack.findIndex(
-                (card) => card.value === value && card.suit === suit
-              );
+          moveCard({ x: endX, y: endY }, false, endID.includes("cell"), () => {
+            setGameData({
+              ...gameData,
+              board: updatedBoard || gameData?.board,
+              players: updatedPlayerCards || gameData?.players,
+            });
 
-            endY +=
-              indexWithinSqueakStack === 0
-                ? 15 // hmm maybe should be zero?
-                : indexWithinSqueakStack *
-                  (15 - squeakEndCoords.squeakStack.length);
-          } else if (endID.includes("squeakHand")) {
-            endY += 15; // tired brain: not exactly sure which case this fires on
-          }
+            if (playerID === userID) {
+              setProposedCardBoxShadow(null);
+            }
 
-          moveCard({ x: endX, y: endY }, false, endID.includes("cell"));
+            if (ownerID !== userID && origin === "deck") {
+              setCardOffsetPosition({ x: 0, y: 0 });
+            } else {
+              setCardHasBeenPlaced(true);
+            }
+          });
 
           if (playerID === userID) {
             if (endID.includes("cell")) {
@@ -145,24 +150,6 @@ function useCardDropApproved({
               },
             }));
           }
-
-          setTimeout(() => {
-            setGameData({
-              ...gameData,
-              board: updatedBoard || gameData?.board,
-              players: updatedPlayerCards || gameData?.players,
-            });
-
-            if (playerID === userID) {
-              setProposedCardBoxShadow(null);
-            }
-
-            if (ownerID !== userID && origin === "deck") {
-              setCardOffsetPosition({ x: 0, y: 0 });
-            } else {
-              setCardHasBeenPlaced(true);
-            }
-          }, 260);
         }
       }
     }
@@ -170,6 +157,7 @@ function useCardDropApproved({
     dataFromBackend,
     moveCard,
     gameData,
+    setSoundPlayStates,
     setGameData,
     setProposedCardBoxShadow,
     suit,
