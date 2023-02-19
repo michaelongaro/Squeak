@@ -77,7 +77,7 @@ function SecondaryButton({
             setShowLoadingSpinner(false);
             setTempDisabled(false);
             onClickFunction?.();
-          }, 1500);
+          }, 1000);
         } else {
           onClickFunction?.();
         }
