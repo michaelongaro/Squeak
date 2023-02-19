@@ -267,8 +267,9 @@ function JoinRoom() {
               </div>
             </fieldset>
             <fieldset className="rounded-md border-2 border-white bg-green-800 p-4">
-              <legend className="pl-4 pr-4 text-left text-lg">
-                {`Players ${roomConfig?.playersInRoom}/${roomConfig?.maxPlayers}`}
+              <legend className="baseFlex gap-2 pl-4 pr-4 text-left text-lg">
+                Players
+                <div className="tracking-widest">{`(${roomConfig.playersInRoom}/${roomConfig.maxPlayers})`}</div>
               </legend>
               <div className="baseVertFlex gap-6 p-4">
                 <div className="baseFlex gap-8">
@@ -302,7 +303,7 @@ function JoinRoom() {
                 </div>
               </div>
             </fieldset>
-            waiting for host to start the game
+            {`waiting for ${roomConfig.hostUsername} to start the game`}
             {/* starting game + spinner */}
           </div>
         )}
