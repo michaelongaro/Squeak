@@ -38,7 +38,9 @@ function Stats() {
         totalGamesPlayed: userStats.totalGamesPlayed,
       };
 
-      setFilteredStats(filteredStats);
+      setTimeout(() => {
+        setFilteredStats(filteredStats);
+      }, 500);
     }
   }, [userStats, filteredStats]);
 
@@ -49,22 +51,36 @@ function Stats() {
       }}
       className="baseVertFlex w-[700px] gap-8 bg-green-800 p-8"
     >
-      {filteredStats && (
-        <div
-          style={{
-            borderColor: "hsl(120deg 100% 86%)",
-            color: "hsl(120deg 100% 86%)",
-          }}
-          className="baseVertFlex gap-4 rounded-md border-2 p-4"
-        >
-          {Object.values(filteredStats).map((value, index) => (
-            <div key={index} className="baseFlex w-full !justify-between gap-8">
-              <div className="text-xl">{rowNames[index]}</div>
-              <div className="text-xl">{value}</div>
-            </div>
-          ))}
-        </div>
-      )}
+      <div
+        style={{
+          borderColor: "hsl(120deg 100% 86%)",
+          color: "hsl(120deg 100% 86%)",
+        }}
+        className="baseVertFlex gap-4 rounded-md border-2 p-4"
+      >
+        {rowNames.map((rowName, index) => (
+          <div key={index} className="baseFlex w-full !justify-between gap-8">
+            <div className="text-xl">{rowName}</div>
+            {filteredStats ? (
+              <div className="text-xl">
+                {Object.values(filteredStats)[index]}
+              </div>
+            ) : (
+              <div
+                style={{
+                  width: "1.5rem",
+                  height: "1.5rem",
+                  borderTop: `0.35rem solid hsla(120deg, 100%, 86%, 40%)`,
+                  borderRight: `0.35rem solid hsla(120deg, 100%, 86%, 40%)`,
+                  borderBottom: `0.35rem solid hsla(120deg, 100%, 86%, 40%)`,
+                  borderLeft: `0.35rem solid hsl(120deg 100% 86%)`,
+                }}
+                className="loadingSpinner"
+              ></div>
+            )}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

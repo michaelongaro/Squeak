@@ -52,9 +52,9 @@ function FriendsList() {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.15 }}
-      className="baseVertFlex absolute right-0 top-16 w-[325px] !items-start gap-2 rounded-md border-2 border-white bg-green-800 p-4"
+      className="baseVertFlex absolute right-0 top-16 w-[350px] !items-start gap-2 rounded-md border-2 border-white bg-green-800 p-4"
     >
-      <div className="baseVertFlex !items-start gap-2">
+      <div className="baseVertFlex w-full !items-start gap-2">
         <div
           style={{
             color: "hsl(120deg 100% 86%)",
@@ -62,75 +62,116 @@ function FriendsList() {
           className="baseFlex mb-4 gap-2 border-b-2 border-white text-xl"
         >
           <FiMail size={"1.5rem"} />
-          <div className="text-green-300">Pending</div>
+          <div className="baseFlex gap-2 ">
+            Pending
+            {friendInviteIDs !== undefined && (
+              <div className="baseFlex gap-[0.1rem]">
+                <div>(</div>
+                <div>{friendInviteIDs.length}</div>
+                <div>)</div>
+              </div>
+            )}
+          </div>
         </div>
-        {friendInviteIDs?.map((friend) => (
-          <div key={friend.id} className="baseFlex gap-2">
-            <PlayerIcon
-              avatarPath={friend.avatarPath}
-              borderColor={friend.color}
-              size={"3rem"}
-            />
-            <div className="text-green-300">{friend.username}</div>
-            <SecondaryButton
-              icon={<AiOutlineCheck size={"1.5rem"} />}
-              extraPadding={false}
-              onClickFunction={() =>
-                socket.emit("modifyFriendData", {
-                  action: "acceptFriendInvite",
-                  initiatorID: userID,
-                  targetID: friend.id,
-                })
-              }
-              style={customButtonStyles}
-            />
-            <DangerButton
-              icon={<AiOutlineClose size={"1.5rem"} />}
-              onClickFunction={() =>
-                socket.emit("modifyFriendData", {
-                  action: "declineFriendInvite",
-                  initiatorID: userID,
-                  targetID: friend.id,
-                })
-              }
-              // not sure why icon doesn't show (setting flex-shrink: 0; on svg fixes* it)
-              style={customButtonStyles}
-            />
+        {friendInviteIDs ? (
+          friendInviteIDs.map((friend) => (
+            <div
+              key={friend.id}
+              style={{
+                color: "hsl(120deg 100% 86%)",
+              }}
+              className="baseFlex gap-2"
+            >
+              <PlayerIcon
+                avatarPath={friend.avatarPath}
+                borderColor={friend.color}
+                size={"3rem"}
+              />
+              <div>{friend.username}</div>
+              <SecondaryButton
+                icon={<AiOutlineCheck size={"1.5rem"} />}
+                extraPadding={false}
+                onClickFunction={() =>
+                  socket.emit("modifyFriendData", {
+                    action: "acceptFriendInvite",
+                    initiatorID: userID,
+                    targetID: friend.id,
+                  })
+                }
+                style={customButtonStyles}
+              />
+              <DangerButton
+                icon={<AiOutlineClose size={"1.5rem"} />}
+                onClickFunction={() =>
+                  socket.emit("modifyFriendData", {
+                    action: "declineFriendInvite",
+                    initiatorID: userID,
+                    targetID: friend.id,
+                  })
+                }
+                // not sure why icon doesn't show (setting flex-shrink: 0; on svg fixes* it)
+                style={customButtonStyles}
+              />
+            </div>
+          ))
+        ) : (
+          <div className="baseFlex w-full">
+            <div
+              style={{
+                width: "2.5rem",
+                height: "2.5rem",
+                borderTop: `0.35rem solid hsla(120deg, 100%, 86%, 40%)`,
+                borderRight: `0.35rem solid hsla(120deg, 100%, 86%, 40%)`,
+                borderBottom: `0.35rem solid hsla(120deg, 100%, 86%, 40%)`,
+                borderLeft: `0.35rem solid hsl(120deg 100% 86%)`,
+              }}
+              className="loadingSpinner"
+            ></div>
           </div>
-        ))}
+        )}
 
-        {roomInviteIDs?.map((friend) => (
-          <div key={friend.id} className="baseFlex gap-2">
-            <div className="text-green-300">{friend.username}</div>
-            <SecondaryButton
-              icon={<AiOutlineCheck size={"1.5rem"} />}
-              extraPadding={false}
-              onClickFunction={() =>
-                socket.emit("modifyFriendData", {
-                  action: "acceptRoomInvite",
-                  initiatorID: userID,
-                  targetID: friend.id,
-                  roomCode: friend.roomCode,
-                  currentRoomIsPublic: friend.currentRoomIsPublic,
-                })
-              }
-              style={customButtonStyles}
-            />
-            <DangerButton
-              icon={<AiOutlineClose size={"1.5rem"} />}
-              onClickFunction={() =>
-                socket.emit("modifyFriendData", {
-                  action: "declineRoomInvite",
-                  initiatorID: userID,
-                })
-              }
-              style={customButtonStyles}
-            />
-          </div>
-        ))}
+        {/* gating render until friendIDs appear so that it doesn't show loading circle
+            and the roomInvites at the same time */}
+        {friendInviteIDs &&
+          roomInviteIDs &&
+          roomInviteIDs.map((friend) => (
+            <div
+              key={friend.id}
+              style={{
+                color: "hsl(120deg 100% 86%)",
+              }}
+              className="baseFlex gap-2"
+            >
+              <div>{friend.username}</div>
+              <SecondaryButton
+                icon={<AiOutlineCheck size={"1.5rem"} />}
+                extraPadding={false}
+                onClickFunction={() =>
+                  socket.emit("modifyFriendData", {
+                    action: "acceptRoomInvite",
+                    initiatorID: userID,
+                    targetID: friend.id,
+                    roomCode: friend.roomCode,
+                    currentRoomIsPublic: friend.currentRoomIsPublic,
+                  })
+                }
+                style={customButtonStyles}
+              />
+              <DangerButton
+                icon={<AiOutlineClose size={"1.5rem"} />}
+                onClickFunction={() =>
+                  socket.emit("modifyFriendData", {
+                    action: "declineRoomInvite",
+                    initiatorID: userID,
+                  })
+                }
+                style={customButtonStyles}
+              />
+            </div>
+          ))}
       </div>
 
-      <div className="baseVertFlex !items-start gap-2">
+      <div className="baseVertFlex w-full !items-start gap-2">
         <div
           style={{
             color: "hsl(120deg 100% 86%)",
@@ -142,92 +183,120 @@ function FriendsList() {
             style={{
               color: "hsl(120deg 100% 86%)",
             }}
+            className="baseFlex gap-2 "
           >
             Friends
+            {friends !== undefined && (
+              <div className="baseFlex gap-[0.1rem]">
+                <div>(</div>
+                <div>{friends.length}</div>
+                <div>)</div>
+              </div>
+            )}
           </div>
         </div>
-        {friends?.map((friend) => (
-          <div key={friend.id} className="baseFlex gap-2">
-            <PlayerIcon
-              avatarPath={friend.avatarPath}
-              borderColor={friend.color}
-              size={"3rem"}
-              onlineStatus={friend.online}
-            />
+        {friends ? (
+          friends.map((friend) => (
+            <div key={friend.id} className="baseFlex gap-2">
+              <div className="baseFlex gap-4">
+                <PlayerIcon
+                  avatarPath={friend.avatarPath}
+                  borderColor={friend.color}
+                  size={"3rem"}
+                  onlineStatus={friend.online}
+                />
+                <div
+                  style={{
+                    color: "hsl(120deg 100% 86%)",
+                  }}
+                  className="baseVertFlex !items-start"
+                >
+                  {friend.username}
+                  {friend.online && (
+                    <div className="text-sm opacity-80">{friend.status}</div>
+                  )}
+                </div>
+              </div>
+              <SecondaryButton
+                icon={<BiMailSend size={"1.5rem"} />}
+                extraPadding={false}
+                disabled={
+                  !friend.online ||
+                  friend.status === "in a game" ||
+                  !connectedToRoom
+                }
+                onClickFunction={() =>
+                  socket.emit("modifyFriendData", {
+                    action: "sendRoomInvite",
+                    initiatorID: userID,
+                    targetID: friend.id,
+                  })
+                }
+                style={customButtonStyles}
+              />
+              <SecondaryButton
+                icon={<IoEnterOutline size={"1.5rem"} />}
+                extraPadding={false}
+                disabled={
+                  !friend.online ||
+                  friend.roomCode === null ||
+                  !friend.currentRoomIsPublic
+                }
+                onClickFunction={() => {
+                  if (connectedToRoom) {
+                    socket.emit("leaveRoom", {
+                      roomCode: roomConfig.code,
+                      userID,
+                    });
+                  }
+
+                  setPageToRender("joinRoom");
+
+                  socket.emit("modifyFriendData", {
+                    action: "joinRoom", // think about this one (run through what might go wrong interaction-wise)
+                    initiatorID: userID,
+                    roomCode: friend.roomCode,
+                    currentRoomIsPublic: friend.currentRoomIsPublic,
+                  });
+
+                  socket.emit("joinRoom", {
+                    userID,
+                    code: friend.roomCode,
+                    playerMetadata: playerMetadata[userID],
+                  });
+
+                  setConnectedToRoom(true);
+                }}
+                style={customButtonStyles}
+              />
+              <DangerButton
+                icon={<FaTrashAlt size={"1.5rem"} />}
+                onClickFunction={() =>
+                  socket.emit("modifyFriendData", {
+                    action: "removeFriend",
+                    initiatorID: userID,
+                    targetID: friend.id,
+                  })
+                }
+                style={customButtonStyles}
+              />
+            </div>
+          ))
+        ) : (
+          <div className="baseFlex w-full">
             <div
               style={{
-                color: "hsl(120deg 100% 86%)",
+                width: "2.5rem",
+                height: "2.5rem",
+                borderTop: `0.35rem solid hsla(120deg, 100%, 86%, 40%)`,
+                borderRight: `0.35rem solid hsla(120deg, 100%, 86%, 40%)`,
+                borderBottom: `0.35rem solid hsla(120deg, 100%, 86%, 40%)`,
+                borderLeft: `0.35rem solid hsl(120deg 100% 86%)`,
               }}
-              className="baseVertFlex !items-start"
-            >
-              {friend.username}
-              <div className="text-sm">{friend.status}</div>
-            </div>
-            <SecondaryButton
-              icon={<BiMailSend size={"1.5rem"} />}
-              extraPadding={false}
-              disabled={
-                !friend.online ||
-                friend.status === "in a game" ||
-                !connectedToRoom
-              }
-              onClickFunction={() =>
-                socket.emit("modifyFriendData", {
-                  action: "sendRoomInvite",
-                  initiatorID: userID,
-                  targetID: friend.id,
-                })
-              }
-              style={customButtonStyles}
-            />
-            <SecondaryButton
-              icon={<IoEnterOutline size={"1.5rem"} />}
-              extraPadding={false}
-              disabled={
-                !friend.online ||
-                friend.roomCode === null ||
-                !friend.currentRoomIsPublic
-              }
-              onClickFunction={() => {
-                if (connectedToRoom) {
-                  socket.emit("leaveRoom", {
-                    roomCode: roomConfig.code,
-                    userID,
-                  });
-                }
-
-                setPageToRender("joinRoom");
-
-                socket.emit("modifyFriendData", {
-                  action: "joinRoom", // think about this one (run through what might go wrong interaction-wise)
-                  initiatorID: userID,
-                  roomCode: friend.roomCode,
-                  currentRoomIsPublic: friend.currentRoomIsPublic,
-                });
-
-                socket.emit("joinRoom", {
-                  userID,
-                  code: friend.roomCode,
-                  playerMetadata: playerMetadata[userID],
-                });
-
-                setConnectedToRoom(true);
-              }}
-              style={customButtonStyles}
-            />
-            <DangerButton
-              icon={<FaTrashAlt size={"1.5rem"} />}
-              onClickFunction={() =>
-                socket.emit("modifyFriendData", {
-                  action: "removeFriend",
-                  initiatorID: userID,
-                  targetID: friend.id,
-                })
-              }
-              style={customButtonStyles}
-            />
+              className="loadingSpinner"
+            ></div>
           </div>
-        ))}
+        )}
       </div>
     </motion.div>
   );

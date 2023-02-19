@@ -50,7 +50,7 @@ function PublicRooms() {
       >
         <div className="baseFlex gap-2">
           <div className="text-xl">Public rooms</div>
-          <div>{`(${publicRooms?.length})`}</div>
+          {publicRooms && <div>{`(${publicRooms.length})`}</div>}
         </div>
 
         <SecondaryButton
@@ -68,67 +68,100 @@ function PublicRooms() {
         />
       </legend>
 
-      <div
-        style={{
-          borderColor: "hsl(120deg 100% 86%)",
-        }}
-        className="baseVertFlex max-h-[400px] w-full !justify-start rounded-md border-2 "
-      >
-        <div
-          style={{
-            backgroundColor: "hsl(120deg 100% 86%)",
-            color: "hsl(120deg 100% 18%)",
-          }}
-          className="grid w-[618px] grid-cols-3 place-items-center p-4 pr-12"
-        >
-          <div>Name</div>
-          <div>Points to win</div>
-          <div>Players</div>
-        </div>
-
-        <div className="h-full w-full overflow-y-scroll">
-          {publicRooms?.map((room, index) => (
+      {publicRooms ? (
+        <>
+          {publicRooms.length > 0 ? (
             <div
-              key={room.code}
               style={{
-                backgroundColor: "hsl(120deg 100% 18%)",
-                color: "hsl(120deg 100% 86%)",
                 borderColor: "hsl(120deg 100% 86%)",
-                filter:
-                  hoveredIndex === index ? "brightness(1.15)" : "brightness(1)",
-                transition: "all 0.1s ",
               }}
-              className="relative grid w-[600px] grid-cols-3 place-items-center border-b-2 p-4 pr-8 "
-              onMouseEnter={() => setHoveredIndex(index)}
-              onMouseLeave={() => setHoveredIndex(-1)}
+              className="baseVertFlex max-h-[400px] w-full !justify-start rounded-md border-2 "
             >
-              <div>{room.hostUsername}</div>
-              <div>{room.pointsToWin}</div>
-              <div className="baseFlex gap-2">
-                {room.playersInRoom} / {room.maxPlayers}
+              <div
+                style={{
+                  backgroundColor: "hsl(120deg 100% 86%)",
+                  color: "hsl(120deg 100% 18%)",
+                }}
+                className="grid w-[618px] grid-cols-3 place-items-center p-4 pr-12"
+              >
+                <div>Name</div>
+                <div>Points to win</div>
+                <div>Players</div>
               </div>
 
-              <div className="absolute right-4 ">
-                <SecondaryButton
-                  // maybe add "join" to the button text
-                  extraPadding={false} // maybe try other way too
-                  disabled={
-                    playerMetadata[userID]?.username.length === 0 ||
-                    filter.isProfane(playerMetadata[userID]?.username ?? "")
-                  }
-                  width={"3.5rem"}
-                  height={"2.5rem"}
-                  icon={<ImEnter size={"1.5rem"} />}
-                  onClickFunction={() => {
-                    setRoomConfig(room);
-                    setRoomCode(room.code);
-                  }}
-                />
+              <div className="h-full w-full overflow-y-scroll">
+                {publicRooms.map((room, index) => (
+                  <div
+                    key={room.code}
+                    style={{
+                      backgroundColor: "hsl(120deg 100% 18%)",
+                      color: "hsl(120deg 100% 86%)",
+                      borderColor: "hsl(120deg 100% 86%)",
+                      filter:
+                        hoveredIndex === index
+                          ? "brightness(1.25)"
+                          : "brightness(1)",
+                      transition: "all 0.1s ",
+                    }}
+                    className="relative grid w-[600px] grid-cols-3 place-items-center border-b-2 p-4 pr-8 "
+                    onMouseEnter={() => setHoveredIndex(index)}
+                    onMouseLeave={() => setHoveredIndex(-1)}
+                  >
+                    <div>{room.hostUsername}</div>
+                    <div>{room.pointsToWin}</div>
+                    <div className="baseFlex gap-2">
+                      {room.playersInRoom} / {room.maxPlayers}
+                    </div>
+
+                    <div className="absolute right-4 ">
+                      <SecondaryButton
+                        // maybe add "join" to the button text
+                        extraPadding={false} // maybe try other way too
+                        disabled={
+                          playerMetadata[userID]?.username.length === 0 ||
+                          filter.isProfane(
+                            playerMetadata[userID]?.username ?? ""
+                          )
+                        }
+                        width={"3.5rem"}
+                        height={"2.5rem"}
+                        icon={<ImEnter size={"1.5rem"} />}
+                        onClickFunction={() => {
+                          setRoomConfig(room);
+                          setRoomCode(room.code);
+                        }}
+                      />
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
-          ))}
+          ) : (
+            <div
+              style={{
+                color: "hsl(120deg 100% 18%)",
+              }}
+              className="min-w-[658px] text-xl"
+            >
+              No rooms found. Create one or refresh to find more.
+            </div>
+          )}
+        </>
+      ) : (
+        <div className="baseFlex min-w-[658px]">
+          <div
+            style={{
+              width: "3.5rem",
+              height: "3.5rem",
+              borderTop: `0.35rem solid hsla(120deg, 100%, 86%, 40%)`,
+              borderRight: `0.35rem solid hsla(120deg, 100%, 86%, 40%)`,
+              borderBottom: `0.35rem solid hsla(120deg, 100%, 86%, 40%)`,
+              borderLeft: `0.35rem solid hsl(120deg 100% 86%)`,
+            }}
+            className="loadingSpinner"
+          ></div>
         </div>
-      </div>
+      )}
     </fieldset>
   );
 }

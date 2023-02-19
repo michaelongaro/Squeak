@@ -51,7 +51,7 @@ function LeaderboardModal({ setShowModal }: ILeaderboardModal) {
         className="baseVertFlex rounded-md border-2 border-white shadow-md"
       >
         {/* combine these classes with above? */}
-        <div className="baseVertFlex relative w-full gap-8 rounded-t-md bg-green-800 p-8">
+        <div className="baseVertFlex relative w-full !justify-start gap-8 rounded-t-md bg-green-800 p-8">
           <div
             style={{
               color: "hsl(120deg 100% 86%)",
@@ -89,7 +89,7 @@ function LeaderboardModal({ setShowModal }: ILeaderboardModal) {
                 borderColor: "hsl(120deg 100% 86%)",
                 color: "hsl(120deg 100% 86%)",
               }}
-              className="baseVertFlex mt-4 w-[500px] gap-4 rounded-md border-2 p-4"
+              className="baseVertFlex mt-4 min-h-[500px] w-[500px] !justify-start gap-4 rounded-md border-2 p-4"
             >
               <div
                 style={{
@@ -101,7 +101,7 @@ function LeaderboardModal({ setShowModal }: ILeaderboardModal) {
                 <div>Player</div>
                 <div>Value</div>
               </div>
-              {leaderboardStats &&
+              {leaderboardStats ? (
                 Object.values(leaderboardStats)?.[currentlySelectedIndex]?.map(
                   (player, index) => (
                     <div
@@ -120,7 +120,22 @@ function LeaderboardModal({ setShowModal }: ILeaderboardModal) {
                       <div className="text-xl">{player.value} </div>
                     </div>
                   )
-                )}
+                )
+              ) : (
+                <div className="baseFlex h-[420px] w-full">
+                  <div
+                    style={{
+                      width: "4rem",
+                      height: "4rem",
+                      borderTop: `0.35rem solid hsla(120deg, 100%, 86%, 40%)`,
+                      borderRight: `0.35rem solid hsla(120deg, 100%, 86%, 40%)`,
+                      borderBottom: `0.35rem solid hsla(120deg, 100%, 86%, 40%)`,
+                      borderLeft: `0.35rem solid hsl(120deg 100% 86%)`,
+                    }}
+                    className="loadingSpinner"
+                  ></div>
+                </div>
+              )}
             </div>
           </div>
 
