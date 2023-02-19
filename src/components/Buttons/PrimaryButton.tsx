@@ -29,15 +29,8 @@ function PrimaryButton({
   return (
     <button
       style={{
-        borderColor: hoveringOnButton
-          ? "hsl(120deg 100% 86%)"
-          : "hsl(120deg 100% 18%)",
-        backgroundColor: hoveringOnButton
-          ? "hsl(120deg 100% 18%)"
-          : "hsl(120deg 100% 86%)",
-        color: hoveringOnButton
-          ? "hsl(120deg 100% 86%)"
-          : "hsl(120deg 100% 18%)",
+        backgroundColor: "hsl(120deg 100% 86%)",
+        color: "hsl(120deg 100% 18%)",
         filter: `brightness(${brightness})`,
         padding: "1.15rem 1.5rem",
         width: width ?? "100%",
@@ -45,8 +38,11 @@ function PrimaryButton({
         cursor: disabled || tempDisabled ? "not-allowed" : "pointer",
         opacity: disabled || tempDisabled ? 0.25 : 1,
       }}
-      className="baseFlex relative gap-2 rounded-md border-2 transition-all"
-      onMouseEnter={() => setHoveringOnButton(true)}
+      className="baseFlex relative gap-2 rounded-md transition-all"
+      onMouseEnter={() => {
+        setHoveringOnButton(true);
+        setBrightness(0.9);
+      }}
       onMouseLeave={() => {
         setHoveringOnButton(false);
         setBrightness(1);
@@ -78,18 +74,10 @@ function PrimaryButton({
           style={{
             width: "1.5rem",
             height: "1.5rem",
-            borderTop: `0.35rem solid hsla(120deg, 100%, ${
-              hoveringOnButton ? "86%" : "18%"
-            }, 40%)`,
-            borderRight: `0.35rem solid hsla(120deg, 100%, ${
-              hoveringOnButton ? "86%" : "18%"
-            }, 40%)`,
-            borderBottom: `0.35rem solid hsla(120deg, 100%, ${
-              hoveringOnButton ? "86%" : "18%"
-            }, 40%)`,
-            borderLeft: `0.35rem solid hsl(120deg 100% ${
-              hoveringOnButton ? "86%" : "18%"
-            })`,
+            borderTop: `0.35rem solid hsla(120deg, 100%, 18%, 40%)`,
+            borderRight: `0.35rem solid hsla(120deg, 100%, 18%, 40%)`,
+            borderBottom: `0.35rem solid hsla(120deg, 100%, 18%, 40%)`,
+            borderLeft: `0.35rem solid hsl(120deg, 100%, 18%)`,
           }}
           className="loadingSpinner"
         ></div>
