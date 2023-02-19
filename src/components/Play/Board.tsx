@@ -1,8 +1,8 @@
 import { Fragment } from "react";
-import { useUserIDContext } from "../../context/UserIDContext";
 import { useRoomContext } from "../../context/RoomContext";
 import Card from "./Card";
 import { AnimatePresence, motion } from "framer-motion";
+import useTrackHoverOverBoardCells from "../../hooks/useTrackHoverOverBoardCells";
 
 interface IBoard {
   boardClass: string | undefined;
@@ -24,9 +24,8 @@ function Board({ boardClass }: IBoard) {
     hoveredCell,
     setHoveredCell,
   } = useRoomContext();
-  const { value: userID } = useUserIDContext();
 
-  // interface to accept id, rowIdx, colIdx, squeakStackIdx
+  useTrackHoverOverBoardCells();
 
   function getBoxShadowStyles({
     id,
@@ -47,7 +46,13 @@ function Board({ boardClass }: IBoard) {
   }
 
   return (
-    <div className={`${boardClass} grid w-full grid-cols-5 gap-1`}>
+    <div
+      style={{
+        outline: "4px ridge hsl(120deg 100% 86%)",
+        boxShadow: "inset 0px 0px 16px 0px hsl(106deg 100% 5%)",
+      }}
+      className={`${boardClass} grid w-full grid-cols-5 gap-1 rounded-md p-2`}
+    >
       {gameData?.board.map((row, rowIdx) => (
         <Fragment key={`boardRow${rowIdx}`}>
           {row.map((cell, colIdx) => (
@@ -67,9 +72,7 @@ function Board({ boardClass }: IBoard) {
                     ? 0.35 // worst case you leave it like this (was prev 0.75)
                     : 1,
               }}
-              className="baseFlex relative z-[600] h-[64px] min-h-fit w-[48px] min-w-fit rounded-lg p-1 transition-all tall:h-[90px] tall:w-[70px]"
-              onMouseEnter={() => setHoveredCell([rowIdx, colIdx])}
-              onMouseLeave={() => setHoveredCell(null)}
+              className="baseFlex relative h-[64px] min-h-fit w-[48px] min-w-fit rounded-lg p-1 transition-all tall:h-[90px] tall:w-[70px]"
             >
               <AnimatePresence
                 initial={false}
