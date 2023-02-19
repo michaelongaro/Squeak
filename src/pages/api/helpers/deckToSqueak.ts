@@ -39,8 +39,22 @@ export function deckToSqueak({
     return true;
   });
 
+  const indexWithinSqueakStack = gameData[roomCode]!.players[
+    playerID
+  ]!.squeakHand[squeakEndLocation]!.findIndex(
+    (squeakCard) =>
+      squeakCard.value === card.value && squeakCard.suit === card.suit
+  );
+
+  const squeakStackLength =
+    gameData[roomCode]!.players[playerID]!.squeakHand[squeakEndLocation]!
+      .length;
+
   io.in(roomCode).emit("cardDropApproved", {
     card,
+    squeakEndCoords: {
+      offsetHeight: indexWithinSqueakStack * (15 - squeakStackLength),
+    },
     endID: `${playerID}squeakHand${squeakEndLocation}`,
     updatedBoard: gameData[roomCode]?.board, // ideally shouldn't have to send this
     updatedPlayerCards: gameData[roomCode]?.players,

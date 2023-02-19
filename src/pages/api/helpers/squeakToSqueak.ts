@@ -59,15 +59,22 @@ export function squeakToSqueak({
   gameData[roomCode]!.players[playerID]!.squeakHand[squeakEndLocation] =
     endSqueakStack.concat(cardsToMove);
 
+  const indexWithinSqueakStack = gameData[roomCode]!.players[
+    playerID
+  ]!.squeakHand[squeakEndLocation]!.findIndex(
+    (squeakCard) =>
+      squeakCard.value === card.value && squeakCard.suit === card.suit
+  );
+
+  const squeakStackLength =
+    gameData[roomCode]!.players[playerID]!.squeakHand[squeakEndLocation]!
+      .length;
+
   io.in(roomCode).emit("cardDropApproved", {
     card,
     squeakEndCoords: {
-      squeakStack:
-        // not sure how to do this without "!"s
-        gameData[roomCode]!.players[playerID]!.squeakHand[squeakEndLocation],
+      offsetHeight: indexWithinSqueakStack * (15 - squeakStackLength),
       stackOfCardsMoved: cardsToMove,
-      col: squeakEndLocation,
-      row: endSqueakStack.length,
     },
     endID: `${playerID}squeakHand${squeakEndLocation}`,
     updatedBoard: gameData[roomCode]?.board, // ideally shouldn't have to send this
