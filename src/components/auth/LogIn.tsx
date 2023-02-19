@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
 import { AnimatePresence } from "framer-motion";
 import OAuthSignInButtons from "./OAuthSignInButtons";
@@ -10,24 +10,31 @@ interface ILogIn {
 }
 
 function LogIn({ gap }: ILogIn) {
+  const [forSignup, setForSignup] = useState<boolean>(false);
   const [showModal, setShowModal] = useState<boolean>(false);
 
   return (
     <>
       <div style={{ gap: gap }} className="flex items-center justify-center">
         <PrimaryButton
-          innerText={"Sign Up"}
+          innerText={"Sign up"}
           width={"8rem"}
           height={"2rem"}
-          onClickFunction={() => setShowModal(true)}
+          onClickFunction={() => {
+            setForSignup(true);
+            setShowModal(true);
+          }}
         />
 
         <SecondaryButton
-          innerText={"Log In"}
+          innerText={"Login"}
           extraPadding={false}
           width={"8rem"}
           height={"2.5rem"}
-          onClickFunction={() => setShowModal(true)}
+          onClickFunction={() => {
+            setForSignup(false);
+            setShowModal(true);
+          }}
         />
       </div>
       <AnimatePresence
@@ -35,7 +42,12 @@ function LogIn({ gap }: ILogIn) {
         mode={"wait"}
         onExitComplete={() => null}
       >
-        {showModal && <OAuthSignInButtons setShowModal={setShowModal} />}
+        {showModal && (
+          <OAuthSignInButtons
+            forSignup={forSignup}
+            setShowModal={setShowModal}
+          />
+        )}
       </AnimatePresence>
     </>
   );

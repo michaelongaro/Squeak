@@ -7,10 +7,11 @@ import { IoClose } from "react-icons/io5";
 import { FaGoogle, FaDiscord } from "react-icons/fa";
 
 interface IOAuthSignInButtons {
+  forSignup: boolean;
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-function OAuthSignInButtons({ setShowModal }: IOAuthSignInButtons) {
+function OAuthSignInButtons({ forSignup, setShowModal }: IOAuthSignInButtons) {
   const signInRef = useRef<HTMLDivElement>(null);
 
   useOnClickOutside({
@@ -32,17 +33,17 @@ function OAuthSignInButtons({ setShowModal }: IOAuthSignInButtons) {
         animate={{ opacity: 1 }}
         transition={{ duration: 0.15 }}
         ref={signInRef}
-        className="baseVertFlex relative gap-4 rounded-md border-2 border-white bg-green-800 p-16"
+        className="baseVertFlex relative gap-8 rounded-md border-2 border-white bg-green-800 p-16"
       >
         <SecondaryButton
-          innerText="Sign in with"
+          innerText={`${forSignup ? "Sign up" : "Login"} with`}
           icon={<FaGoogle size={"1.25rem"} />}
           extraPadding={true}
           onClickFunction={() => signIn("google")}
         />
 
         <SecondaryButton
-          innerText="Sign in with"
+          innerText={`${forSignup ? "Sign up" : "Login"} with`}
           icon={<FaDiscord size={"1.25rem"} />}
           extraPadding={true}
           onClickFunction={() => signIn("discord")}
