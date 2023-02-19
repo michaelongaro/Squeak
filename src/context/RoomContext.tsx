@@ -30,6 +30,10 @@ export interface ISoundStates {
   squeakSound: boolean;
 }
 
+interface ICardBeingMovedProgramatically {
+  [playerID: string]: boolean;
+}
+
 interface IRoomContext {
   pageToRender: "home" | "createRoom" | "joinRoom" | "play";
   setPageToRender: React.Dispatch<
@@ -84,6 +88,10 @@ interface IRoomContext {
   setSoundPlayStates: React.Dispatch<React.SetStateAction<ISoundStates>>;
   currentVolume: number;
   setCurrentVolume: React.Dispatch<React.SetStateAction<number>>;
+  cardBeingMovedProgramatically: ICardBeingMovedProgramatically;
+  setCardBeingMovedProgramatically: React.Dispatch<
+    React.SetStateAction<ICardBeingMovedProgramatically>
+  >;
 }
 
 const RoomContext = createContext<IRoomContext | null>(null);
@@ -158,6 +166,9 @@ export function RoomProvider(props: { children: React.ReactNode }) {
   const [showScoreboard, setShowScoreboard] = useState<boolean>(false); // temp for testing - should be false
   const [showShufflingCountdown, setShowShufflingCountdown] =
     useState<boolean>(false);
+
+  const [cardBeingMovedProgramatically, setCardBeingMovedProgramatically] =
+    useState<ICardBeingMovedProgramatically>({});
 
   // might want to move into a hook eventually
   useEffect(() => {
@@ -338,6 +349,8 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     setSoundPlayStates,
     currentVolume,
     setCurrentVolume,
+    cardBeingMovedProgramatically,
+    setCardBeingMovedProgramatically,
   };
 
   return (

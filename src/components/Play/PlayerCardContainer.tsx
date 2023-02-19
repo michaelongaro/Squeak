@@ -40,6 +40,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
     currentVolume,
     originIndexForHeldSqueakCard,
     setHoldingADeckCard,
+    cardBeingMovedProgramatically,
     setOriginIndexForHeldSqueakCard,
     setHoldingASqueakCard,
     setResetHeldSqueakStackLocation,
@@ -319,7 +320,14 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
 
           <div
             id={`${userID}hand`}
-            className={`${classes.playerHand} relative z-[20] h-[64px] w-[48px] select-none tall:h-[87px] tall:w-[67px]`}
+            style={{
+              zIndex:
+                cardBeingMovedProgramatically[userID] === true ||
+                holdingADeckCard
+                  ? 500
+                  : 499,
+            }}
+            className={`${classes.playerHand} relative h-[64px] w-[48px] select-none tall:h-[87px] tall:w-[67px]`}
           >
             <>
               {gameData.players[userID]?.topCardsInDeck.map(

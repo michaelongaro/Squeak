@@ -58,6 +58,8 @@ function Card({
     setProposedCardBoxShadow,
     setHeldSqueakStackLocation,
     setHoldingADeckCard,
+    cardBeingMovedProgramatically,
+    setCardBeingMovedProgramatically,
     setHoldingASqueakCard,
   } = useRoomContext();
   const { value: userID } = useUserIDContext();
@@ -95,6 +97,14 @@ function Card({
         return;
 
       cardIsMovingRef.current = true;
+
+      if (origin === "deck" && ownerID) {
+        console.log("on");
+        setCardBeingMovedProgramatically({
+          ...cardBeingMovedProgramatically,
+          [ownerID]: true,
+        });
+      }
 
       cardRef.current.style.transition = "all 0.25s linear"; // ease-in-out
       // make sure card is on top, but below shuffling modal while moving over other cards
@@ -190,6 +200,14 @@ function Card({
         cardRef.current.style.zIndex = "500";
         imageRef.current.style.transition = "none";
 
+        if (origin === "deck" && ownerID) {
+          console.log("off");
+          setCardBeingMovedProgramatically({
+            ...cardBeingMovedProgramatically,
+            [ownerID]: false,
+          });
+        }
+
         if (flip) {
           cardRef.current.style.transform = "translate(0px, 0px)";
           imageRef.current.style.transform = "";
@@ -223,6 +241,8 @@ function Card({
       setHoldingADeckCard,
       setHoldingASqueakCard,
       setProposedCardBoxShadow,
+      cardBeingMovedProgramatically,
+      setCardBeingMovedProgramatically,
     ]
   );
 
