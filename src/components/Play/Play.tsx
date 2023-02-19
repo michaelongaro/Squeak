@@ -8,14 +8,20 @@ import Scoreboard from "../modals/Scoreboard/Scoreboard";
 import ShufflingCountdownModal from "../modals/ShufflingCountdownModal";
 import useStartAnotherRoundHandler from "../../hooks/useStartAnotherRoundHandler";
 import useReturnToRoomHandler from "../../hooks/useReturnToRoomHandler";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 
 import classes from "./Play.module.css";
 import { useUserIDContext } from "../../context/UserIDContext";
 
 function Play() {
-  const { gameData, roomConfig, setGameData, setShowShufflingCountdown } =
-    useRoomContext();
+  const {
+    gameData,
+    roomConfig,
+    setGameData,
+    showScoreboard,
+    showShufflingCountdown,
+    setShowShufflingCountdown,
+  } = useRoomContext();
   const { value: userID } = useUserIDContext();
 
   const [gameStarted, setGameStarted] = useState<boolean>(false);
@@ -69,7 +75,7 @@ function Play() {
       exit={{ opacity: 0 }}
       transition={{ duration: 0.15 }}
     >
-      <div className={`${classes.fullBoardGrid} relative `}>
+      <div className={`${classes.fullBoardGrid} relative z-[999]`}>
         {gameStarted && (
           <>
             <OtherPlayersCardContainers
@@ -89,9 +95,21 @@ function Play() {
         )}
       </div>
 
-      <ShufflingCountdownModal />
+      <AnimatePresence
+        initial={false}
+        mode={"wait"}
+        onExitComplete={() => null}
+      >
+        {showShufflingCountdown && <ShufflingCountdownModal />}
+      </AnimatePresence>
 
-      <Scoreboard />
+      <AnimatePresence
+        initial={false}
+        mode={"wait"}
+        onExitComplete={() => null}
+      >
+        {showScoreboard && <Scoreboard />}
+      </AnimatePresence>
     </motion.div>
   );
 }
