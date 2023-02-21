@@ -36,6 +36,9 @@ function TopRightControls({ forPlayScreen }: ITopRightControls) {
           <SecondaryButton
             icon={<IoSettingsSharp size={"1.5rem"} />}
             extraPadding={false}
+            disabled={status !== "authenticated"}
+            hoverTooltipText={"Only available for logged in users"}
+            hoverTooltipTextPosition={"left"}
             onClickFunction={() => {
               if (status === "authenticated") {
                 setShowSettingsModal(true);
@@ -60,6 +63,9 @@ function TopRightControls({ forPlayScreen }: ITopRightControls) {
           <SecondaryButton
             icon={<FaUserFriends size={"1.5rem"} />}
             extraPadding={false}
+            disabled={status !== "authenticated"}
+            hoverTooltipText={"Only available for logged in users"}
+            hoverTooltipTextPosition={"left"}
             onClickFunction={() => setShowFriendsList(!showFriendsList)}
           />
           <AnimatePresence
