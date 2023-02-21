@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { GiClubs, GiDiamonds, GiHearts, GiSpades } from "react-icons/gi";
 
 interface ISecondaryButton {
@@ -6,6 +6,9 @@ interface ISecondaryButton {
   innerText?: string;
   onClickFunction?: () => void;
   showLoadingSpinnerOnClick?: boolean;
+  hoverTooltipText?: string;
+  hoverTooltipTextPosition?: "left" | "bottom";
+  postClickTooltipText?: string;
   width?: string;
   height?: string;
   forceHover?: boolean;
@@ -23,6 +26,9 @@ function SecondaryButton({
   width,
   height,
   forceHover,
+  hoverTooltipText,
+  postClickTooltipText,
+  hoverTooltipTextPosition,
   icon,
   iconOnLeft,
   rotateIcon,
@@ -34,28 +40,38 @@ function SecondaryButton({
   const [brightness, setBrightness] = useState<number>(1);
   const [showLoadingSpinner, setShowLoadingSpinner] = useState<boolean>(false);
   const [tempDisabled, setTempDisabled] = useState<boolean>(false);
+  const [showPostClickTooltipText, setShowPostClickTooltipText] =
+    useState<boolean>(false);
+
+  const openToLeftTooltipRef = useRef<HTMLDivElement>(null);
+
+  const dynamicOpacity =
+    disabled || tempDisabled
+      ? hoveringOnButton || forceHover
+        ? 0.35
+        : 0.25
+      : 1;
 
   return (
     <button
       style={{
         borderColor:
           hoveringOnButton || forceHover
-            ? "hsl(120deg 100% 18%)"
-            : "hsl(120deg 100% 86%)",
+            ? `hsl(120deg 100% 18% / ${dynamicOpacity})`
+            : `hsl(120deg 100% 86% / ${dynamicOpacity})`,
         backgroundColor:
           hoveringOnButton || forceHover
-            ? "hsl(120deg 100% 86%)"
-            : "hsl(120deg 100% 18%)",
+            ? `hsl(120deg 100% 86% / ${dynamicOpacity})`
+            : `hsl(120deg 100% 18% / ${dynamicOpacity})`,
         color:
           hoveringOnButton || forceHover
-            ? "hsl(120deg 100% 18%)"
-            : "hsl(120deg 100% 86%)",
+            ? `hsl(120deg 100% 18% / ${dynamicOpacity})`
+            : `hsl(120deg 100% 86% / ${dynamicOpacity})`,
         filter: `brightness(${brightness})`,
         padding: extraPadding ? "1.15rem 1.5rem" : "0.5rem",
         width: width ?? "100%",
         height: height ?? "100%",
         cursor: disabled || tempDisabled ? "not-allowed" : "pointer",
-        opacity: disabled || tempDisabled ? 0.25 : 1,
         ...style,
       }}
       className="baseFlex relative h-full w-full gap-2 rounded-md border-2 transition-all"
@@ -80,6 +96,12 @@ function SecondaryButton({
           }, 1000);
         } else {
           onClickFunction?.();
+          if (postClickTooltipText) {
+            setShowPostClickTooltipText(true);
+            setTimeout(() => {
+              setShowPostClickTooltipText(false);
+            }, 1000);
+          }
         }
       }}
     >
@@ -173,6 +195,48 @@ function SecondaryButton({
           }}
           className="loadingSpinner"
         ></div>
+      )}
+
+      {hoverTooltipText && hoverTooltipTextPosition === "bottom" && (
+        <div
+          style={{
+            top: "100%",
+            left: "50%",
+            transform: "translate(-50%, 0.5rem)",
+            background: "hsl(120deg 100% 18%)",
+            color: "hsl(120deg 100% 86%)",
+            border: "1px solid white",
+            opacity: hoveringOnButton || forceHover ? 1 : 0,
+            transition: "opacity 0.15s ease-in-out",
+          }}
+          className="pointer-events-none absolute min-h-max min-w-max rounded-md p-2 shadow-2xl"
+        >
+          {showPostClickTooltipText ? postClickTooltipText : hoverTooltipText}
+        </div>
+      )}
+
+      {hoverTooltipText && hoverTooltipTextPosition === "left" && disabled && (
+        <div
+          ref={openToLeftTooltipRef}
+          style={{
+            left: openToLeftTooltipRef.current
+              ? `${
+                  (openToLeftTooltipRef.current.getBoundingClientRect().width +
+                    15) *
+                  -1
+                }px`
+              : "50%",
+
+            background: "hsl(120deg 100% 18%)",
+            color: "hsl(120deg 100% 86%)",
+            border: "1px solid white",
+            opacity: hoveringOnButton || forceHover ? 1 : 0,
+            transition: "opacity 0.15s ease-in-out",
+          }}
+          className="pointer-events-none absolute min-h-max min-w-max rounded-md p-2 shadow-2xl"
+        >
+          {showPostClickTooltipText ? postClickTooltipText : hoverTooltipText}
+        </div>
       )}
     </button>
   );
