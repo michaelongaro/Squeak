@@ -5,9 +5,10 @@ import SecondaryButton from "./SecondaryButton";
 interface IDangerButton {
   innerText?: string;
   innerTooltipText?: string;
-  relativeTooltipPosition?: "top" | "bottom" | "left" | "right";
+  forFriendsList?: boolean;
   onClickFunction?: () => void;
   showLoadingSpinnerOnClick?: boolean;
+  hoverTooltipText?: string;
   width?: string;
   height?: string;
   icon?: JSX.Element;
@@ -17,8 +18,9 @@ interface IDangerButton {
 function DangerButton({
   innerText,
   innerTooltipText,
-  relativeTooltipPosition,
+  forFriendsList,
   showLoadingSpinnerOnClick = false,
+  hoverTooltipText,
   width,
   height,
   icon,
@@ -45,7 +47,7 @@ function DangerButton({
         height: height ?? "100%",
         ...style,
       }}
-      className="baseFlex relative cursor-pointer gap-2 rounded-md border-2 p-2 transition-all"
+      className="relative grid cursor-pointer place-content-center gap-2 rounded-md border-2 p-2 transition-all"
       onMouseEnter={() => {
         if (!showTooltip) {
           setHoveringOnButton(true);
@@ -80,9 +82,10 @@ function DangerButton({
         // } else {
         //   onClickFunction?.();
         // }
+
         if (innerTooltipText && !showTooltip) {
           setShowTooltip(true);
-        } else {
+        } else if (innerTooltipText === undefined) {
           onClickFunction?.();
         }
       }}
@@ -99,17 +102,12 @@ function DangerButton({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.15 }}
-            // left and top... hmm + tooltip triangle (add class)
-
             style={{
               backgroundColor: "hsl(0, 84%, 95%)",
               borderColor: "hsl(0, 84%, 50%)",
               color: "hsl(0, 84%, 50%)",
-              left:
-                relativeTooltipPosition === "bottom" // currently only supporting left/bottom
-                  ? "-60px"
-                  : "-150px", // guesstimates
-              top: relativeTooltipPosition === "bottom" ? "32px" : "-45px", // guesstimates
+              top: forFriendsList ? "50px" : "32px",
+              left: forFriendsList ? "-78px" : "-60px",
             }}
             className="baseVertFlex absolute cursor-default gap-2 rounded-md border-2 p-2 shadow-md"
           >
@@ -117,21 +115,23 @@ function DangerButton({
             <div className="baseFlex gap-2">
               <DangerButton
                 innerText="Confirm"
-                width={"4rem"}
                 height={"2.5rem"}
-                onClickFunction={() => {
-                  onClickFunction;
-                }}
-                // style={{
-                //   padding: "0.5rem",
-                // }}
+                onClickFunction={onClickFunction}
               />
-              <SecondaryButton innerText="Deny" extraPadding={false} />
+              <SecondaryButton
+                innerText="Deny"
+                extraPadding={false}
+                onClickFunction={() => {
+                  setShowTooltip(false);
+                  setHoveringOnButton(false);
+                }}
+              />
             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
+      {/* do you need to gate on !innerTooltipText below? */}
       {!innerTooltipText && innerText}
       {!showLoadingSpinner && icon}
       {showLoadingSpinner && (
@@ -154,6 +154,25 @@ function DangerButton({
           }}
           className="loadingSpinner"
         ></div>
+      )}
+
+      {hoverTooltipText && !showTooltip && (
+        <div
+          style={{
+            position: "absolute",
+            top: "100%",
+            left: "50%",
+            transform: "translate(-50%, 0.5rem)",
+            background: "hsl(0, 84%, 95%)",
+            color: "hsl(0, 84%, 40%)",
+            border: "1px solid hsl(0, 84%, 60%)",
+            opacity: hoveringOnButton ? 1 : 0,
+            transition: "opacity 0.15s ease-in-out",
+          }}
+          className="pointer-events-none min-h-max min-w-max rounded-md p-2 shadow-2xl"
+        >
+          {hoverTooltipText}
+        </div>
       )}
     </button>
   );
