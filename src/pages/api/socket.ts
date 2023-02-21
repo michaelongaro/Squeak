@@ -73,6 +73,7 @@ export interface IModifyFriendData {
     | "declineRoomInvite"
     | "createRoom"
     | "joinRoom"
+    | "roomMetadataUpdate"
     | "startGame"
     | "leaveRoom" // this is also called when a player is kicked from a room
     | "removeFriend"
@@ -82,6 +83,7 @@ export interface IModifyFriendData {
   targetID?: string;
   roomCode?: string;
   currentRoomIsPublic?: boolean;
+  currentRoomIsFull?: boolean;
 }
 
 export interface ICardDropProposal {

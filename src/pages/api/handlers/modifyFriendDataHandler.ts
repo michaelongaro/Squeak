@@ -12,6 +12,7 @@ export function modifyFriendDataHandler(
     targetID,
     roomCode,
     currentRoomIsPublic,
+    currentRoomIsFull,
   }: IModifyFriendData) {
     const initiator = friendData[initiatorID];
     const target = targetID ? friendData[targetID] : null;
@@ -222,6 +223,46 @@ export function modifyFriendDataHandler(
           },
         })
         .catch((err) => console.log(err));
+
+      for (const friendID of initiator.friendIDs) {
+        const friend = friendData[friendID];
+
+        if (!friend) continue; // don't think this should ever happen but continue better than return here?
+
+        io.emit("friendDataUpdated", {
+          playerID: friendID,
+          friendData: friend,
+        });
+      }
+    } else if (
+      action === "roomMetadataUpdate" &&
+      (currentRoomIsPublic !== undefined || currentRoomIsFull !== undefined)
+    ) {
+      if (currentRoomIsPublic !== undefined) {
+        prisma.user
+          .update({
+            where: {
+              id: initiatorID,
+            },
+            data: {
+              currentRoomIsPublic: currentRoomIsPublic,
+            },
+          })
+          .catch((err) => console.log(err));
+      }
+
+      if (currentRoomIsFull !== undefined) {
+        prisma.user
+          .update({
+            where: {
+              id: initiatorID,
+            },
+            data: {
+              currentRoomIsFull: currentRoomIsFull,
+            },
+          })
+          .catch((err) => console.log(err));
+      }
 
       for (const friendID of initiator.friendIDs) {
         const friend = friendData[friendID];

@@ -243,6 +243,17 @@ export function RoomProvider(props: { children: React.ReactNode }) {
   ]);
 
   useEffect(() => {
+    if (status === "authenticated") {
+      socket.emit("modifyFriendData", {
+        action: "roomMetadataUpdate",
+        initiatorID: userID,
+        currentRoomIsPublic: roomConfig.isPublic,
+        currentRoomIsFull: roomConfig.playersInRoom === roomConfig.maxPlayers,
+      });
+    }
+  }, [roomConfig, status, userID]);
+
+  useEffect(() => {
     if (
       playerMetadata[userID] !== undefined ||
       status === "loading" ||
