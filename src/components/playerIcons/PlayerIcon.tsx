@@ -64,6 +64,9 @@ function PlayerIcon({
                 extraPadding={false}
                 width={"30px"}
                 height={"30px"}
+                hoverTooltipText={"Send friend invite"}
+                hoverTooltipTextPosition={"bottom"}
+                postClickTooltipText={"Friend invite sent!"}
                 onClickFunction={() => {
                   socket.emit("modifyFriendData", {
                     action: "sendFriendInvite",
@@ -85,8 +88,8 @@ function PlayerIcon({
               <DangerButton
                 innerText="Confirm"
                 innerTooltipText="Kick player?"
-                relativeTooltipPosition="bottom"
                 icon={<AiOutlineClose size={"1rem"} />}
+                hoverTooltipText={"Kick"}
                 onClickFunction={() => {
                   if (!playerID) return;
                   socket.emit("leaveRoom", {
