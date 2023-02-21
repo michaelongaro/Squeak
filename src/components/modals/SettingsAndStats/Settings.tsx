@@ -86,13 +86,13 @@ function Settings({
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.15 }}
                 style={{
-                  right: "-252px",
+                  right: "-235px",
                   color: "hsl(120deg 100% 86%)",
                 }}
                 className="baseVertFlex absolute top-0 gap-2 rounded-md border-2 border-red-700 bg-green-700 pt-2 pb-2 pr-1 pl-1 shadow-md"
               >
-                <div>Profanity detected,</div>
-                <div className="text-center">please change your username</div>
+                <div>Username not allowed,</div>
+                <div className="text-center">please choose another one</div>
               </motion.div>
             )}
           </AnimatePresence>
