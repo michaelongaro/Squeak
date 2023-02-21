@@ -90,6 +90,7 @@ model User {
   status              String   @default("on home screen")
   roomCode            String?
   currentRoomIsPublic Boolean?
+  currentRoomIsFull   Boolean?
 }
 
 model VerificationToken {
