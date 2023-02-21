@@ -17,13 +17,11 @@ function AudioLevelSlider() {
     useState(false);
 
   useEffect(() => {
-    // setTimeout(() => {
     const volume = localStorage.getItem("volume");
     if (volume) {
       setValues([parseInt(volume)]);
       setInitialSetOfVolumeComplete(true);
     }
-    // }, 1000);
   }, []);
 
   useEffect(() => {
@@ -42,7 +40,9 @@ function AudioLevelSlider() {
       }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      className="baseFlex h-full w-full !justify-start gap-2 rounded-md border-2  p-2 "
+      className={`baseFlex h-full w-full !justify-start ${
+        hovered ? "gap-2" : "gap-0"
+      } rounded-md border-2 p-2`}
     >
       {hovered && <div>{values[0]}</div>}
 
@@ -54,9 +54,10 @@ function AudioLevelSlider() {
             min: 0,
             max: 100,
           }),
-          display: hovered ? "block" : "none",
+          margin: hovered ? "0 0.5rem" : "0",
+          width: hovered ? "10rem" : "0rem",
         }}
-        className="ml-2 mr-2 h-full w-40"
+        className="ml-2 mr-2 h-full transition-all"
       >
         <Range
           step={1}
@@ -69,9 +70,10 @@ function AudioLevelSlider() {
               {...props}
               style={{
                 ...props.style,
-                height: "6px",
-                width: "10rem",
-                // backgroundColor: "#ccc",
+                height: hovered ? "6px" : "0px",
+                opacity: hovered ? "1" : "0",
+                width: hovered ? "10rem" : "0rem",
+                transition: "width 0.2s",
               }}
             >
               {children}
@@ -93,10 +95,12 @@ function AudioLevelSlider() {
       </div>
 
       {values[0] === 0 && <BsFillVolumeMuteFill size={"1.5rem"} />}
-      {values[0] && values[0] > 0 && values[0] < 50 && (
+      {values[0] && values[0] > 0 && values[0] < 50 ? (
         <BsFillVolumeDownFill size={"1.5rem"} />
-      )}
-      {values[0] && values[0] >= 50 && <BsFillVolumeUpFill size={"1.5rem"} />}
+      ) : null}
+      {values[0] && values[0] >= 50 ? (
+        <BsFillVolumeUpFill size={"1.5rem"} />
+      ) : null}
     </div>
   );
 }
