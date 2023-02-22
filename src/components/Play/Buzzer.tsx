@@ -33,7 +33,7 @@ function Buzzer({ playerID, roomID, interactive }: IBuzzer) {
       }
 
       if (squeakButtonAudioRef.current) {
-        squeakButtonAudioRef.current.volume = currentVolume;
+        squeakButtonAudioRef.current.volume = currentVolume * 0.01;
         squeakButtonAudioRef.current.play();
       }
 
