@@ -163,7 +163,7 @@ export function RoomProvider(props: { children: React.ReactNode }) {
 
   const [connectedToRoom, setConnectedToRoom] = useState<boolean>(false);
 
-  const [showScoreboard, setShowScoreboard] = useState<boolean>(false); // temp for testing - should be false
+  const [showScoreboard, setShowScoreboard] = useState<boolean>(false);
   const [showShufflingCountdown, setShowShufflingCountdown] =
     useState<boolean>(false);
 
@@ -202,14 +202,16 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     if (userID && friendData && Object.keys(friendData).length === 0) {
       socket.emit("initializeAuthorizedPlayer", userID);
 
-      setTimeout(() => {
-        socket.emit("modifyFriendData", {
-          action: "goOnline",
-          initiatorID: userID,
-        });
-      }, 2500);
+      if (status === "authenticated") {
+        setTimeout(() => {
+          socket.emit("modifyFriendData", {
+            action: "goOnline",
+            initiatorID: userID,
+          });
+        }, 2500);
+      }
     }
-  }, [userID, friendData]);
+  }, [userID, friendData, status]);
 
   useEffect(() => {
     function leaveRoomOnPageClose() {
