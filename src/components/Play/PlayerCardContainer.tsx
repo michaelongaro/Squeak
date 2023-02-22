@@ -61,11 +61,17 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
 
   const cardDimensions = useResponsiveCardDimensions();
 
+  const [drawingFromDeckInProgress, setDrawingFromDeckInProgress] =
+    useState<boolean>(false);
+
   const audioRef = useRef<HTMLAudioElement>(null);
 
   useEffect(() => {
     if (soundPlayStates.currentPlayer && audioRef.current) {
       audioRef.current.volume = currentVolume * 0.01;
+      // restarting audio from beginning if it's already playing
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
       audioRef.current.play();
       setSoundPlayStates({ ...soundPlayStates, currentPlayer: false });
     }
@@ -85,9 +91,9 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
     squeakStackIdx,
   }: IGetBoxShadowStyles): string {
     if (holdingADeckCard || holdingASqueakCard) {
-      return `0px 0px 10px ${
+      return `0px 0px 4px ${
         hoveredSqueakStack && hoveredSqueakStack === squeakStackIdx
-          ? "5px"
+          ? "4px"
           : "3px"
       } rgba(184,184,184,1)`;
     } else if (proposedCardBoxShadow?.id === id) {
@@ -104,7 +110,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
         <div className={`${classes.gridContainer}`}>
           <div
             id={`${userID}squeakDeck`}
-            className={`${classes.squeakDeck} h-full w-full`}
+            className={`${classes.squeakDeck} baseFlex h-full w-full`}
           >
             {gameData.players[userID]!.squeakDeck.length > 0 ? (
               <div className="relative h-full w-full">
@@ -148,13 +154,8 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
             ) : (
               <Buzzer
                 playerID={userID}
+                roomID={roomConfig.code}
                 interactive={true}
-                onClickFunction={() => {
-                  socket.emit("roundOver", {
-                    roomID: roomConfig.code,
-                    winner: userID,
-                  });
-                }}
               />
             )}
           </div>
@@ -181,7 +182,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                     cards.length === 1
                       ? `${cardDimensions.height}px`
                       : `${
-                          (cards.length - 1) * (15 - cardsIdx) +
+                          (cards.length - 1) * (20 - cardsIdx) +
                           cardDimensions.height
                         }px`,
                 }}
@@ -191,14 +192,14 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                   <div
                     key={`${userID}card${cardIdx}`}
                     id={`${userID}squeakStack${cardsIdx}${cardIdx}`}
-                    className={`absolute left-0 h-full w-full`}
                     style={{
                       zIndex:
                         originIndexForHeldSqueakCard === cardsIdx
                           ? 501
                           : "auto",
-                      top: `${(15 - cards.length) * cardIdx}px`, //was just: cardsIdx * 15
+                      top: `${(20 - cards.length) * cardIdx}px`, //was just: cardsIdx * 15
                     }}
+                    className={`absolute left-0 h-[64px] w-[48px] tall:h-[87px] tall:w-[67px]`}
                     onMouseDown={() => {
                       setOriginIndexForHeldSqueakCard(cardsIdx);
                       setHoldingASqueakCard(true);
@@ -233,11 +234,14 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
               id={`${userID}deck`}
               style={{
                 boxShadow:
-                  hoveringOverDeck && !holdingADeckCard
-                    ? "0px 0px 10px 3px rgba(184,184,184,1)"
+                  hoveringOverDeck &&
+                  !holdingADeckCard &&
+                  !drawingFromDeckInProgress
+                    ? "0px 0px 4px 3px rgba(184,184,184,1)"
                     : "none",
+                cursor: drawingFromDeckInProgress ? "auto" : "pointer",
               }}
-              className="h-full w-full cursor-pointer transition-shadow"
+              className="h-full w-full transition-shadow"
               onMouseEnter={() => {
                 setHoveringOverDeck(true);
               }}
@@ -245,6 +249,12 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                 setHoveringOverDeck(false);
               }}
               onClick={() => {
+                if (drawingFromDeckInProgress) return;
+
+                setDrawingFromDeckInProgress(true);
+                setTimeout(() => {
+                  setDrawingFromDeckInProgress(false);
+                }, 250);
                 socket.emit("playerDrawFromDeck", {
                   playerID: userID,
                   roomCode: roomConfig.code,
@@ -392,7 +402,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                 ? (document
                     .getElementById(`${userID}icon`)!
                     .getBoundingClientRect().width +
-                    15) *
+                    20) *
                   -1
                 : 50,
             }}
