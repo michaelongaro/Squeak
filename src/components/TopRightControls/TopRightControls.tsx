@@ -33,7 +33,7 @@ function TopRightControls({ forPlayScreen }: ITopRightControls) {
       }}
       className={`${
         forPlayScreen ? "baseFlex" : "baseVertFlex"
-      } absolute top-4 right-4 !min-w-fit gap-2 sm:gap-4`}
+      } absolute top-4 right-4 z-[999] !min-w-fit gap-2 sm:gap-4`}
     >
       {!forPlayScreen && (
         <div className="w-[44px]">
