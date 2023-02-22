@@ -108,18 +108,22 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
     <div className={`${cardContainerClass}`}>
       <audio ref={audioRef} src="/sounds/firstSuccessfulMove.wav" />
       {userID && (
+        <div
+          className={`${
             mirrorPlayerContainer
               ? classes.reversedGridContainer
               : classes.gridContainer
+          } select-none`}
+        >
           <div
             id={`${userID}squeakDeck`}
-            className={`${classes.squeakDeck} baseFlex h-full w-full`}
+            className={`${classes.squeakDeck} baseFlex h-full w-full select-none`}
           >
             {gameData.players[userID]!.squeakDeck.length > 0 ? (
               <div className="relative h-full w-full">
                 {/* dummy cards to show "depth" of deck visually */}
                 {gameData.players[userID]!.squeakDeck.length > 2 && (
-                  <div className="absolute top-[2px] left-0 h-full w-full">
+                  <div className="absolute top-[2px] left-0 h-full w-full select-none">
                     <Card
                       showCardBack={true}
                       draggable={false}
@@ -131,7 +135,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                 )}
 
                 {gameData.players[userID]!.squeakDeck.length > 1 && (
-                  <div className="absolute top-[1px] left-0 h-full w-full">
+                  <div className="absolute top-[1px] left-0 h-full w-full select-none">
                     <Card
                       showCardBack={true}
                       draggable={false}
@@ -142,7 +146,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                   </div>
                 )}
 
-                <div className="absolute top-0 left-0 h-full w-full">
+                <div className="absolute top-0 left-0 h-full w-full select-none">
                   <Card
                     value={gameData.players[userID]!.squeakDeck[0]!.value}
                     suit={gameData.players[userID]!.squeakDeck[0]!.suit}
@@ -167,7 +171,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
             <div
               key={`${userID}card${cardsIdx}`}
               // @ts-expect-error asdf
-              className={`${cardClassMap[cardsIdx]} relative h-full w-full`}
+              className={`${cardClassMap[cardsIdx]} relative h-full w-full select-none`}
             >
               <div
                 id={`${userID}squeakHand${cardsIdx}`}
@@ -189,7 +193,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                           cardDimensions.height
                         }px`,
                 }}
-                className="absolute w-full rounded-lg transition-all"
+                className="absolute w-full select-none rounded-lg transition-all"
               >
                 {cards.map((card, cardIdx) => (
                   <div
@@ -200,9 +204,9 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                         originIndexForHeldSqueakCard === cardsIdx
                           ? 501
                           : "auto",
-                      top: `${(20 - cards.length) * cardIdx}px`, //was just: cardsIdx * 15
+                      top: `${(20 - cards.length) * cardIdx}px`,
                     }}
-                    className={`absolute left-0 h-[64px] w-[48px] tall:h-[87px] tall:w-[67px]`}
+                    className={`absolute left-0 h-[64px] w-[48px] select-none tall:h-[87px] tall:w-[67px]`}
                     onMouseDown={() => {
                       setOriginIndexForHeldSqueakCard(cardsIdx);
                       setHoldingASqueakCard(true);
@@ -231,7 +235,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
           ))}
 
           <div
-            className={`${classes.playerDeck} z-[500] h-[64px] w-[48px] tall:h-[87px] tall:w-[67px]`}
+            className={`${classes.playerDeck} z-[500] h-[64px] w-[48px] select-none tall:h-[87px] tall:w-[67px]`}
           >
             <div
               id={`${userID}deck`}
@@ -244,7 +248,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                     : "none",
                 cursor: drawingFromDeckInProgress ? "auto" : "pointer",
               }}
-              className="h-full w-full transition-shadow"
+              className="h-full w-full select-none transition-shadow"
               onMouseEnter={() => {
                 setHoveringOverDeck(true);
               }}
@@ -265,10 +269,10 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
               }}
             >
               {gameData?.players[userID]?.nextTopCardInDeck ? (
-                <div className="relative h-full w-full">
+                <div className="relative h-full w-full select-none">
                   {/* dummy cards to show "depth" of deck visually */}
                   {showSecondDummyCardBeneathDeck && (
-                    <div className="absolute top-[2px] left-0 h-full w-full">
+                    <div className="absolute top-[2px] left-0 h-full w-full select-none">
                       <Card
                         showCardBack={true}
                         draggable={false}
@@ -280,7 +284,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                   )}
 
                   {showFirstDummyCardBeneathDeck && (
-                    <div className="absolute top-[1px] left-0 h-full w-full">
+                    <div className="absolute top-[1px] left-0 h-full w-full select-none">
                       <Card
                         showCardBack={true}
                         draggable={false}
@@ -297,7 +301,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                         ? "running"
                         : "paused",
                     }}
-                    className="topBackFacingCardInDeck absolute top-0 left-0 h-full w-full"
+                    className="topBackFacingCardInDeck absolute top-0 left-0 h-full w-full select-none"
                   >
                     <Card
                       value={
@@ -313,11 +317,11 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                   </div>
                 </div>
               ) : (
-                <div className="grid cursor-pointer grid-cols-1 items-center justify-items-center">
-                  <div className="col-start-1 row-start-1">
+                <div className="grid cursor-pointer select-none grid-cols-1 items-center justify-items-center">
+                  <div className="col-start-1 row-start-1 select-none">
                     <FaRedoAlt size={"1.5rem"} />
                   </div>
-                  <div className="col-start-1 row-start-1 opacity-25">
+                  <div className="col-start-1 row-start-1 select-none opacity-25">
                     <Card
                       showCardBack={true}
                       draggable={false}
@@ -348,7 +352,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                   card !== null && ( // necessary?
                     <div
                       key={`${userID}card${card?.suit}${card?.value}`}
-                      className="absolute top-0 left-0"
+                      className="absolute top-0 left-0 select-none"
                       style={{
                         top: `${-1 * (idx * 2)}px`,
                       }}

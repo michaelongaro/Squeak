@@ -51,7 +51,7 @@ function Board({ boardClass }: IBoard) {
         outline: "4px ridge hsl(120deg 100% 86%)",
         boxShadow: "inset 0px 0px 16px 0px hsl(106deg 100% 5%)",
       }}
-      className={`${boardClass} grid w-full grid-cols-5 gap-1 rounded-md p-2`}
+      className={`${boardClass} grid w-full select-none grid-cols-5 gap-1 rounded-md p-2`}
     >
       {gameData?.board.map((row, rowIdx) => (
         <Fragment key={`boardRow${rowIdx}`}>
@@ -72,7 +72,7 @@ function Board({ boardClass }: IBoard) {
                     ? 0.35 // worst case you leave it like this (was prev 0.75)
                     : 1,
               }}
-              className="baseFlex relative h-[65px] min-h-fit w-[48px] min-w-fit rounded-lg p-1 transition-all tall:h-[95px] tall:w-[70px]"
+              className="baseFlex relative h-[65px] min-h-fit w-[48px] min-w-fit select-none rounded-lg p-1 transition-all tall:h-[95px] tall:w-[70px]"
             >
               <AnimatePresence
                 initial={false}
@@ -84,10 +84,10 @@ function Board({ boardClass }: IBoard) {
                     key={`board${rowIdx}${colIdx}AnimatedCell`}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.55 }}
-                    className="relative h-full w-full"
+                    className="relative h-full w-full select-none"
                   >
                     {cell.value !== "A" && cell.value !== "2" && (
-                      <div className="absolute top-[2px] left-0 h-full w-full">
+                      <div className="absolute top-[2px] left-0 h-full w-full select-none">
                         <Card
                           showCardBack={true}
                           draggable={false}
@@ -97,7 +97,7 @@ function Board({ boardClass }: IBoard) {
                     )}
 
                     {cell.value !== "A" && (
-                      <div className="absolute top-[1px] left-0 h-full w-full">
+                      <div className="absolute top-[1px] left-0 h-full w-full select-none">
                         <Card
                           showCardBack={true}
                           draggable={false}

@@ -116,23 +116,26 @@ function OtherPlayersCardContainers({
       {/* Object.keys(gameData.players)
         .filter((playerID) => playerID !== userID) */}
       {otherPlayerIDs.map((playerID, idx) => (
-        <div key={playerID} className={`${orderedClassNames[idx]} relative`}>
+        <div
+          key={playerID}
+          className={`${orderedClassNames[idx]} relative select-none`}
+        >
           <div
             style={{
               opacity: gameData.playerIDsThatLeftMidgame.includes(playerID)
                 ? 0.25
                 : 1,
             }}
-            className={internalOrderedGridClassNames[idx]}
+            className={`${internalOrderedGridClassNames[idx]} select-none`}
           >
             <div
               id={`${playerID}squeakDeck`}
-              className={`${classes.squeakDeck} h-[64px] w-[48px] tall:h-[87px] tall:w-[67px]`}
+              className={`${classes.squeakDeck} h-[64px] w-[48px] select-none tall:h-[87px] tall:w-[67px]`}
             >
               {gameData.players[playerID]!.squeakDeck.length > 0 ? (
                 <div className="relative h-full w-full">
                   {showDummyDeckCardStates?.[playerID]?.[2] && (
-                    <div className="absolute top-[2px] left-0 h-full w-full">
+                    <div className="absolute top-[2px] left-0 h-full w-full select-none">
                       <Card
                         showCardBack={true}
                         draggable={false}
@@ -144,7 +147,7 @@ function OtherPlayersCardContainers({
                   )}
 
                   {showDummyDeckCardStates?.[playerID]?.[3] && (
-                    <div className="absolute top-[1px] left-0 h-full w-full">
+                    <div className="absolute top-[1px] left-0 h-full w-full select-none">
                       <Card
                         showCardBack={true}
                         draggable={false}
@@ -154,7 +157,7 @@ function OtherPlayersCardContainers({
                       />
                     </div>
                   )}
-                  <div className="absolute top-0 left-0 h-full w-full">
+                  <div className="absolute top-0 left-0 h-full w-full select-none">
                     <Card
                       value={gameData.players[playerID]?.squeakDeck[0]!.value}
                       suit={gameData.players[playerID]?.squeakDeck[0]!.suit}
@@ -175,7 +178,7 @@ function OtherPlayersCardContainers({
                         : "none",
                     transition: "box-shadow 0.85s ease-in-out",
                   }}
-                  className="bg-green-300 p-4 transition-colors hover:bg-green-200"
+                  className="select-none bg-green-300 p-4 transition-colors hover:bg-green-200"
                   disabled={true}
                 >
                   Squeak!
@@ -187,10 +190,8 @@ function OtherPlayersCardContainers({
               <div
                 key={`${playerID}squeakStack${cardsIdx}`}
                 // @ts-expect-error asdf
-                className={`${cardClassMap[cardsIdx]} relative h-[64px] w-[48px] tall:h-[87px] tall:w-[67px]`}
+                className={`${cardClassMap[cardsIdx]} relative h-full w-full select-none`}
               >
-                {/* maybe the offsetHeight issue that you were having is related to above being confined 
-              but below being full height? hmm */}
                 <div
                   id={`${playerID}squeakHand${cardsIdx}`}
                   style={{
@@ -202,13 +203,13 @@ function OtherPlayersCardContainers({
                             cardDimensions.height
                           }px`,
                   }}
-                  className="absolute h-full w-full"
+                  className="absolute h-full w-full select-none"
                 >
                   {cards.map((card, cardIdx) => (
                     <div
-                      key={`${playerID}card${cardIdx}`} //${card.suit}${card.value}
+                      key={`${playerID}card${cardIdx}`}
                       id={`${playerID}squeakStack${cardsIdx}${cardIdx}`}
-                      className={`absolute left-0 h-full w-full`}
+                      className={`absolute left-0 h-[64px] w-[48px] select-none tall:h-[87px] tall:w-[67px]`}
                       style={{
                         top: `${(20 - cards.length) * cardIdx}px`,
                       }}
@@ -229,13 +230,13 @@ function OtherPlayersCardContainers({
             ))}
 
             <div
-              className={`${classes.playerDeck} z-[500] h-[64px] w-[48px] tall:h-[87px] tall:w-[67px]`}
+              className={`${classes.playerDeck} z-[500] h-[64px] w-[48px] select-none tall:h-[87px] tall:w-[67px]`}
             >
               <div id={`${playerID}deck`} className="h-full w-full">
                 {gameData?.players[playerID]?.nextTopCardInDeck ? (
-                  <div className="relative h-full w-full">
+                  <div className="relative h-full w-full select-none">
                     {showDummyDeckCardStates?.[playerID]?.[0] && (
-                      <div className="absolute top-[2px] left-0 h-full w-full">
+                      <div className="absolute top-[2px] left-0 h-full w-full select-none">
                         <Card
                           showCardBack={true}
                           draggable={false}
@@ -247,7 +248,7 @@ function OtherPlayersCardContainers({
                     )}
 
                     {showDummyDeckCardStates?.[playerID]?.[1] && (
-                      <div className="absolute top-[1px] left-0 h-full w-full">
+                      <div className="absolute top-[1px] left-0 h-full w-full select-none">
                         <Card
                           showCardBack={true}
                           draggable={false}
@@ -263,7 +264,7 @@ function OtherPlayersCardContainers({
                           ? "running"
                           : "paused",
                       }}
-                      className="topBackFacingCardInDeck absolute top-0 left-0 h-full w-full"
+                      className="topBackFacingCardInDeck absolute top-0 left-0 h-full w-full select-none"
                     >
                       <Card
                         value={
@@ -281,11 +282,11 @@ function OtherPlayersCardContainers({
                     </div>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-1 items-center justify-items-center">
+                  <div className="grid select-none grid-cols-1 items-center justify-items-center">
                     <div className="col-start-1 row-start-1">
                       <FaRedoAlt size={"1.5rem"} />
                     </div>
-                    <div className="col-start-1 row-start-1 opacity-25">
+                    <div className="col-start-1 row-start-1 select-none opacity-25">
                       <Card
                         showCardBack={true}
                         draggable={false}
@@ -309,7 +310,7 @@ function OtherPlayersCardContainers({
                     card !== null && ( // necessary?
                       <div
                         key={`${playerID}card${card?.suit}${card?.value}`}
-                        className="absolute top-0 left-0"
+                        className="absolute top-0 left-0 select-none"
                         style={{
                           top: `${-1 * (topCardsIdx * 2)}px`,
                         }}
