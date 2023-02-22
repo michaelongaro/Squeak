@@ -64,6 +64,8 @@ export const roomsRouter = router({
 
         if (room.playersInRoom === room.maxPlayers) return "Room is full.";
 
+        if (room.gameStarted) return "Game has already started.";
+
         return room;
       } catch (error) {
         console.log(error);
