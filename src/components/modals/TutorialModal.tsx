@@ -52,19 +52,27 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
               Preparation
             </legend>
 
-            <div
-              style={{
-                color: "hsl(120deg 100% 86%)",
-              }}
-              className="baseVertFlex w-[1000px] gap-2 p-4"
-            >
-              Squeak is a multiplayer rendition of Solitaire, otherwise known as
-              "Nerts" or "Blank". Games can be played with 2-4 players, each
-              player starting with a regular deck of cards. 13 of those cards
-              are placed in each player's "Squeak pile", with four cards face up
-              beside it. The remaining deck stays below the Squeak pile.
+            <div className="baseVertFlex gap-4">
+              <div
+                style={{
+                  color: "hsl(120deg 100% 86%)",
+                }}
+                className="baseVertFlex w-[1000px] gap-2 p-4"
+              >
+                Squeak is a multiplayer rendition of Solitaire, otherwise known
+                as &quot;Nertz&quot;. Games can be played with 2-4 players, each
+                player starting with a regular deck of cards. After shuffling,
+                each player places 13 cards in their &quot;Squeak pile&quot;,
+                with an additional four cards face up beside it. The remaining
+                deck stays below the Squeak pile.
+              </div>
+
+              <img
+                src="/tutorial/labeledPlayerContainer.png"
+                alt="Example of a player's card placement with labels"
+                className="h-auto w-auto rounded-md"
+              />
             </div>
-            {/* should have screenshot of player container (not including their icon) */}
           </fieldset>
 
           <fieldset className="mt-4 rounded-md border-2 border-white bg-green-800 p-4">
@@ -83,8 +91,8 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
               className="w-[1000px]  p-4"
             >
               The goal of each round is to get rid of all the cards in your
-              Squeak pile, allowing you to press the "Squeak" button, which
-              signals the end of the round.
+              Squeak pile, allowing you to press the &quot;Squeak&quot; button,
+              which signals the end of the round.
             </div>
           </fieldset>
 
@@ -105,30 +113,39 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
               className="baseVertFlex w-[1000px] !justify-start gap-4 p-4"
             >
               {/* use actual <Card />s in examples */}
-              <div className="baseFlex w-full !justify-start gap-4">
+              <div className="baseFlex w-full !items-start !justify-start gap-4">
                 <div className="baseFlex w-[45px] rounded-full border-2 border-white p-2">
                   1
                 </div>
-                <div className="w-full">
+                <div className="baseVertFlex w-full gap-4">
                   Placing a card on the board: must start with an ace, and the
                   every card afterwords must be of the same suit and be one
                   value higher than the previous card. (ex. ace of hearts, 2 of
                   hearts, 3 of hearts)
+                  <img
+                    src="/tutorial/boardPlacementExample.png"
+                    alt="Example of a card being placed on the board"
+                    className="h-auto w-auto rounded-md"
+                  />
                 </div>
               </div>
-              <div className="baseFlex w-full !justify-start gap-4">
+              <div className="baseFlex w-full !items-start !justify-start gap-4">
                 <div className="baseFlex w-[45px] rounded-full border-2 border-white p-2">
                   2
                 </div>
-                <div className="w-full">
+                <div className="baseVertFlex w-full gap-4">
                   Stacking cards on top of the cards next to your Squeak pile
                   (the squeak stacks) follows the same rules as Solitaire. Cards
-                  can only be placed on cards of alternate color and must be in
-                  descending order. (ex. Jack of spades, 10 of hearts, 9 of
-                  clubs)
+                  can only be placed on cards of alternate color and exactly one
+                  higher rank. (ex. Jack of spades, 10 of hearts, 9 of clubs)
+                  <img
+                    src="/tutorial/squeakStackPlacementExample.png"
+                    alt="Example of a card being placed on the board"
+                    className="h-auto w-auto rounded-md"
+                  />
                 </div>
               </div>
-              <div className="baseFlex w-full !justify-start gap-4">
+              <div className="baseFlex w-full !items-start !justify-start gap-4">
                 <div className="baseFlex w-[45px] rounded-full border-2 border-white p-2">
                   3
                 </div>
@@ -138,7 +155,7 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
                   empty stack.
                 </div>
               </div>
-              <div className="baseFlex w-full !justify-start gap-4">
+              <div className="baseFlex w-full !items-start !justify-start gap-4">
                 <div className="baseFlex w-[45px] rounded-full border-2 border-white p-2">
                   4
                 </div>
@@ -149,8 +166,6 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
                   stacking defined earlier.
                 </div>
               </div>
-
-              {/* screenshots of board section and squeak stacks to show what is valid card placement wise */}
             </div>
           </fieldset>
 
@@ -172,9 +187,9 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
               Points are calculated after the end of each round. Each card a
               player played onto the board is worth one point. The player who
               Squeaked gets an additional ten points, while every other player
-              gets docked a point for every card left in their Squeak pile. When
-              a player reaches the pre-defined threshold of points to win, that
-              player has won and the game is over.
+              loses a point for every card left in their Squeak pile. When a
+              player reaches the room&apos;s pre-defined threshold of points to
+              win, that player has won and the game is over.
             </div>
           </fieldset>
 
