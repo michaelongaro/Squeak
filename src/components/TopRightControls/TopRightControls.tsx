@@ -5,7 +5,7 @@ import SecondaryButton from "../Buttons/SecondaryButton";
 import UserSettingsAndStatsModal from "../modals/SettingsAndStats/UserSettingsAndStatsModal";
 import { IoSettingsSharp, IoLogOutOutline } from "react-icons/io5";
 import { FaUserFriends } from "react-icons/fa";
-import { AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import FriendsList from "../modals/FriendsList";
 import AudioLevelSlider from "./AudioLevelSlider";
 
@@ -16,8 +16,12 @@ interface ITopRightControls {
 function TopRightControls({ forPlayScreen }: ITopRightControls) {
   const { status } = useSession();
 
-  const { showSettingsModal, setShowSettingsModal, leaveRoom } =
-    useRoomContext();
+  const {
+    showSettingsModal,
+    setShowSettingsModal,
+    leaveRoom,
+    newInviteNotification,
+  } = useRoomContext();
   const [showFriendsList, setShowFriendsList] = React.useState<boolean>(false);
 
   // volume state
@@ -68,6 +72,24 @@ function TopRightControls({ forPlayScreen }: ITopRightControls) {
             hoverTooltipTextPosition={"left"}
             onClickFunction={() => setShowFriendsList(!showFriendsList)}
           />
+
+          <AnimatePresence
+            initial={false}
+            mode={"wait"}
+            onExitComplete={() => null}
+          >
+            {newInviteNotification && (
+              <motion.div
+                key={"friendsListInviteNotification"}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.15 }}
+                className="absolute bottom-[-5px] right-[-5px] h-4 w-4 rounded-full bg-red-600"
+              ></motion.div>
+            )}
+          </AnimatePresence>
+
           <AnimatePresence
             initial={false}
             mode={"wait"}
