@@ -32,7 +32,7 @@ function AnimatedCard({ card, index, playerID }: IAnimatedCard) {
       Math.random() * (animatedCardContainer.width - 50) + 50
     );
 
-    const initY = Math.floor(Math.random() * -150) - 100;
+    const initY = Math.floor(Math.random() * -250) - 100;
 
     const { initXRotation, initYRotation, initZRotation } = {
       initXRotation: Math.floor(Math.random() * 35) + 50,
@@ -44,12 +44,13 @@ function AnimatedCard({ card, index, playerID }: IAnimatedCard) {
       Math.floor(Math.random() * (animatedCardContainer.width - 50)) + 50;
     const finalY = Math.floor(
       Math.random() * animatedCardContainer.height * 0.1 +
-        animatedCardContainer.height
+        animatedCardContainer.height +
+        50
     );
 
     const finalXRotation = Math.floor(Math.random() * 90);
     const finalYRotation = Math.floor(Math.random() * 50);
-    const finalZRotation = Math.floor(Math.random() * 50);
+    const finalZRotation = Math.floor(Math.random() * 90);
 
     anime({
       targets: `#scoreboardAnimatedCard${index}${playerID}`,
