@@ -48,8 +48,6 @@ function useCardDrawFromDeck({
 
       // I think this logic checks out
       if (ownerID === playerID && currentTopCardInDeck === null) {
-        console.log("next top card in deck was null");
-
         setGameData({
           ...gameData,
           board: updatedBoard,
