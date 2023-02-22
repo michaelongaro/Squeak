@@ -46,6 +46,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
     setResetHeldSqueakStackLocation,
     setHoveredSqueakStack,
   } = useRoomContext();
+  const { mirrorPlayerContainer } = useRoomContext();
   const { value: userID } = useUserIDContext();
 
   const [hoveringOverDeck, setHoveringOverDeck] = useState(false);
@@ -107,7 +108,9 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
     <div className={`${cardContainerClass}`}>
       <audio ref={audioRef} src="/sounds/firstSuccessfulMove.wav" />
       {userID && (
-        <div className={`${classes.gridContainer}`}>
+            mirrorPlayerContainer
+              ? classes.reversedGridContainer
+              : classes.gridContainer
           <div
             id={`${userID}squeakDeck`}
             className={`${classes.squeakDeck} baseFlex h-full w-full`}
