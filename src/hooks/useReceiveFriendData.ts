@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useEffect, useCallback } from "react";
 import { useRoomContext } from "../context/RoomContext";
 import { useUserIDContext } from "../context/UserIDContext";
 import { socket } from "../pages";
@@ -24,7 +24,7 @@ function useReceiveFriendData() {
     return () => {
       socket.off("friendDataUpdated", (data) => handleFriendData(data));
     };
-  }, [userID, setFriendData, handleFriendData]);
+  }, [handleFriendData]);
 }
 
 export default useReceiveFriendData;
