@@ -33,9 +33,9 @@ function Board({ boardClass }: IBoard) {
     colIdx,
   }: IGetBoxShadowStyles): string {
     if (holdingADeckCard || holdingASqueakCard) {
-      return `0px 0px 10px ${
+      return `0px 0px 4px ${
         hoveredCell?.[0] === rowIdx && hoveredCell?.[1] === colIdx
-          ? "5px"
+          ? "4px"
           : "3px"
       } rgba(184,184,184,1)`;
     } else if (proposedCardBoxShadow?.id === id) {
@@ -72,7 +72,7 @@ function Board({ boardClass }: IBoard) {
                     ? 0.35 // worst case you leave it like this (was prev 0.75)
                     : 1,
               }}
-              className="baseFlex relative h-[64px] min-h-fit w-[48px] min-w-fit rounded-lg p-1 transition-all tall:h-[90px] tall:w-[70px]"
+              className="baseFlex relative h-[65px] min-h-fit w-[48px] min-w-fit rounded-lg p-1 transition-all tall:h-[95px] tall:w-[70px]"
             >
               <AnimatePresence
                 initial={false}
@@ -84,7 +84,28 @@ function Board({ boardClass }: IBoard) {
                     key={`board${rowIdx}${colIdx}AnimatedCell`}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.55 }}
+                    className="relative h-full w-full"
                   >
+                    {cell.value !== "A" && cell.value !== "2" && (
+                      <div className="absolute top-[2px] left-0 h-full w-full">
+                        <Card
+                          showCardBack={true}
+                          draggable={false}
+                          rotation={0}
+                        />
+                      </div>
+                    )}
+
+                    {cell.value !== "A" && (
+                      <div className="absolute top-[1px] left-0 h-full w-full">
+                        <Card
+                          showCardBack={true}
+                          draggable={false}
+                          rotation={0}
+                        />
+                      </div>
+                    )}
+
                     <Card
                       value={cell?.value}
                       suit={cell?.suit}
