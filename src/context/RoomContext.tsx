@@ -92,6 +92,10 @@ interface IRoomContext {
   setCardBeingMovedProgramatically: React.Dispatch<
     React.SetStateAction<ICardBeingMovedProgramatically>
   >;
+  newInviteNotification: boolean;
+  setNewInviteNotification: React.Dispatch<React.SetStateAction<boolean>>;
+  mirrorPlayerContainer: boolean;
+  setMirrorPlayerContainer: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const RoomContext = createContext<IRoomContext | null>(null);
@@ -169,6 +173,12 @@ export function RoomProvider(props: { children: React.ReactNode }) {
 
   const [cardBeingMovedProgramatically, setCardBeingMovedProgramatically] =
     useState<ICardBeingMovedProgramatically>({});
+
+  const [newInviteNotification, setNewInviteNotification] =
+    useState<boolean>(false);
+
+  const [mirrorPlayerContainer, setMirrorPlayerContainer] =
+    useState<boolean>(false);
 
   // might want to move into a hook eventually
   useEffect(() => {
@@ -274,6 +284,8 @@ export function RoomProvider(props: { children: React.ReactNode }) {
         deckHueRotation: user ? user.deckHueRotation : 232,
       } as IRoomPlayer,
     }));
+
+    setMirrorPlayerContainer(user ? !user.squeakPileOnLeft : false);
   }, [userID, user, playerMetadata, session, status]);
 
   function leaveRoom(moveBackToHome: boolean) {
@@ -364,6 +376,10 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     setCurrentVolume,
     cardBeingMovedProgramatically,
     setCardBeingMovedProgramatically,
+    newInviteNotification,
+    setNewInviteNotification,
+    mirrorPlayerContainer,
+    setMirrorPlayerContainer,
   };
 
   return (
