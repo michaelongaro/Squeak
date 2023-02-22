@@ -150,7 +150,7 @@ export function modifyFriendDataHandler(
           friendData: friend,
         });
       }
-    } else if (action === "declineRoomInvite") {
+    } else if (action === "declineRoomInvite" && targetID) {
       initiator.roomInviteIDs = initiator.roomInviteIDs.filter(
         (id) => id !== targetID
       );
