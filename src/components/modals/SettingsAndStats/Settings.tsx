@@ -37,7 +37,6 @@ function Settings({
   const [focusedInInput, setFocusedInInput] = useState<boolean>(false);
 
   return (
-    // play around with with the width, maybe not best to have hardcoded 700px?
     <div
       style={{
         color: "hsl(120deg 100% 86%)",
@@ -135,12 +134,16 @@ function Settings({
           aria-label="toggle desktop notifications"
           type="checkbox"
           checked={localPlayerSettings.desktopNotifications}
-          onChange={() =>
-            setLocalPlayerSettings((prevSettings) => ({
-              ...prevSettings,
-              desktopNotifications: !prevSettings.desktopNotifications,
-            }))
-          }
+          onChange={() => {
+            Notification.requestPermission().then((result) => {
+              if (result === "granted") {
+                setLocalPlayerSettings((prevSettings) => ({
+                  ...prevSettings,
+                  desktopNotifications: !prevSettings.desktopNotifications,
+                }));
+              }
+            });
+          }}
         />
       </div>
     </div>
