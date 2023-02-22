@@ -158,9 +158,13 @@ function DangerButton({
 
       {hoverTooltipText && !showTooltip && (
         <div
+          // shouldn't this be below styles? test it
+          // top: "50%",
+          //         left: "50%",
+          //         transform: "translate(-50%, -50%)",
           style={{
             position: "absolute",
-            top: "100%",
+            top: forFriendsList ? "2.5rem" : "100%",
             left: "50%",
             transform: "translate(-50%, 0.5rem)",
             background: "hsl(0, 84%, 95%)",

@@ -9,6 +9,7 @@ interface ISecondaryButton {
   hoverTooltipText?: string;
   hoverTooltipTextPosition?: "left" | "bottom";
   postClickTooltipText?: string;
+  hoverTooltipTextTop?: string;
   width?: string;
   height?: string;
   forceHover?: boolean;
@@ -29,6 +30,7 @@ function SecondaryButton({
   hoverTooltipText,
   postClickTooltipText,
   hoverTooltipTextPosition,
+  hoverTooltipTextTop,
   icon,
   iconOnLeft,
   rotateIcon,
@@ -200,7 +202,7 @@ function SecondaryButton({
       {hoverTooltipText && hoverTooltipTextPosition === "bottom" && (
         <div
           style={{
-            top: "100%",
+            top: hoverTooltipTextTop ?? "100%",
             left: "50%",
             transform: "translate(-50%, 0.5rem)",
             background: "hsl(120deg 100% 18%)",
