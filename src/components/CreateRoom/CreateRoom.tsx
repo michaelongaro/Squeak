@@ -394,6 +394,7 @@ function CreateRoom() {
 
             <PrimaryButton
               innerText={"Start game"}
+              innerTextWhenLoading={"Starting game"}
               disabled={roomConfig.playersInRoom < 2}
               onClickFunction={() => {
                 setGameData({} as IGameMetadata);
@@ -414,6 +415,7 @@ function CreateRoom() {
         ) : (
           <PrimaryButton
             innerText={"Create"}
+            innerTextWhenLoading={"Creating"}
             disabled={
               Object.values(playerMetadata)[0]?.username.length === 0 ||
               usernameIsProfane

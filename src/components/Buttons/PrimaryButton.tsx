@@ -2,6 +2,7 @@ import { useState } from "react";
 
 interface IPrimaryButton {
   innerText?: string;
+  innerTextWhenLoading?: string;
   onClickFunction?: () => void;
   showLoadingSpinnerOnClick?: boolean;
   width?: string;
@@ -13,6 +14,7 @@ interface IPrimaryButton {
 
 function PrimaryButton({
   innerText,
+  innerTextWhenLoading,
   disabled = false,
   showLoadingSpinnerOnClick = false,
   width,
@@ -67,7 +69,7 @@ function PrimaryButton({
       }}
     >
       {iconOnLeft && icon}
-      {innerText}
+      {showLoadingSpinner ? innerTextWhenLoading : innerText}
       {!iconOnLeft && !showLoadingSpinner && icon}
       {showLoadingSpinner && (
         <div

@@ -91,8 +91,6 @@ function JoinRoom() {
   useEffect(() => {
     // rough way to check whether context data has been initialized
     if (room && !connectedToRoom) {
-      console.log("hopefully second");
-
       setRoomConfig(room);
       setSubmittedRoomCode("");
       joinRoom();
@@ -255,6 +253,7 @@ function JoinRoom() {
             >
               <PrimaryButton
                 innerText={"Join"}
+                innerTextWhenLoading={"Joining"}
                 disabled={
                   playerMetadata[userID]?.username.length === 0 ||
                   roomCode.length === 0 ||

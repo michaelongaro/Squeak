@@ -34,8 +34,7 @@ interface IUserSettingsAndStatsModalProps {
 function UserSettingsAndStatsModal({
   setShowModal,
 }: IUserSettingsAndStatsModalProps) {
-  const { playerMetadata, setPlayerMetadata, connectedToRoom } =
-    useRoomContext();
+  const {
   const { value: userID } = useUserIDContext();
 
   const utils = trpc.useContext();
@@ -212,6 +211,7 @@ function UserSettingsAndStatsModal({
           {showSettings && (
             <PrimaryButton
               innerText="Save"
+              innerTextWhenLoading={"Saving"}
               icon={<IoSave size={"1.25rem"} />}
               width={"8rem"}
               height={"3rem"}
