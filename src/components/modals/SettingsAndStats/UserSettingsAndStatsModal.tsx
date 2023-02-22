@@ -35,6 +35,11 @@ function UserSettingsAndStatsModal({
   setShowModal,
 }: IUserSettingsAndStatsModalProps) {
   const {
+    playerMetadata,
+    setPlayerMetadata,
+    connectedToRoom,
+    setMirrorPlayerContainer,
+  } = useRoomContext();
   const { value: userID } = useUserIDContext();
 
   const utils = trpc.useContext();
@@ -124,6 +129,8 @@ function UserSettingsAndStatsModal({
       desktopNotifications: localPlayerSettings.desktopNotifications,
     });
 
+    setMirrorPlayerContainer(!localPlayerSettings.squeakPileOnLeft);
+
     // cannot update while connected to room because it could show incorrect/out of date
     // metadata compared to what the server has
     if (!connectedToRoom) {
@@ -203,7 +210,7 @@ function UserSettingsAndStatsModal({
             innerText="Log out"
             icon={<IoLogOutOutline size={"1.25rem"} />}
             extraPadding={false}
-            width={"8rem"}
+            width={"10rem"}
             height={"3rem"}
             onClickFunction={() => signOut()}
           />
@@ -213,7 +220,7 @@ function UserSettingsAndStatsModal({
               innerText="Save"
               innerTextWhenLoading={"Saving"}
               icon={<IoSave size={"1.25rem"} />}
-              width={"8rem"}
+              width={"10rem"}
               height={"3rem"}
               disabled={!ableToSave || usernameIsProfane}
               onClickFunction={() => updateUserHandler()}
