@@ -1,23 +1,60 @@
-import { useState } from "react";
-
+import { useState, useEffect, useRef } from "react";
+import { useRoomContext } from "../../context/RoomContext";
+import { useUserIDContext } from "../../context/UserIDContext";
+import { socket } from "../../pages";
 interface IBuzzer {
   playerID: string;
+  roomID: string;
   interactive: boolean;
-  onClickFunction: () => void;
 }
 
-function Buzzer({ playerID, interactive, onClickFunction }: IBuzzer) {
-  // will need effect + timeout to simulate pressing the button when somebody else
-  // squeaks (also play sound from here at same time) OOOO maybe idk could send out a pulsewave
-  // like 10% opacity of that persons color that expands across whole screen then fades out?
-  // would have to have borderRadius 50% and then just animate the width and height to 100vw/100vh
+function Buzzer({ playerID, roomID, interactive }: IBuzzer) {
+  const { currentVolume, playerMetadata, playerIDWhoSqueaked } =
+    useRoomContext();
 
-  // maybe have useeffect listener to play sound from here?
-  // need to add <audio> w/ ref
+  const { value: userID } = useUserIDContext();
 
   const [hoveringOnButton, setHoveringOnButton] = useState<boolean>(false);
-
   const [mouseDownOnButton, setMouseDownOnButton] = useState<boolean>(false);
+
+  const [playExpandingPulseWaveAnimation, setPlayExpandingPulseWaveAnimation] =
+    useState<boolean>(false);
+
+  const squeakButtonAudioRef = useRef<HTMLAudioElement>(null);
+
+  useEffect(() => {
+    if (playerIDWhoSqueaked === playerID) {
+      if (playerIDWhoSqueaked !== userID) {
+        // simulating a mouse click on the button to trigger the animation
+        setMouseDownOnButton(true);
+        setTimeout(() => {
+          setMouseDownOnButton(false);
+        }, 100);
+      }
+
+      if (squeakButtonAudioRef.current) {
+        squeakButtonAudioRef.current.volume = currentVolume;
+        squeakButtonAudioRef.current.play();
+      }
+
+      // temporarily hiding overflow on <Page /> so that the expanding pulse wave
+      // animation doesn't cause the page to scroll
+      const pageContainer = document.getElementById("playContainer");
+
+      if (pageContainer) {
+        pageContainer.style.overflow = "hidden";
+      }
+
+      setPlayExpandingPulseWaveAnimation(true);
+
+      setTimeout(() => {
+        setPlayExpandingPulseWaveAnimation(false);
+        if (pageContainer) {
+          pageContainer.style.overflow = "auto";
+        }
+      }, 1000);
+    }
+  }, [playerIDWhoSqueaked, playerID, currentVolume, userID]);
 
   return (
     <div
@@ -44,9 +81,13 @@ function Buzzer({ playerID, interactive, onClickFunction }: IBuzzer) {
         if (interactive) setMouseDownOnButton(false);
       }}
       onClick={() => {
-        if (interactive) onClickFunction();
+        socket.emit("roundOver", {
+          roomID,
+          winner: playerID,
+        });
       }}
     >
+      <audio ref={squeakButtonAudioRef} src="/sounds/squeakButtonPress.mp3" />
       {/* grey baseplate for button */}
       <div className="absolute top-0 left-0">
         <img
@@ -70,6 +111,20 @@ function Buzzer({ playerID, interactive, onClickFunction }: IBuzzer) {
           className="absolute h-[35px] w-[50px] transition-all"
         />
       </div>
+
+      <div
+        style={{
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          height: playExpandingPulseWaveAnimation ? "100vh" : "0",
+          width: playExpandingPulseWaveAnimation ? "100vw" : "0",
+          backgroundColor: playerMetadata[playerID]?.color,
+          opacity: playExpandingPulseWaveAnimation ? "0.5" : "0",
+          transition: playExpandingPulseWaveAnimation ? "all 1s" : "all 0.25s",
+        }}
+        className="absolute rounded-full"
+      ></div>
     </div>
   );
 }
