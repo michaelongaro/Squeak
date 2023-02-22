@@ -39,7 +39,6 @@ function PublicRooms() {
     }
   }, [connectedToRoom, setConnectedToRoom, joinRoom, roomCode]);
 
-  // alternating light and dark, maybe just have hover over darken it a bit (brightness(0.85))
   return (
     <fieldset className="rounded-md border-2 border-white bg-green-800 p-4">
       <legend
@@ -94,14 +93,12 @@ function PublicRooms() {
                   <div
                     key={room.code}
                     style={{
-                      backgroundColor: "hsl(120deg 100% 18%)",
+                      backgroundColor:
+                        hoveredIndex === index
+                          ? "hsl(120deg 100% 23%)"
+                          : "hsl(120deg 100% 18%)",
                       color: "hsl(120deg 100% 86%)",
                       borderColor: "hsl(120deg 100% 86%)",
-                      filter:
-                        hoveredIndex === index
-                          ? "brightness(1.25)"
-                          : "brightness(1)",
-                      transition: "all 0.1s ",
                     }}
                     className="relative grid w-[600px] grid-cols-3 place-items-center border-b-2 p-4 pr-8 "
                     onMouseEnter={() => setHoveredIndex(index)}
