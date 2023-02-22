@@ -39,7 +39,7 @@ function MainOptions() {
       className="baseFlex relative min-h-[100vh]"
     >
       {status !== "loading" && (
-        <div className="baseVertFlex min-w-[22.25rem] gap-4 rounded-md border-2 border-white bg-green-800 p-8 shadow-lg">
+        <div className="baseVertFlex min-w-[22.25rem] rounded-md border-2 border-white bg-green-800 p-8 shadow-lg">
           <img
             src="/logo/squeakLogo.svg"
             alt="Squeak logo"
@@ -63,7 +63,7 @@ function MainOptions() {
             <LogIn gap={"2rem"} />
           )}
 
-          <div className="baseVertFlex mt-4 gap-4">
+          <div className="baseVertFlex mt-8 gap-4">
             <SecondaryButton
               innerText={"How to play"}
               icon={<AiOutlineInfoCircle size={"1.5rem"} />}
