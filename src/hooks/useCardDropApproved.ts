@@ -139,7 +139,7 @@ function useCardDropApproved({
 
             setProposedCardBoxShadow({
               id: endID,
-              boxShadowValue: `0px 0px 10px 5px rgba(29, 232, 7, 1)`,
+              boxShadowValue: `0px 0px 4px 3px rgba(29, 232, 7, 1)`,
             });
           } else if (playerID && endID.includes("cell")) {
             setSoundPlayStates((prevState) => ({
