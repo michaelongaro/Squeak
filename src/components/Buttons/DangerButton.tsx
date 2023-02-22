@@ -6,6 +6,9 @@ interface IDangerButton {
   innerText?: string;
   innerTooltipText?: string;
   forFriendsList?: boolean;
+  setShowingDeleteFriendConfirmationModal?: React.Dispatch<
+    React.SetStateAction<boolean>
+  >;
   onClickFunction?: () => void;
   showLoadingSpinnerOnClick?: boolean;
   hoverTooltipText?: string;
@@ -19,6 +22,7 @@ function DangerButton({
   innerText,
   innerTooltipText,
   forFriendsList,
+  setShowingDeleteFriendConfirmationModal,
   showLoadingSpinnerOnClick = false,
   hoverTooltipText,
   width,
@@ -85,6 +89,10 @@ function DangerButton({
 
         if (innerTooltipText && !showTooltip) {
           setShowTooltip(true);
+
+          if (forFriendsList && setShowingDeleteFriendConfirmationModal) {
+            setShowingDeleteFriendConfirmationModal(true);
+          }
         } else if (innerTooltipText === undefined) {
           onClickFunction?.();
         }
@@ -107,7 +115,7 @@ function DangerButton({
               borderColor: "hsl(0, 84%, 50%)",
               color: "hsl(0, 84%, 50%)",
               top: forFriendsList ? "50px" : "32px",
-              left: forFriendsList ? "-78px" : "-60px",
+              left: forFriendsList ? "-141px" : "-60px",
             }}
             className="baseVertFlex absolute cursor-default gap-2 rounded-md border-2 p-2 shadow-md"
           >
@@ -124,6 +132,12 @@ function DangerButton({
                 onClickFunction={() => {
                   setShowTooltip(false);
                   setHoveringOnButton(false);
+                  if (
+                    forFriendsList &&
+                    setShowingDeleteFriendConfirmationModal
+                  ) {
+                    setShowingDeleteFriendConfirmationModal(false);
+                  }
                 }}
               />
             </div>
@@ -165,7 +179,7 @@ function DangerButton({
           style={{
             position: "absolute",
             top: forFriendsList ? "2.5rem" : "100%",
-            left: "50%",
+            left: forFriendsList ? "-33px" : "50%",
             transform: "translate(-50%, 0.5rem)",
             background: "hsl(0, 84%, 95%)",
             color: "hsl(0, 84%, 40%)",
