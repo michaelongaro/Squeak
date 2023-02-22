@@ -109,6 +109,7 @@ function Card({
       // make sure card is on top, but below shuffling modal while moving over other cards
       cardRef.current.style.zIndex = "998";
       imageRef.current.style.transition = "transform 0.125s linear"; // ease-in-out
+      imageRef.current.style.zIndex = "998";
 
       const currentTransform = imageRef.current.style.transform;
 
@@ -199,6 +200,7 @@ function Card({
         cardRef.current.style.zIndex = "500";
         imageRef.current.style.transition = "none";
         imageRef.current.style.opacity = "0";
+        imageRef.current.style.zIndex = "500";
 
         setTimeout(() => {
           if (!imageRef.current) return;
@@ -226,11 +228,9 @@ function Card({
         callbackFunction?.();
       }, 265);
 
-      // maybe need check to make sure this only happens when it is current user's card
-      // that is being moved
-      if (origin === "deck" && ownerID == userID) {
+      if (origin === "deck" && ownerID === userID) {
         setHoldingADeckCard(false);
-      } else if (origin === "squeak" && ownerID == userID) {
+      } else if (origin === "squeak" && ownerID === userID) {
         setHoldingASqueakCard(false);
       }
     },
@@ -441,7 +441,7 @@ function Card({
         >
           <div
             ref={cardRef}
-            className={`baseFlex relative z-[500] h-full w-full !items-start ${
+            className={`baseFlex relative z-[500] h-full w-full select-none !items-start ${
               draggable && "cursor-grab active:cursor-grabbing"
             }`}
           >
