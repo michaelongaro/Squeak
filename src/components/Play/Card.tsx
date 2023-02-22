@@ -99,7 +99,6 @@ function Card({
       cardIsMovingRef.current = true;
 
       if (origin === "deck" && ownerID) {
-        console.log("on");
         setCardBeingMovedProgramatically({
           ...cardBeingMovedProgramatically,
           [ownerID]: true,
@@ -117,7 +116,7 @@ function Card({
         if (hoveredCell) {
           setProposedCardBoxShadow({
             id: `cell${hoveredCell[0]}${hoveredCell[1]}`,
-            boxShadowValue: `0px 0px 10px 5px rgba(227, 12, 5, 1)`,
+            boxShadowValue: `0px 0px 4px 3px rgba(227, 12, 5, 1)`,
           });
 
           setTimeout(() => {
@@ -126,7 +125,7 @@ function Card({
         } else if (hoveredSqueakStack !== null) {
           setProposedCardBoxShadow({
             id: `${userID}squeakHand${hoveredSqueakStack}`,
-            boxShadowValue: `0px 0px 10px 5px rgba(227, 12, 5, 1)`,
+            boxShadowValue: `0px 0px 4px 3px rgba(227, 12, 5, 1)`,
           });
 
           setTimeout(() => {
@@ -199,9 +198,14 @@ function Card({
         cardRef.current.style.transition = "none";
         cardRef.current.style.zIndex = "500";
         imageRef.current.style.transition = "none";
+        imageRef.current.style.opacity = "0";
+
+        setTimeout(() => {
+          if (!imageRef.current) return;
+          imageRef.current.style.opacity = "1";
+        }, 0);
 
         if (origin === "deck" && ownerID) {
-          console.log("off");
           setCardBeingMovedProgramatically({
             ...cardBeingMovedProgramatically,
             [ownerID]: false,
@@ -220,13 +224,13 @@ function Card({
         cardIsMovingRef.current = false;
 
         callbackFunction?.();
-      }, 280); // should maybe be 250 again?
+      }, 265);
 
       // maybe need check to make sure this only happens when it is current user's card
       // that is being moved
-      if (origin === "deck") {
+      if (origin === "deck" && ownerID == userID) {
         setHoldingADeckCard(false);
-      } else if (origin === "squeak") {
+      } else if (origin === "squeak" && ownerID == userID) {
         setHoldingASqueakCard(false);
       }
     },
@@ -239,7 +243,6 @@ function Card({
       hoveredCell,
       ownerID,
       hoveredSqueakStack,
-      // flipKing,
       setHeldSqueakStackLocation,
       setHoldingADeckCard,
       setHoldingASqueakCard,
@@ -354,8 +357,7 @@ function Card({
       }
     }
 
-    // squeak start + squeak end (I guess you should have a check to make sure you aren't trying to drop a card
-    // on the same stack it came from)
+    // squeak start + squeak end
     else if (
       holdingASqueakCard &&
       hoveredSqueakStack !== null &&
@@ -384,7 +386,7 @@ function Card({
       }
     }
 
-    // dropping card over anywhere else
+    // dropping card over anywhere else on the screen
     else {
       moveCard({ x: 0, y: 0 }, false, false);
     }
