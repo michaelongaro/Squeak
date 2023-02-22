@@ -6,11 +6,8 @@ import { type ICard } from "../utils/generateDeckAndSqueakCards";
 
 interface ICardDropAccepted extends Partial<ICardDropProposal> {
   squeakEndCoords?: {
-    // squeakStack: ICard[];
     offsetHeight: number;
     stackOfCardsMoved?: ICard[];
-    // col: number;
-    // row: number;
   };
   endID: string; // have this here or on main interface?
 }
@@ -108,7 +105,7 @@ function useCardDropApproved({
         if (endLocation) {
           const endX = endLocation.x;
           const endY = squeakEndCoords
-            ? endLocation.y + squeakEndCoords.offsetHeight
+            ? endLocation.y - squeakEndCoords.offsetHeight
             : endLocation.y;
 
           moveCard({ x: endX, y: endY }, false, endID.includes("cell"), () => {
