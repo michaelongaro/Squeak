@@ -59,6 +59,11 @@ export const roomsRouter = router({
             playersInRoom: { lt: 4 },
           },
         });
+
+        if (!room) return "Room not found.";
+
+        if (room.playersInRoom === room.maxPlayers) return "Room is full.";
+
         return room;
       } catch (error) {
         console.log(error);
