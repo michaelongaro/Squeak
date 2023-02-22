@@ -7,15 +7,50 @@ import { type IReceiveFriendData } from "../pages/api/socket";
 function useReceiveFriendData() {
   const { value: userID } = useUserIDContext();
 
-  const { setFriendData } = useRoomContext();
+  const {
+    friendData,
+    setFriendData,
+    newInviteNotification,
+    setNewInviteNotification,
+  } = useRoomContext();
 
   const handleFriendData = useCallback(
-    ({ friendData, playerID }: IReceiveFriendData) => {
+    ({ friendData: newFriendData, playerID }: IReceiveFriendData) => {
       if (playerID === userID) {
-        setFriendData(friendData);
+        if (
+          !newInviteNotification &&
+          friendData?.friendInviteIDs &&
+          newFriendData.friendInviteIDs.length >
+            friendData.friendInviteIDs.length
+        ) {
+          setNewInviteNotification(true);
+
+          if (Notification.permission === "granted") {
+            new Notification("You have a new friend invite");
+          }
+        }
+
+        if (
+          !newInviteNotification &&
+          friendData?.roomInviteIDs &&
+          newFriendData.roomInviteIDs.length > friendData.roomInviteIDs.length
+        ) {
+          setNewInviteNotification(true);
+
+          if (Notification.permission === "granted") {
+            new Notification("You have a new room invite");
+          }
+        }
+        setFriendData(newFriendData);
       }
     },
-    [userID, setFriendData]
+    [
+      userID,
+      friendData,
+      setFriendData,
+      newInviteNotification,
+      setNewInviteNotification,
+    ]
   );
 
   useEffect(() => {
