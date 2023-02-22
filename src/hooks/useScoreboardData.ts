@@ -4,7 +4,8 @@ import { socket } from "../pages";
 import { type IScoreboardMetadata } from "../pages/api/handlers/roundOverHandler";
 
 function useScoreboardData(): Partial<IScoreboardMetadata> | null {
-  const { setGameData, roomConfig } = useRoomContext();
+  const { setGameData, roomConfig, setShowScoreboard, setPlayerIDWhoSqueaked } =
+    useRoomContext();
 
   const [dataFromBackend, setDataFromBackend] =
     useState<IScoreboardMetadata | null>(null);
@@ -27,13 +28,18 @@ function useScoreboardData(): Partial<IScoreboardMetadata> | null {
       const { gameWinnerID, roundWinnerID, gameData, playerRoundDetails } =
         dataFromBackend;
 
-      setScoreboardData({
-        gameWinnerID,
-        roundWinnerID,
-        playerRoundDetails,
-      });
+      setPlayerIDWhoSqueaked(roundWinnerID);
 
-      setGameData(gameData);
+      setTimeout(() => {
+        setShowScoreboard(true);
+        setScoreboardData({
+          gameWinnerID,
+          roundWinnerID,
+          playerRoundDetails,
+        });
+
+        setGameData(gameData);
+      }, 1000); // waiting for pulsing animation to finish
 
       setTimeout(() => {
         socket.emit("resetGame", {
@@ -42,7 +48,13 @@ function useScoreboardData(): Partial<IScoreboardMetadata> | null {
         });
       }, 15000);
     }
-  }, [dataFromBackend, roomConfig, setGameData]);
+  }, [
+    dataFromBackend,
+    roomConfig,
+    setGameData,
+    setPlayerIDWhoSqueaked,
+    setShowScoreboard,
+  ]);
 
   return scoreboardData;
 }
