@@ -49,6 +49,10 @@ function CreateRoom() {
   const createRoomInDatabase = trpc.rooms.createRoom.useMutation();
   const updateRoomInDatabase = trpc.rooms.updateRoomConfig.useMutation();
 
+  const { data: authenticatedUsers } = trpc.users.getUsersFromIDList.useQuery(
+    Object.keys(playerMetadata)
+  );
+
   const [configAndMetadataInitialized, setConfigAndMetadataInitialized] =
     useState<boolean>(false);
   const [showCheckmark, setShowCheckmark] = useState<boolean>(false);
@@ -367,7 +371,12 @@ function CreateRoom() {
                       size={"3rem"}
                       showAddFriendButton={
                         userID !== playerID &&
-                        friendData?.friendIDs?.indexOf(playerID) === -1
+                        friendData?.friendIDs?.indexOf(playerID) === -1 &&
+                        authenticatedUsers
+                          ? authenticatedUsers.findIndex(
+                              (player) => player.id === playerID
+                            ) !== -1
+                          : false
                       }
                       showRemovePlayerFromRoomButton={userID !== playerID}
                     />

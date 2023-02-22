@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { trpc } from "../../utils/trpc";
 import { socket } from "../../pages";
 import { useRoomContext } from "../../context/RoomContext";
@@ -15,6 +15,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import PublicRooms from "./PublicRooms";
 import Filter from "bad-words";
 import { useSession } from "next-auth/react";
+import { type Room } from "@prisma/client";
 
 const filter = new Filter();
 
@@ -40,8 +41,20 @@ function JoinRoom() {
   const [focusedInInput, setFocusedInInput] = useState<boolean>(false);
   const [usernameIsProfane, setUsernameIsProfane] = useState<boolean>(false);
 
-  const { data: receivedRoomConfig } =
-    trpc.rooms.findRoomByCode.useQuery(submittedRoomCode);
+  const [room, setRoom] = useState<Room | null>(null);
+  const [roomError, setRoomError] = useState<string | null>(null);
+  const [showAnimation, setShowAnimation] = useState<boolean>(false);
+
+  const { data: queriedRoom } = trpc.rooms.findRoomByCode.useQuery(
+    submittedRoomCode,
+    {
+      refetchOnWindowFocus: false,
+    }
+  );
+
+  const { data: authenticatedUsers } = trpc.users.getUsersFromIDList.useQuery(
+    Object.keys(playerMetadata)
+  );
 
   const joinRoom = useCallback(() => {
     socket.emit("joinRoom", {
@@ -50,31 +63,48 @@ function JoinRoom() {
       playerMetadata: playerMetadata[userID],
     });
 
-    if (!receivedRoomConfig || status !== "authenticated") return;
+    if (
+      !queriedRoom ||
+      typeof queriedRoom === "string" ||
+      status !== "authenticated"
+    )
+      return;
 
     socket.emit("modifyFriendData", {
       action: "joinRoom",
       initiatorID: userID,
       roomCode: roomCode,
-      currentRoomIsPublic: receivedRoomConfig.isPublic,
+      currentRoomIsPublic: queriedRoom.isPublic,
     });
-  }, [roomCode, userID, playerMetadata, receivedRoomConfig, status]);
+  }, [roomCode, userID, playerMetadata, queriedRoom, status]);
+
+  useEffect(() => {
+    if (queriedRoom && typeof queriedRoom !== "string") {
+      setRoom(queriedRoom);
+      setRoomError(null);
+    } else if (typeof queriedRoom === "string") {
+      setRoomError(queriedRoom);
+      setShowAnimation(true);
+    }
+  }, [queriedRoom]);
 
   useEffect(() => {
     // rough way to check whether context data has been initialized
-    if (receivedRoomConfig && !connectedToRoom) {
-      setRoomConfig(receivedRoomConfig);
+    if (room && !connectedToRoom) {
+      console.log("hopefully second");
+
+      setRoomConfig(room);
       setSubmittedRoomCode("");
       joinRoom();
       setConnectedToRoom(true);
+
+      // reset room data once connected to room
+      setRoomCode("");
+      setSubmittedRoomCode("");
+      setRoom(null);
+      setRoomError(null);
     }
-  }, [
-    connectedToRoom,
-    setConnectedToRoom,
-    joinRoom,
-    setRoomConfig,
-    receivedRoomConfig,
-  ]);
+  }, [connectedToRoom, setConnectedToRoom, joinRoom, setRoomConfig, room]);
 
   useEffect(() => {
     socket.on("playerMetadataUpdated", (newUsers) =>
@@ -209,18 +239,55 @@ function JoinRoom() {
               </div>
             </div>
 
-            <PrimaryButton
-              innerText={"Join"}
-              disabled={
-                playerMetadata[userID]?.username.length === 0 ||
-                roomCode.length === 0 ||
-                usernameIsProfane
-              }
-              width={"20rem"}
-              height={"4rem"}
-              onClickFunction={() => setSubmittedRoomCode(roomCode)}
-              showLoadingSpinnerOnClick={true}
-            />
+            <div
+              style={{
+                animation: showAnimation
+                  ? "errorAnimation 0.55s linear"
+                  : "none",
+              }}
+              className="baseFlex relative h-full w-full"
+              onAnimationEnd={() => {
+                setShowAnimation(false);
+                setTimeout(() => {
+                  setRoomError(null);
+                }, 1000);
+              }}
+            >
+              <PrimaryButton
+                innerText={"Join"}
+                disabled={
+                  playerMetadata[userID]?.username.length === 0 ||
+                  roomCode.length === 0 ||
+                  usernameIsProfane
+                }
+                width={"20rem"}
+                height={"4rem"}
+                onClickFunction={() => setSubmittedRoomCode(roomCode)}
+                showLoadingSpinnerOnClick={true}
+              />
+
+              <AnimatePresence
+                initial={false}
+                mode={"wait"}
+                onExitComplete={() => null}
+              >
+                {roomError && (
+                  <motion.div
+                    key={"joinRoomError"}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.15 }}
+                    style={{
+                      color: "hsl(120deg 100% 86%)",
+                    }}
+                    className="pointer-events-none absolute right-[-20px] rounded-md border-2 border-white bg-green-800 p-4 shadow-md transition-all"
+                  >
+                    {roomError}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
 
             <PublicRooms />
           </>
@@ -287,7 +354,12 @@ function JoinRoom() {
                       playerID={playerID}
                       showAddFriendButton={
                         userID !== playerID &&
-                        friendData?.friendIDs?.indexOf(playerID) === -1
+                        friendData?.friendIDs?.indexOf(playerID) === -1 &&
+                        authenticatedUsers
+                          ? authenticatedUsers.findIndex(
+                              (player) => player.id === playerID
+                            ) !== -1
+                          : false
                       }
                       username={playerMetadata[playerID]?.username}
                       size={"3rem"}
