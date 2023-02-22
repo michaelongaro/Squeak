@@ -87,6 +87,9 @@ function OtherPlayersCardContainers({
       for (const index in otherPlayerIDs) {
         if (soundPlayStates.otherPlayers[otherPlayerIDs[index]!]) {
           audioRefs[index]!.current!.volume = currentVolume * 0.01;
+          // restarting audio from beginning if it's already playing
+          audioRefs[index]!.current!.pause();
+          audioRefs[index]!.current!.currentTime = 0;
           audioRefs[index]!.current!.play();
 
           setSoundPlayStates({
@@ -186,6 +189,8 @@ function OtherPlayersCardContainers({
                 // @ts-expect-error asdf
                 className={`${cardClassMap[cardsIdx]} relative h-[64px] w-[48px] tall:h-[87px] tall:w-[67px]`}
               >
+                {/* maybe the offsetHeight issue that you were having is related to above being confined 
+              but below being full height? hmm */}
                 <div
                   id={`${playerID}squeakHand${cardsIdx}`}
                   style={{
@@ -193,7 +198,7 @@ function OtherPlayersCardContainers({
                       cards.length === 1
                         ? `${cardDimensions.height}px`
                         : `${
-                            (cards.length - 1) * (15 - cardsIdx) +
+                            (cards.length - 1) * (20 - cardsIdx) +
                             cardDimensions.height
                           }px`,
                   }}
@@ -205,7 +210,7 @@ function OtherPlayersCardContainers({
                       id={`${playerID}squeakStack${cardsIdx}${cardIdx}`}
                       className={`absolute left-0 h-full w-full`}
                       style={{
-                        top: `${(15 - cards.length) * cardIdx}px`,
+                        top: `${(20 - cards.length) * cardIdx}px`,
                       }}
                     >
                       <Card
