@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import CountUp from "react-countup";
 import { socket } from "../../../pages";
 import { useRoomContext } from "../../../context/RoomContext";
@@ -31,9 +31,10 @@ interface IPlayerColorVariants {
 }
 
 function Scoreboard() {
-  const { roomConfig, showScoreboard, playerMetadata } = useRoomContext();
+  const { roomConfig, showScoreboard, playerMetadata, currentVolume } =
+    useRoomContext();
 
-  // const scoreboardData = useScoreboardData();
+  const scoreboardData = useScoreboardData();
 
   const [showNewRankings, setShowNewRankings] = useState<boolean>(false);
   const [showWinningPlayerMessage, setShowWinningPlayerMessage] =
@@ -52,12 +53,18 @@ function Scoreboard() {
   const [playerColorVariants, setPlayerColorVariants] =
     useState<IPlayerColorVariants>({});
 
-  // delete after testing
-  const [onlyDoThisOnce, setOnlyDoThisOnce] = useState<boolean>(false);
+  const confettiPopRef = useRef<HTMLAudioElement>(null);
+
+  // // delete after testing
+  // const [onlyDoThisOnce, setOnlyDoThisOnce] = useState<boolean>(false);
 
   useEffect(() => {
-    if (showScoreboard && !onlyDoThisOnce && roomConfig.code) {
-      setOnlyDoThisOnce(true);
+    if (
+      showScoreboard &&
+      // !onlyDoThisOnce &&
+      roomConfig.code
+    ) {
+      // setOnlyDoThisOnce(true);
 
       setTimeout(() => {
         setAnimateCardsPlayedValue(true);
@@ -81,6 +88,13 @@ function Scoreboard() {
 
       setTimeout(() => {
         setShowConfetti(true);
+
+        if (confettiPopRef.current) {
+          confettiPopRef.current.volume = currentVolume * 0.01;
+          confettiPopRef.current.pause();
+          confettiPopRef.current.currentTime = 0.15;
+          confettiPopRef.current.play();
+        }
 
         confetti(
           Object.assign(
@@ -120,11 +134,11 @@ function Scoreboard() {
 
         setTimeout(() => {
           setCountdownTimerValue(2);
-        }, 2000);
+        }, 1000);
 
         setTimeout(() => {
           setCountdownTimerValue(1);
-        }, 3000);
+        }, 2000);
       }, 9000);
 
       // delete this later
@@ -135,114 +149,119 @@ function Scoreboard() {
       //   });
       // }, 15000);
     }
-  }, [showScoreboard, roomConfig.code, onlyDoThisOnce]);
+  }, [
+    showScoreboard,
+    roomConfig.code,
+    currentVolume,
+    //  onlyDoThisOnce
+  ]);
 
-  const scoreboardData: Partial<IScoreboardMetadata> | null = {
-    gameWinnerID: null,
-    roundWinnerID: "cldk02mcr0000ul6k95niugk9",
-    playerRoundDetails: [
-      {
-        playerID: "cldk02mcr0000ul6k95niugk9",
-        oldScore: 10,
-        newScore: 25,
-        oldRanking: 1,
-        newRanking: 2,
-        cardsPlayed: [
-          {
-            suit: "H",
-            value: "A",
-          },
-          {
-            suit: "H",
-            value: "A",
-          },
-          {
-            suit: "H",
-            value: "A",
-          },
-          {
-            suit: "H",
-            value: "A",
-          },
-          {
-            suit: "H",
-            value: "A",
-          },
-          {
-            suit: "H",
-            value: "A",
-          },
-          {
-            suit: "H",
-            value: "A",
-          },
-          {
-            suit: "H",
-            value: "A",
-          },
-          {
-            suit: "H",
-            value: "A",
-          },
-          {
-            suit: "H",
-            value: "A",
-          },
-          {
-            suit: "H",
-            value: "A",
-          },
-          {
-            suit: "H",
-            value: "A",
-          },
-          {
-            suit: "H",
-            value: "A",
-          },
-        ],
-        squeakModifier: 10,
-      },
-      {
-        playerID: "8ea9ee59061148a0",
-        oldScore: 15,
-        newScore: 2,
-        oldRanking: 1,
-        newRanking: 3,
-        cardsPlayed: [
-          {
-            suit: "H",
-            value: "A",
-          },
-          {
-            suit: "H",
-            value: "A",
-          },
-          {
-            suit: "H",
-            value: "A",
-          },
-          {
-            suit: "H",
-            value: "A",
-          },
-          {
-            suit: "H",
-            value: "A",
-          },
-          {
-            suit: "H",
-            value: "A",
-          },
-          {
-            suit: "H",
-            value: "A",
-          },
-        ],
-        squeakModifier: -5,
-      },
-    ],
-  };
+  // const scoreboardData: Partial<IScoreboardMetadata> | null = {
+  //   gameWinnerID: null,
+  //   roundWinnerID: "cldk02mcr0000ul6k95niugk9",
+  //   playerRoundDetails: [
+  //     {
+  //       playerID: "cldk02mcr0000ul6k95niugk9",
+  //       oldScore: 10,
+  //       newScore: 25,
+  //       oldRanking: 1,
+  //       newRanking: 2,
+  //       cardsPlayed: [
+  //         {
+  //           suit: "H",
+  //           value: "A",
+  //         },
+  //         {
+  //           suit: "H",
+  //           value: "A",
+  //         },
+  //         {
+  //           suit: "H",
+  //           value: "A",
+  //         },
+  //         {
+  //           suit: "H",
+  //           value: "A",
+  //         },
+  //         {
+  //           suit: "H",
+  //           value: "A",
+  //         },
+  //         {
+  //           suit: "H",
+  //           value: "A",
+  //         },
+  //         {
+  //           suit: "H",
+  //           value: "A",
+  //         },
+  //         {
+  //           suit: "H",
+  //           value: "A",
+  //         },
+  //         {
+  //           suit: "H",
+  //           value: "A",
+  //         },
+  //         {
+  //           suit: "H",
+  //           value: "A",
+  //         },
+  //         {
+  //           suit: "H",
+  //           value: "A",
+  //         },
+  //         {
+  //           suit: "H",
+  //           value: "A",
+  //         },
+  //         {
+  //           suit: "H",
+  //           value: "A",
+  //         },
+  //       ],
+  //       squeakModifier: 10,
+  //     },
+  //     {
+  //       playerID: "cle3ogdkv0000ulbopywfks8n",
+  //       oldScore: 15,
+  //       newScore: 2,
+  //       oldRanking: 1,
+  //       newRanking: 3,
+  //       cardsPlayed: [
+  //         {
+  //           suit: "H",
+  //           value: "A",
+  //         },
+  //         {
+  //           suit: "H",
+  //           value: "A",
+  //         },
+  //         {
+  //           suit: "H",
+  //           value: "A",
+  //         },
+  //         {
+  //           suit: "H",
+  //           value: "A",
+  //         },
+  //         {
+  //           suit: "H",
+  //           value: "A",
+  //         },
+  //         {
+  //           suit: "H",
+  //           value: "A",
+  //         },
+  //         {
+  //           suit: "H",
+  //           value: "A",
+  //         },
+  //       ],
+  //       squeakModifier: -5,
+  //     },
+  //   ],
+  // };
 
   useEffect(() => {
     if (Object.keys(playerColorVariants).length !== 0) return;
@@ -281,8 +300,9 @@ function Scoreboard() {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.15 }}
-      className="baseFlex absolute top-0 left-0 z-[600] h-full w-full bg-black bg-opacity-60 transition-all"
+      className="baseFlex absolute top-0 left-0 z-[999] h-full w-full bg-black bg-opacity-60 transition-all"
     >
+      <audio ref={confettiPopRef} src="/sounds/confettiPop.wav" />
       <div
         style={{
           color: "hsl(120deg 100% 86%)",
@@ -370,7 +390,7 @@ function Scoreboard() {
                                 ? player.cardsPlayed.length
                                 : 0
                             }
-                            duration={1500}
+                            duration={animateCardsPlayedValue ? 1500 : 0}
                             hasComma={true}
                             size={18}
                           />
@@ -394,7 +414,7 @@ function Scoreboard() {
                                 ? player.squeakModifier
                                 : 0
                             }
-                            duration={1500}
+                            duration={animateSqueakModifierValue ? 1500 : 0}
                             hasComma={true}
                             size={18}
                           />
@@ -408,7 +428,7 @@ function Scoreboard() {
                               ? player.oldScore
                               : player.newScore
                           }
-                          duration={1500}
+                          duration={animateTotalValue ? 1500 : 0}
                           hasComma={true}
                           size={20}
                         />
@@ -518,7 +538,7 @@ function Scoreboard() {
 
               <AnimatedNumber
                 value={countdownTimerValue}
-                duration={1500}
+                duration={1000}
                 hasComma={true}
                 size={20}
               />
