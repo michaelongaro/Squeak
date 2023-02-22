@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { socket } from "../../pages";
 import { FiMail } from "react-icons/fi";
 import { FaUserFriends } from "react-icons/fa";
@@ -30,6 +31,7 @@ function FriendsList() {
     roomConfig,
     playerMetadata,
   } = useRoomContext();
+  const { newInviteNotification, setNewInviteNotification } = useRoomContext();
   const { value: userID } = useUserIDContext();
 
   const { data: friends } = trpc.users.getUsersFromIDList.useQuery(
@@ -42,6 +44,17 @@ function FriendsList() {
     friendData.roomInviteIDs
   );
 
+  const [
+    showingDeleteFriendConfirmationModal,
+    setShowingDeleteFriendConfirmationModal,
+  ] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (newInviteNotification) {
+      setNewInviteNotification(false);
+    }
+  }, [newInviteNotification, setNewInviteNotification]);
+
   return (
     <motion.div
       key={"friendsListModal"}
@@ -49,7 +62,7 @@ function FriendsList() {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.15 }}
-      className="baseVertFlex absolute right-0 top-16 w-[430px] !items-start gap-2 rounded-md border-2 border-white bg-green-800 p-4"
+      className="baseVertFlex absolute right-0 top-16 w-[370px] !items-start gap-2 rounded-md border-2 border-white bg-green-800 p-4"
     >
       <div className="baseVertFlex max-h-48 w-full !items-start gap-2">
         <div
@@ -218,7 +231,15 @@ function FriendsList() {
         </div>
         {friends ? (
           // extra padding bottom so that scrollbar doesn't show unless needed
-          <div className="flex w-full flex-col items-start justify-start gap-4 overflow-auto p-2 pb-[3.1rem] ">
+          <div
+            style={{
+              paddingBottom:
+                showingDeleteFriendConfirmationModal && friends.length > 0
+                  ? "7rem"
+                  : "3.1rem",
+            }}
+            className="flex w-full flex-col items-start justify-start gap-4 overflow-auto p-2  "
+          >
             {friends.map((friend, index) => (
               <div
                 key={friend.id}
@@ -316,6 +337,9 @@ function FriendsList() {
                     innerTooltipText="Remove friend?"
                     hoverTooltipText="Remove friend"
                     forFriendsList={true}
+                    setShowingDeleteFriendConfirmationModal={
+                      setShowingDeleteFriendConfirmationModal
+                    }
                     onClickFunction={() =>
                       socket.emit("modifyFriendData", {
                         action: "removeFriend",
