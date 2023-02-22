@@ -8,6 +8,7 @@ import AnimatedCardContainer from "./AnimatedCardContainer";
 import PlayerIcon from "../../playerIcons/PlayerIcon";
 import AnimatedNumber from "react-awesome-animated-number";
 import confetti from "canvas-confetti";
+import { motion } from "framer-motion";
 
 interface IRanking {
   [key: number]: string;
@@ -274,11 +275,12 @@ function Scoreboard() {
   // the opacity/pointer events of main modal be 0/none for a few seconds while squeak animation is playing
 
   return (
-    <div
-      style={{
-        opacity: showScoreboard ? 1 : 0,
-        pointerEvents: showScoreboard ? "auto" : "none",
-      }}
+    <motion.div
+      key={"shufflingCountdownModal"}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.15 }}
       className="baseFlex absolute top-0 left-0 z-[600] h-full w-full bg-black bg-opacity-60 transition-all"
     >
       <div
@@ -524,7 +526,7 @@ function Scoreboard() {
           </div>
         )}
       </div>
-    </div>
+    </motion.div>
   );
 }
 
