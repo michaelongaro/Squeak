@@ -75,7 +75,10 @@ function Play() {
       exit={{ opacity: 0 }}
       transition={{ duration: 0.15 }}
     >
-      <div className={`${classes.fullBoardGrid} relative z-[999]`}>
+      <div
+        id={"playContainer"}
+        className={`${classes.fullBoardGrid} relative z-[999]`}
+      >
         {gameStarted && (
           <>
             <OtherPlayersCardContainers
