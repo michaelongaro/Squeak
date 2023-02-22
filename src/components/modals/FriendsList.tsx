@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { socket } from "../../pages";
 import { FiMail } from "react-icons/fi";
 import { FaUserFriends } from "react-icons/fa";
@@ -43,12 +42,6 @@ function FriendsList() {
     friendData.roomInviteIDs
   );
 
-  // needed to expand container since I couldn't make tooltips stay on top of the parent
-  // container when visible.
-  const [paddingBottomPerFriend, setPaddingBottomPerFriend] = useState<{
-    [playerID: string]: string;
-  }>({});
-
   return (
     <motion.div
       key={"friendsListModal"}
@@ -78,7 +71,12 @@ function FriendsList() {
           </div>
         </div>
         {friendInviteIDs ? (
-          <div className="flex w-full items-start justify-start gap-4 overflow-auto p-2">
+          <div
+            style={{
+              padding: friendInviteIDs.length > 0 ? "0.5rem" : "0",
+            }}
+            className="flex w-full items-start justify-start gap-4 overflow-auto"
+          >
             {friendInviteIDs.map((friend, index) => (
               <div
                 key={friend.id}
@@ -99,7 +97,7 @@ function FriendsList() {
                     <div className="text-sm opacity-80">friend invite</div>
                   </div>
                 </div>
-                <div className="baseFlex gap-2">
+                <div className="baseFlex gap-[0.75rem]">
                   <SecondaryButton
                     icon={<AiOutlineCheck size={"1.5rem"} />}
                     extraPadding={false}
@@ -121,7 +119,6 @@ function FriendsList() {
                         targetID: friend.id,
                       })
                     }
-                    // not sure why icon doesn't show (setting flex-shrink: 0; on svg fixes* it)
                     style={customButtonStyles}
                   />
                 </div>
@@ -164,7 +161,7 @@ function FriendsList() {
                   <div className="text-sm opacity-80">room invite</div>
                 </div>
               </div>
-              <div className="baseFlex gap-2">
+              <div className="baseFlex gap-[0.75rem]">
                 <SecondaryButton
                   icon={<AiOutlineCheck size={"1.5rem"} />}
                   extraPadding={false}
@@ -185,6 +182,7 @@ function FriendsList() {
                     socket.emit("modifyFriendData", {
                       action: "declineRoomInvite",
                       initiatorID: userID,
+                      targetID: friend.id,
                     })
                   }
                   style={customButtonStyles}
@@ -219,13 +217,13 @@ function FriendsList() {
           </div>
         </div>
         {friends ? (
-          <div className="flex w-full flex-col items-start justify-start gap-4 overflow-auto p-2 ">
+          // extra padding bottom so that scrollbar doesn't show unless needed
+          <div className="flex w-full flex-col items-start justify-start gap-4 overflow-auto p-2 pb-[3.1rem] ">
             {friends.map((friend, index) => (
               <div
                 key={friend.id}
                 style={{
                   zIndex: friends.length - index,
-                  paddingBottom: paddingBottomPerFriend[friend.id],
                 }}
                 className="baseFlex gap-2 transition-all"
               >
@@ -248,21 +246,7 @@ function FriendsList() {
                     )}
                   </div>
                 </div>
-                <div
-                  className="baseFlex gap-2"
-                  onMouseEnter={() =>
-                    setPaddingBottomPerFriend({
-                      ...paddingBottomPerFriend,
-                      [friend.id]: "7rem",
-                    })
-                  }
-                  onMouseLeave={() =>
-                    setPaddingBottomPerFriend({
-                      ...paddingBottomPerFriend,
-                      [friend.id]: "0.5rem",
-                    })
-                  }
-                >
+                <div className="baseFlex gap-2">
                   <SecondaryButton
                     icon={<BiMailSend size={"1.5rem"} />}
                     extraPadding={false}
@@ -275,6 +259,7 @@ function FriendsList() {
                     hoverTooltipText={"Send room invite"}
                     hoverTooltipTextPosition={"bottom"}
                     postClickTooltipText={"Invite sent!"}
+                    hoverTooltipTextTop={"2.5rem"}
                     onClickFunction={() =>
                       socket.emit("modifyFriendData", {
                         action: "sendRoomInvite",
@@ -296,6 +281,7 @@ function FriendsList() {
                     }
                     hoverTooltipText={"Join room"}
                     hoverTooltipTextPosition={"bottom"}
+                    hoverTooltipTextTop={"2.5rem"}
                     onClickFunction={() => {
                       if (connectedToRoom) {
                         socket.emit("leaveRoom", {
@@ -307,7 +293,7 @@ function FriendsList() {
                       setPageToRender("joinRoom");
 
                       socket.emit("modifyFriendData", {
-                        action: "joinRoom", // think about this one (run through what might go wrong interaction-wise)
+                        action: "joinRoom",
                         initiatorID: userID,
                         roomCode: friend.roomCode,
                         currentRoomIsPublic: friend.currentRoomIsPublic,
@@ -323,6 +309,7 @@ function FriendsList() {
                     }}
                     style={customButtonStyles}
                   />
+
                   <DangerButton
                     icon={<FaTrashAlt size={"1.25rem"} />}
                     innerText="Confirm"
