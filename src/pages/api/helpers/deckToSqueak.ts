@@ -53,7 +53,7 @@ export function deckToSqueak({
   io.in(roomCode).emit("cardDropApproved", {
     card,
     squeakEndCoords: {
-      offsetHeight: indexWithinSqueakStack * (15 - squeakStackLength),
+      offsetHeight: indexWithinSqueakStack * (20 - squeakStackLength),
     },
     endID: `${playerID}squeakHand${squeakEndLocation}`,
     updatedBoard: gameData[roomCode]?.board, // ideally shouldn't have to send this
