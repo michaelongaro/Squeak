@@ -6,7 +6,6 @@ import useReceiveFriendData from "../hooks/useReceiveFriendData";
 import useInitializeUserStats from "../hooks/useInitializeUserStats";
 
 export const socket = io({
-  path: "/api/socket",
   closeOnBeforeunload: false,
 });
 
