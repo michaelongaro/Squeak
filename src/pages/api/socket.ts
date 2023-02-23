@@ -171,7 +171,7 @@ export default function SocketHandler(req, res) {
     return;
   }
 
-  const io = new Server(8080, {
+  const io = new Server(8081, {
     path: "/api/socket",
   });
   res.socket.server.io = io;
