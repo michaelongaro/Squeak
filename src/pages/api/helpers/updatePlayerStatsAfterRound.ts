@@ -2,6 +2,9 @@ import {
   type IPlayerRankings,
   type IPlayerRoundDetails,
 } from "../handlers/roundOverHandler";
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
 
 interface IUpdatePlayerStatsAfterRound {
   roundWinnerID: string;

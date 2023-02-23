@@ -1,5 +1,8 @@
 import { type Server, type Socket } from "socket.io";
 import { type IFriendsData, type IModifyFriendData } from "../socket";
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
 
 export function modifyFriendDataHandler(
   io: Server,
