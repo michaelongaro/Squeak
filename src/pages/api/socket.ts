@@ -172,7 +172,9 @@ export default function SocketHandler(req, res) {
   }
 
   //8081
-  const io = new Server(res.socket.server);
+  const io = new Server(res.socket.server, {
+    path: "/api/socket",
+  });
   res.socket.server.io = io;
 
   const onConnection = (socket: Socket) => {
