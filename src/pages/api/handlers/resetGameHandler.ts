@@ -4,6 +4,7 @@ import {
   type IMoveBackToLobby,
   type IGameData,
   type IRoomData,
+  type IMiscRoomData,
 } from "../socket";
 
 interface IResetGame {
@@ -16,11 +17,17 @@ export function resetGameHandler(
   socket: Socket,
   gameData: IGameData,
   roomData: IRoomData,
-  gameStuckInterval: NodeJS.Timeout
+  miscRoomData: IMiscRoomData
 ) {
   function resetGame({ gameIsFinished, roomCode }: IResetGame) {
+    const miscRoomDataObj = miscRoomData[roomCode];
+
     if (gameIsFinished) {
-      clearInterval(gameStuckInterval); // pretty sure this is necessary
+      const miscRoomDataObj = miscRoomData[roomCode];
+
+      if (miscRoomDataObj) {
+        clearInterval(miscRoomDataObj.gameStuckInterval);
+      }
 
       const room = roomData[roomCode];
       const game = gameData[roomCode];
@@ -79,7 +86,9 @@ export function resetGameHandler(
 
     game.currentRound = game.currentRound + 1;
 
-    clearInterval(gameStuckInterval);
+    if (miscRoomDataObj) {
+      clearInterval(miscRoomDataObj.gameStuckInterval); // pretty sure this is necessary
+    }
 
     io.in(roomCode).emit("startNewRound", game);
   }

@@ -4,6 +4,7 @@ import {
   type IGameData,
   type IGameMetadata,
   type IRoomData,
+  type IMiscRoomData,
 } from "../socket";
 
 interface ILeaveRoomHandler {
@@ -15,11 +16,13 @@ export function leaveRoomHandler(
   io: Server,
   socket: Socket,
   gameData: IGameData,
-  roomData: IRoomData
+  roomData: IRoomData,
+  miscRoomData: IMiscRoomData
 ) {
   function resetGame({ playerID, roomCode }: ILeaveRoomHandler) {
     const game = gameData[roomCode];
     const room = roomData[roomCode];
+    const miscRoomDataObj = miscRoomData[roomCode];
     const previousHostID = room?.roomConfig.hostUserID;
     let newHostID = "";
 
@@ -30,14 +33,12 @@ export function leaveRoomHandler(
     // per player who called it
     if (!room.players[playerID]) return;
 
-    if (!game) {
-      // remove player from room
-      delete room.players[playerID];
-      room.roomConfig.playersInRoom--;
-      room.roomConfig.hostUserID = Object.keys(room.players)[0] || "";
-      room.roomConfig.hostUsername =
-        Object.values(room.players)[0]?.username || "";
-    }
+    // remove player from room
+    delete room.players[playerID];
+    room.roomConfig.playersInRoom--;
+    room.roomConfig.hostUserID = Object.keys(room.players)[0] || "";
+    room.roomConfig.hostUsername =
+      Object.values(room.players)[0]?.username || "";
 
     if (game) {
       // remove player from game
@@ -60,6 +61,11 @@ export function leaveRoomHandler(
     if (room.roomConfig.playersInRoom === 0) {
       delete roomData[roomCode];
       delete gameData[roomCode];
+
+      if (miscRoomDataObj) {
+        clearInterval(miscRoomDataObj.gameStuckInterval);
+        delete miscRoomData[roomCode];
+      }
     }
 
     const emitData: IPlayerHasLeftRoom = {

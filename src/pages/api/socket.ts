@@ -37,6 +37,15 @@ interface IRoomMetadata {
   players: IRoomPlayersMetadata;
 }
 
+export interface IMiscRoomData {
+  [code: string]: IMiscRoomMetadata;
+}
+
+interface IMiscRoomMetadata {
+  numberOfPlayersReady: number;
+  gameStuckInterval?: NodeJS.Timeout;
+}
+
 export interface IGameData {
   [code: string]: IGameMetadata;
 }
@@ -160,8 +169,10 @@ interface IJoinRoomConfig {
 const roomData: IRoomData = {};
 const gameData: IGameData = {};
 const friendsData: IFriendsData = {};
-let numberOfPlayersReady = 0;
-let gameStuckInterval: ReturnType<typeof setTimeout>;
+const miscRoomData: IMiscRoomData = {};
+// move both below into roomData ? so that they can be separate for each room
+// let numberOfPlayersReady = 0;
+// let gameStuckInterval: ReturnType<typeof setTimeout>;
 
 // @ts-expect-error sdf
 export default function SocketHandler(req, res) {
@@ -189,6 +200,10 @@ export default function SocketHandler(req, res) {
           players: {
             [roomConfig.hostUserID]: playerMetadata,
           },
+        };
+
+        miscRoomData[roomConfig.code] = {
+          numberOfPlayersReady: 0,
         };
 
         io.in(roomConfig.code).emit("roomWasCreated");
@@ -349,18 +364,28 @@ export default function SocketHandler(req, res) {
 
       // start interval that checks + handles if game is stuck
       // (no player has a valid move available)
-      gameStuckInterval = setInterval(() => {
+      const miscRoomDataObj = miscRoomData[roomCode];
+
+      if (!miscRoomDataObj) return;
+
+      miscRoomDataObj.gameStuckInterval = setInterval(() => {
         gameStuckHandler(io, gameData, roomCode);
       }, 15000);
     });
 
     // game logic
     socket.on("playerReadyToReceiveInitGameData", (roomCode) => {
-      numberOfPlayersReady++;
+      const miscRoomDataObj = miscRoomData[roomCode];
+
+      if (!miscRoomDataObj) return;
+      miscRoomDataObj.numberOfPlayersReady++;
 
       const players = roomData[roomCode]?.players;
 
-      if (!players || numberOfPlayersReady !== Object.keys(players).length)
+      if (
+        !players ||
+        miscRoomDataObj.numberOfPlayersReady !== Object.keys(players).length
+      )
         return;
 
       const board = Array.from({ length: 4 }, () =>
@@ -385,17 +410,23 @@ export default function SocketHandler(req, res) {
       };
 
       io.in(roomCode).emit("initGameData", gameData[roomCode]);
-      numberOfPlayersReady = 0;
+      miscRoomDataObj.numberOfPlayersReady = 0;
     });
 
     socket.on("playerFullyReady", (roomCode) => {
-      numberOfPlayersReady++;
+      const miscRoomDataObj = miscRoomData[roomCode];
+
+      if (!miscRoomDataObj) return;
+      miscRoomDataObj.numberOfPlayersReady++;
 
       const players = roomData[roomCode]?.players;
 
-      if (players && numberOfPlayersReady === Object.keys(players).length) {
+      if (
+        players &&
+        miscRoomDataObj.numberOfPlayersReady === Object.keys(players).length
+      ) {
         io.in(roomCode).emit("gameStarted");
-        numberOfPlayersReady = 0;
+        miscRoomDataObj.numberOfPlayersReady = 0;
       }
     });
 
@@ -410,9 +441,9 @@ export default function SocketHandler(req, res) {
 
     roundOverHandler(io, socket, gameData, roomData);
 
-    resetGameHandler(io, socket, gameData, roomData, gameStuckInterval);
+    resetGameHandler(io, socket, gameData, roomData, miscRoomData);
 
-    leaveRoomHandler(io, socket, gameData, roomData);
+    leaveRoomHandler(io, socket, gameData, roomData, miscRoomData);
 
     // friends handlers
     initializeAuthorizedPlayerInFriendsObject(io, socket, friendsData);
