@@ -17,6 +17,7 @@ interface IUseCardDropApproved {
   suit?: string;
   ownerID?: string;
   userID: string | null;
+  rotation: number;
   origin?: "deck" | "squeak";
   moveCard: (
     { x, y }: { x: number; y: number },
@@ -39,6 +40,7 @@ function useCardDropApproved({
   ownerID,
   userID,
   origin,
+  rotation,
   moveCard,
   setCardOffsetPosition,
   setCardHasBeenPlaced,
@@ -103,10 +105,20 @@ function useCardDropApproved({
           .getElementById(endID)
           ?.getBoundingClientRect();
         if (endLocation) {
-          const endX = endLocation.x;
-          const endY = squeakEndCoords
-            ? endLocation.y - squeakEndCoords.offsetHeight
-            : endLocation.y;
+          let endX = endLocation.x;
+          let endY = endLocation.y;
+
+          if (squeakEndCoords?.offsetHeight) {
+            if (rotation === 0) {
+              endY += squeakEndCoords.offsetHeight;
+            } else if (rotation === 90) {
+              endX -= squeakEndCoords.offsetHeight;
+            } else if (rotation === 180) {
+              endY -= squeakEndCoords.offsetHeight;
+            } else if (rotation === 270) {
+              endX += squeakEndCoords.offsetHeight;
+            }
+          }
 
           moveCard({ x: endX, y: endY }, false, endID.includes("cell"), () => {
             setGameData({
