@@ -52,9 +52,7 @@ function Card({
     holdingASqueakCard,
     hoveredSqueakStack,
     originIndexForHeldSqueakCard,
-    resetHeldSqueakStackLocation,
     heldSqueakStackLocation,
-    setResetHeldSqueakStackLocation,
     setProposedCardBoxShadow,
     setHeldSqueakStackLocation,
     setHoldingADeckCard,
@@ -139,7 +137,7 @@ function Card({
         if (squeakStackLocation) {
           setHeldSqueakStackLocation({
             squeakStack: squeakStackLocation,
-            location: { x: 0, y: 0 },
+            location: { x, y },
           });
         }
       } else if (startID) {
@@ -273,6 +271,7 @@ function Card({
     ownerID,
     userID,
     origin,
+    rotation,
     moveCard,
     setCardOffsetPosition,
     setCardHasBeenPlaced,
@@ -392,18 +391,6 @@ function Card({
     }
   }
 
-  useEffect(() => {
-    if (
-      squeakStackLocation &&
-      resetHeldSqueakStackLocation &&
-      resetHeldSqueakStackLocation[0] === squeakStackLocation[0] &&
-      resetHeldSqueakStackLocation[1] < squeakStackLocation[1]
-    ) {
-      moveCard({ x: 0, y: 0 }, false, false);
-      setResetHeldSqueakStackLocation(null);
-    }
-  }, [squeakStackLocation, resetHeldSqueakStackLocation, moveCard]);
-
   function dragHandler(e: DraggableEvent, data: DraggableData) {
     const { x, y } = cardOffsetPosition;
     setCardOffsetPosition({
@@ -441,6 +428,19 @@ function Card({
         >
           <div
             ref={cardRef}
+            style={{
+              transition:
+                squeakStackLocation &&
+                heldSqueakStackLocation &&
+                heldSqueakStackLocation.squeakStack[0] ===
+                  squeakStackLocation[0] &&
+                heldSqueakStackLocation.squeakStack[1] <
+                  squeakStackLocation[1] &&
+                heldSqueakStackLocation.location.x === 0 &&
+                heldSqueakStackLocation.location.y === 0
+                  ? "transform 0.25s linear"
+                  : "none",
+            }}
             className={`baseFlex relative z-[500] h-full w-full select-none !items-start ${
               draggable && "cursor-grab active:cursor-grabbing"
             }`}
