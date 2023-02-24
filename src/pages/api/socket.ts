@@ -419,12 +419,15 @@ export default function SocketHandler(req, res) {
       if (!miscRoomDataObj) return;
       miscRoomDataObj.numberOfPlayersReady++;
 
-      const players = roomData[roomCode]?.players;
+      const room = roomData[roomCode];
 
       if (
-        players &&
-        miscRoomDataObj.numberOfPlayersReady === Object.keys(players).length
+        room &&
+        miscRoomDataObj.numberOfPlayersReady ===
+          Object.keys(room.players).length
       ) {
+        room.roomConfig.gameStarted = true;
+        io.in(roomCode).emit("roomConfigUpdated", room.roomConfig);
         io.in(roomCode).emit("gameStarted");
         miscRoomDataObj.numberOfPlayersReady = 0;
       }
