@@ -130,7 +130,7 @@ function OtherPlayersCardContainers({
           >
             <div
               id={`${playerID}squeakDeck`}
-              className={`${classes.squeakDeck} h-[64px] w-[48px] select-none tall:h-[87px] tall:w-[67px]`}
+              className={`${classes.squeakDeck} baseFlex h-full w-full select-none`}
             >
               {gameData.players[playerID]!.squeakDeck.length > 0 ? (
                 <div className="relative h-full w-full">
@@ -196,7 +196,7 @@ function OtherPlayersCardContainers({
                   id={`${playerID}squeakHand${cardsIdx}`}
                   style={{
                     height:
-                      cards.length === 1
+                      cards.length === 0 || cards.length === 1
                         ? `${cardDimensions.height}px`
                         : `${
                             (cards.length - 1) * (20 - cardsIdx) +
@@ -221,6 +221,11 @@ function OtherPlayersCardContainers({
                         origin={"squeak"}
                         ownerID={playerID}
                         startID={`${playerID}squeakStack${cardsIdx}${cardIdx}`}
+                        // implement this functionality in a refactor later
+                        // squeakStackLocation={[cardsIdx, cardIdx]}
+                        // offsetSqueakStackHeight={
+                        //   cardIdx === 0 ? 0 : (20 - cards.length) * cardIdx
+                        // }
                         rotation={rotationOrder[idx] as number}
                       />
                     </div>

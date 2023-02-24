@@ -186,7 +186,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                       ? 0.35
                       : 1,
                   height:
-                    cards.length === 1
+                    cards.length === 0 || cards.length === 1
                       ? `${cardDimensions.height}px`
                       : `${
                           (cards.length - 1) * (20 - cardsIdx) +
@@ -215,7 +215,6 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                     onMouseUp={() => {
                       setHoldingASqueakCard(false);
                       setOriginIndexForHeldSqueakCard(null);
-                      setResetHeldSqueakStackLocation([cardsIdx, cardIdx]);
                     }}
                   >
                     <Card
@@ -224,6 +223,10 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                       draggable={true}
                       origin={"squeak"}
                       squeakStackLocation={[cardsIdx, cardIdx]}
+                      // implement this functionality in a refactor later
+                      // offsetSqueakStackHeight={
+                      //   cardIdx === 0 ? 0 : (20 - cards.length) * cardIdx
+                      // }
                       ownerID={userID}
                       startID={`${userID}squeakStack${cardsIdx}${cardIdx}`}
                       rotation={0}
