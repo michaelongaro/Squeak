@@ -69,7 +69,7 @@ function Board({ boardClass }: IBoard) {
                   hoveredCell?.[0] === rowIdx &&
                   hoveredCell?.[1] === colIdx &&
                   (holdingADeckCard || holdingASqueakCard)
-                    ? 0.35 // worst case you leave it like this (was prev 0.75)
+                    ? 0.35
                     : 1,
               }}
               className="baseFlex relative h-[65px] min-h-fit w-[48px] min-w-fit select-none rounded-lg p-1 transition-all tall:h-[95px] tall:w-[70px]"

@@ -183,7 +183,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                   opacity:
                     hoveredSqueakStack === cardsIdx &&
                     (holdingADeckCard || holdingASqueakCard)
-                      ? 0.35 // worst case you leave it like this (was prev 0.75)
+                      ? 0.35
                       : 1,
                   height:
                     cards.length === 1
