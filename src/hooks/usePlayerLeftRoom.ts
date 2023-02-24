@@ -52,7 +52,7 @@ function usePlayerLeftRoom() {
 
       updateRoomInDatabase.mutate(roomConfig);
 
-      if (newHostID === userID) {
+      if (newHostID === userID && !roomConfig.gameStarted) {
         setPageToRender("createRoom");
       }
     }
