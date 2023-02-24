@@ -36,9 +36,6 @@ export function leaveRoomHandler(
     // remove player from room
     delete room.players[playerID];
     room.roomConfig.playersInRoom--;
-    room.roomConfig.hostUserID = Object.keys(room.players)[0] || "";
-    room.roomConfig.hostUsername =
-      Object.values(room.players)[0]?.username || "";
 
     if (game) {
       // remove player from game
@@ -46,15 +43,15 @@ export function leaveRoomHandler(
       game.playerIDsThatLeftMidgame.push(playerID);
     }
 
-    const earliestJoinedPlayerIDInRoom = Object.keys(room.players)[0];
-
     // assign a new host if the host left
-    if (
-      playerID === previousHostID &&
-      room.roomConfig.playersInRoom !== 0 &&
-      earliestJoinedPlayerIDInRoom
-    ) {
-      newHostID = earliestJoinedPlayerIDInRoom;
+    if (playerID === previousHostID && room.roomConfig.playersInRoom !== 0) {
+      room.roomConfig.hostUserID = Object.keys(room.players)[0] || "";
+      room.roomConfig.hostUsername =
+        Object.values(room.players)[0]?.username || "";
+      const earliestJoinedPlayerIDInRoom = Object.keys(room.players)[0];
+      if (earliestJoinedPlayerIDInRoom) {
+        newHostID = earliestJoinedPlayerIDInRoom;
+      }
     }
 
     // if there are no players left in the room, delete the room
