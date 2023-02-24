@@ -20,7 +20,8 @@
 
 .leftInnerGridContainer,
 .rightInnerGridContainer {
-  min-width: min-content;
+  /* was min-content before, but seems to work better at least on tall devices at max-content */
+  min-width: max-content;
 }
 
 @media (max-height: 768px) or (max-width: 1500px) {
