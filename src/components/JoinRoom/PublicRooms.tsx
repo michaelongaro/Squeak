@@ -74,7 +74,7 @@ function PublicRooms() {
               style={{
                 borderColor: "hsl(120deg 100% 86%)",
               }}
-              className="baseVertFlex max-h-[400px] w-full !justify-start rounded-md border-2 "
+              className="baseVertFlex max-h-[400px] w-full !justify-start rounded-md border-2"
             >
               <div
                 style={{
@@ -96,11 +96,11 @@ function PublicRooms() {
                       backgroundColor:
                         hoveredIndex === index
                           ? "hsl(120deg 100% 23%)"
-                          : "hsl(120deg 100% 18%)",
+                          : "hsl(120deg 100% 15%)",
                       color: "hsl(120deg 100% 86%)",
                       borderColor: "hsl(120deg 100% 86%)",
                     }}
-                    className="relative grid w-[600px] grid-cols-3 place-items-center border-b-2 p-4 pr-8 "
+                    className="relative grid w-[600px] grid-cols-3 place-items-center border-b-2 p-4 pr-8"
                     onMouseEnter={() => setHoveredIndex(index)}
                     onMouseLeave={() => setHoveredIndex(-1)}
                   >
