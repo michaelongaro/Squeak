@@ -46,7 +46,8 @@ function UserSettingsAndStatsModal({
   const { data: user } = trpc.users.getUserByID.useQuery(userID);
   const updateUser = trpc.users.updateUser.useMutation({
     onMutate: () => {
-      utils.users.getUserByID.cancel();
+      // relatively sure we are doing this wrong with the "keys" that it is going off of.
+      utils.users.getUserByID.cancel("userData");
       const optimisticUpdate = utils.users.getUserByID.getData("userData");
 
       if (optimisticUpdate) {
@@ -56,7 +57,6 @@ function UserSettingsAndStatsModal({
     },
     onSettled: () => {
       utils.users.getUserByID.invalidate();
-      // setUpdateInProgress(false); // used for showing loading circle next to save button text
     },
   });
 
@@ -100,7 +100,8 @@ function UserSettingsAndStatsModal({
     if (user === undefined || user === null) return;
 
     if (
-      localPlayerMetadata[userID]?.username !== user.username ||
+      (localPlayerMetadata[userID]?.username !== user.username &&
+        localPlayerMetadata[userID]?.username.length !== 0) ||
       localPlayerMetadata[userID]?.avatarPath !== user.avatarPath ||
       localPlayerMetadata[userID]?.color !== user.color ||
       localPlayerMetadata[userID]?.deckHueRotation !== user.deckHueRotation ||
