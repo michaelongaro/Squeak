@@ -83,7 +83,7 @@ function Settings({
           <AnimatePresence>
             {usernameIsProfane && (
               <motion.div
-                key={"joinRoomProfanityWarning"}
+                key={"settingsProfanityWarning"}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}

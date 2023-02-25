@@ -18,7 +18,7 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
 
   return (
     <motion.div
-      key={"leaderboardModal"}
+      key={"tutorialModal"}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}

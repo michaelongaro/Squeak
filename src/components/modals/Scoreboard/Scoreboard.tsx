@@ -295,7 +295,7 @@ function Scoreboard() {
 
   return (
     <motion.div
-      key={"shufflingCountdownModal"}
+      key={"scoreboardModal"}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
