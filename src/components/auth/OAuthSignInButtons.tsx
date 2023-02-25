@@ -28,10 +28,7 @@ function OAuthSignInButtons({ forSignup, setShowModal }: IOAuthSignInButtons) {
       transition={{ duration: 0.15 }}
       className="fixed top-0 left-0 z-[500] flex min-h-[100vh] min-w-[100vw] items-center justify-center bg-black/50 transition-all"
     >
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.15 }}
+      <div
         ref={signInRef}
         className="baseVertFlex relative gap-8 rounded-md border-2 border-white bg-green-800 p-16"
       >
@@ -61,7 +58,7 @@ function OAuthSignInButtons({ forSignup, setShowModal }: IOAuthSignInButtons) {
             right: "0.5rem",
           }}
         />
-      </motion.div>
+      </div>
     </motion.div>
   );
 }
