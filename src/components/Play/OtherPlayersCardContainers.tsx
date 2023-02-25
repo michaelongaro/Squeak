@@ -8,6 +8,7 @@ import { FaRedoAlt } from "react-icons/fa";
 import isEqual from "lodash.isequal";
 import classes from "./OtherPlayersCardContainers.module.css";
 import useRotatePlayerDecks from "../../hooks/useRotatePlayerDecks";
+import Buzzer from "./Buzzer";
 
 interface IOtherPlayersCardContainers {
   orderedClassNames: (string | undefined)[];
@@ -32,10 +33,10 @@ function OtherPlayersCardContainers({
   orderedClassNames,
 }: IOtherPlayersCardContainers) {
   const {
+    roomConfig,
     gameData,
     playerMetadata,
     decksAreBeingRotated,
-    playerIDWhoSqueaked,
     soundPlayStates,
     setSoundPlayStates,
     currentVolume,
@@ -170,19 +171,11 @@ function OtherPlayersCardContainers({
                   </div>
                 </div>
               ) : (
-                <button
-                  style={{
-                    boxShadow:
-                      playerIDWhoSqueaked === playerID
-                        ? "0px 0px 20px 5px rgba(184,184,184,1)"
-                        : "none",
-                    transition: "box-shadow 0.85s ease-in-out",
-                  }}
-                  className="select-none bg-green-300 p-4 transition-colors hover:bg-green-200"
-                  disabled={true}
-                >
-                  Squeak!
-                </button>
+                <Buzzer
+                  playerID={playerID}
+                  roomID={roomConfig.code}
+                  interactive={false}
+                />
               )}
             </div>
 
