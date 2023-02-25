@@ -35,11 +35,6 @@ function ShufflingCountdownModal() {
 
     if (gameData.currentRound !== 1) {
       setTimeout(() => {
-        console.log(
-          "started game from shuffle, currentRound is",
-          gameData.currentRound
-        );
-
         socket.emit("startGame", {
           roomCode: roomConfig.code,
           firstRound: gameData.currentRound === 1,
@@ -50,7 +45,7 @@ function ShufflingCountdownModal() {
     setTimeout(() => {
       setShowShufflingCountdown(false);
       setTimersInitiated(false);
-    }, 3500); // full 4000ms delay felt too long
+    }, 3250); // full 4000ms delay felt too long
   }, [
     gameData.currentRound,
     roomConfig.code,
