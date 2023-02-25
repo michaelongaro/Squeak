@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { socket } from "../../pages";
 import { FiMail } from "react-icons/fi";
 import { FaUserFriends } from "react-icons/fa";
@@ -14,6 +14,7 @@ import { IoEnterOutline } from "react-icons/io5";
 import { useUserIDContext } from "../../context/UserIDContext";
 import DangerButton from "../Buttons/DangerButton";
 import { ImEnter } from "react-icons/im";
+import useOnClickOutside from "../../hooks/useOnClickOutside";
 
 const customButtonStyles = {
   height: "2rem",
@@ -22,7 +23,11 @@ const customButtonStyles = {
   borderRadius: "50%",
 };
 
-function FriendsList() {
+interface IFriendsList {
+  setShowFriendsListModal: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+function FriendsList({ setShowFriendsListModal }: IFriendsList) {
   const {
     friendData,
     setPageToRender,
@@ -49,11 +54,18 @@ function FriendsList() {
     setShowingDeleteFriendConfirmationModal,
   ] = useState<boolean>(false);
 
+  const modalRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     if (newInviteNotification) {
       setNewInviteNotification(false);
     }
   }, [newInviteNotification, setNewInviteNotification]);
+
+  useOnClickOutside({
+    ref: modalRef,
+    setShowModal: setShowFriendsListModal,
+  });
 
   return (
     <motion.div
@@ -62,6 +74,7 @@ function FriendsList() {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.15 }}
+      ref={modalRef}
       className="baseVertFlex absolute right-0 top-16 w-[370px] !items-start gap-2 rounded-md border-2 border-white bg-green-800 p-4"
     >
       <div className="baseVertFlex max-h-48 w-full !items-start gap-2">

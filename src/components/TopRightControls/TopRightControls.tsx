@@ -95,7 +95,9 @@ function TopRightControls({ forPlayScreen }: ITopRightControls) {
             mode={"wait"}
             onExitComplete={() => null}
           >
-            {showFriendsList && <FriendsList />}
+            {showFriendsList && (
+              <FriendsList setShowFriendsListModal={setShowFriendsList} />
+            )}
           </AnimatePresence>
         </div>
       )}
