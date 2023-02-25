@@ -20,8 +20,9 @@ function AudioLevelSlider() {
     const volume = localStorage.getItem("volume");
     if (volume) {
       setValues([parseInt(volume)]);
-      setInitialSetOfVolumeComplete(true);
     }
+
+    setInitialSetOfVolumeComplete(true);
   }, []);
 
   useEffect(() => {
