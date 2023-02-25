@@ -188,7 +188,11 @@ function JoinRoom() {
                   />
                   <div
                     style={{
-                      opacity: focusedInInput ? 1 : 0,
+                      opacity:
+                        focusedInInput ||
+                        playerMetadata[userID]?.username?.length === 0
+                          ? 1
+                          : 0,
                     }}
                     className="absolute top-[-0.25rem] right-1 text-xl text-red-600 transition-all"
                   >
