@@ -148,11 +148,16 @@ function JoinRoom() {
           />
         </div>
 
-        <div className="text-xl text-green-300">
+        <div
+          style={{
+            color: "hsl(120deg 100% 86%)",
+          }}
+          className="text-xl"
+        >
           {`${
             connectedToRoom
               ? `${Object.values(playerMetadata)[0]?.username}'s room`
-              : "Join Room"
+              : "Join room"
           }`}
         </div>
         {!connectedToRoom ? (
