@@ -290,7 +290,13 @@ function CreateRoom() {
                 }
               />
 
-              <div className=" text-green-300">{roomConfig.pointsToWin}</div>
+              <div
+                style={{
+                  color: "hsl(120deg 100% 86%)",
+                }}
+              >
+                {roomConfig.pointsToWin}
+              </div>
 
               <SecondaryButton
                 innerText={"+25"}
@@ -330,7 +336,13 @@ function CreateRoom() {
 
             <label>Room code:</label>
             <div className="baseFlex gap-2">
-              <div className=" text-green-300">{roomConfig.code}</div>
+              <div
+                style={{
+                  color: "hsl(120deg 100% 86%)",
+                }}
+              >
+                {roomConfig.code}
+              </div>
               <SecondaryButton
                 icon={
                   showCheckmark ? (

@@ -54,7 +54,13 @@ function MainOptions() {
                 size={"3rem"}
               />
               {user?.username ? (
-                <div className="text-green-300">{user?.username}</div>
+                <div
+                  style={{
+                    color: "hsl(120, 100%, 86%)",
+                  }}
+                >
+                  {user?.username}
+                </div>
               ) : (
                 <div className="skeletonLoading h-6 w-28 rounded-sm"></div>
               )}
