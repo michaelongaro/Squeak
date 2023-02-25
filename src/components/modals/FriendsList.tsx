@@ -210,7 +210,7 @@ function FriendsList() {
           style={{
             color: "hsl(120deg 100% 86%)",
           }}
-          className="baseFlex mb-4 mt-4 gap-2 border-b-2 border-white text-xl"
+          className="baseFlex mt-4 gap-2 border-b-2 border-white text-xl"
         >
           <FaUserFriends size={"1.5rem"} />
           <div
@@ -236,7 +236,7 @@ function FriendsList() {
               paddingBottom:
                 showingDeleteFriendConfirmationModal && friends.length > 0
                   ? "7rem"
-                  : "3.1rem",
+                  : "3rem",
             }}
             className="flex w-full flex-col items-start justify-start gap-4 overflow-auto p-2  "
           >
@@ -280,7 +280,7 @@ function FriendsList() {
                     hoverTooltipText={"Send room invite"}
                     hoverTooltipTextPosition={"bottom"}
                     postClickTooltipText={"Invite sent!"}
-                    hoverTooltipTextTop={"2.5rem"}
+                    hoverTooltipTextTop={"2.25rem"}
                     onClickFunction={() =>
                       socket.emit("modifyFriendData", {
                         action: "sendRoomInvite",
@@ -302,7 +302,7 @@ function FriendsList() {
                     }
                     hoverTooltipText={"Join room"}
                     hoverTooltipTextPosition={"bottom"}
-                    hoverTooltipTextTop={"2.5rem"}
+                    hoverTooltipTextTop={"2.25rem"}
                     onClickFunction={() => {
                       if (connectedToRoom) {
                         socket.emit("leaveRoom", {

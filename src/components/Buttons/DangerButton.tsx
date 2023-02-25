@@ -178,7 +178,7 @@ function DangerButton({
           //         transform: "translate(-50%, -50%)",
           style={{
             position: "absolute",
-            top: forFriendsList ? "2.5rem" : "100%",
+            top: forFriendsList ? "2.25rem" : "100%",
             left: forFriendsList ? "-33px" : "50%",
             transform: "translate(-50%, 0.5rem)",
             background: "hsl(0, 84%, 95%)",
