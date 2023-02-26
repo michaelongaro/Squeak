@@ -136,9 +136,9 @@ function PublicRooms() {
           ) : (
             <div
               style={{
-                color: "hsl(120deg 100% 18%)",
+                color: "hsl(120deg 100% 86%)",
               }}
-              className="min-w-[658px] text-xl"
+              className="min-w-[658px] text-center text-xl"
             >
               No rooms found. Create one or refresh to find more.
             </div>
