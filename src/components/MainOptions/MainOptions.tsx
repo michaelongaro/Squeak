@@ -17,6 +17,7 @@ import { useUserIDContext } from "../../context/UserIDContext";
 import { trpc } from "../../utils/trpc";
 import { AnimatePresence, motion } from "framer-motion";
 import LeaderboardModal from "../modals/LeaderboardModal";
+import { HiExternalLink } from "react-icons/hi";
 
 function MainOptions() {
   const { data: session, status } = useSession();
@@ -26,6 +27,7 @@ function MainOptions() {
   const { data: user } = trpc.users.getUserByID.useQuery(userID);
   const { setPageToRender } = useRoomContext();
 
+  const [hoveringOnAboutMe, setHoveringOnAboutMe] = useState(false);
   const [showTutorialModal, setShowTutorialModal] = useState(false);
   const [showLeaderboardModal, setShowLeaderboardModal] = useState(false);
 
@@ -104,6 +106,48 @@ function MainOptions() {
           </div>
         </div>
       )}
+
+      <div
+        style={{
+          color: "hsl(120, 100%, 86%)",
+          borderColor: "hsl(120, 100%, 86%)",
+          background: "hsl(120, 100%, 18%)",
+          gap: hoveringOnAboutMe ? "2rem" : "0px",
+          padding: hoveringOnAboutMe ? "0.5rem 1.5rem" : "0.5rem 1rem",
+          transition: "all 0.3s ease-in-out",
+        }}
+        className="baseFlex absolute right-2 bottom-2 gap-2 rounded-full border-2"
+        onMouseEnter={() => setHoveringOnAboutMe(true)}
+        onMouseLeave={() => setHoveringOnAboutMe(false)}
+      >
+        <AnimatePresence initial={false} mode={"wait"}>
+          {hoveringOnAboutMe && (
+            <motion.div
+              key={"aboutMe"}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0, paddingLeft: "0px" }}
+              transition={{ duration: 0.25 }}
+              className="baseFlex gap-2 overflow-hidden"
+            >
+              Made by
+              <a
+                href="https://michaelongaro.com"
+                target="_blank"
+                rel="noreferrer"
+                style={{
+                  borderColor: "hsl(120, 100%, 86%)",
+                }}
+                className="baseFlex gap-2 border-b-2"
+              >
+                Michael Ongaro
+                <HiExternalLink size={"1.5rem"} />
+              </a>
+            </motion.div>
+          )}
+        </AnimatePresence>
+        <div className="select-none text-2xl">i</div>
+      </div>
 
       <AnimatePresence
         initial={false}
