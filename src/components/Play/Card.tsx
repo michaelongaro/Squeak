@@ -160,7 +160,9 @@ function Card({
           y: endYCoordinate,
         });
 
-        if (squeakStackLocation) {
+        // data only valid if card is being moved from a squeak stack and the current user
+        // is the owner of the card being moved
+        if (squeakStackLocation && ownerID === userID) {
           setHeldSqueakStackLocation({
             squeakStack: squeakStackLocation,
             location: { x: endXCoordinate, y: endYCoordinate },
@@ -224,6 +226,10 @@ function Card({
         cardIsMovingRef.current = false;
 
         callbackFunction?.();
+
+        if (squeakStackLocation && ownerID === userID) {
+          setHeldSqueakStackLocation(null);
+        }
       }, 265);
 
       if (origin === "deck" && ownerID === userID) {
