@@ -65,10 +65,6 @@ interface IRoomContext {
   setHeldSqueakStackLocation: React.Dispatch<
     React.SetStateAction<IHeldSqueakStackLocation | null>
   >;
-  resetHeldSqueakStackLocation: [number, number] | null;
-  setResetHeldSqueakStackLocation: React.Dispatch<
-    React.SetStateAction<[number, number] | null>
-  >;
   proposedCardBoxShadow: IProposedCardBoxShadow | null;
   setProposedCardBoxShadow: React.Dispatch<
     React.SetStateAction<IProposedCardBoxShadow | null>
@@ -144,8 +140,6 @@ export function RoomProvider(props: { children: React.ReactNode }) {
 
   const [heldSqueakStackLocation, setHeldSqueakStackLocation] =
     useState<IHeldSqueakStackLocation | null>(null);
-  const [resetHeldSqueakStackLocation, setResetHeldSqueakStackLocation] =
-    useState<[number, number] | null>(null);
 
   const [proposedCardBoxShadow, setProposedCardBoxShadow] =
     useState<IProposedCardBoxShadow | null>(null);
@@ -355,8 +349,6 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     setOriginIndexForHeldSqueakCard,
     heldSqueakStackLocation,
     setHeldSqueakStackLocation,
-    resetHeldSqueakStackLocation,
-    setResetHeldSqueakStackLocation,
     proposedCardBoxShadow,
     setProposedCardBoxShadow,
     decksAreBeingRotated,

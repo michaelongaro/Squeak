@@ -43,7 +43,6 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
     cardBeingMovedProgramatically,
     setOriginIndexForHeldSqueakCard,
     setHoldingASqueakCard,
-    setResetHeldSqueakStackLocation,
     setHoveredSqueakStack,
   } = useRoomContext();
   const { mirrorPlayerContainer } = useRoomContext();
