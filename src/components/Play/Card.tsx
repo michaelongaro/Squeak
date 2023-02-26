@@ -340,7 +340,15 @@ function Card({
 
       const boardCell = gameData?.board?.[row]?.[col] || null;
 
-      if (cardPlacementIsValid(boardCell, value, suit, true)) {
+      // making sure that the card being moved is the bottom card in the stack
+      // since it's not legal to move a card from the middle of a stack to the board
+      if (
+        squeakStackLocation &&
+        squeakStackLocation[1] ===
+          gameData.players[userID]!.squeakHand[squeakStackLocation[0]]!.length -
+            1 &&
+        cardPlacementIsValid(boardCell, value, suit, true)
+      ) {
         socket.emit("proposedCardDrop", {
           card: {
             value,
