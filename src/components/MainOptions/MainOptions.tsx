@@ -113,7 +113,7 @@ function MainOptions() {
           borderColor: "hsl(120, 100%, 86%)",
           background: "hsl(120, 100%, 18%)",
           gap: hoveringOnAboutMe ? "2rem" : "0px",
-          padding: hoveringOnAboutMe ? "0.5rem 1.5rem" : "0.5rem 1rem",
+          padding: hoveringOnAboutMe ? "0.5rem 1.5rem" : "0.5rem 1.25rem",
           transition: "all 0.3s ease-in-out",
         }}
         className="baseFlex absolute right-2 bottom-2 gap-2 rounded-full border-2"
@@ -127,7 +127,7 @@ function MainOptions() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0, paddingLeft: "0px" }}
-              transition={{ duration: 0.25 }}
+              transition={{ duration: 0.27 }}
               className="baseFlex gap-2 overflow-hidden"
             >
               Made by
