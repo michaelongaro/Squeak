@@ -13,23 +13,42 @@ export function drawFromDeckHandler(
     let topCardsInDeck = playerCards?.topCardsInDeck;
     if (!playerCards || !deck || !deckIdx || !topCardsInDeck) return;
 
+    // resets the deck if the player has drawn all the cards
+    if (playerCards.nextTopCardInDeck === null) {
+      // updating the reference to the actual player object
+      playerCards.deckIdx = -1;
+      playerCards.nextTopCardInDeck = deck[2] || null;
+      playerCards.topCardsInDeck = [null, null, null];
+
+      io.in(roomCode).emit("playerDrawnFromDeck", {
+        nextTopCardInDeck: deck[2] || null,
+        resetDeck: true,
+        playerID,
+        updatedBoard: gameData[roomCode]?.board,
+        updatedPlayerCards: gameData[roomCode]?.players,
+      });
+      return;
+    }
+
     // cards are rendered with the last card in the array at the top of stack
-    if (deckIdx + 3 <= deck.length) {
+    if (deckIdx + 3 <= deck.length - 1) {
       topCardsInDeck = [
         deck[deckIdx + 1] || null,
         deck[deckIdx + 2] || null,
         deck[deckIdx + 3] || null,
       ];
 
-      deckIdx + 3 === deck.length ? (deckIdx = -1) : (deckIdx = deckIdx + 3);
+      deckIdx + 3 === deck.length - 1 ? (deckIdx = -1) : (deckIdx += 3);
     } else {
-      if (deckIdx + 2 === deck.length) {
+      // maybe should be comparing to deck.length - 1 for all of these
+
+      if (deckIdx + 2 === deck.length - 1) {
         topCardsInDeck = [
           null,
           deck[deckIdx + 1] || null,
           deck[deckIdx + 2] || null,
         ];
-      } else if (deckIdx + 1 === deck.length) {
+      } else if (deckIdx + 1 === deck.length - 1) {
         topCardsInDeck = [null, null, deck[deckIdx + 1] || null];
       } else {
         topCardsInDeck = [null, null, null];
@@ -40,8 +59,13 @@ export function drawFromDeckHandler(
     const currentTopCardInDeck = playerCards.nextTopCardInDeck;
 
     // updating the reference to the actual player object
-    playerCards.nextTopCardInDeck =
-      deck[deckIdx + 3] ?? deck[deckIdx + 2] ?? deck[deckIdx + 1] ?? null;
+    if (deckIdx === -1) {
+      playerCards.nextTopCardInDeck = null;
+    } else {
+      playerCards.nextTopCardInDeck =
+        deck[deckIdx + 3] ?? deck[deckIdx + 2] ?? deck[deckIdx + 1] ?? null;
+    }
+
     playerCards.deckIdx = deckIdx;
     playerCards.topCardsInDeck = topCardsInDeck;
 
