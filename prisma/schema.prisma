@@ -87,7 +87,7 @@ model User {
   roomInviteIDs   String[] @default([])
 
   online              Boolean  @default(true)
-  status              String   @default("on home screen")
+  status              String   @default("on main menu")
   roomCode            String?
   currentRoomIsPublic Boolean?
   currentRoomIsFull   Boolean?

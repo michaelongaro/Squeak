@@ -310,6 +310,7 @@ function FriendsList({ setShowFriendsListModal }: IFriendsList) {
                       !friend.online ||
                       friend.roomCode === null ||
                       friend.roomCode === roomConfig.code ||
+                      friend.status === "in a game" ||
                       !friend.currentRoomIsPublic ||
                       friend.currentRoomIsFull === true
                     }

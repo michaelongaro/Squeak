@@ -306,7 +306,7 @@ export function modifyFriendDataHandler(
             id: initiatorID,
           },
           data: {
-            status: "on home screen",
+            status: "on main menu",
             roomCode: null,
             currentRoomIsPublic: null,
           },
@@ -331,7 +331,7 @@ export function modifyFriendDataHandler(
           },
           data: {
             online: false,
-            status: "on home screen",
+            status: "on main menu",
             roomCode: null,
             currentRoomIsPublic: null,
           },
