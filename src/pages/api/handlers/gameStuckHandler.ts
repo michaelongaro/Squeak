@@ -4,29 +4,31 @@ import {
   type ICard,
   type IPlayerCards,
 } from "../../../utils/generateDeckAndSqueakCards";
-import { type IGameData } from "../socket";
+import { type IGameData, type IMiscRoomData } from "../socket";
+
+// TODO: move away from .map()s and use regular for loops so you can break out of them
+// when you find a valid card
 
 export function gameStuckHandler(
   io: Server,
+  roomCode: string,
   gameData: IGameData,
-  roomCode: string
+  miscRoomData: IMiscRoomData
 ) {
   console.log("game stuck handler called from interval");
 
-  // on sighting of even *one* valid card, return from function. otherwise, emit game stuck
-
-  // eventually move away from .map()s and use regular for loops so you can break out of them
-  // when you find a valid card
+  // on sighting of even *one* valid move, return from function. otherwise, emit game stuck
 
   let validCardFound = false;
 
   const players = gameData[roomCode]?.players;
+  let rotateDecksCounter = miscRoomData[roomCode]?.rotateDecksCounter;
 
-  if (!players) return;
+  if (!players || rotateDecksCounter === undefined) return;
 
   // for each player:
   Object.keys(players).map((playerID, idx) => {
-    // get all avail cards from their deck that they can access from clicking deck
+    // get all avail cards from their deck that they can access from clicking on their deck
     // .map through and check if any board cell / bottom of any of their four squeak
     // stacks is valid move
 
@@ -41,11 +43,7 @@ export function gameStuckHandler(
       board.map((row) => {
         row.map((cell) => {
           if (cardPlacementIsValid(cell, card.value, card.suit, true)) {
-            // console.log("valid card found, deck -> board");
             validCardFound = true;
-
-            // does not look like these returns are jumping you out of WHOLE function,
-            // just out of the .map?
           }
         });
       });
@@ -57,7 +55,6 @@ export function gameStuckHandler(
           bottomCard &&
           cardPlacementIsValid(bottomCard, card.value, card.suit, false)
         ) {
-          // console.log("valid card found, deck -> squeak");
           validCardFound = true;
         }
       });
@@ -73,28 +70,25 @@ export function gameStuckHandler(
           if (
             cardPlacementIsValid(cell, bottomCard.value, bottomCard.suit, true)
           ) {
-            // console.log("valid card found, squeak -> board");
             validCardFound = true;
           }
         });
       });
     });
 
-    // .map through each squeak stack and see if any indiv. card can be moved to bottom of
-    // any other squeak stack (maybe simpler to store these bottom cards in an array for step 2 and this one?)
-    // (maybe want to limit valid moves to only if it would free up a squeak spot?)
-
+    // .map through each squeak stack and see if any substack can be moved to bottom of
+    // any other squeak stack. Only valid if moving the substack frees up a squeak spot
     player.squeakHand.map((stack, stackIdx) => {
-      stack.map((card) => {
+      stack.map((card, cardIndex) => {
         // need to make sure it is valid on OTHER stacks, not the same stack
         player.squeakHand.map((otherStack, otherStackIdx) => {
           if (stackIdx !== otherStackIdx) {
             const bottomCard = otherStack[otherStack.length - 1];
             if (
               bottomCard &&
-              cardPlacementIsValid(bottomCard, card.value, card.suit, false)
+              cardPlacementIsValid(bottomCard, card.value, card.suit, false) &&
+              cardIndex === 0 // only valid if moving the stack frees up a squeak spot
             ) {
-              // console.log("valid card found, squeak -> squeak");
               validCardFound = true;
             }
           }
@@ -104,6 +98,13 @@ export function gameStuckHandler(
   });
 
   if (validCardFound) return;
+
+  if (rotateDecksCounter === 3) {
+    io.in(roomCode).emit("manuallyResetRound");
+    return;
+  }
+
+  rotateDecksCounter++;
 
   // if no valid card found, rotate all player's decks and emit new game data
   Object.keys(players).map((playerID, idx) => {
@@ -125,7 +126,15 @@ function getReachableCardsFromDeck(player: IPlayerCards): ICard[] {
   const deck = player.deck;
   const availCards: ICard[] = [];
 
-  if (player.deckIdx !== -1 && player.topCardsInDeck.includes(null)) {
+  // if a player has played a card or two from their hand, then we want to include
+  // their currently visible top card because on a fresh runthrough of their deck
+  // from -1 index, they will not be able to access that current top card
+  if (
+    player.deckIdx !== -1 &&
+    player.topCardsInDeck[2] === null &&
+    player.topCardsInDeck[0] !== null
+  ) {
+    // pushes on their currently visible top card
     availCards.push(player.deck[player.deckIdx]!);
   }
 
@@ -133,7 +142,7 @@ function getReachableCardsFromDeck(player: IPlayerCards): ICard[] {
     if (tempIdx + 3 <= deck.length - 1) {
       availCards.push(deck[tempIdx + 3]!);
 
-      tempIdx = tempIdx + 3;
+      tempIdx += 3;
     } else {
       if (tempIdx + 2 === deck.length - 1) {
         availCards.push(deck[tempIdx + 2]!);
@@ -151,6 +160,6 @@ function getReachableCardsFromDeck(player: IPlayerCards): ICard[] {
 
 function rotateDeckByOneCard(deck: ICard[]): ICard[] {
   if (deck.length === 0) return deck;
-  deck.push(deck.shift()!); // deck is never empty, so this should be fine
+  deck.push(deck.shift()!); // deck isn't empty here, so this should be fine
   return deck;
 }
