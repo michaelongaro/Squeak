@@ -18,7 +18,7 @@ interface IUseCardDropApproved {
   ownerID?: string;
   userID: string | null;
   rotation: number;
-  origin?: "deck" | "squeak";
+  origin?: "deck" | "hand" | "squeak";
   moveCard: (
     { x, y }: { x: number; y: number },
     flip: boolean,
@@ -131,7 +131,7 @@ function useCardDropApproved({
               setProposedCardBoxShadow(null);
             }
 
-            if (ownerID !== userID && origin === "deck") {
+            if (ownerID !== userID && origin === "hand") {
               setCardOffsetPosition({ x: 0, y: 0 });
             } else {
               setCardHasBeenPlaced(true);
@@ -173,6 +173,7 @@ function useCardDropApproved({
     ownerID,
     value,
     origin,
+    rotation,
     setCardHasBeenPlaced,
     setCardOffsetPosition,
     userID,

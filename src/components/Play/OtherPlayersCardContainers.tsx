@@ -38,6 +38,7 @@ function OtherPlayersCardContainers({
     playerMetadata,
     decksAreBeingRotated,
     soundPlayStates,
+    cardBeingMovedProgramatically,
     setSoundPlayStates,
     currentVolume,
   } = useRoomContext();
@@ -274,6 +275,7 @@ function OtherPlayersCardContainers({
                         showCardBack={true} // separate state inside overrides this halfway through flip
                         draggable={false}
                         ownerID={playerID}
+                        origin={"deck"}
                         startID={`${playerID}deck`}
                         rotation={rotationOrder[idx] as number}
                       />
@@ -300,7 +302,11 @@ function OtherPlayersCardContainers({
 
             <div
               id={`${playerID}hand`}
-              className={`${classes.playerHand} relative z-[20] h-[64px] w-[48px] select-none tall:h-[87px] tall:w-[67px]`}
+              style={{
+                zIndex:
+                  cardBeingMovedProgramatically[playerID] === true ? 500 : 499,
+              }}
+              className={`${classes.playerHand} relative h-[64px] w-[48px] select-none tall:h-[87px] tall:w-[67px]`}
             >
               <>
                 {gameData.players[playerID]?.topCardsInDeck.map(
@@ -317,7 +323,7 @@ function OtherPlayersCardContainers({
                           value={card?.value}
                           suit={card?.suit}
                           draggable={true}
-                          origin={"deck"}
+                          origin={"hand"}
                           ownerID={playerID}
                           startID={`${playerID}hand`}
                           rotation={rotationOrder[idx] as number}

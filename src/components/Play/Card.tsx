@@ -19,7 +19,7 @@ interface ICardComponent {
   suit?: string;
   showCardBack?: boolean;
   draggable: boolean;
-  origin?: "deck" | "squeak";
+  origin?: "deck" | "hand" | "squeak";
   ownerID?: string;
   startID?: string;
   squeakStackLocation?: [number, number];
@@ -96,7 +96,7 @@ function Card({
 
       cardIsMovingRef.current = true;
 
-      if (origin === "deck" && ownerID) {
+      if (origin !== "deck" && ownerID) {
         setCardBeingMovedProgramatically({
           ...cardBeingMovedProgramatically,
           [ownerID]: true,
@@ -207,7 +207,7 @@ function Card({
           imageRef.current.style.opacity = "1";
         }, 0);
 
-        if (origin === "deck" && ownerID) {
+        if (origin !== "deck" && ownerID) {
           setCardBeingMovedProgramatically({
             ...cardBeingMovedProgramatically,
             [ownerID]: false,

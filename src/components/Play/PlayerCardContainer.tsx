@@ -313,6 +313,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                       showCardBack={true} // separate state inside overrides this halfway through flip
                       draggable={false}
                       ownerID={userID}
+                      origin={"deck"}
                       startID={`${userID}deck`}
                       rotation={0}
                     />
@@ -370,7 +371,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                         value={card?.value}
                         suit={card?.suit}
                         draggable={true}
-                        origin={"deck"}
+                        origin={"hand"}
                         ownerID={userID}
                         startID={`${userID}hand`}
                         rotation={0}
