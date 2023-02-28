@@ -113,10 +113,10 @@ function MainOptions() {
           borderColor: "hsl(120, 100%, 86%)",
           background: "hsl(120, 100%, 18%)",
           gap: hoveringOnAboutMe ? "2rem" : "0px",
-          padding: hoveringOnAboutMe ? "0.5rem 1.5rem" : "0.5rem 1.25rem",
+          padding: "0.25rem 1rem",
           transition: "all 0.3s ease-in-out",
         }}
-        className="baseFlex absolute right-2 bottom-2 gap-2 rounded-full border-2"
+        className="baseFlex absolute right-4 bottom-4 rounded-full border-2"
         onMouseEnter={() => setHoveringOnAboutMe(true)}
         onMouseLeave={() => setHoveringOnAboutMe(false)}
       >
@@ -124,24 +124,27 @@ function MainOptions() {
           {hoveringOnAboutMe && (
             <motion.div
               key={"aboutMe"}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0, paddingLeft: "0px" }}
-              transition={{ duration: 0.27 }}
-              className="baseFlex gap-2 overflow-hidden"
+              // not sure about scale
+              initial={{ opacity: 0, width: 0, scale: 0 }}
+              animate={{ opacity: 1, width: "auto", scale: 1 }}
+              exit={{ opacity: 0, width: 0, scale: 0 }}
+              transition={{
+                duration: 0.27,
+                opacity: { duration: 0.25 },
+                width: { duration: 0.2 },
+                scale: { duration: 0.25 },
+              }}
+              className="baseFlex max-h-[25px] gap-2 overflow-hidden"
             >
               Made by
               <a
                 href="https://michaelongaro.com"
                 target="_blank"
                 rel="noreferrer"
-                style={{
-                  borderColor: "hsl(120, 100%, 86%)",
-                }}
-                className="baseFlex gap-2 border-b-2"
+                className="baseFlex gap-1 underline underline-offset-4"
               >
                 Michael Ongaro
-                <HiExternalLink size={"1.5rem"} />
+                <HiExternalLink size={"1.25rem"} />
               </a>
             </motion.div>
           )}
