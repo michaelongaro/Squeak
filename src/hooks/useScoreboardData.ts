@@ -44,6 +44,7 @@ function useScoreboardData(): Partial<IScoreboardMetadata> | null {
       setTimeout(() => {
         socket.emit("resetGame", {
           roomCode: roomConfig.code,
+          resettingRoundFromExcessiveDeckRotations: false,
           gameIsFinished: gameWinnerID !== null,
         });
       }, 15000);
