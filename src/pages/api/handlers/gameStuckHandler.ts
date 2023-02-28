@@ -99,7 +99,10 @@ export function gameStuckHandler(
 
   if (validCardFound) return;
 
-  if (rotateDecksCounter === 3) {
+  // hard limit on how many times to rotate decks before saying that
+  // the game is fully stuck (necessary cards to progress are inside squeak pile
+  // or inside other squeak stacks)
+  if (rotateDecksCounter === 8) {
     io.in(roomCode).emit("manuallyResetRound");
     return;
   }
