@@ -32,9 +32,6 @@ export function deckToSqueak({
 
   player.deck = player.deck.filter((c) => {
     if (c.value === card.value && c.suit === card.suit) {
-      if (player.deckIdx !== -1) {
-        player.deckIdx--;
-      }
       return false;
     }
 
