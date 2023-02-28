@@ -3,15 +3,17 @@ import { useRoomContext } from "../context/RoomContext";
 import { socket } from "../pages";
 import { type IScoreboardMetadata } from "../pages/api/handlers/roundOverHandler";
 
-function useScoreboardData(): Partial<IScoreboardMetadata> | null {
-  const { setGameData, roomConfig, setShowScoreboard, setPlayerIDWhoSqueaked } =
-    useRoomContext();
+function useScoreboardData() {
+  const {
+    setGameData,
+    roomConfig,
+    setShowScoreboard,
+    setPlayerIDWhoSqueaked,
+    setScoreboardMetadata,
+  } = useRoomContext();
 
   const [dataFromBackend, setDataFromBackend] =
     useState<IScoreboardMetadata | null>(null);
-
-  const [scoreboardData, setScoreboardData] =
-    useState<Partial<IScoreboardMetadata> | null>(null);
 
   useEffect(() => {
     socket.on("scoreboardMetadata", (data) => setDataFromBackend(data));
@@ -32,7 +34,8 @@ function useScoreboardData(): Partial<IScoreboardMetadata> | null {
 
       setTimeout(() => {
         setShowScoreboard(true);
-        setScoreboardData({
+
+        setScoreboardMetadata({
           gameWinnerID,
           roundWinnerID,
           playerRoundDetails,
@@ -47,6 +50,8 @@ function useScoreboardData(): Partial<IScoreboardMetadata> | null {
           resettingRoundFromExcessiveDeckRotations: false,
           gameIsFinished: gameWinnerID !== null,
         });
+
+        setPlayerIDWhoSqueaked(null);
       }, 15000);
     }
   }, [
@@ -54,10 +59,9 @@ function useScoreboardData(): Partial<IScoreboardMetadata> | null {
     roomConfig,
     setGameData,
     setPlayerIDWhoSqueaked,
+    setScoreboardMetadata,
     setShowScoreboard,
   ]);
-
-  return scoreboardData;
 }
 
 export default useScoreboardData;

@@ -31,10 +31,13 @@ interface IPlayerColorVariants {
 }
 
 function Scoreboard() {
-  const { roomConfig, showScoreboard, playerMetadata, currentVolume } =
-    useRoomContext();
-
-  const scoreboardData = useScoreboardData();
+  const {
+    roomConfig,
+    showScoreboard,
+    playerMetadata,
+    currentVolume,
+    scoreboardMetadata,
+  } = useRoomContext();
 
   const [showNewRankings, setShowNewRankings] = useState<boolean>(false);
   const [showWinningPlayerMessage, setShowWinningPlayerMessage] =
@@ -156,7 +159,7 @@ function Scoreboard() {
     //  onlyDoThisOnce
   ]);
 
-  // const scoreboardData: Partial<IScoreboardMetadata> | null = {
+  // const scoreboardMetadata: Partial<IScoreboardMetadata> | null = {
   //   gameWinnerID: null,
   //   roundWinnerID: "cldk02mcr0000ul6k95niugk9",
   //   playerRoundDetails: [
@@ -311,12 +314,12 @@ function Scoreboard() {
         }}
         className="h-[95%] w-[95%] rounded-lg border-2 p-4 shadow-md tall:h-[75%] tall:w-[75%]"
       >
-        {scoreboardData?.playerRoundDetails && (
+        {scoreboardMetadata?.playerRoundDetails && (
           <div className="baseVertFlex h-full gap-2 tall:gap-12">
             <div className="text-2xl">Scoreboard</div>
 
             <div className="baseFlex h-full w-full gap-4">
-              {scoreboardData.playerRoundDetails.map((player) => (
+              {scoreboardMetadata.playerRoundDetails.map((player) => (
                 <div
                   key={player.playerID}
                   className="baseVertFlex h-full w-full shadow-md"
@@ -471,7 +474,7 @@ function Scoreboard() {
                 opacity: showWinningPlayerMessage ? 1 : 0,
                 pointerEvents: showWinningPlayerMessage ? "auto" : "none",
                 backgroundColor:
-                  playerColorVariants[scoreboardData.roundWinnerID!]
+                  playerColorVariants[scoreboardMetadata.roundWinnerID!]
                     ?.baseColor ?? "black",
               }}
               className="baseFlex gap-4 rounded-md p-4 transition-all"
@@ -492,11 +495,11 @@ function Scoreboard() {
               {/* remove "!"s when using actual hook */}
               <PlayerIcon
                 avatarPath={
-                  playerMetadata[scoreboardData.roundWinnerID!]?.avatarPath ??
-                  "/avatars/rabbit.svg"
+                  playerMetadata[scoreboardMetadata.roundWinnerID!]
+                    ?.avatarPath ?? "/avatars/rabbit.svg"
                 }
                 borderColor={
-                  playerMetadata[scoreboardData.roundWinnerID!]?.color ??
+                  playerMetadata[scoreboardMetadata.roundWinnerID!]?.color ??
                   "hsl(352deg, 69%, 61%)"
                 }
                 size={"3rem"}
@@ -504,13 +507,15 @@ function Scoreboard() {
               <div
                 style={{
                   color:
-                    playerColorVariants[scoreboardData.roundWinnerID!]
+                    playerColorVariants[scoreboardMetadata.roundWinnerID!]
                       ?.textColor ?? "black",
                 }}
                 className="text-xl"
               >
-                {playerMetadata[scoreboardData.roundWinnerID!]?.username}
-                {` won the ${scoreboardData.gameWinnerID ? "game" : "round"}!`}
+                {playerMetadata[scoreboardMetadata.roundWinnerID!]?.username}
+                {` won the ${
+                  scoreboardMetadata.gameWinnerID ? "game" : "round"
+                }!`}
               </div>
               {/* right confetti cannon */}
               <img

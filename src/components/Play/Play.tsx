@@ -15,6 +15,7 @@ import { useUserIDContext } from "../../context/UserIDContext";
 import useResetDeckFromCardDraw from "../../hooks/useResetDeckFromCardDraw";
 import ResetRoundModal from "../modals/ResetRoundModal";
 import useManuallyResetRound from "../../hooks/useManuallyResetRound";
+import useScoreboardData from "../../hooks/useScoreboardData";
 
 function Play() {
   const {
@@ -34,6 +35,7 @@ function Play() {
   useReturnToRoomHandler();
   useResetDeckFromCardDraw();
   useManuallyResetRound();
+  useScoreboardData();
 
   useEffect(() => {
     for (const imagePath of cardAssetPaths) {

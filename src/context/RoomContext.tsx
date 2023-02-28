@@ -7,7 +7,7 @@ import {
   type IFriendsMetadata,
 } from "../pages/api/socket";
 import { type IGameMetadata } from "../pages/api/socket";
-import { type IPlayerRoundDetails } from "../pages/api/handlers/roundOverHandler";
+import { type IScoreboardMetadata } from "../pages/api/handlers/roundOverHandler";
 import { useSession } from "next-auth/react";
 import { useUserIDContext } from "./UserIDContext";
 import { trpc } from "../utils/trpc";
@@ -94,6 +94,10 @@ interface IRoomContext {
   setMirrorPlayerContainer: React.Dispatch<React.SetStateAction<boolean>>;
   showResetRoundModal: boolean;
   setShowResetRoundModal: React.Dispatch<React.SetStateAction<boolean>>;
+  scoreboardMetadata: Partial<IScoreboardMetadata> | null;
+  setScoreboardMetadata: React.Dispatch<
+    React.SetStateAction<Partial<IScoreboardMetadata | null>>
+  >;
 }
 
 const RoomContext = createContext<IRoomContext | null>(null);
@@ -169,6 +173,9 @@ export function RoomProvider(props: { children: React.ReactNode }) {
   const [showResetRoundModal, setShowResetRoundModal] =
     useState<boolean>(false);
 
+  const [scoreboardMetadata, setScoreboardMetadata] =
+    useState<Partial<IScoreboardMetadata> | null>(null);
+
   const [cardBeingMovedProgramatically, setCardBeingMovedProgramatically] =
     useState<ICardBeingMovedProgramatically>({});
 
@@ -191,19 +198,6 @@ export function RoomProvider(props: { children: React.ReactNode }) {
 
   useEffect(() => {
     fetch("/api/socket");
-
-    setTimeout(() => {
-      socket.on(
-        "scoreboardMetadata",
-        ({ playerID: winnerID }: IPlayerRoundDetails) => {
-          setPlayerIDWhoSqueaked(winnerID);
-
-          // maybe need a timeout to set it back to null after a bit?
-          // or just reset when you go through resetting everything (minus points, etc.)
-          // before next round?
-        }
-      );
-    });
   }, []);
 
   useEffect(() => {
@@ -363,6 +357,8 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     setShowScoreboard,
     showShufflingCountdown,
     setShowShufflingCountdown,
+    scoreboardMetadata,
+    setScoreboardMetadata,
     connectedToRoom,
     setConnectedToRoom,
     leaveRoom,
