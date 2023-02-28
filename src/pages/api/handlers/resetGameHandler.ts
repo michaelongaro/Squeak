@@ -9,6 +9,7 @@ import {
 
 interface IResetGame {
   gameIsFinished: boolean;
+  resettingRoundFromExcessiveDeckRotations: boolean;
   roomCode: string;
 }
 
@@ -19,7 +20,11 @@ export function resetGameHandler(
   roomData: IRoomData,
   miscRoomData: IMiscRoomData
 ) {
-  function resetGame({ gameIsFinished, roomCode }: IResetGame) {
+  function resetGame({
+    gameIsFinished,
+    resettingRoundFromExcessiveDeckRotations,
+    roomCode,
+  }: IResetGame) {
     const miscRoomDataObj = miscRoomData[roomCode];
 
     if (gameIsFinished) {
@@ -84,7 +89,11 @@ export function resetGameHandler(
       };
     }
 
-    game.currentRound = game.currentRound + 1;
+    if (!resettingRoundFromExcessiveDeckRotations) {
+      game.currentRound += 1;
+    } else if (miscRoomDataObj) {
+      miscRoomDataObj.rotateDecksCounter = 0;
+    }
 
     if (miscRoomDataObj) {
       clearInterval(miscRoomDataObj.gameStuckInterval); // pretty sure this is necessary
