@@ -92,6 +92,8 @@ interface IRoomContext {
   setNewInviteNotification: React.Dispatch<React.SetStateAction<boolean>>;
   mirrorPlayerContainer: boolean;
   setMirrorPlayerContainer: React.Dispatch<React.SetStateAction<boolean>>;
+  showResetRoundModal: boolean;
+  setShowResetRoundModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const RoomContext = createContext<IRoomContext | null>(null);
@@ -163,6 +165,8 @@ export function RoomProvider(props: { children: React.ReactNode }) {
 
   const [showScoreboard, setShowScoreboard] = useState<boolean>(false);
   const [showShufflingCountdown, setShowShufflingCountdown] =
+    useState<boolean>(false);
+  const [showResetRoundModal, setShowResetRoundModal] =
     useState<boolean>(false);
 
   const [cardBeingMovedProgramatically, setCardBeingMovedProgramatically] =
@@ -372,6 +376,8 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     setNewInviteNotification,
     mirrorPlayerContainer,
     setMirrorPlayerContainer,
+    showResetRoundModal,
+    setShowResetRoundModal,
   };
 
   return (
