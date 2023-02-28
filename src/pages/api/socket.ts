@@ -43,6 +43,7 @@ export interface IMiscRoomData {
 
 interface IMiscRoomMetadata {
   numberOfPlayersReady: number;
+  rotateDecksCounter: number;
   gameStuckInterval?: NodeJS.Timeout;
 }
 
@@ -118,6 +119,7 @@ export interface IDrawFromSqueakDeck {
 
 export interface IDrawFromDeck {
   nextTopCardInDeck: ICard | null;
+  resetDeck?: boolean;
   topCardsInDeck: (ICard | null)[];
   playerID: string;
   roomCode: string;
@@ -170,9 +172,6 @@ const roomData: IRoomData = {};
 const gameData: IGameData = {};
 const friendsData: IFriendsData = {};
 const miscRoomData: IMiscRoomData = {};
-// move both below into roomData ? so that they can be separate for each room
-// let numberOfPlayersReady = 0;
-// let gameStuckInterval: ReturnType<typeof setTimeout>;
 
 // @ts-expect-error sdf
 export default function SocketHandler(req, res) {
@@ -204,6 +203,7 @@ export default function SocketHandler(req, res) {
 
         miscRoomData[roomConfig.code] = {
           numberOfPlayersReady: 0,
+          rotateDecksCounter: 0,
         };
 
         io.in(roomConfig.code).emit("roomWasCreated");
@@ -369,7 +369,7 @@ export default function SocketHandler(req, res) {
       if (!miscRoomDataObj) return;
 
       miscRoomDataObj.gameStuckInterval = setInterval(() => {
-        gameStuckHandler(io, gameData, roomCode);
+        gameStuckHandler(io, roomCode, gameData, miscRoomData);
       }, 15000);
     });
 
