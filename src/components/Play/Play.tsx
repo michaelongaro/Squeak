@@ -12,6 +12,9 @@ import { AnimatePresence, motion } from "framer-motion";
 import { cardAssetPaths } from "../../utils/cardAssetPaths";
 import classes from "./Play.module.css";
 import { useUserIDContext } from "../../context/UserIDContext";
+import useResetDeckFromCardDraw from "../../hooks/useResetDeckFromCardDraw";
+import ResetRoundModal from "../modals/ResetRoundModal";
+import useManuallyResetRound from "../../hooks/useManuallyResetRound";
 
 function Play() {
   const {
@@ -20,6 +23,7 @@ function Play() {
     setGameData,
     showScoreboard,
     showShufflingCountdown,
+    showResetRoundModal,
     setShowShufflingCountdown,
   } = useRoomContext();
   const { value: userID } = useUserIDContext();
@@ -28,6 +32,8 @@ function Play() {
 
   useStartAnotherRoundHandler();
   useReturnToRoomHandler();
+  useResetDeckFromCardDraw();
+  useManuallyResetRound();
 
   useEffect(() => {
     for (const imagePath of cardAssetPaths) {
@@ -111,6 +117,14 @@ function Play() {
         onExitComplete={() => null}
       >
         {showShufflingCountdown && <ShufflingCountdownModal />}
+      </AnimatePresence>
+
+      <AnimatePresence
+        initial={false}
+        mode={"wait"}
+        onExitComplete={() => null}
+      >
+        {showResetRoundModal && <ResetRoundModal />}
       </AnimatePresence>
 
       <AnimatePresence
