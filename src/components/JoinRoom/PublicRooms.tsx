@@ -95,7 +95,7 @@ function PublicRooms() {
                     style={{
                       backgroundColor:
                         hoveredIndex === index
-                          ? "hsl(120deg 100% 23%)"
+                          ? "hsl(120deg 100% 18%)"
                           : "hsl(120deg 100% 15%)",
                       color: "hsl(120deg 100% 86%)",
                       borderColor: "hsl(120deg 100% 86%)",
@@ -138,7 +138,7 @@ function PublicRooms() {
               style={{
                 color: "hsl(120deg 100% 86%)",
               }}
-              className="min-w-[658px] text-center text-xl"
+              className="min-w-[658px] pt-4 pb-4 text-center text-lg"
             >
               No rooms found. Create one or refresh to find more.
             </div>
