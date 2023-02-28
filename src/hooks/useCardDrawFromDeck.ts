@@ -37,7 +37,7 @@ function useCardDrawFromDeck({
 
   useEffect(() => {
     if (dataFromBackend !== null) {
-      setDataFromBackend(null); // if this doesn't work then move it to the end of the function
+      setDataFromBackend(null);
 
       const {
         nextTopCardInDeck: currentTopCardInDeck, // is actually referencing the current top card in deck
@@ -45,16 +45,6 @@ function useCardDrawFromDeck({
         updatedBoard,
         updatedPlayerCards,
       } = dataFromBackend;
-
-      // I think this logic checks out
-      if (ownerID === playerID && currentTopCardInDeck === null) {
-        setGameData({
-          ...gameData,
-          board: updatedBoard,
-          players: updatedPlayerCards,
-        });
-        return;
-      }
 
       if (
         ownerID !== playerID ||
