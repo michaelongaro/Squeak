@@ -2,6 +2,7 @@
   width: 100vw;
   height: 100vh;
   display: grid;
+  overflow: hidden;
   grid-template-rows: 0.25fr 0.5fr 0.25fr;
   grid-template-columns: 0.25fr 0.5fr 0.25fr;
   grid-template-areas:
@@ -11,9 +12,17 @@
   gap: 1rem;
 }
 
+@media (max-height: 768px) or (max-width: 1500px) {
+  .fullBoardGrid {
+    max-width: 100%;
+    row-gap: 0.5rem;
+  }
+}
+
 /* keeps proportions when playing with less than 4 players */
 .fullBoardGrid>div {
   min-width: 100%;
+  min-height: 1%;
 }
 
 .leftPlayerCards,
@@ -34,12 +43,6 @@
   grid-area: topPlayerCards;
 }
 
-
-/* maybe have this be positioned absolutely in top right? */
-.settings {
-  grid-area: settings;
-}
-
 .leftPlayerCards {
   grid-area: leftPlayerCards;
 }
@@ -48,6 +51,7 @@
   grid-area: board;
   align-items: center;
   justify-items: center;
+  height: 100% !important;
 }
 
 .rightPlayerCards {
