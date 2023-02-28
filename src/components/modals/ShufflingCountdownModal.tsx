@@ -63,7 +63,13 @@ function ShufflingCountdownModal() {
       transition={{ duration: 0.15 }}
       className="baseFlex absolute top-0 left-0 z-[999] h-full w-full bg-black bg-opacity-60 transition-all"
     >
-      <div className="h-fit w-fit rounded-md bg-green-200 p-8 pl-16 pr-16 shadow-md">
+      <div
+        style={{
+          backgroundColor: "hsl(120deg, 100%, 86%)",
+          color: "hsl(120deg, 100%, 18%)",
+        }}
+        className="h-fit w-fit rounded-md p-8 pl-16 pr-16 font-medium shadow-md"
+      >
         <div className="baseVertFlex gap-6">
           <div className="text-xl">Shuffling decks</div>
 
@@ -101,6 +107,7 @@ function ShufflingCountdownModal() {
               // counting up, just the countdown.
               duration={timersInitiated ? 1000 : 0}
               hasComma={true}
+              color={"hsl(120deg, 100%, 18%)"}
               size={20}
             />
           </div>

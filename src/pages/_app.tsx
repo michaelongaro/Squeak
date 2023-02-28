@@ -11,7 +11,7 @@ import "react-awesome-animated-number/dist/index.css";
 import "../styles/globals.css";
 
 const montserrat = Montserrat({
-  weight: "400", // probably add more weights?
+  weight: "variable",
   subsets: ["latin"],
 });
 

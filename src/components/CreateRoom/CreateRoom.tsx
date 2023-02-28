@@ -175,8 +175,9 @@ function CreateRoom() {
         <div
           style={{
             color: "hsl(120deg 100% 86%)",
+            filter: "drop-shadow(2px 3px 2px rgba(0, 0, 0, 0.2))",
           }}
-          className="text-xl"
+          className="text-xl font-medium"
         >
           {`${
             connectedToRoom
