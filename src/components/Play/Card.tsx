@@ -5,6 +5,7 @@ import Draggable, {
   type DraggableEvent,
 } from "react-draggable";
 import { socket } from "../../pages/";
+import Image from "next/image";
 import { useRoomContext } from "../../context/RoomContext";
 import { useUserIDContext } from "../../context/UserIDContext";
 import cardPlacementIsValid from "../../utils/cardPlacementIsValid";
@@ -13,6 +14,7 @@ import useCardDrawFromSqueakDeck from "../../hooks/useCardDrawFromSqueakDeck";
 import useCardDropApproved from "../../hooks/useCardDropApproved";
 import useCardDropDenied from "../../hooks/useCardDropDenied";
 import { adjustCoordinatesByRotation } from "../../utils/adjustCoordinatesByRotation";
+import { cards } from "../../utils/cardAssetPaths";
 
 interface ICardComponent {
   value?: string;
@@ -459,7 +461,32 @@ function Card({
               draggable && "cursor-grab active:cursor-grabbing"
             }`}
           >
-            <img
+            <Image
+              ref={imageRef}
+              style={{
+                width: width,
+                height: height,
+                filter:
+                  showCardBack && !manuallyShowCardFront
+                    ? `hue-rotate(${hueRotationDegrees}deg)`
+                    : "none",
+              }}
+              className="pointer-events-none h-[64px] w-[48px] select-none tall:h-[87px] tall:w-[67px]"
+              src={
+                showCardBack && !manuallyShowCardFront
+                  ? cards["cardBack"]
+                  : // @ts-expect-error asdf
+                    cards[`${suit}${value}`]
+              }
+              alt={
+                showCardBack && !manuallyShowCardFront
+                  ? "Back of card"
+                  : `${value}${suit} card`
+              }
+              draggable="false"
+            />
+
+            {/* <img
               ref={imageRef}
               style={{
                 width: width,
@@ -481,7 +508,7 @@ function Card({
                   : `${value}${suit} card`
               }
               draggable="false"
-            />
+            /> */}
           </div>
         </Draggable>
       )}
