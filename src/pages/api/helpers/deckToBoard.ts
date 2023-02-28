@@ -43,7 +43,9 @@ export function deckToBoard({
 
     player.deck = player.deck.filter((c) => {
       if (c.value === card.value && c.suit === card.suit) {
-        player.deckIdx--;
+        if (player.deckIdx !== -1) {
+          player.deckIdx--;
+        }
         return false;
       }
 
