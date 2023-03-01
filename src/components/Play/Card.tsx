@@ -98,7 +98,7 @@ function Card({
 
       cardIsMovingRef.current = true;
 
-      if (origin !== "deck" && ownerID) {
+      if (origin === "hand" && ownerID) {
         setCardBeingMovedProgramatically({
           ...cardBeingMovedProgramatically,
           [ownerID]: true,
@@ -209,7 +209,7 @@ function Card({
           imageRef.current.style.opacity = "1";
         }, 0);
 
-        if (origin !== "deck" && ownerID) {
+        if (origin === "hand" && ownerID) {
           setCardBeingMovedProgramatically({
             ...cardBeingMovedProgramatically,
             [ownerID]: false,
@@ -483,32 +483,9 @@ function Card({
                   ? "Back of card"
                   : `${value}${suit} card`
               }
+              priority={true}
               draggable="false"
             />
-
-            {/* <img
-              ref={imageRef}
-              style={{
-                width: width,
-                height: height,
-                filter:
-                  showCardBack && !manuallyShowCardFront
-                    ? `hue-rotate(${hueRotationDegrees}deg)`
-                    : "none",
-              }}
-              className="pointer-events-none h-[64px] w-[48px] select-none tall:h-[87px] tall:w-[67px]"
-              src={
-                showCardBack && !manuallyShowCardFront
-                  ? "/cards/cardBack.png"
-                  : `/cards/${value}${suit}.svg`
-              }
-              alt={
-                showCardBack && !manuallyShowCardFront
-                  ? "Back of card"
-                  : `${value}${suit} card`
-              }
-              draggable="false"
-            /> */}
           </div>
         </Draggable>
       )}
