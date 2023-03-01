@@ -33,13 +33,13 @@ function useScoreboardData() {
       setPlayerIDWhoSqueaked(roundWinnerID);
 
       setTimeout(() => {
-        setShowScoreboard(true);
-
         setScoreboardMetadata({
           gameWinnerID,
           roundWinnerID,
           playerRoundDetails,
         });
+
+        setShowScoreboard(true);
 
         setGameData(gameData);
       }, 1000); // waiting for pulsing animation to finish
