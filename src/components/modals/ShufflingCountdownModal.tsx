@@ -17,17 +17,14 @@ function ShufflingCountdownModal() {
 
   const [timersInitiated, setTimersInitiated] = useState<boolean>(false);
   const [countdownTimerValue, setCountdownTimerValue] = useState<number>(3);
-  const [animationStarted, setAnimationStarted] = useState<boolean>(false);
 
   useEffect(() => {
     if (timersInitiated || !showShufflingCountdown || !gameData.currentRound)
       return;
 
-    setTimersInitiated(true);
-
     setTimeout(() => {
-      setAnimationStarted(true);
-    }, 250);
+      setTimersInitiated(true);
+    }, 150);
 
     // timers are offset by 500ms to allow for the animation to play out
     setTimeout(() => {
@@ -94,7 +91,7 @@ function ShufflingCountdownModal() {
             </div>
             <div
               style={{
-                animationPlayState: animationStarted ? "running" : "paused",
+                animationPlayState: timersInitiated ? "running" : "paused",
               }}
               className={`topBackFacingCardInDeck absolute top-0 left-0 h-full w-full`}
             >
@@ -116,7 +113,6 @@ function ShufflingCountdownModal() {
               // but from the moment this component is rendered, we don't want to show any
               // counting up, just the countdown.
               duration={timersInitiated ? 1000 : 0}
-              hasComma={true}
               color={"hsl(120deg, 100%, 18%)"}
               size={20}
             />
