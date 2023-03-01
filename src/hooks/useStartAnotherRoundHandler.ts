@@ -29,7 +29,7 @@ function useStartAnotherRoundHandler() {
 
       setTimeout(() => {
         setShowShufflingCountdown(true);
-      }, 500); // might be too long tbh
+      }, 250); // might be too long tbh
     }
   }, [
     dataFromBackend,
