@@ -1,14 +1,10 @@
 import { useState, useEffect, useRef } from "react";
-import CountUp from "react-countup";
-import { socket } from "../../../pages";
 import { useRoomContext } from "../../../context/RoomContext";
-import useScoreboardData from "../../../hooks/useScoreboardData";
-import { IScoreboardMetadata } from "../../../pages/api/handlers/roundOverHandler";
 import AnimatedCardContainer from "./AnimatedCardContainer";
 import PlayerIcon from "../../playerIcons/PlayerIcon";
 import AnimatedNumber from "react-awesome-animated-number";
 import confetti from "canvas-confetti";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 
 interface IRanking {
   [key: number]: string;
@@ -31,13 +27,8 @@ interface IPlayerColorVariants {
 }
 
 function Scoreboard() {
-  const {
-    roomConfig,
-    showScoreboard,
-    playerMetadata,
-    currentVolume,
-    scoreboardMetadata,
-  } = useRoomContext();
+  const { playerMetadata, currentVolume, scoreboardMetadata } =
+    useRoomContext();
 
   const [showNewRankings, setShowNewRankings] = useState<boolean>(false);
   const [showWinningPlayerMessage, setShowWinningPlayerMessage] =
@@ -48,7 +39,7 @@ function Scoreboard() {
     useState<boolean>(false);
   const [animateSqueakModifierValue, setAnimateSqueakModifierValue] =
     useState<boolean>(false);
-  const [animateTotalValue, setAnimateTotalValue] = useState<boolean>(true);
+  const [animateTotalValue, setAnimateTotalValue] = useState<boolean>(false);
   const [showConfetti, setShowConfetti] = useState<boolean>(false);
 
   const [countdownTimerValue, setCountdownTimerValue] = useState<number>(3);
@@ -58,213 +49,82 @@ function Scoreboard() {
 
   const confettiPopRef = useRef<HTMLAudioElement>(null);
 
-  // // delete after testing
-  // const [onlyDoThisOnce, setOnlyDoThisOnce] = useState<boolean>(false);
-
   useEffect(() => {
-    if (
-      showScoreboard &&
-      // !onlyDoThisOnce &&
-      roomConfig.code
-    ) {
-      // setOnlyDoThisOnce(true);
+    setTimeout(() => {
+      setAnimateCardsPlayedValue(true);
+    }, 1000);
+
+    setTimeout(() => {
+      setAnimateSqueakModifierValue(true);
+    }, 2500);
+
+    setTimeout(() => {
+      setAnimateTotalValue(true);
+    }, 4000);
+
+    setTimeout(() => {
+      setShowNewRankings(true);
+    }, 4000);
+
+    setTimeout(() => {
+      setShowWinningPlayerMessage(true);
+    }, 6000);
+
+    setTimeout(() => {
+      setShowConfetti(true);
+
+      if (confettiPopRef.current) {
+        confettiPopRef.current.volume = currentVolume * 0.01;
+        confettiPopRef.current.pause();
+        confettiPopRef.current.currentTime = 0.35;
+        confettiPopRef.current.play();
+      }
+
+      confetti(
+        Object.assign(
+          {},
+          { origin: { x: 0.39, y: 0.72 } },
+          {
+            spread: 26,
+            startVelocity: 35,
+            angle: 135,
+            zIndex: 999,
+          },
+          {
+            particleCount: 100,
+          }
+        )
+      );
+
+      confetti(
+        Object.assign(
+          {},
+          { origin: { x: 0.6, y: 0.72 } },
+          {
+            spread: 26,
+            startVelocity: 35,
+            angle: 45,
+            zIndex: 999,
+          },
+          {
+            particleCount: 100,
+          }
+        )
+      );
+    }, 6500);
+
+    setTimeout(() => {
+      setShowCountdownTimer(true);
 
       setTimeout(() => {
-        setAnimateCardsPlayedValue(true);
+        setCountdownTimerValue(2);
       }, 1000);
 
       setTimeout(() => {
-        setAnimateSqueakModifierValue(true);
-      }, 2500);
-
-      setTimeout(() => {
-        setAnimateTotalValue(false); // when false, animates to new total value
-      }, 4000);
-
-      setTimeout(() => {
-        setShowNewRankings(true);
-      }, 4000);
-
-      setTimeout(() => {
-        setShowWinningPlayerMessage(true);
-      }, 6000);
-
-      setTimeout(() => {
-        setShowConfetti(true);
-
-        if (confettiPopRef.current) {
-          confettiPopRef.current.volume = currentVolume * 0.01;
-          confettiPopRef.current.pause();
-          confettiPopRef.current.currentTime = 0.15;
-          confettiPopRef.current.play();
-        }
-
-        confetti(
-          Object.assign(
-            {},
-            { origin: { x: 0.39, y: 0.72 } },
-            {
-              spread: 26,
-              startVelocity: 35,
-              angle: 135,
-              zIndex: 999,
-            },
-            {
-              particleCount: 100,
-            }
-          )
-        );
-
-        confetti(
-          Object.assign(
-            {},
-            { origin: { x: 0.6, y: 0.72 } },
-            {
-              spread: 26,
-              startVelocity: 35,
-              angle: 45,
-              zIndex: 999,
-            },
-            {
-              particleCount: 100,
-            }
-          )
-        );
-      }, 6500);
-
-      setTimeout(() => {
-        setShowCountdownTimer(true);
-
-        setTimeout(() => {
-          setCountdownTimerValue(2);
-        }, 1000);
-
-        setTimeout(() => {
-          setCountdownTimerValue(1);
-        }, 2000);
-      }, 9000);
-
-      // delete this later
-      // setTimeout(() => {
-      //   socket.emit("resetGame", {
-      //     roomCode: roomConfig.code,
-      //     gameIsFinished: true,
-      //   });
-      // }, 15000);
-    }
-  }, [
-    showScoreboard,
-    roomConfig.code,
-    currentVolume,
-    //  onlyDoThisOnce
-  ]);
-
-  // const scoreboardMetadata: Partial<IScoreboardMetadata> | null = {
-  //   gameWinnerID: null,
-  //   roundWinnerID: "cldk02mcr0000ul6k95niugk9",
-  //   playerRoundDetails: [
-  //     {
-  //       playerID: "cldk02mcr0000ul6k95niugk9",
-  //       oldScore: 10,
-  //       newScore: 25,
-  //       oldRanking: 1,
-  //       newRanking: 2,
-  //       cardsPlayed: [
-  //         {
-  //           suit: "H",
-  //           value: "A",
-  //         },
-  //         {
-  //           suit: "H",
-  //           value: "A",
-  //         },
-  //         {
-  //           suit: "H",
-  //           value: "A",
-  //         },
-  //         {
-  //           suit: "H",
-  //           value: "A",
-  //         },
-  //         {
-  //           suit: "H",
-  //           value: "A",
-  //         },
-  //         {
-  //           suit: "H",
-  //           value: "A",
-  //         },
-  //         {
-  //           suit: "H",
-  //           value: "A",
-  //         },
-  //         {
-  //           suit: "H",
-  //           value: "A",
-  //         },
-  //         {
-  //           suit: "H",
-  //           value: "A",
-  //         },
-  //         {
-  //           suit: "H",
-  //           value: "A",
-  //         },
-  //         {
-  //           suit: "H",
-  //           value: "A",
-  //         },
-  //         {
-  //           suit: "H",
-  //           value: "A",
-  //         },
-  //         {
-  //           suit: "H",
-  //           value: "A",
-  //         },
-  //       ],
-  //       squeakModifier: 10,
-  //     },
-  //     {
-  //       playerID: "cle3ogdkv0000ulbopywfks8n",
-  //       oldScore: 15,
-  //       newScore: 2,
-  //       oldRanking: 1,
-  //       newRanking: 3,
-  //       cardsPlayed: [
-  //         {
-  //           suit: "H",
-  //           value: "A",
-  //         },
-  //         {
-  //           suit: "H",
-  //           value: "A",
-  //         },
-  //         {
-  //           suit: "H",
-  //           value: "A",
-  //         },
-  //         {
-  //           suit: "H",
-  //           value: "A",
-  //         },
-  //         {
-  //           suit: "H",
-  //           value: "A",
-  //         },
-  //         {
-  //           suit: "H",
-  //           value: "A",
-  //         },
-  //         {
-  //           suit: "H",
-  //           value: "A",
-  //         },
-  //       ],
-  //       squeakModifier: -5,
-  //     },
-  //   ],
-  // };
+        setCountdownTimerValue(1);
+      }, 2000);
+    }, 9000);
+  }, [currentVolume]);
 
   useEffect(() => {
     if (Object.keys(playerColorVariants).length !== 0) return;
@@ -292,9 +152,6 @@ function Scoreboard() {
 
     setPlayerColorVariants(newPlayerColorVariants);
   }, [playerMetadata, playerColorVariants]);
-
-  // have some kind of delay that will immediately have the data rendered below but still have
-  // the opacity/pointer events of main modal be 0/none for a few seconds while squeak animation is playing
 
   return (
     <motion.div
@@ -336,7 +193,7 @@ function Scoreboard() {
                         playerColorVariants[player.playerID]?.baseColor ??
                         "white",
                     }}
-                    className="baseVertFlex h-36 w-full gap-2 rounded-t-md pt-2"
+                    className="baseVertFlex h-36 w-full gap-2 rounded-t-md pt-2 font-semibold"
                   >
                     <PlayerIcon
                       avatarPath={
@@ -399,7 +256,6 @@ function Scoreboard() {
                                 : 0
                             }
                             duration={animateCardsPlayedValue ? 1500 : 0}
-                            hasComma={true}
                             size={18}
                           />
                         </div>
@@ -423,7 +279,6 @@ function Scoreboard() {
                                 : 0
                             }
                             duration={animateSqueakModifierValue ? 1500 : 0}
-                            hasComma={true}
                             size={18}
                           />
                         </div>
@@ -437,8 +292,7 @@ function Scoreboard() {
                               : player.newScore
                           }
                           duration={animateTotalValue ? 1500 : 0}
-                          hasComma={true}
-                          size={20}
+                          size={22}
                         />
                       </div>
                     </div>
@@ -450,9 +304,7 @@ function Scoreboard() {
                   </div>
 
                   {/* ranking */}
-                  {/* currently thinking to have this area and avatar+username area on top to be a slightly
-                      lighter (filter: brightness(1.1)?, so that the avatar background can still be seen easily)
-                      (prob still want 1px black border around avatar), and then just have an obj for   */}
+                  {/* pretty sure you wanted to have these be  */}
                   <div
                     style={{
                       backgroundColor:
@@ -464,9 +316,41 @@ function Scoreboard() {
                     }}
                     className="baseFlex w-full gap-2 rounded-b-md p-2"
                   >
-                    {showNewRankings
-                      ? ranking[player.newRanking]
-                      : ranking[player.oldRanking]}
+                    <AnimatePresence
+                      initial={false}
+                      mode={"wait"}
+                      onExitComplete={() => null}
+                    ></AnimatePresence>
+                    {showNewRankings && (
+                      <motion.div
+                        key={`newRanking${player.playerID}`}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.15 }}
+                        className="font-semibold"
+                      >
+                        {ranking[player.newRanking]}
+                      </motion.div>
+                    )}
+                    <AnimatePresence
+                      initial={false}
+                      mode={"wait"}
+                      onExitComplete={() => null}
+                    >
+                      {!showNewRankings && (
+                        <motion.div
+                          key={`oldRanking${player.playerID}`}
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          transition={{ duration: 0.15 }}
+                          className="font-semibold"
+                        >
+                          {ranking[player.oldRanking]}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
                 </div>
               ))}
@@ -491,7 +375,7 @@ function Scoreboard() {
                   transform: showConfetti
                     ? "scale(1) rotate(135deg)"
                     : "scale(0) rotate(135deg)",
-                  filter: "drop-shadow(rgba(0,0,0, 0.15) 0px 0px 0.5rem)",
+                  filter: "drop-shadow(rgba(0,0,0, 0.10) 0px 0px 0.5rem)",
                 }}
                 className="h-8 w-8 transition-all"
                 src="/scoreboard/confettiCannon.svg"
@@ -529,7 +413,7 @@ function Scoreboard() {
                   transform: showConfetti
                     ? "scale(1) rotate(225deg)"
                     : "scale(0) rotate(225deg)",
-                  filter: "drop-shadow(rgba(0,0,0, 0.15) 0px 0px 0.5rem)",
+                  filter: "drop-shadow(rgba(0,0,0, 0.10) 0px 0px 0.5rem)",
                 }}
                 className="h-8 w-8 transition-all"
                 src="/scoreboard/confettiCannon.svg"
@@ -549,7 +433,6 @@ function Scoreboard() {
               <AnimatedNumber
                 value={countdownTimerValue}
                 duration={1000}
-                hasComma={true}
                 size={20}
               />
             </div>
