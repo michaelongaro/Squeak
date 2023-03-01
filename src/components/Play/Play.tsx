@@ -9,7 +9,6 @@ import ShufflingCountdownModal from "../modals/ShufflingCountdownModal";
 import useStartAnotherRoundHandler from "../../hooks/useStartAnotherRoundHandler";
 import useReturnToRoomHandler from "../../hooks/useReturnToRoomHandler";
 import { AnimatePresence, motion } from "framer-motion";
-// import { cardAssetPaths } from "../../utils/cardAssetPaths";
 import classes from "./Play.module.css";
 import { useUserIDContext } from "../../context/UserIDContext";
 import useResetDeckFromCardDraw from "../../hooks/useResetDeckFromCardDraw";
@@ -36,13 +35,6 @@ function Play() {
   useResetDeckFromCardDraw();
   useManuallyResetRound();
   useScoreboardData();
-
-  // useEffect(() => {
-  //   for (const imagePath of cardAssetPaths) {
-  //     const imageElement = new Image();
-  //     imageElement.src = imagePath;
-  //   }
-  // }, []);
 
   useEffect(() => {
     if (gameData?.board === undefined && gameData?.players === undefined) {
