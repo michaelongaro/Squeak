@@ -61,7 +61,7 @@ function useCardDrawFromDeck({
 
       if (endLocation) {
         const endX = endLocation.x;
-        const endY = endLocation.y;
+        const endY = endLocation.y - 4;
 
         moveCard({ x: endX, y: endY }, true, false, () => {
           setGameData({
