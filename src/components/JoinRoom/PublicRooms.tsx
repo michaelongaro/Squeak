@@ -81,14 +81,14 @@ function PublicRooms() {
                   backgroundColor: "hsl(120deg 100% 86%)",
                   color: "hsl(120deg 100% 18%)",
                 }}
-                className="grid w-[618px] grid-cols-3 place-items-center p-4 pr-12"
+                className="grid w-full grid-cols-3 place-items-center p-4 pr-8 font-medium"
               >
                 <div>Name</div>
                 <div>Points to win</div>
                 <div>Players</div>
               </div>
 
-              <div className="h-full w-full overflow-y-scroll">
+              <div className="h-full w-full overflow-y-auto">
                 {publicRooms.map((room, index) => (
                   <div
                     key={room.code}
@@ -99,6 +99,8 @@ function PublicRooms() {
                           : "hsl(120deg 100% 15%)",
                       color: "hsl(120deg 100% 86%)",
                       borderColor: "hsl(120deg 100% 86%)",
+                      borderBottomWidth:
+                        index === publicRooms.length - 1 ? "0px" : "2px ",
                     }}
                     className="relative grid w-[600px] grid-cols-3 place-items-center border-b-2 p-4 pr-8"
                     onMouseEnter={() => setHoveredIndex(index)}
