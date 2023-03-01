@@ -393,12 +393,12 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                transition={{ duration: 0.1 }}
+                transition={{ duration: 0.25 }}
                 style={{
                   color: "hsl(120deg 100% 86%)",
                   borderColor: "hsl(120deg 100% 86%)",
                 }}
-                className="baseVertFlex absolute left-[-20rem] bottom-4 gap-2 rounded-sm border-2 bg-green-800 p-2"
+                className="baseVertFlex absolute left-[-22rem] bottom-4 gap-2 rounded-sm border-2 bg-green-800 p-2"
               >
                 <div>No player has valid moves,</div>
                 <div>rotating each player&apos;s deck by one card.</div>
