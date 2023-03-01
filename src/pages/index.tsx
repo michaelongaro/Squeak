@@ -25,6 +25,7 @@ const Home: NextPage = () => {
                    Games can be played with 2-4 players, lasting around 20 minutes."
         />
         <link rel="icon" href="/favicon.ico" />
+        <link rel="canonical" href="https://playsqueak.com" />
       </Head>
 
       <NextSeo
@@ -39,8 +40,8 @@ const Home: NextPage = () => {
           images: [
             {
               url: "https://i.imgur.com/EpwvpXH.png",
-              width: 850,
-              height: 650,
+              width: 960,
+              height: 465,
               alt: "Screenshot of a Squeak game",
             },
           ],
