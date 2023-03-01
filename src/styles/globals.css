@@ -78,7 +78,7 @@ body {
   }
 }
 
-legend {
+legend>*:not(button) {
   font-weight: 500;
   filter: drop-shadow(2px 4px 3px rgba(0, 0, 0, 0.35));
 }
