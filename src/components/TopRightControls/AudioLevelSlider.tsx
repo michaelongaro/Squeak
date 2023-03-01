@@ -61,6 +61,10 @@ function AudioLevelSlider() {
         className="ml-2 mr-2 h-full transition-all"
       >
         <Range
+          aria-label="Volume slider"
+          aria-orientation="horizontal"
+          aria-valuemin="0"
+          aria-valuemax="100"
           step={1}
           min={0}
           max={100}
