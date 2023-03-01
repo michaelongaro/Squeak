@@ -112,29 +112,26 @@ function MainOptions() {
           color: "hsl(120, 100%, 86%)",
           borderColor: "hsl(120, 100%, 86%)",
           background: "hsl(120, 100%, 18%)",
-          gap: hoveringOnAboutMe ? "2rem" : "0px",
+          width: hoveringOnAboutMe ? "18rem" : "2.65rem",
           padding: "0.25rem 1rem",
           transition: "all 0.3s ease-in-out",
         }}
-        className="baseFlex absolute right-4 bottom-4 rounded-full border-2"
+        className="baseFlex absolute right-4 bottom-4 !justify-end overflow-hidden rounded-full border-2"
         onMouseEnter={() => setHoveringOnAboutMe(true)}
         onMouseLeave={() => setHoveringOnAboutMe(false)}
       >
-        <AnimatePresence initial={false} mode={"wait"}>
+        <AnimatePresence initial={false}>
           {hoveringOnAboutMe && (
             <motion.div
               key={"aboutMe"}
-              // not sure about scale
-              initial={{ opacity: 0, width: 0, scale: 0 }}
-              animate={{ opacity: 1, width: "auto", scale: 1 }}
-              exit={{ opacity: 0, width: 0, scale: 0 }}
+              initial={{ opacity: 0, scale: 0.25 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.25 }}
               transition={{
-                duration: 0.27,
                 opacity: { duration: 0.25 },
-                width: { duration: 0.2 },
-                scale: { duration: 0.25 },
+                scale: { duration: 0.2 },
               }}
-              className="baseFlex max-h-[25px] gap-2 overflow-hidden"
+              className="baseFlex absolute left-[1rem] gap-2"
             >
               Made by
               <a
