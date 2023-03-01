@@ -63,8 +63,9 @@ function Buzzer({ playerID, roomID, interactive }: IBuzzer) {
           interactive && hoveringOnButton
             ? "0px 0px 10px 3px rgba(184,184,184,1)"
             : "none",
+        cursor: interactive ? "pointer" : "default",
       }}
-      className="relative h-[40px] w-[75px] cursor-pointer rounded-[50%] transition-all"
+      className="relative z-[999] h-[40px] w-[75px] rounded-[50%] transition-all"
       onMouseEnter={() => {
         if (interactive) setHoveringOnButton(true);
       }}
@@ -82,14 +83,14 @@ function Buzzer({ playerID, roomID, interactive }: IBuzzer) {
       }}
       onClick={() => {
         socket.emit("roundOver", {
-          roomID,
-          winner: playerID,
+          roomCode: roomID,
+          roundWinnerID: playerID,
         });
       }}
     >
       <audio ref={squeakButtonAudioRef} src="/sounds/squeakButtonPress.mp3" />
       {/* grey baseplate for button */}
-      <div className="absolute top-0 left-0">
+      <div className="absolute top-0 left-0 z-[998]">
         <img
           draggable={false}
           src="/buzzer/baseplate.png"
@@ -99,7 +100,7 @@ function Buzzer({ playerID, roomID, interactive }: IBuzzer) {
       </div>
 
       {/* actual button container */}
-      <div className="absolute left-[12px] top-[-5px] h-[35px] w-[50px] ">
+      <div className="absolute left-[12px] top-[-5px] z-[998] h-[35px] w-[50px]">
         <img
           style={{
             top: mouseDownOnButton ? "8px" : "0px",
@@ -123,7 +124,7 @@ function Buzzer({ playerID, roomID, interactive }: IBuzzer) {
           opacity: playExpandingPulseWaveAnimation ? "0.5" : "0",
           transition: playExpandingPulseWaveAnimation ? "all 1s" : "all 0.25s",
         }}
-        className="absolute rounded-full"
+        className="absolute z-[999] rounded-full"
       ></div>
     </div>
   );

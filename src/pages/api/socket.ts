@@ -127,6 +127,11 @@ export interface IDrawFromDeck {
   updatedPlayerCards: IPlayerCardsMetadata;
 }
 
+export interface IRoundOver {
+  roomCode: string;
+  roundWinnerID: string;
+}
+
 export interface IPlayer extends IPlayerCards {
   totalPoints: number;
   rankInRoom: number;

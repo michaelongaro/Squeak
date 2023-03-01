@@ -8,7 +8,7 @@ import {
   type IGameData,
   type IRoomData,
   type IGameMetadata,
-  type IDrawFromDeck,
+  type IRoundOver,
 } from "../socket";
 
 export interface IPlayerRoundDetails {
@@ -38,7 +38,7 @@ export function roundOverHandler(
   gameData: IGameData,
   roomData: IRoomData
 ) {
-  function generateAndEmitScoreboard({ playerID, roomCode }: IDrawFromDeck) {
+  function generateAndEmitScoreboard({ roundWinnerID, roomCode }: IRoundOver) {
     const playerCards = gameData[roomCode]?.players;
     const pointsToWin = roomData[roomCode]?.roomConfig.pointsToWin;
 
@@ -135,14 +135,14 @@ export function roundOverHandler(
     for (const player of playerRoundDetails) {
       updatePlayerStatsAfterRound({
         playerRoundDetails: player,
-        roundWinnerID: playerID,
+        roundWinnerID,
         gameWinnerID,
         playerRankingsForThisRound: playerRankings,
       });
     }
 
     io.in(roomCode).emit("scoreboardMetadata", {
-      roundWinnerID: playerID,
+      roundWinnerID,
       gameWinnerID,
       playerRoundDetails,
       gameData: gameData[roomCode],
