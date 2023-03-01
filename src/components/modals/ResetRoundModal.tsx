@@ -1,9 +1,3 @@
-import { useEffect, useState } from "react";
-import { socket } from "../../pages/";
-import { useRoomContext } from "../../context/RoomContext";
-import Card from "../Play/Card";
-import AnimatedNumber from "react-awesome-animated-number";
-import { useUserIDContext } from "../../context/UserIDContext";
 import { motion } from "framer-motion";
 
 function ResetRoundModal() {
