@@ -156,8 +156,13 @@ function UserSettingsAndStatsModal({
       transition={{ duration: 0.15 }}
       className="baseFlex fixed top-0 left-0 z-[500] min-h-[100vh] min-w-[100vw] bg-black/50 transition-all"
     >
-      <div
+      <motion.div
         ref={modalRef}
+        key={"settingsModalInner"}
+        initial={{ scale: 0.9 }}
+        animate={{ scale: 1 }}
+        exit={{ scale: 0.9 }}
+        transition={{ duration: 0.15 }}
         className="baseVertFlex rounded-md border-2 border-white shadow-md"
       >
         <div className="baseFlex relative w-full gap-4 rounded-t-md bg-green-900 pt-4 pb-4 pl-20 pr-20">
@@ -229,7 +234,7 @@ function UserSettingsAndStatsModal({
             />
           )}
         </div>
-      </div>
+      </motion.div>
     </motion.div>
   );
 }

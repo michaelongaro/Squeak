@@ -63,7 +63,12 @@ function ShufflingCountdownModal() {
       transition={{ duration: 0.15 }}
       className="baseFlex absolute top-0 left-0 z-[999] h-full w-full bg-black bg-opacity-60 transition-all"
     >
-      <div
+      <motion.div
+        key={"shufflingCountdownModalInner"}
+        initial={{ scale: 0.9 }}
+        animate={{ scale: 1 }}
+        exit={{ scale: 0.9 }}
+        transition={{ duration: 0.15 }}
         style={{
           backgroundColor: "hsl(120deg, 100%, 86%)",
           color: "hsl(120deg, 100%, 18%)",
@@ -112,7 +117,7 @@ function ShufflingCountdownModal() {
             />
           </div>
         </div>
-      </div>
+      </motion.div>
     </motion.div>
   );
 }

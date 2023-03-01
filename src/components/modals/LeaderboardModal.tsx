@@ -46,8 +46,13 @@ function LeaderboardModal({ setShowModal }: ILeaderboardModal) {
       transition={{ duration: 0.15 }}
       className="baseFlex fixed top-0 left-0 z-[500] min-h-[100vh] min-w-[100vw] bg-black/50 transition-all"
     >
-      <div
+      <motion.div
         ref={modalRef}
+        key={"leaderboardModalInner"}
+        initial={{ scale: 0.9 }}
+        animate={{ scale: 1 }}
+        exit={{ scale: 0.9 }}
+        transition={{ duration: 0.15 }}
         className="baseVertFlex rounded-md border-2 border-white shadow-md"
       >
         {/* combine these classes with above? */}
@@ -152,7 +157,7 @@ function LeaderboardModal({ setShowModal }: ILeaderboardModal) {
             }}
           />
         </div>
-      </div>
+      </motion.div>
     </motion.div>
   );
 }
