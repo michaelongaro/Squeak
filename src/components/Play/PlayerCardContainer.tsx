@@ -263,7 +263,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                 setDrawingFromDeckInProgress(true);
                 setTimeout(() => {
                   setDrawingFromDeckInProgress(false);
-                }, 270);
+                }, 300);
                 socket.emit("playerDrawFromDeck", {
                   playerID: userID,
                   roomCode: roomConfig.code,
