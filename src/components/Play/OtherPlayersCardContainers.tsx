@@ -345,7 +345,7 @@ function OtherPlayersCardContainers({
                   : 50,
               }}
               id={`${playerID}icon`}
-              className={`${classes.playerAvatar} !items-end`}
+              className={`${classes.playerAvatar}`}
             >
               <PlayerIcon
                 avatarPath={
@@ -355,6 +355,9 @@ function OtherPlayersCardContainers({
                   playerMetadata[playerID]?.color || "hsl(352deg, 69%, 61%)"
                 }
                 username={playerMetadata[playerID]?.username}
+                avatarToUsernamePositioning={
+                  idx === 0 || idx === 2 ? "right" : "left"
+                }
                 size={"3rem"}
               />
             </div>

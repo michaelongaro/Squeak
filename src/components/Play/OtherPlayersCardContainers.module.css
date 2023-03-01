@@ -81,7 +81,7 @@
 .playerAvatar {
   position: absolute;
   right: -4.5rem;
-  bottom: 0.5rem;
+  bottom: 1.25rem;
 }
 
 /* adjustment rotations to make sure player avatars are shown upright */

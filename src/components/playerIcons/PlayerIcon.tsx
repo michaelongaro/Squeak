@@ -12,6 +12,7 @@ interface IPlayerIcon {
   size: string;
   username?: string;
   playerID?: string;
+  avatarToUsernamePositioning?: "left" | "right";
   showAddFriendButton?: boolean;
   showRemovePlayerFromRoomButton?: boolean;
   onlineStatus?: boolean;
@@ -24,6 +25,7 @@ function PlayerIcon({
   borderColor,
   size,
   username,
+  avatarToUsernamePositioning,
   showAddFriendButton,
   playerID,
   showRemovePlayerFromRoomButton,
@@ -38,6 +40,11 @@ function PlayerIcon({
         <div
           style={{
             color: "hsl(120deg 100% 86%)",
+            alignItems: avatarToUsernamePositioning
+              ? avatarToUsernamePositioning === "left"
+                ? "flex-start"
+                : "flex-end"
+              : "center",
           }}
           className="baseVertFlex gap-2"
         >
