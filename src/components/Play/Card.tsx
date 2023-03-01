@@ -458,7 +458,7 @@ function Card({
                   : "none",
             }}
             className={`baseFlex relative z-[500] h-full w-full select-none !items-start ${
-              draggable && "cursor-grab active:cursor-grabbing"
+              draggable && "cursor-grab hover:active:cursor-grabbing"
             }`}
           >
             <Image
