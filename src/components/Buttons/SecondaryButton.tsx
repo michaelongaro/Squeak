@@ -228,7 +228,6 @@ function SecondaryButton({
                   -1
                 }px`
               : "50%",
-
             background: "hsl(120deg 100% 18%)",
             color: "hsl(120deg 100% 86%)",
             border: "1px solid white",
