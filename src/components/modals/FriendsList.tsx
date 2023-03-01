@@ -191,15 +191,39 @@ function FriendsList({ setShowFriendsListModal }: IFriendsList) {
                 <SecondaryButton
                   icon={<AiOutlineCheck size={"1.5rem"} />}
                   extraPadding={false}
-                  onClickFunction={() =>
+                  onClickFunction={() => {
                     socket.emit("modifyFriendData", {
                       action: "acceptRoomInvite",
                       initiatorID: userID,
                       targetID: friend.id,
                       roomCode: friend.roomCode,
                       currentRoomIsPublic: friend.currentRoomIsPublic,
-                    })
-                  }
+                    });
+
+                    if (connectedToRoom) {
+                      socket.emit("leaveRoom", {
+                        roomCode: roomConfig.code,
+                        userID,
+                      });
+                    }
+
+                    setPageToRender("joinRoom");
+
+                    socket.emit("modifyFriendData", {
+                      action: "joinRoom",
+                      initiatorID: userID,
+                      roomCode: friend.roomCode,
+                      currentRoomIsPublic: friend.currentRoomIsPublic,
+                    });
+
+                    socket.emit("joinRoom", {
+                      userID,
+                      code: friend.roomCode,
+                      playerMetadata: playerMetadata[userID],
+                    });
+
+                    setConnectedToRoom(true);
+                  }}
                   style={customButtonStyles}
                 />
                 <DangerButton
@@ -253,119 +277,126 @@ function FriendsList({ setShowFriendsListModal }: IFriendsList) {
             }}
             className="flex w-full flex-col items-start justify-start gap-4 overflow-auto p-2  "
           >
-            {friends.map((friend, index) => (
-              <div
-                key={friend.id}
-                style={{
-                  zIndex: friends.length - index,
-                }}
-                className="baseFlex gap-2 transition-all"
-              >
-                <div className="baseFlex gap-4">
-                  <PlayerIcon
-                    avatarPath={friend.avatarPath}
-                    borderColor={friend.color}
-                    size={"3rem"}
-                    onlineStatus={friend.online}
-                  />
-                  <div
-                    style={{
-                      color: "hsl(120deg 100% 86%)",
-                    }}
-                    className="baseVertFlex !items-start"
-                  >
-                    {friend.username}
-                    {friend.online && (
-                      <div className="text-sm opacity-80">{friend.status}</div>
-                    )}
+            {friends
+              .sort(
+                ({ online: onlineA = false }, { online: onlineB = false }) =>
+                  Number(onlineB) - Number(onlineA)
+              )
+              .map((friend, index) => (
+                <div
+                  key={friend.id}
+                  style={{
+                    zIndex: friends.length - index,
+                  }}
+                  className="baseFlex gap-2 transition-all"
+                >
+                  <div className="baseFlex gap-4">
+                    <PlayerIcon
+                      avatarPath={friend.avatarPath}
+                      borderColor={friend.color}
+                      size={"3rem"}
+                      onlineStatus={friend.online}
+                    />
+                    <div
+                      style={{
+                        color: "hsl(120deg 100% 86%)",
+                      }}
+                      className="baseVertFlex !items-start"
+                    >
+                      {friend.username}
+                      {friend.online && (
+                        <div className="text-sm opacity-80">
+                          {friend.status}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <div className="baseFlex gap-2">
+                    <SecondaryButton
+                      icon={<BiMailSend size={"1.5rem"} />}
+                      extraPadding={false}
+                      disabled={
+                        !friend.online ||
+                        friend.status === "in a game" ||
+                        !connectedToRoom ||
+                        friend.roomCode === roomConfig.code
+                      }
+                      hoverTooltipText={"Send room invite"}
+                      hoverTooltipTextPosition={"bottom"}
+                      postClickTooltipText={"Invite sent!"}
+                      hoverTooltipTextTop={"2.25rem"}
+                      onClickFunction={() =>
+                        socket.emit("modifyFriendData", {
+                          action: "sendRoomInvite",
+                          initiatorID: userID,
+                          targetID: friend.id,
+                        })
+                      }
+                      style={customButtonStyles}
+                    />
+                    <SecondaryButton
+                      icon={<IoEnterOutline size={"1.5rem"} />}
+                      extraPadding={false}
+                      disabled={
+                        !friend.online ||
+                        friend.roomCode === null ||
+                        friend.roomCode === roomConfig.code ||
+                        friend.status === "in a game" ||
+                        !friend.currentRoomIsPublic ||
+                        friend.currentRoomIsFull === true
+                      }
+                      hoverTooltipText={"Join room"}
+                      hoverTooltipTextPosition={"bottom"}
+                      hoverTooltipTextTop={"2.25rem"}
+                      onClickFunction={() => {
+                        if (connectedToRoom) {
+                          socket.emit("leaveRoom", {
+                            roomCode: roomConfig.code,
+                            userID,
+                          });
+                        }
+
+                        setPageToRender("joinRoom");
+
+                        socket.emit("modifyFriendData", {
+                          action: "joinRoom",
+                          initiatorID: userID,
+                          roomCode: friend.roomCode,
+                          currentRoomIsPublic: friend.currentRoomIsPublic,
+                        });
+
+                        socket.emit("joinRoom", {
+                          userID,
+                          code: friend.roomCode,
+                          playerMetadata: playerMetadata[userID],
+                        });
+
+                        setConnectedToRoom(true);
+                      }}
+                      style={customButtonStyles}
+                    />
+
+                    <DangerButton
+                      icon={<FaTrashAlt size={"1.25rem"} />}
+                      innerText="Confirm"
+                      innerTooltipText="Remove friend?"
+                      hoverTooltipText="Remove friend"
+                      forFriendsList={true}
+                      setShowingDeleteFriendConfirmationModal={
+                        setShowingDeleteFriendConfirmationModal
+                      }
+                      onClickFunction={() =>
+                        socket.emit("modifyFriendData", {
+                          action: "removeFriend",
+                          initiatorID: userID,
+                          targetID: friend.id,
+                        })
+                      }
+                      style={customButtonStyles}
+                    />
                   </div>
                 </div>
-                <div className="baseFlex gap-2">
-                  <SecondaryButton
-                    icon={<BiMailSend size={"1.5rem"} />}
-                    extraPadding={false}
-                    disabled={
-                      !friend.online ||
-                      friend.status === "in a game" ||
-                      !connectedToRoom ||
-                      friend.roomCode === roomConfig.code
-                    }
-                    hoverTooltipText={"Send room invite"}
-                    hoverTooltipTextPosition={"bottom"}
-                    postClickTooltipText={"Invite sent!"}
-                    hoverTooltipTextTop={"2.25rem"}
-                    onClickFunction={() =>
-                      socket.emit("modifyFriendData", {
-                        action: "sendRoomInvite",
-                        initiatorID: userID,
-                        targetID: friend.id,
-                      })
-                    }
-                    style={customButtonStyles}
-                  />
-                  <SecondaryButton
-                    icon={<IoEnterOutline size={"1.5rem"} />}
-                    extraPadding={false}
-                    disabled={
-                      !friend.online ||
-                      friend.roomCode === null ||
-                      friend.roomCode === roomConfig.code ||
-                      friend.status === "in a game" ||
-                      !friend.currentRoomIsPublic ||
-                      friend.currentRoomIsFull === true
-                    }
-                    hoverTooltipText={"Join room"}
-                    hoverTooltipTextPosition={"bottom"}
-                    hoverTooltipTextTop={"2.25rem"}
-                    onClickFunction={() => {
-                      if (connectedToRoom) {
-                        socket.emit("leaveRoom", {
-                          roomCode: roomConfig.code,
-                          userID,
-                        });
-                      }
-
-                      setPageToRender("joinRoom");
-
-                      socket.emit("modifyFriendData", {
-                        action: "joinRoom",
-                        initiatorID: userID,
-                        roomCode: friend.roomCode,
-                        currentRoomIsPublic: friend.currentRoomIsPublic,
-                      });
-
-                      socket.emit("joinRoom", {
-                        userID,
-                        code: friend.roomCode,
-                        playerMetadata: playerMetadata[userID],
-                      });
-
-                      setConnectedToRoom(true);
-                    }}
-                    style={customButtonStyles}
-                  />
-
-                  <DangerButton
-                    icon={<FaTrashAlt size={"1.25rem"} />}
-                    innerText="Confirm"
-                    innerTooltipText="Remove friend?"
-                    hoverTooltipText="Remove friend"
-                    forFriendsList={true}
-                    setShowingDeleteFriendConfirmationModal={
-                      setShowingDeleteFriendConfirmationModal
-                    }
-                    onClickFunction={() =>
-                      socket.emit("modifyFriendData", {
-                        action: "removeFriend",
-                        initiatorID: userID,
-                        targetID: friend.id,
-                      })
-                    }
-                    style={customButtonStyles}
-                  />
-                </div>
-              </div>
-            ))}
+              ))}
           </div>
         ) : (
           <div className="baseFlex w-full">
