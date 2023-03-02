@@ -15,7 +15,6 @@ export interface IScoreboardMetadata {
   gameWinnerID: string | null;
   roundWinnerID: string;
   playerRoundDetails: IPlayerRoundDetailsMetadata;
-  gameData: IGameMetadata;
 }
 
 export interface IPlayerRoundDetailsMetadata {
@@ -23,6 +22,7 @@ export interface IPlayerRoundDetailsMetadata {
 }
 
 export interface IPlayerRoundDetails {
+  playerID: string;
   cardsPlayed: ICard[];
   squeakModifier: number;
   oldScore: number;
@@ -49,7 +49,8 @@ export function roundOverHandler(
 
     const playerRoundDetails = {} as IPlayerRoundDetailsMetadata;
 
-    const playerScoresForThisRound: IPlayerRankings = {};
+    const playerScoresForThisRound: [string, number][] = [];
+    const playerRanksForThisRound = {} as IPlayerRankings;
 
     // calculate final score for each player from this round
     for (const playerID of Object.keys(playerCards)) {
@@ -70,7 +71,10 @@ export function roundOverHandler(
       const squeakModifier =
         squeakDeckCards.length === 0 ? 10 : squeakDeckCards.length * -1;
 
-      playerScoresForThisRound[playerID] = cardsPlayed.length + squeakModifier;
+      playerScoresForThisRound.push([
+        playerID,
+        cardsPlayed.length + squeakModifier,
+      ]);
     }
 
     // calculate and store playerRoundDetails for each player
@@ -97,6 +101,7 @@ export function roundOverHandler(
       const newRanking = oldRanking; // we calculate this value down later once playerRoundDetails is populated
 
       playerRoundDetails[playerID] = {
+        playerID,
         cardsPlayed,
         squeakModifier,
         oldScore,
@@ -112,16 +117,29 @@ export function roundOverHandler(
     for (const playerID of Object.keys(playerCards)) {
       const player = playerCards[playerID];
 
-      if (!player || !playerRoundDetails || !playerScoresForThisRound) return;
+      const idx = playerScoresForThisRound.findIndex(
+        (playerRank) => playerRank[0] === playerID
+      );
+
+      const currPlayerRoundDetails = playerRoundDetails[playerID];
+
+      const currPlayerScoreForThisRound = playerScoresForThisRound[idx];
+
+      if (
+        !player ||
+        !currPlayerRoundDetails ||
+        !currPlayerScoreForThisRound ||
+        !playerScoresForThisRound
+      )
+        return;
 
       newPlayerRanks.push([
         playerID,
-        playerRoundDetails[playerID]!.oldScore +
-          playerScoresForThisRound[playerID]!,
+        currPlayerRoundDetails.oldScore + currPlayerScoreForThisRound[1],
       ]);
     }
 
-    // updating playerRoundDetails with new rankings
+    // adding sorted ranks for this round + overall new ranks to playerRoundDetails
     for (const playerID of Object.keys(playerCards)) {
       const player = playerCards[playerID];
 
@@ -129,6 +147,11 @@ export function roundOverHandler(
 
       playerRoundDetails[playerID]!.newRanking =
         newPlayerRanks
+          .sort((a, b) => b[1] - a[1])
+          .findIndex((playerRank) => playerRank[0] === playerID) + 1;
+
+      playerRanksForThisRound[playerID] =
+        playerScoresForThisRound
           .sort((a, b) => b[1] - a[1])
           .findIndex((playerRank) => playerRank[0] === playerID) + 1;
     }
@@ -160,21 +183,12 @@ export function roundOverHandler(
 
     // updating stats for each user in the room
     for (const playerID of Object.keys(playerRoundDetails)) {
-      // convert obj to array for easier sorting
-      const playerScoresForThisRoundArray: [string, number][] = [];
-      for (const [key, value] of Object.entries(playerScoresForThisRound)) {
-        playerScoresForThisRoundArray.push([key, value]);
-      }
-
       updatePlayerStatsAfterRound({
         playerID,
         playerRoundDetails: playerRoundDetails[playerID]!,
         roundWinnerID,
         gameWinnerID,
-        playerRankForThisRound:
-          playerScoresForThisRoundArray
-            .sort((a, b) => b[1] - a[1])
-            .findIndex((playerRank) => playerRank[0] === playerID) + 1,
+        playerRankForThisRound: playerRanksForThisRound[playerID]!,
       });
     }
 
@@ -182,7 +196,6 @@ export function roundOverHandler(
       roundWinnerID,
       gameWinnerID,
       playerRoundDetails,
-      gameData: gameData[roomCode],
     });
   }
 
@@ -202,20 +215,17 @@ function calculateCardsPlayedDuringRound(
     ...cardsLeftInSqueakHands,
   ];
 
-  let cardsPlayed: ICard[] = [];
-
-  for (const cardToBeFiltered of allCardsNotPlayedOnBoard) {
-    cardsPlayed = fullDeck.filter((card) => {
+  const cardsPlayed = fullDeck.filter((item) => {
+    for (let i = 0; i < allCardsNotPlayedOnBoard.length; i++) {
       if (
-        card.suit === cardToBeFiltered.suit &&
-        card.value === cardToBeFiltered.value
+        item.suit === allCardsNotPlayedOnBoard[i]!.suit &&
+        item.value === allCardsNotPlayedOnBoard[i]!.value
       ) {
         return false;
       }
-
-      return true;
-    });
-  }
+    }
+    return true;
+  });
 
   return cardsPlayed;
 }
