@@ -41,7 +41,7 @@ function MainOptions() {
       className="baseFlex relative min-h-[100vh]"
     >
       {status !== "loading" && (
-        <div className="baseVertFlex min-w-[22.25rem] rounded-md border-2 border-white bg-green-800 p-8 shadow-lg">
+        <div className="baseVertFlex w-[16rem] rounded-md border-2 border-white bg-green-800 p-4 shadow-lg lg:w-[22.25rem] lg:p-8">
           <img
             src="/logo/squeakLogo.svg"
             alt="Squeak logo"
@@ -116,7 +116,7 @@ function MainOptions() {
           padding: "0.25rem 1rem",
           transition: "all 0.3s ease-in-out",
         }}
-        className="baseFlex absolute right-4 bottom-4 !justify-end overflow-hidden rounded-full border-2"
+        className="baseFlex fixed right-1 bottom-1 !justify-end overflow-hidden rounded-full border-2 lg:right-4 lg:bottom-4"
         onMouseEnter={() => setHoveringOnAboutMe(true)}
         onMouseLeave={() => setHoveringOnAboutMe(false)}
       >

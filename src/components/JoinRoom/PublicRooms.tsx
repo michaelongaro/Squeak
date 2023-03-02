@@ -40,7 +40,7 @@ function PublicRooms() {
   }, [connectedToRoom, setConnectedToRoom, joinRoom, roomCode]);
 
   return (
-    <fieldset className="rounded-md border-2 border-white bg-green-800 p-4">
+    <fieldset className="mt-8 rounded-md border-2 border-white bg-green-800 p-4">
       <legend
         style={{
           color: "hsl(120deg 100% 86%)",
@@ -102,7 +102,7 @@ function PublicRooms() {
                       borderBottomWidth:
                         index === publicRooms.length - 1 ? "0px" : "2px ",
                     }}
-                    className="relative grid w-[600px] grid-cols-3 place-items-center border-b-2 p-4 pr-8"
+                    className="relative grid w-auto grid-cols-3 place-items-center border-b-2 p-4 pr-8 lg:w-[600px]"
                     onMouseEnter={() => setHoveredIndex(index)}
                     onMouseLeave={() => setHoveredIndex(-1)}
                   >
@@ -140,14 +140,14 @@ function PublicRooms() {
               style={{
                 color: "hsl(120deg 100% 86%)",
               }}
-              className="min-w-[658px] pt-4 pb-4 text-center text-lg"
+              className=" w-auto pt-4 pb-4 text-center text-lg lg:min-w-[658px]"
             >
               No rooms found. Create one or refresh to find more.
             </div>
           )}
         </>
       ) : (
-        <div className="baseFlex min-w-[658px]">
+        <div className="baseFlex w-auto lg:min-w-[658px]">
           <div
             style={{
               width: "3.5rem",

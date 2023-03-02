@@ -30,7 +30,7 @@ function HomePage() {
   usePlayerLeftRoom();
 
   return (
-    <div className="relative">
+    <div className="relative pb-8 pt-8 lg:pt-0 lg:pb-0">
       <AnimatePresence
         initial={false}
         mode={"wait"}

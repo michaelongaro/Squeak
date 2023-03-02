@@ -44,7 +44,7 @@ function LeaderboardModal({ setShowModal }: ILeaderboardModal) {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.15 }}
-      className="baseFlex fixed top-0 left-0 z-[500] min-h-[100vh] min-w-[100vw] bg-black/50 transition-all"
+      className="baseFlex fixed top-0 left-0 z-[1000] min-h-[100vh] min-w-[100vw] bg-black/50 transition-all lg:z-[500]"
     >
       <motion.div
         ref={modalRef}
@@ -53,10 +53,10 @@ function LeaderboardModal({ setShowModal }: ILeaderboardModal) {
         animate={{ scale: 1 }}
         exit={{ scale: 0.9 }}
         transition={{ duration: 0.15 }}
-        className="baseVertFlex rounded-md border-2 border-white shadow-md"
+        className="baseVertFlex h-[90vh] w-[93vw] !justify-start overflow-y-auto rounded-md border-2 border-white shadow-md lg:h-auto lg:w-auto"
       >
         {/* combine these classes with above? */}
-        <div className="baseVertFlex relative w-full !justify-start gap-8 rounded-t-md bg-green-800 p-8">
+        <div className="baseVertFlex relative w-full !justify-start gap-8 rounded-md bg-green-800 p-8">
           <div
             style={{
               color: "hsl(120deg 100% 86%)",
@@ -94,7 +94,7 @@ function LeaderboardModal({ setShowModal }: ILeaderboardModal) {
                 borderColor: "hsl(120deg 100% 86%)",
                 color: "hsl(120deg 100% 86%)",
               }}
-              className="baseVertFlex mt-4 min-h-[500px] w-[500px] !justify-start gap-4 rounded-md border-2 p-4"
+              className="baseVertFlex min-h-auto mt-4 w-auto !justify-start gap-4 rounded-md border-2 p-4 lg:min-h-[500px] lg:w-[500px]"
             >
               <div
                 style={{
@@ -113,16 +113,20 @@ function LeaderboardModal({ setShowModal }: ILeaderboardModal) {
                       key={index}
                       className="grid-rows-10 grid w-full grid-cols-3 place-items-center gap-2" // play with gap
                     >
-                      <div className="text-xl">{orderValues[index]}</div>
+                      <div className="text-sm lg:text-xl">
+                        {orderValues[index]}
+                      </div>
                       <div className="baseFlex gap-4">
                         <PlayerIcon
                           borderColor={player.color}
                           avatarPath={player.avatarPath}
                           size="3rem"
                         />
-                        <div className="text-xl">{player.username}</div>
+                        <div className="text-sm lg:text-xl">
+                          {player.username}
+                        </div>
                       </div>
-                      <div className="text-xl">{player.value} </div>
+                      <div className="text-sm lg:text-xl">{player.value} </div>
                     </div>
                   )
                 )

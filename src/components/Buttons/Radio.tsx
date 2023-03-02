@@ -20,7 +20,9 @@ function Radio({
       style={{
         borderColor: "hsl(120deg 100% 86%)",
       }}
-      className="baseFlex relative h-full w-full rounded-md border-2 transition-all"
+      className={`baseFlex relative h-full w-full ${
+        minHeight && "flex-wrap"
+      } rounded-md border-2 transition-all lg:flex-nowrap`}
     >
       {values.map((value, index) => (
         <button
