@@ -63,6 +63,8 @@ function OtherPlayersCardContainers({
     }>();
 
   useEffect(() => {
+    if (avatarIconAbsolutePositions) return;
+
     const tempAvatarIconAbsolutePositions: {
       [playerID: string]: {
         bottom: string;
@@ -97,7 +99,7 @@ function OtherPlayersCardContainers({
     }
 
     setAvatarIconAbsolutePositions(tempAvatarIconAbsolutePositions);
-  }, [otherPlayerIDs]);
+  }, [otherPlayerIDs, avatarIconAbsolutePositions]);
 
   useEffect(() => {
     let tempDummyDeckCardStates = { ...showDummyDeckCardStates };
@@ -162,8 +164,6 @@ function OtherPlayersCardContainers({
       <audio ref={audioRef1} src="/sounds/otherPlayerCardMove.wav" />
       <audio ref={audioRef2} src="/sounds/otherPlayerCardMove.wav" />
 
-      {/* Object.keys(gameData.players)
-        .filter((playerID) => playerID !== userID) */}
       {otherPlayerIDs.map((playerID, idx) => (
         <div
           key={playerID}
