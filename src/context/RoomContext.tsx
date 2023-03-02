@@ -94,9 +94,13 @@ interface IRoomContext {
   setMirrorPlayerContainer: React.Dispatch<React.SetStateAction<boolean>>;
   showResetRoundModal: boolean;
   setShowResetRoundModal: React.Dispatch<React.SetStateAction<boolean>>;
-  scoreboardMetadata: Partial<IScoreboardMetadata> | null;
+  scoreboardMetadata: IScoreboardMetadata | null;
   setScoreboardMetadata: React.Dispatch<
-    React.SetStateAction<Partial<IScoreboardMetadata | null>>
+    React.SetStateAction<IScoreboardMetadata | null>
+  >;
+  playerIDToStartNextRound: string | null;
+  setPlayerIDToStartNextRound: React.Dispatch<
+    React.SetStateAction<string | null>
   >;
 }
 
@@ -174,7 +178,7 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     useState<boolean>(false);
 
   const [scoreboardMetadata, setScoreboardMetadata] =
-    useState<Partial<IScoreboardMetadata> | null>(null);
+    useState<IScoreboardMetadata | null>(null);
 
   const [cardBeingMovedProgramatically, setCardBeingMovedProgramatically] =
     useState<ICardBeingMovedProgramatically>({});
@@ -184,6 +188,10 @@ export function RoomProvider(props: { children: React.ReactNode }) {
 
   const [mirrorPlayerContainer, setMirrorPlayerContainer] =
     useState<boolean>(false);
+
+  const [playerIDToStartNextRound, setPlayerIDToStartNextRound] = useState<
+    string | null
+  >(null);
 
   // might want to move into a hook eventually
   useEffect(() => {
@@ -374,6 +382,8 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     setMirrorPlayerContainer,
     showResetRoundModal,
     setShowResetRoundModal,
+    playerIDToStartNextRound,
+    setPlayerIDToStartNextRound,
   };
 
   return (
