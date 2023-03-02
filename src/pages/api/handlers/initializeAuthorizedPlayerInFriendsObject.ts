@@ -25,7 +25,6 @@ export async function initializeAuthorizedPlayerInFriendsObject(
           roomInviteIDs: user.roomInviteIDs,
         };
       });
-      console.log("first");
 
       io.emit("friendDataUpdated", {
         playerID,
@@ -55,7 +54,6 @@ export async function initializeAuthorizedPlayerInFriendsObject(
         friendInviteIDs: user.friendInviteIDs,
         roomInviteIDs: user.roomInviteIDs,
       };
-      console.log("second");
 
       io.emit("friendDataUpdated", {
         playerID,
@@ -65,8 +63,6 @@ export async function initializeAuthorizedPlayerInFriendsObject(
 
     // player already in friendData
     else {
-      console.log("third");
-
       io.emit("friendDataUpdated", {
         playerID,
         friendData: friendData[playerID],

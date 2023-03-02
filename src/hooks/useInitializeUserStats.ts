@@ -19,8 +19,6 @@ function useInitializeUserStats() {
       !initialized &&
       status === "authenticated"
     ) {
-      console.log("initializing user stats");
-
       initializeUser.mutate(userID);
 
       setInitialized(true);

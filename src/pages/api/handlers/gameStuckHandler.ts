@@ -15,8 +15,6 @@ export function gameStuckHandler(
   gameData: IGameData,
   miscRoomData: IMiscRoomData
 ) {
-  console.log("game stuck handler called from interval");
-
   // on sighting of even *one* valid move, return from function. otherwise, emit game stuck
 
   let validCardFound = false;

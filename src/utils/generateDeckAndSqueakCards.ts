@@ -43,7 +43,6 @@ export function createAndFormatDeck(): ICard[] {
   return shuffleDeck(deck);
 }
 
-// create a function that shuffles the deck
 function shuffleDeck(deck: ICard[]): ICard[] {
   const shuffledDeck: ICard[] = [];
 

@@ -5,8 +5,6 @@ export const statsRouter = router({
   initializeUser: publicProcedure // maybe go protected if it still will return null on "" input
     .input(z.string())
     .mutation(async ({ ctx, input }) => {
-      console.log("input: " + input);
-
       if (input === "") return null;
 
       try {
