@@ -5,6 +5,8 @@ import PlayerIcon from "../../playerIcons/PlayerIcon";
 import AnimatedNumber from "react-awesome-animated-number";
 import confetti from "canvas-confetti";
 import { AnimatePresence, motion } from "framer-motion";
+import Image from "next/image";
+import confettiCannon from "../../../../public/scoreboard/confettiCannon.svg";
 
 interface IRanking {
   [key: number]: string;
@@ -369,7 +371,7 @@ function Scoreboard() {
               className="baseFlex gap-4 rounded-md p-4 transition-all"
             >
               {/* left confetti cannon */}
-              <img
+              <Image
                 style={{
                   opacity: showConfetti ? 1 : 0,
                   transform: showConfetti
@@ -378,7 +380,7 @@ function Scoreboard() {
                   filter: "drop-shadow(rgba(0,0,0, 0.10) 0px 0px 0.5rem)",
                 }}
                 className="h-8 w-8 transition-all"
-                src="/scoreboard/confettiCannon.svg"
+                src={confettiCannon}
                 alt={"left celebratory confetti cannon"}
               />
               {/* remove "!"s when using actual hook */}
@@ -407,7 +409,7 @@ function Scoreboard() {
                 }!`}
               </div>
               {/* right confetti cannon */}
-              <img
+              <Image
                 style={{
                   opacity: showConfetti ? 1 : 0,
                   transform: showConfetti
@@ -416,7 +418,7 @@ function Scoreboard() {
                   filter: "drop-shadow(rgba(0,0,0, 0.10) 0px 0px 0.5rem)",
                 }}
                 className="h-8 w-8 transition-all"
-                src="/scoreboard/confettiCannon.svg"
+                src={confettiCannon}
                 alt={"right celebratory confetti cannon"}
               />
             </div>

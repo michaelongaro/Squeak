@@ -3,13 +3,8 @@ import { useRoomContext } from "../../context/RoomContext";
 import LogIn from "../auth/LogIn";
 import SecondaryButton from "../Buttons/SecondaryButton";
 import TutorialModal from "../modals/TutorialModal";
-import TopRightControls from "../TopRightControls/TopRightControls";
 import { ImEnter } from "react-icons/im";
-import {
-  AiFillPlusCircle,
-  AiOutlinePlusCircle,
-  AiOutlineInfoCircle,
-} from "react-icons/ai";
+import { AiOutlinePlusCircle, AiOutlineInfoCircle } from "react-icons/ai";
 import { IoStatsChart } from "react-icons/io5";
 import { useSession } from "next-auth/react";
 import PlayerIcon from "../playerIcons/PlayerIcon";
@@ -18,6 +13,8 @@ import { trpc } from "../../utils/trpc";
 import { AnimatePresence, motion } from "framer-motion";
 import LeaderboardModal from "../modals/LeaderboardModal";
 import { HiExternalLink } from "react-icons/hi";
+import Image from "next/image";
+import logo from "../../../public/logo/squeakLogo.svg";
 
 function MainOptions() {
   const { data: session, status } = useSession();
@@ -42,8 +39,8 @@ function MainOptions() {
     >
       {status !== "loading" && (
         <div className="baseVertFlex w-[16rem] rounded-md border-2 border-white bg-green-800 p-4 shadow-lg lg:w-[22.25rem] lg:p-8">
-          <img
-            src="/logo/squeakLogo.svg"
+          <Image
+            src={logo}
             alt="Squeak logo"
             className="h-48 w-48 tall:h-[300px] tall:w-[300px]"
           />

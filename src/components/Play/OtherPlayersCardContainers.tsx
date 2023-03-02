@@ -9,6 +9,8 @@ import isEqual from "lodash.isequal";
 import classes from "./OtherPlayersCardContainers.module.css";
 import useRotatePlayerDecks from "../../hooks/useRotatePlayerDecks";
 import Buzzer from "./Buzzer";
+import Image from "next/image";
+import disconnectIcon from "../../../public/disconnect/disconnect.svg";
 
 interface IOtherPlayersCardContainers {
   orderedClassNames: (string | undefined)[];
@@ -364,13 +366,13 @@ function OtherPlayersCardContainers({
           </div>
 
           {gameData.playerIDsThatLeftMidgame.includes(playerID) && (
-            <img
+            <Image
               style={{
                 top: "50%",
                 left: "50%",
                 transform: "translate(-50%, -50%)",
               }}
-              src={"/disconnect/disconnect.svg"}
+              src={disconnectIcon}
               alt={"player has disconnected icon"}
               className="absolute z-[999] h-14 w-14"
             />

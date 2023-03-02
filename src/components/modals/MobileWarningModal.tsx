@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import PrimaryButton from "../Buttons/PrimaryButton";
-
+import Image from "next/image";
+import mobileWarning from "../../../public/mobileWarning/mobileWarning.svg";
 interface IMobileWarningModal {
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -29,8 +30,8 @@ function MobileWarningModal({ setShowModal }: IMobileWarningModal) {
           }}
           className="baseVertFlex relative h-full w-full gap-8 rounded-md bg-green-800 p-4 text-center"
         >
-          <img
-            src={"/mobileWarning/mobileWarning.svg"}
+          <Image
+            src={mobileWarning}
             alt={"mobile warning"}
             className={"h-20 w-20"}
           />

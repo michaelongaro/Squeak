@@ -2,6 +2,9 @@ import { useState, useEffect, useRef } from "react";
 import { useRoomContext } from "../../context/RoomContext";
 import { useUserIDContext } from "../../context/UserIDContext";
 import { socket } from "../../pages";
+import Image from "next/image";
+import baseplate from "../../../public/buzzer/baseplate.png";
+import squeakBuzzer from "../../../public/buzzer/buzzerButton.png";
 interface IBuzzer {
   playerID: string;
   roomID: string;
@@ -91,9 +94,9 @@ function Buzzer({ playerID, roomID, interactive }: IBuzzer) {
       <audio ref={squeakButtonAudioRef} src="/sounds/squeakButtonPress.mp3" />
       {/* grey baseplate for button */}
       <div className="absolute top-0 left-0 z-[998]">
-        <img
+        <Image
           draggable={false}
-          src="/buzzer/baseplate.png"
+          src={baseplate}
           alt="baseplate for buzzer"
           className="h-[40px] w-[75px]"
         />
@@ -101,13 +104,13 @@ function Buzzer({ playerID, roomID, interactive }: IBuzzer) {
 
       {/* actual button container */}
       <div className="absolute left-[12px] top-[-5px] z-[998] h-[35px] w-[50px]">
-        <img
+        <Image
           style={{
             top: mouseDownOnButton ? "8px" : "0px",
             transform: mouseDownOnButton ? "rotateX(60deg)" : "rotateX(0deg)",
           }}
           draggable={false}
-          src="/buzzer/buzzerButton.png"
+          src={squeakBuzzer}
           alt="buzzer"
           className="absolute h-[35px] w-[50px] transition-all"
         />
