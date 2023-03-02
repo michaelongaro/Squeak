@@ -1,30 +1,29 @@
-import {
-  type IPlayerRankings,
-  type IPlayerRoundDetails,
-} from "../handlers/roundOverHandler";
+import { type IPlayerRoundDetails } from "../handlers/roundOverHandler";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
 interface IUpdatePlayerStatsAfterRound {
+  playerID: string;
   roundWinnerID: string;
   gameWinnerID: string | null;
   playerRoundDetails: IPlayerRoundDetails;
-  playerRankingsForThisRound: IPlayerRankings;
+  playerRankForThisRound: number;
 }
 
 export async function updatePlayerStatsAfterRound({
+  playerID,
   playerRoundDetails,
   roundWinnerID,
   gameWinnerID,
-  playerRankingsForThisRound,
+  playerRankForThisRound,
 }: IUpdatePlayerStatsAfterRound) {
   if (!prisma) return;
 
   const playerStats = await prisma.stats
     .findUnique({
       where: {
-        userID: playerRoundDetails.playerID,
+        userID: playerID,
       },
     })
     .catch((err) => console.log(err));
@@ -35,14 +34,12 @@ export async function updatePlayerStatsAfterRound({
   // modify all appropriate properties
 
   // squeaks
-  if (roundWinnerID === playerRoundDetails.playerID) {
+  if (roundWinnerID === playerID) {
     playerStats.squeaks++;
   }
 
   // finishingPlace
-  const finishingPlace =
-    playerRankingsForThisRound[playerRoundDetails.playerID];
-  if (finishingPlace) playerStats.allFinishedPlacesValues.push(finishingPlace);
+  playerStats.allFinishedPlacesValues.push(playerRankForThisRound);
 
   // averagePlace
   playerStats.averageFinishingPlace =
@@ -84,7 +81,7 @@ export async function updatePlayerStatsAfterRound({
   // prisma call to update Stats(userID)
   prisma.stats.update({
     where: {
-      userID: playerRoundDetails.playerID,
+      userID: playerID,
     },
     data: playerStats,
   });
