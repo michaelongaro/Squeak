@@ -71,7 +71,7 @@ function LeaderboardModal({ setShowModal }: ILeaderboardModal) {
             <Radio
               values={[
                 "Total Squeaks",
-                "Average place per round",
+                "Average rank",
                 "Average left in Squeak pile",
                 "Highest score",
                 "Lowest score",

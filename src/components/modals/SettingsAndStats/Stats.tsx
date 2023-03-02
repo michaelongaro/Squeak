@@ -4,7 +4,7 @@ import { trpc } from "../../../utils/trpc";
 
 const rowNames = [
   "Total Squeaks",
-  "Average place per round",
+  "Average rank",
   "Average left in Squeak",
   "Highest score",
   "Lowest score",

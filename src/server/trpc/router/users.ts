@@ -95,7 +95,7 @@ export const usersRouter = router({
 
       const leaderboardStats: IFormattedStats = {
         "Total Squeaks": [],
-        "Average place per round": [],
+        "Average rank": [],
         "Average left in Squeak": [],
         "Highest score": [],
         "Lowest score": [],
@@ -114,7 +114,7 @@ export const usersRouter = router({
           ...baseUserMetadata,
           value: user?.stats?.squeaks || 0,
         });
-        leaderboardStats["Average place per round"]?.push({
+        leaderboardStats["Average rank"]?.push({
           ...baseUserMetadata,
           value: user?.stats?.averageFinishingPlace || 0,
         });
@@ -148,7 +148,7 @@ export const usersRouter = router({
           currentlyCategory = currentlyCategory
             .sort((a, b) => b.value + a.value)
             .slice(0, 10);
-        } else if (category === "Average place per round") {
+        } else if (category === "Average rank") {
           currentlyCategory = currentlyCategory
             .sort((a, b) => a.value - b.value)
             .slice(0, 10);
