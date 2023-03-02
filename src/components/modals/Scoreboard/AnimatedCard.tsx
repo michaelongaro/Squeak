@@ -32,7 +32,7 @@ function AnimatedCard({ card, index, playerID }: IAnimatedCard) {
       Math.random() * (animatedCardContainer.width - 50) + 50
     );
 
-    const initY = Math.floor(Math.random() * -250) - 100;
+    const initY = Math.floor(Math.random() * -375) - 100;
 
     const { initXRotation, initYRotation, initZRotation } = {
       initXRotation: Math.floor(Math.random() * 35) + 50,
@@ -62,7 +62,7 @@ function AnimatedCard({ card, index, playerID }: IAnimatedCard) {
       rotateZ: [`${initZRotation}deg`, `${finalZRotation}deg`],
 
       delay: index * 100,
-      duration: 4000,
+      duration: 4500,
       loop: false,
       direction: "normal",
       easing: "easeOutQuad", // easeInOut?,
