@@ -46,7 +46,8 @@ function Play() {
   useScoreboardData();
 
   useEffect(() => {
-    if (gameData?.board === undefined && gameData?.players === undefined) {
+    // used to only run block of code once, the first time this component is rendered
+    if (gameData.board === undefined && gameData.players === undefined) {
       setShowShufflingCountdown(true);
 
       socket.emit("playerReadyToReceiveInitGameData", roomConfig.code);
