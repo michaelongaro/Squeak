@@ -10,16 +10,26 @@ export default function useOnClickOutside({
   setShowModal,
 }: IOnClickOutside) {
   useEffect(() => {
-    const listener = (event: MouseEvent) => {
+    const clickListener = (event: MouseEvent) => {
       // Do nothing if clicking ref's element or descendent elements
 
       if (!ref.current?.contains(event.target as Node)) {
         setShowModal(false);
       }
     };
-    document.addEventListener("mousedown", listener);
+
+    const keydownListener = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setShowModal(false);
+      }
+    };
+
+    document.addEventListener("mousedown", clickListener);
+    document.addEventListener("keydown", keydownListener);
+
     return () => {
-      document.removeEventListener("mousedown", listener);
+      document.removeEventListener("mousedown", clickListener);
+      document.removeEventListener("keydown", keydownListener);
     };
   }, []);
 }
