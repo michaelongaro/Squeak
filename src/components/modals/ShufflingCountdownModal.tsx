@@ -11,6 +11,8 @@ function ShufflingCountdownModal() {
     roomConfig,
     gameData,
     showShufflingCountdown,
+    playerIDToStartNextRound,
+    setPlayerIDToStartNextRound,
     setShowShufflingCountdown,
   } = useRoomContext();
   const { value: userID } = useUserIDContext();
@@ -22,11 +24,18 @@ function ShufflingCountdownModal() {
     if (timersInitiated || !showShufflingCountdown || !gameData.currentRound)
       return;
 
+    if (gameData.currentRound !== 1 && playerIDToStartNextRound === userID) {
+      socket.emit("startGame", {
+        roomCode: roomConfig.code,
+        firstRound: gameData.currentRound === 1,
+      });
+      setPlayerIDToStartNextRound(null);
+    }
+
     setTimeout(() => {
       setTimersInitiated(true);
     }, 150);
 
-    // timers are offset by 500ms to allow for the animation to play out
     setTimeout(() => {
       setCountdownTimerValue(2);
     }, 1000);
@@ -35,15 +44,6 @@ function ShufflingCountdownModal() {
       setCountdownTimerValue(1);
     }, 2000);
 
-    if (gameData.currentRound !== 1) {
-      setTimeout(() => {
-        socket.emit("startGame", {
-          roomCode: roomConfig.code,
-          firstRound: gameData.currentRound === 1,
-        });
-      }, 3000);
-    }
-
     setTimeout(() => {
       setShowShufflingCountdown(false);
       setTimersInitiated(false);
@@ -51,8 +51,11 @@ function ShufflingCountdownModal() {
   }, [
     gameData.currentRound,
     roomConfig.code,
+    userID,
     timersInitiated,
     showShufflingCountdown,
+    playerIDToStartNextRound,
+    setPlayerIDToStartNextRound,
     setShowShufflingCountdown,
   ]);
 
