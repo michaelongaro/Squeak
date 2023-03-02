@@ -7,11 +7,11 @@ import baseplate from "../../../public/buzzer/baseplate.png";
 import squeakBuzzer from "../../../public/buzzer/buzzerButton.png";
 interface IBuzzer {
   playerID: string;
-  roomID: string;
+  roomCode: string;
   interactive: boolean;
 }
 
-function Buzzer({ playerID, roomID, interactive }: IBuzzer) {
+function Buzzer({ playerID, roomCode, interactive }: IBuzzer) {
   const { currentVolume, playerMetadata, playerIDWhoSqueaked } =
     useRoomContext();
 
@@ -26,37 +26,37 @@ function Buzzer({ playerID, roomID, interactive }: IBuzzer) {
   const squeakButtonAudioRef = useRef<HTMLAudioElement>(null);
 
   useEffect(() => {
-    if (playerIDWhoSqueaked === playerID) {
-      if (playerIDWhoSqueaked !== userID) {
-        // simulating a mouse click on the button to trigger the animation
-        setMouseDownOnButton(true);
-        setTimeout(() => {
-          setMouseDownOnButton(false);
-        }, 100);
-      }
+    if (playerIDWhoSqueaked !== playerID) return;
 
-      if (squeakButtonAudioRef.current) {
-        squeakButtonAudioRef.current.volume = currentVolume * 0.01;
-        squeakButtonAudioRef.current.play();
-      }
-
-      // temporarily hiding overflow on <Page /> so that the expanding pulse wave
-      // animation doesn't cause the page to scroll
-      const pageContainer = document.getElementById("playContainer");
-
-      if (pageContainer) {
-        pageContainer.style.overflow = "hidden";
-      }
-
-      setPlayExpandingPulseWaveAnimation(true);
-
+    if (playerIDWhoSqueaked !== userID) {
+      // simulating a mouse click on the button to trigger the animation
+      setMouseDownOnButton(true);
       setTimeout(() => {
-        setPlayExpandingPulseWaveAnimation(false);
-        if (pageContainer) {
-          pageContainer.style.overflow = "auto";
-        }
-      }, 1000);
+        setMouseDownOnButton(false);
+      }, 100);
     }
+
+    if (squeakButtonAudioRef.current) {
+      squeakButtonAudioRef.current.volume = currentVolume * 0.01;
+      squeakButtonAudioRef.current.play();
+    }
+
+    // temporarily hiding overflow on <Page /> so that the expanding pulse wave
+    // animation doesn't cause the page to scroll
+    const pageContainer = document.getElementById("playContainer");
+
+    if (pageContainer) {
+      pageContainer.style.overflow = "hidden";
+    }
+
+    setPlayExpandingPulseWaveAnimation(true);
+
+    setTimeout(() => {
+      setPlayExpandingPulseWaveAnimation(false);
+      if (pageContainer) {
+        pageContainer.style.overflow = "auto";
+      }
+    }, 1000);
   }, [playerIDWhoSqueaked, playerID, currentVolume, userID]);
 
   return (
@@ -85,9 +85,11 @@ function Buzzer({ playerID, roomID, interactive }: IBuzzer) {
         if (interactive) setMouseDownOnButton(false);
       }}
       onClick={() => {
+        console.log(playerID, roomCode);
+
         socket.emit("roundOver", {
-          roomCode: roomID,
           roundWinnerID: playerID,
+          roomCode,
         });
       }}
     >
@@ -123,7 +125,7 @@ function Buzzer({ playerID, roomID, interactive }: IBuzzer) {
           transform: "translate(-50%, -50%)",
           height: playExpandingPulseWaveAnimation ? "100vh" : "0",
           width: playExpandingPulseWaveAnimation ? "100vw" : "0",
-          backgroundColor: playerMetadata[playerID]?.color,
+          backgroundColor: playerMetadata[playerIDWhoSqueaked!]?.color,
           opacity: playExpandingPulseWaveAnimation ? "0.5" : "0",
           transition: playExpandingPulseWaveAnimation ? "all 1s" : "all 0.25s",
         }}

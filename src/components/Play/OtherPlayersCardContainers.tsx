@@ -176,7 +176,7 @@ function OtherPlayersCardContainers({
               ) : (
                 <Buzzer
                   playerID={playerID}
-                  roomID={roomConfig.code}
+                  roomCode={roomConfig.code}
                   interactive={false}
                 />
               )}

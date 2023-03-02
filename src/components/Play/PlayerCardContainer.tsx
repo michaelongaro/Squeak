@@ -160,7 +160,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
             ) : (
               <Buzzer
                 playerID={userID}
-                roomID={roomConfig.code}
+                roomCode={roomConfig.code}
                 interactive={true}
               />
             )}
