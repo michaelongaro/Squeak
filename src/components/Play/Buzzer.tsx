@@ -85,8 +85,6 @@ function Buzzer({ playerID, roomCode, interactive }: IBuzzer) {
         if (interactive) setMouseDownOnButton(false);
       }}
       onClick={() => {
-        console.log(playerID, roomCode);
-
         socket.emit("roundOver", {
           roundWinnerID: playerID,
           roomCode,
@@ -127,7 +125,9 @@ function Buzzer({ playerID, roomCode, interactive }: IBuzzer) {
           width: playExpandingPulseWaveAnimation ? "100vw" : "0",
           backgroundColor: playerMetadata[playerIDWhoSqueaked!]?.color,
           opacity: playExpandingPulseWaveAnimation ? "0.5" : "0",
-          transition: playExpandingPulseWaveAnimation ? "all 1s" : "all 0.25s",
+          transition: playExpandingPulseWaveAnimation
+            ? "all 1s linear"
+            : "all 0.25s linear",
         }}
         className="absolute z-[999] rounded-full"
       ></div>
