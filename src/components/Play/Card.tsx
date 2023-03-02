@@ -263,6 +263,7 @@ function Card({
     value,
     suit,
     ownerID,
+    rotation,
     moveCard,
   });
 

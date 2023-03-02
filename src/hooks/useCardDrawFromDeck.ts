@@ -7,6 +7,7 @@ interface IUseCardDrawFromDeck {
   value?: string;
   suit?: string;
   ownerID?: string;
+  rotation: number;
   moveCard: (
     { x, y }: { x: number; y: number },
     flip: boolean,
@@ -19,6 +20,7 @@ function useCardDrawFromDeck({
   value,
   suit,
   ownerID,
+  rotation,
   moveCard,
 }: IUseCardDrawFromDeck) {
   const { gameData, setGameData } = useRoomContext();
@@ -60,8 +62,18 @@ function useCardDrawFromDeck({
         ?.getBoundingClientRect();
 
       if (endLocation) {
-        const endX = endLocation.x;
-        const endY = endLocation.y - 4;
+        let endX = endLocation.x;
+        let endY = endLocation.y;
+
+        if (rotation === 0) {
+          endY -= 4;
+        } else if (rotation === 90) {
+          endX += 4;
+        } else if (rotation === 180) {
+          endY += 4;
+        } else if (rotation === 270) {
+          endX -= 4;
+        }
 
         moveCard({ x: endX, y: endY }, true, false, () => {
           setGameData({
@@ -72,7 +84,16 @@ function useCardDrawFromDeck({
         });
       }
     }
-  }, [dataFromBackend, moveCard, gameData, setGameData, suit, ownerID, value]);
+  }, [
+    dataFromBackend,
+    moveCard,
+    gameData,
+    setGameData,
+    rotation,
+    suit,
+    ownerID,
+    value,
+  ]);
 }
 
 export default useCardDrawFromDeck;
