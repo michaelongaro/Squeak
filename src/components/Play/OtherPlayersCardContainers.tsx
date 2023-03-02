@@ -54,6 +54,51 @@ function OtherPlayersCardContainers({
     [playerID: string]: [boolean, boolean, boolean, boolean];
   }>();
 
+  const [avatarIconAbsolutePositions, setAvatarIconAbsolutePositions] =
+    useState<{
+      [playerID: string]: {
+        bottom: string;
+        right: string;
+      };
+    }>();
+
+  useEffect(() => {
+    const tempAvatarIconAbsolutePositions: {
+      [playerID: string]: {
+        bottom: string;
+        right: string;
+      };
+    } = {};
+
+    for (let i = 0; i < otherPlayerIDs.length; i++) {
+      const icon = document.getElementById(`${otherPlayerIDs[i]}icon`);
+
+      if (icon) {
+        const { width } = icon.getBoundingClientRect();
+
+        let adjBottom = "";
+        let adjRight = "";
+        if (i === 0) {
+          adjBottom = `20px`;
+          adjRight = `${(width + 15) * -1}px`;
+        } else if (i === 1) {
+          adjBottom = `0px`;
+          adjRight = `${(width + 25) * -1}px`;
+        } else if (i === 2) {
+          adjBottom = `${width * 0.1}px`;
+          adjRight = `${width * -1.15}px`;
+        }
+
+        tempAvatarIconAbsolutePositions[otherPlayerIDs[i]!] = {
+          bottom: adjBottom,
+          right: adjRight,
+        };
+      }
+    }
+
+    setAvatarIconAbsolutePositions(tempAvatarIconAbsolutePositions);
+  }, [otherPlayerIDs]);
+
   useEffect(() => {
     let tempDummyDeckCardStates = { ...showDummyDeckCardStates };
 
@@ -181,7 +226,6 @@ function OtherPlayersCardContainers({
                 />
               )}
             </div>
-
             {gameData.players[playerID]?.squeakHand.map((cards, cardsIdx) => (
               <div
                 key={`${playerID}squeakStack${cardsIdx}`}
@@ -229,7 +273,6 @@ function OtherPlayersCardContainers({
                 </div>
               </div>
             ))}
-
             <div
               className={`${classes.playerDeck} z-[500] h-[64px] w-[48px] select-none tall:h-[87px] tall:w-[67px]`}
             >
@@ -301,7 +344,6 @@ function OtherPlayersCardContainers({
                 )}
               </div>
             </div>
-
             <div
               id={`${playerID}hand`}
               style={{
@@ -338,13 +380,12 @@ function OtherPlayersCardContainers({
 
             <div
               style={{
-                right: document.getElementById(`${playerID}icon`)
-                  ? (document
-                      .getElementById(`${playerID}icon`)!
-                      .getBoundingClientRect().width +
-                      15) *
-                    -1
-                  : 50,
+                bottom: avatarIconAbsolutePositions?.[playerID]
+                  ? avatarIconAbsolutePositions[playerID]!.bottom
+                  : "-50px",
+                right: avatarIconAbsolutePositions?.[playerID]
+                  ? avatarIconAbsolutePositions[playerID]!.right
+                  : "-50px",
               }}
               id={`${playerID}icon`}
               className={`${classes.playerAvatar}`}
