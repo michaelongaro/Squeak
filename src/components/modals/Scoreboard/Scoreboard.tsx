@@ -148,7 +148,7 @@ function Scoreboard() {
         pointsBackgroundColor:
           strippedHSLColor + `${Math.floor(lightness * 0.75)}%)`,
         textColor: strippedHSLColor + `${Math.floor(lightness * 1.5)}%)`,
-        animatedCardsBackgroundColor: strippedHSLColor + "90%)", //`${Math.floor(lightness * 1)}%)`
+        animatedCardsBackgroundColor: strippedHSLColor + "90%)",
       };
     }
 
@@ -183,27 +183,26 @@ function Scoreboard() {
             <div className="text-2xl">Scoreboard</div>
 
             <div className="baseFlex h-full w-full gap-4">
-              {scoreboardMetadata.playerRoundDetails.map((player) => (
+              {Object.keys(playerMetadata).map((playerID) => (
                 <div
-                  key={player.playerID}
+                  key={playerID}
                   className="baseVertFlex h-full w-full shadow-md"
                 >
                   {/* avatar + username */}
                   <div
                     style={{
                       backgroundColor:
-                        playerColorVariants[player.playerID]?.baseColor ??
-                        "white",
+                        playerColorVariants[playerID]?.baseColor ?? "white",
                     }}
                     className="baseVertFlex h-36 w-full gap-2 rounded-t-md pt-2 font-semibold"
                   >
                     <PlayerIcon
                       avatarPath={
-                        playerMetadata[player.playerID]?.avatarPath ??
+                        playerMetadata[playerID]?.avatarPath ??
                         "/avatars/rabbit.svg"
                       }
                       borderColor={
-                        playerMetadata[player.playerID]?.color ??
+                        playerMetadata[playerID]?.color ??
                         "hsl(352deg, 69%, 61%)"
                       }
                       size={"3rem"}
@@ -211,11 +210,10 @@ function Scoreboard() {
                     <div
                       style={{
                         color:
-                          playerColorVariants[player.playerID]?.textColor ??
-                          "black",
+                          playerColorVariants[playerID]?.textColor ?? "black",
                       }}
                     >
-                      {playerMetadata[player.playerID]?.username}
+                      {playerMetadata[playerID]?.username}
                     </div>
                   </div>
 
@@ -223,11 +221,10 @@ function Scoreboard() {
                   <div
                     style={{
                       backgroundColor:
-                        playerColorVariants[player.playerID]
+                        playerColorVariants[playerID]
                           ?.animatedCardsBackgroundColor ?? "white",
                       color:
-                        playerColorVariants[player.playerID]?.textColor ??
-                        "black",
+                        playerColorVariants[playerID]?.textColor ?? "black",
                     }}
                     className="relative z-[1] h-full w-full overflow-hidden"
                   >
@@ -235,7 +232,7 @@ function Scoreboard() {
                     <div
                       style={{
                         backgroundColor:
-                          playerColorVariants[player.playerID]
+                          playerColorVariants[playerID]
                             ?.pointsBackgroundColor ?? "white",
                       }}
                       className="baseVertFlex absolute top-0 left-0 z-[3] w-full bg-black bg-opacity-30 p-2"
@@ -254,7 +251,9 @@ function Scoreboard() {
                           <AnimatedNumber
                             value={
                               animateCardsPlayedValue
-                                ? player.cardsPlayed.length
+                                ? scoreboardMetadata.playerRoundDetails![
+                                    playerID
+                                  ]!.cardsPlayed.length
                                 : 0
                             }
                             duration={animateCardsPlayedValue ? 1500 : 0}
@@ -272,12 +271,17 @@ function Scoreboard() {
                             }}
                             className="transition-opacity"
                           >
-                            {player.squeakModifier > 0 ? "+" : ""}
+                            {scoreboardMetadata.playerRoundDetails![playerID]!
+                              .squeakModifier > 0
+                              ? "+"
+                              : ""}
                           </div>
                           <AnimatedNumber
                             value={
                               animateSqueakModifierValue
-                                ? player.squeakModifier
+                                ? scoreboardMetadata.playerRoundDetails![
+                                    playerID
+                                  ]!.squeakModifier
                                 : 0
                             }
                             duration={animateSqueakModifierValue ? 1500 : 0}
@@ -290,8 +294,12 @@ function Scoreboard() {
                         <AnimatedNumber
                           value={
                             animateTotalValue
-                              ? player.oldScore
-                              : player.newScore
+                              ? scoreboardMetadata.playerRoundDetails![
+                                  playerID
+                                ]!.oldScore
+                              : scoreboardMetadata.playerRoundDetails![
+                                  playerID
+                                ]!.newScore
                           }
                           duration={animateTotalValue ? 1500 : 0}
                           size={22}
@@ -300,8 +308,11 @@ function Scoreboard() {
                     </div>
 
                     <AnimatedCardContainer
-                      cards={player.cardsPlayed}
-                      playerID={player.playerID}
+                      cards={
+                        scoreboardMetadata.playerRoundDetails![playerID]!
+                          .cardsPlayed
+                      }
+                      playerID={playerID}
                     />
                   </div>
 
@@ -310,11 +321,9 @@ function Scoreboard() {
                   <div
                     style={{
                       backgroundColor:
-                        playerColorVariants[player.playerID]?.baseColor ??
-                        "white",
+                        playerColorVariants[playerID]?.baseColor ?? "white",
                       color:
-                        playerColorVariants[player.playerID]?.textColor ??
-                        "black",
+                        playerColorVariants[playerID]?.textColor ?? "black",
                     }}
                     className="baseFlex w-full gap-2 rounded-b-md p-2"
                   >
@@ -325,14 +334,19 @@ function Scoreboard() {
                     ></AnimatePresence>
                     {showNewRankings && (
                       <motion.div
-                        key={`newRanking${player.playerID}`}
+                        key={`newRanking${playerID}`}
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.15 }}
                         className="font-semibold"
                       >
-                        {ranking[player.newRanking]}
+                        {
+                          ranking[
+                            scoreboardMetadata.playerRoundDetails![playerID]!
+                              .newRanking
+                          ]
+                        }
                       </motion.div>
                     )}
                     <AnimatePresence
@@ -342,14 +356,19 @@ function Scoreboard() {
                     >
                       {!showNewRankings && (
                         <motion.div
-                          key={`oldRanking${player.playerID}`}
+                          key={`oldRanking${playerID}`}
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           exit={{ opacity: 0 }}
                           transition={{ duration: 0.15 }}
                           className="font-semibold"
                         >
-                          {ranking[player.oldRanking]}
+                          {
+                            ranking[
+                              scoreboardMetadata.playerRoundDetails![playerID]!
+                                .oldRanking
+                            ]
+                          }
                         </motion.div>
                       )}
                     </AnimatePresence>
@@ -358,8 +377,7 @@ function Scoreboard() {
               ))}
             </div>
 
-            {/* get avatar + username from IRoomPlayersMetadata in ctx */}
-            {/* have this fade in after scores are animated, with timeouts */}
+            {/* player who won banner */}
             <div
               style={{
                 opacity: showWinningPlayerMessage ? 1 : 0,
@@ -383,6 +401,7 @@ function Scoreboard() {
                 src={confettiCannon}
                 alt={"left celebratory confetti cannon"}
               />
+
               {/* remove "!"s when using actual hook */}
               <PlayerIcon
                 avatarPath={
