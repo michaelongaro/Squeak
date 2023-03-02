@@ -183,198 +183,181 @@ function Scoreboard() {
             <div className="text-2xl">Scoreboard</div>
 
             <div className="baseFlex h-full w-full gap-4">
-              {Object.keys(playerMetadata).map((playerID) => (
-                <div
-                  key={playerID}
-                  className="baseVertFlex h-full w-full shadow-md"
-                >
-                  {/* avatar + username */}
+              {Object.values(scoreboardMetadata.playerRoundDetails).map(
+                (player) => (
                   <div
-                    style={{
-                      backgroundColor:
-                        playerColorVariants[playerID]?.baseColor ?? "white",
-                    }}
-                    className="baseVertFlex h-36 w-full gap-2 rounded-t-md pt-2 font-semibold"
+                    key={player.playerID}
+                    className="baseVertFlex h-full w-full shadow-md"
                   >
-                    <PlayerIcon
-                      avatarPath={
-                        playerMetadata[playerID]?.avatarPath ??
-                        "/avatars/rabbit.svg"
-                      }
-                      borderColor={
-                        playerMetadata[playerID]?.color ??
-                        "hsl(352deg, 69%, 61%)"
-                      }
-                      size={"3rem"}
-                    />
-                    <div
-                      style={{
-                        color:
-                          playerColorVariants[playerID]?.textColor ?? "black",
-                      }}
-                    >
-                      {playerMetadata[playerID]?.username}
-                    </div>
-                  </div>
-
-                  {/* anim. scores + cards */}
-                  <div
-                    style={{
-                      backgroundColor:
-                        playerColorVariants[playerID]
-                          ?.animatedCardsBackgroundColor ?? "white",
-                      color:
-                        playerColorVariants[playerID]?.textColor ?? "black",
-                    }}
-                    className="relative z-[1] h-full w-full overflow-hidden"
-                  >
-                    {/* ideally some kind of glassmorphism  */}
+                    {/* avatar + username */}
                     <div
                       style={{
                         backgroundColor:
-                          playerColorVariants[playerID]
-                            ?.pointsBackgroundColor ?? "white",
+                          playerColorVariants[player.playerID]?.baseColor ??
+                          "white",
                       }}
-                      className="baseVertFlex absolute top-0 left-0 z-[3] w-full bg-black bg-opacity-30 p-2"
+                      className="baseVertFlex h-36 w-full gap-2 rounded-t-md pt-2 font-semibold"
                     >
-                      <div className="align-center flex w-full justify-between pl-8 pr-8 text-lg ">
-                        Cards played
-                        <div className="baseFlex">
-                          <div
-                            style={{
-                              opacity: animateCardsPlayedValue ? 1 : 0,
-                            }}
-                            className="transition-opacity"
-                          >
-                            +
-                          </div>
-                          <AnimatedNumber
-                            value={
-                              animateCardsPlayedValue
-                                ? scoreboardMetadata.playerRoundDetails![
-                                    playerID
-                                  ]!.cardsPlayed.length
-                                : 0
-                            }
-                            duration={animateCardsPlayedValue ? 1500 : 0}
-                            size={18}
-                          />
-                        </div>
-                      </div>
-                      {/* make this red/green text */}
-                      <div className="align-center flex w-full justify-between pl-8 pr-8 text-lg">
-                        Squeak
-                        <div className="baseFlex">
-                          <div
-                            style={{
-                              opacity: animateSqueakModifierValue ? 1 : 0,
-                            }}
-                            className="transition-opacity"
-                          >
-                            {scoreboardMetadata.playerRoundDetails![playerID]!
-                              .squeakModifier > 0
-                              ? "+"
-                              : ""}
-                          </div>
-                          <AnimatedNumber
-                            value={
-                              animateSqueakModifierValue
-                                ? scoreboardMetadata.playerRoundDetails![
-                                    playerID
-                                  ]!.squeakModifier
-                                : 0
-                            }
-                            duration={animateSqueakModifierValue ? 1500 : 0}
-                            size={18}
-                          />
-                        </div>
-                      </div>
-                      <div className="align-center flex w-full justify-between pl-8 pr-8 text-xl">
-                        Total
-                        <AnimatedNumber
-                          value={
-                            animateTotalValue
-                              ? scoreboardMetadata.playerRoundDetails![
-                                  playerID
-                                ]!.oldScore
-                              : scoreboardMetadata.playerRoundDetails![
-                                  playerID
-                                ]!.newScore
-                          }
-                          duration={animateTotalValue ? 1500 : 0}
-                          size={22}
-                        />
+                      <PlayerIcon
+                        avatarPath={
+                          playerMetadata[player.playerID]?.avatarPath ??
+                          "/avatars/rabbit.svg"
+                        }
+                        borderColor={
+                          playerMetadata[player.playerID]?.color ??
+                          "hsl(352deg, 69%, 61%)"
+                        }
+                        size={"3rem"}
+                      />
+                      <div
+                        style={{
+                          color:
+                            playerColorVariants[player.playerID]?.textColor ??
+                            "black",
+                        }}
+                      >
+                        {playerMetadata[player.playerID]?.username}
                       </div>
                     </div>
 
-                    <AnimatedCardContainer
-                      cards={
-                        scoreboardMetadata.playerRoundDetails![playerID]!
-                          .cardsPlayed
-                      }
-                      playerID={playerID}
-                    />
-                  </div>
-
-                  {/* ranking */}
-                  {/* pretty sure you wanted to have these be  */}
-                  <div
-                    style={{
-                      backgroundColor:
-                        playerColorVariants[playerID]?.baseColor ?? "white",
-                      color:
-                        playerColorVariants[playerID]?.textColor ?? "black",
-                    }}
-                    className="baseFlex w-full gap-2 rounded-b-md p-2"
-                  >
-                    <AnimatePresence
-                      initial={false}
-                      mode={"wait"}
-                      onExitComplete={() => null}
-                    ></AnimatePresence>
-                    {showNewRankings && (
-                      <motion.div
-                        key={`newRanking${playerID}`}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.15 }}
-                        className="font-semibold"
-                      >
-                        {
-                          ranking[
-                            scoreboardMetadata.playerRoundDetails![playerID]!
-                              .newRanking
-                          ]
-                        }
-                      </motion.div>
-                    )}
-                    <AnimatePresence
-                      initial={false}
-                      mode={"wait"}
-                      onExitComplete={() => null}
+                    {/* anim. scores + cards */}
+                    <div
+                      style={{
+                        backgroundColor:
+                          playerColorVariants[player.playerID]
+                            ?.animatedCardsBackgroundColor ?? "white",
+                        color:
+                          playerColorVariants[player.playerID]?.textColor ??
+                          "black",
+                      }}
+                      className="relative z-[1] h-full w-full overflow-hidden"
                     >
-                      {!showNewRankings && (
-                        <motion.div
-                          key={`oldRanking${playerID}`}
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          exit={{ opacity: 0 }}
-                          transition={{ duration: 0.15 }}
-                          className="font-semibold"
-                        >
-                          {
-                            ranking[
-                              scoreboardMetadata.playerRoundDetails![playerID]!
-                                .oldRanking
-                            ]
-                          }
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
+                      {/* ideally some kind of glassmorphism  */}
+                      <div
+                        style={{
+                          backgroundColor:
+                            playerColorVariants[player.playerID]
+                              ?.pointsBackgroundColor ?? "white",
+                        }}
+                        className="baseVertFlex absolute top-0 left-0 z-[3] w-full bg-black bg-opacity-30 p-2"
+                      >
+                        <div className="align-center flex w-full justify-between pl-8 pr-8 text-lg ">
+                          Cards played
+                          <div className="baseFlex">
+                            <div
+                              style={{
+                                opacity: animateCardsPlayedValue ? 1 : 0,
+                              }}
+                              className="transition-opacity"
+                            >
+                              +
+                            </div>
+                            <AnimatedNumber
+                              value={
+                                animateCardsPlayedValue
+                                  ? player.cardsPlayed.length
+                                  : 0
+                              }
+                              duration={animateCardsPlayedValue ? 1500 : 0}
+                              size={18}
+                            />
+                          </div>
+                        </div>
+                        {/* make this red/green text */}
+                        <div className="align-center flex w-full justify-between pl-8 pr-8 text-lg">
+                          Squeak
+                          <div className="baseFlex">
+                            <div
+                              style={{
+                                opacity: animateSqueakModifierValue ? 1 : 0,
+                              }}
+                              className="transition-opacity"
+                            >
+                              {player.squeakModifier > 0 ? "+" : ""}
+                            </div>
+                            <AnimatedNumber
+                              value={
+                                animateSqueakModifierValue
+                                  ? player.squeakModifier
+                                  : 0
+                              }
+                              duration={animateSqueakModifierValue ? 1500 : 0}
+                              size={18}
+                            />
+                          </div>
+                        </div>
+                        <div className="align-center flex w-full justify-between pl-8 pr-8 text-xl">
+                          Total
+                          <AnimatedNumber
+                            value={
+                              animateTotalValue
+                                ? player.newScore
+                                : player.oldScore
+                            }
+                            duration={animateTotalValue ? 1500 : 0}
+                            size={22}
+                          />
+                        </div>
+                      </div>
+
+                      <AnimatedCardContainer
+                        cards={player.cardsPlayed}
+                        playerID={player.playerID}
+                      />
+                    </div>
+
+                    {/* ranking */}
+                    <div
+                      style={{
+                        backgroundColor:
+                          playerColorVariants[player.playerID]?.baseColor ??
+                          "white",
+                        color:
+                          playerColorVariants[player.playerID]?.textColor ??
+                          "black",
+                      }}
+                      className="baseFlex w-full gap-2 rounded-b-md p-2"
+                    >
+                      <AnimatePresence
+                        initial={false}
+                        mode={"wait"}
+                        onExitComplete={() => null}
+                      >
+                        {showNewRankings && (
+                          <motion.div
+                            key={`newRanking${player.playerID}`}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.15 }}
+                            className="font-semibold"
+                          >
+                            {ranking[player.newRanking]}
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                      <AnimatePresence
+                        initial={false}
+                        mode={"wait"}
+                        onExitComplete={() => null}
+                      >
+                        {!showNewRankings && (
+                          <motion.div
+                            key={`oldRanking${player.playerID}`}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.15 }}
+                            className="font-semibold"
+                          >
+                            {ranking[player.oldRanking] ?? "-"}
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
                   </div>
-                </div>
-              ))}
+                )
+              )}
             </div>
 
             {/* player who won banner */}
