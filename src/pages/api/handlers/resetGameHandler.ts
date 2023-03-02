@@ -5,6 +5,7 @@ import {
   type IGameData,
   type IRoomData,
   type IMiscRoomData,
+  type IPlayerCardsMetadata,
 } from "../socket";
 
 interface IResetGame {
@@ -72,22 +73,25 @@ export function resetGameHandler(
       Array.from({ length: 5 }, () => null)
     );
 
-    // resetting the player's data (minus their points/ranking)
+    const tempNewPlayerCardMetadata = {} as IPlayerCardsMetadata;
+
+    // giving each player a new deck and updating their total points/rank
     for (const playerID of Object.keys(game.players)) {
       const player = game.players[playerID];
 
       if (!player) return;
 
-      // maybe have temp var that all of these go into and then set game.players to that?
-      game.players = {
-        ...game.players,
-        [playerID]: {
-          ...generateDeckAndSqueakCards(),
-          totalPoints: player.totalPoints,
-          rankInRoom: player.rankInRoom,
-        },
+      const newCards = generateDeckAndSqueakCards();
+
+      tempNewPlayerCardMetadata[playerID] = {
+        ...newCards,
+        totalPoints: player.totalPoints,
+        rankInRoom: player.rankInRoom,
       };
     }
+
+    // appending the new player card metadata to the game object
+    game.players = tempNewPlayerCardMetadata;
 
     if (!resettingRoundFromExcessiveDeckRotations) {
       game.currentRound += 1;
@@ -96,10 +100,18 @@ export function resetGameHandler(
     }
 
     if (miscRoomDataObj) {
-      clearInterval(miscRoomDataObj.gameStuckInterval); // pretty sure this is necessary
+      clearInterval(miscRoomDataObj.gameStuckInterval);
     }
 
-    io.in(roomCode).emit("startNewRound", game);
+    // pick a random player to start the next round
+    const playerIDs = Object.keys(game.players);
+    const randomPlayerID =
+      playerIDs[Math.floor(Math.random() * playerIDs.length)];
+
+    io.in(roomCode).emit("startNewRound", {
+      gameData: game,
+      playerIDToStartNextRound: randomPlayerID,
+    });
   }
 
   socket.on("resetGame", resetGame);
