@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRoomContext } from "../../context/RoomContext";
 import LogIn from "../auth/LogIn";
 import SecondaryButton from "../Buttons/SecondaryButton";
@@ -28,6 +28,24 @@ function MainOptions() {
   const [showTutorialModal, setShowTutorialModal] = useState(false);
   const [showLeaderboardModal, setShowLeaderboardModal] = useState(false);
 
+  const [loginGap, setLoginGap] = useState("2rem");
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 1024) {
+        setLoginGap("1rem");
+      } else {
+        setLoginGap("2rem");
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
   return (
     <motion.div
       key={"mainOptions"}
@@ -38,10 +56,11 @@ function MainOptions() {
       className="baseFlex relative min-h-[100vh]"
     >
       {status !== "loading" && (
-        <div className="baseVertFlex w-[16rem] rounded-md border-2 border-white bg-green-800 p-4 shadow-lg lg:w-[22.25rem] lg:p-8">
+        <div className="baseVertFlex w-[18rem] rounded-md border-2 border-white bg-green-800 p-4 shadow-lg lg:w-[22.25rem] lg:p-8">
           <Image
             src={logo}
             alt="Squeak logo"
+            priority={true}
             className="h-48 w-48 tall:h-[300px] tall:w-[300px]"
           />
 
@@ -65,7 +84,7 @@ function MainOptions() {
               )}
             </div>
           ) : (
-            <LogIn gap={"2rem"} />
+            <LogIn gap={loginGap} />
           )}
 
           <div className="baseVertFlex mt-8 gap-4">
