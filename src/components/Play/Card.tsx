@@ -15,6 +15,8 @@ import useCardDropApproved from "../../hooks/useCardDropApproved";
 import useCardDropDenied from "../../hooks/useCardDropDenied";
 import { adjustCoordinatesByRotation } from "../../utils/adjustCoordinatesByRotation";
 import { cards } from "../../utils/cardAssetPaths";
+import { type ICard } from "../../utils/generateDeckAndSqueakCards";
+import { type IPlayer } from "../../pages/api/socket";
 
 interface ICardComponent {
   value?: string;
@@ -47,6 +49,7 @@ function Card({
 }: ICardComponent) {
   const {
     gameData,
+    setGameData,
     roomConfig,
     playerMetadata,
     hoveredCell,
@@ -91,6 +94,8 @@ function Card({
       { x, y }: { x: number; y: number },
       flip: boolean,
       rotate: boolean,
+      newPlayerCards?: IPlayer,
+      newBoard?: (ICard | null)[][],
       callbackFunction?: () => void
     ) => {
       if (!cardRef.current || !imageRef.current || cardIsMovingRef.current)
@@ -229,6 +234,17 @@ function Card({
 
         callbackFunction?.();
 
+        if (ownerID && newPlayerCards) {
+          setGameData({
+            ...gameData,
+            board: newBoard || gameData.board,
+            players: {
+              ...gameData.players,
+              [ownerID]: newPlayerCards,
+            },
+          });
+        }
+
         if (squeakStackLocation && ownerID === userID) {
           setHeldSqueakStackLocation(null);
         }
@@ -255,6 +271,8 @@ function Card({
       setProposedCardBoxShadow,
       cardBeingMovedProgramatically,
       setCardBeingMovedProgramatically,
+      gameData,
+      setGameData,
     ]
   );
 

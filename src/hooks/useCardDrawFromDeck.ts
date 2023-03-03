@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { useRoomContext } from "../context/RoomContext";
 import { socket } from "../pages";
-import { type IDrawFromDeck } from "../pages/api/socket";
+import { type IPlayer, type IDrawFromDeck } from "../pages/api/socket";
+import { type ICard } from "../utils/generateDeckAndSqueakCards";
 
 interface IUseCardDrawFromDeck {
   value?: string;
@@ -12,7 +13,9 @@ interface IUseCardDrawFromDeck {
     { x, y }: { x: number; y: number },
     flip: boolean,
     rotate: boolean,
-    callbackFunction?: () => void
+    newPlayerCards?: IPlayer,
+    newBoard?: (ICard | null)[][]
+    // callbackFunction?: () => void
   ) => void;
 }
 
@@ -44,7 +47,6 @@ function useCardDrawFromDeck({
       const {
         nextTopCardInDeck: currentTopCardInDeck, // is actually referencing the current top card in deck
         playerID,
-        updatedBoard,
         updatedPlayerCards,
       } = dataFromBackend;
 
@@ -75,13 +77,20 @@ function useCardDrawFromDeck({
           endX -= 4;
         }
 
-        moveCard({ x: endX, y: endY }, true, false, () => {
-          setGameData({
-            ...gameData,
-            board: updatedBoard,
-            players: updatedPlayerCards,
-          });
-        });
+        moveCard(
+          { x: endX, y: endY },
+          true,
+          false,
+          updatedPlayerCards
+          // () => {
+          // setGameData({
+          //   ...gameData,
+          //   players: {
+          //     ...gameData.players,
+          //     [playerID]: updatedPlayerCards,
+          //   },
+          // });
+        );
       }
     }
   }, [

@@ -1,18 +1,23 @@
 import { type Server } from "socket.io";
-import { type IDrawFromSqueakDeck, type IGameData } from "../socket";
+import { type IGameData } from "../socket";
 
-interface IInitDrawFromSqueakDeck extends IDrawFromSqueakDeck {
+interface IInitDrawFromSqueakDeck {
+  roomCode: string;
+  indexToDrawTo: number;
+  playerID: string;
   gameData: IGameData;
   io: Server;
 }
 
 export function drawFromSqueakDeck({
+  roomCode,
   indexToDrawTo,
   playerID,
-  roomCode,
   gameData,
   io,
 }: IInitDrawFromSqueakDeck) {
+  console.log(playerID, indexToDrawTo);
+
   const player = gameData[roomCode]?.players?.[playerID];
   if (!player) return;
 
@@ -24,8 +29,7 @@ export function drawFromSqueakDeck({
       playerID,
       indexToDrawTo,
       newCard: card,
-      updatedBoard: gameData[roomCode]?.board,
-      updatedPlayerCards: gameData[roomCode]?.players,
+      updatedPlayerCards: player,
     });
   }
 }

@@ -55,8 +55,8 @@ export function deckToSqueak({
       offsetHeight: indexWithinSqueakStack * (20 - squeakStackLength),
     },
     endID: `${playerID}squeakHand${squeakEndLocation}`,
-    updatedBoard: gameData[roomCode]?.board, // ideally shouldn't have to send this
-    updatedPlayerCards: gameData[roomCode]?.players,
+    // updatedBoard: gameData[roomCode]?.board, // ideally shouldn't have to send this
+    newPlayerCards: player,
     playerID,
   });
 }

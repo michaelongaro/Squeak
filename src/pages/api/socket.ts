@@ -102,8 +102,8 @@ export interface ICardDropProposal {
   squeakStartLocation?: number;
   boardEndLocation?: { row: number; col: number };
   squeakEndLocation?: number;
-  updatedBoard?: (ICard | null)[][];
-  updatedPlayerCards?: IPlayerCardsMetadata;
+  newPlayerCards: IPlayer;
+  newBoard?: (ICard | null)[][];
   playerID: string;
   roomCode: string;
 }
@@ -113,8 +113,7 @@ export interface IDrawFromSqueakDeck {
   indexToDrawTo: number;
   playerID: string;
   newCard?: ICard;
-  updatedBoard?: (ICard | null)[][];
-  updatedPlayerCards?: IPlayerCardsMetadata;
+  updatedPlayerCards: IPlayer;
 }
 
 export interface IDrawFromDeck {
@@ -123,8 +122,7 @@ export interface IDrawFromDeck {
   topCardsInDeck: (ICard | null)[];
   playerID: string;
   roomCode: string;
-  updatedBoard: (ICard | null)[][];
-  updatedPlayerCards: IPlayerCardsMetadata;
+  updatedPlayerCards: IPlayer;
 }
 
 export interface IRoundOver {
@@ -334,7 +332,7 @@ export default function SocketHandler(req, res) {
             gameData,
             io,
           });
-        }, 1000 + parseInt(index) * 275);
+        }, 1000 + parseInt(index) * 350);
 
         setTimeout(() => {
           drawFromSqueakDeck({
@@ -344,7 +342,7 @@ export default function SocketHandler(req, res) {
             gameData,
             io,
           });
-        }, 1500 + parseInt(index) * 275);
+        }, 1500 + parseInt(index) * 350);
 
         setTimeout(() => {
           drawFromSqueakDeck({
@@ -354,7 +352,7 @@ export default function SocketHandler(req, res) {
             gameData,
             io,
           });
-        }, 2000 + parseInt(index) * 275);
+        }, 2000 + parseInt(index) * 350);
 
         setTimeout(() => {
           drawFromSqueakDeck({
@@ -364,7 +362,7 @@ export default function SocketHandler(req, res) {
             gameData,
             io,
           });
-        }, 2500 + parseInt(index) * 275);
+        }, 2500 + parseInt(index) * 350);
       }
 
       // start interval that checks + handles if game is stuck

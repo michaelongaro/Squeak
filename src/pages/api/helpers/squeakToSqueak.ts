@@ -22,11 +22,10 @@ export function squeakToSqueak({
   squeakStartLocation,
   squeakEndLocation,
 }: ISqueakToSqueak) {
-  const startSqueakStack =
-    gameData[roomCode]?.players?.[playerID]?.squeakHand[squeakStartLocation];
+  const player = gameData[roomCode]?.players?.[playerID];
+  const startSqueakStack = player?.squeakHand[squeakStartLocation];
 
-  const endSqueakStack =
-    gameData[roomCode]?.players?.[playerID]?.squeakHand[squeakEndLocation];
+  const endSqueakStack = player?.squeakHand[squeakEndLocation];
 
   const indexOfCardInStartStack = startSqueakStack?.findIndex(
     (c) => c.value === card.value && c.suit === card.suit
@@ -77,8 +76,8 @@ export function squeakToSqueak({
       stackOfCardsMoved: cardsToMove,
     },
     endID: `${playerID}squeakHand${squeakEndLocation}`,
-    updatedBoard: gameData[roomCode]?.board, // ideally shouldn't have to send this
-    updatedPlayerCards: gameData[roomCode]?.players,
+    // updatedBoard: gameData[roomCode]?.board, // ideally shouldn't have to send this
+    newPlayerCards: player,
     playerID,
   });
 }

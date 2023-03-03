@@ -145,17 +145,22 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                   </div>
                 )}
 
-                <div className="absolute top-0 left-0 h-full w-full select-none">
-                  <Card
-                    value={gameData.players[userID]!.squeakDeck[0]!.value}
-                    suit={gameData.players[userID]!.squeakDeck[0]!.suit}
-                    showCardBack={true} // separate state inside overrides this halfway through flip
-                    draggable={false}
-                    ownerID={userID}
-                    startID={`${userID}squeakDeck`}
-                    rotation={0}
-                  />
-                </div>
+                {gameData.players[userID]?.squeakDeck.map((card, cardIdx) => (
+                  <div
+                    key={`${userID}squeakDeckCard${cardIdx}`}
+                    className="absolute top-0 left-0 h-full w-full select-none"
+                  >
+                    <Card
+                      value={card.value}
+                      suit={card.suit}
+                      showCardBack={true} // separate state inside overrides this halfway through flip
+                      draggable={false}
+                      ownerID={userID}
+                      startID={`${userID}squeakDeck`}
+                      rotation={0}
+                    />
+                  </div>
+                ))}
               </div>
             ) : (
               <Buzzer

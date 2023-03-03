@@ -22,13 +22,15 @@ function useResetDeckFromCardDraw() {
     if (dataFromBackend !== null) {
       setDataFromBackend(null);
 
-      const { resetDeck, updatedBoard, updatedPlayerCards } = dataFromBackend;
+      const { resetDeck, updatedPlayerCards, playerID } = dataFromBackend;
 
       if (resetDeck) {
         setGameData({
           ...gameData,
-          board: updatedBoard,
-          players: updatedPlayerCards,
+          players: {
+            ...gameData.players,
+            [playerID]: updatedPlayerCards,
+          },
         });
       }
     }

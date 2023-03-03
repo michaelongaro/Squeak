@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useRoomContext } from "../context/RoomContext";
 import { socket } from "../pages";
-import { type ICardDropProposal } from "../pages/api/socket";
+import { type IPlayer, type ICardDropProposal } from "../pages/api/socket";
 import { type ICard } from "../utils/generateDeckAndSqueakCards";
 
 interface ICardDropAccepted extends Partial<ICardDropProposal> {
@@ -23,6 +23,8 @@ interface IUseCardDropApproved {
     { x, y }: { x: number; y: number },
     flip: boolean,
     rotate: boolean,
+    newPlayerCards?: IPlayer,
+    newBoard?: (ICard | null)[][],
     callbackFunction?: () => void
   ) => void;
   setCardOffsetPosition: React.Dispatch<
@@ -71,8 +73,8 @@ function useCardDropApproved({
         card,
         endID,
         squeakEndCoords,
-        updatedBoard,
-        updatedPlayerCards,
+        newBoard,
+        newPlayerCards,
         playerID,
       } = dataFromBackend;
 
@@ -120,23 +122,30 @@ function useCardDropApproved({
             }
           }
 
-          moveCard({ x: endX, y: endY }, false, endID.includes("cell"), () => {
-            setGameData({
-              ...gameData,
-              board: updatedBoard || gameData?.board,
-              players: updatedPlayerCards || gameData?.players,
-            });
+          moveCard(
+            { x: endX, y: endY },
+            false,
+            endID.includes("cell"),
+            newPlayerCards,
+            newBoard || gameData?.board,
+            () => {
+              // setGameData({
+              //   ...gameData,
+              //   board: updatedBoard || gameData?.board,
+              //   players: updatedPlayerCards || gameData?.players,
+              // });
 
-            if (playerID === userID) {
-              setProposedCardBoxShadow(null);
-            }
+              if (playerID === userID) {
+                setProposedCardBoxShadow(null);
+              }
 
-            if (ownerID !== userID && origin === "hand") {
-              setCardOffsetPosition({ x: 0, y: 0 });
-            } else {
-              setCardHasBeenPlaced(true);
+              if (ownerID !== userID && origin === "hand") {
+                setCardOffsetPosition({ x: 0, y: 0 });
+              } else {
+                setCardHasBeenPlaced(true);
+              }
             }
-          });
+          );
 
           if (playerID === userID) {
             if (endID.includes("cell")) {

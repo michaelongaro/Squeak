@@ -24,8 +24,8 @@ export function drawFromDeckHandler(
         nextTopCardInDeck: deck[2] || null,
         resetDeck: true,
         playerID,
-        updatedBoard: gameData[roomCode]?.board,
-        updatedPlayerCards: gameData[roomCode]?.players,
+        // updatedBoard: gameData[roomCode]?.board,
+        updatedPlayerCards: playerCards, //
       });
       return;
     }
@@ -72,8 +72,7 @@ export function drawFromDeckHandler(
     io.in(roomCode).emit("playerDrawnFromDeck", {
       nextTopCardInDeck: currentTopCardInDeck,
       playerID,
-      updatedBoard: gameData[roomCode]?.board,
-      updatedPlayerCards: gameData[roomCode]?.players,
+      updatedPlayerCards: playerCards,
     });
   }
 

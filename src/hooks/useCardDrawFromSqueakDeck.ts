@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { useRoomContext } from "../context/RoomContext";
 import { socket } from "../pages";
-import { type IDrawFromSqueakDeck } from "../pages/api/socket";
+import { type IPlayer, type IDrawFromSqueakDeck } from "../pages/api/socket";
+import { type ICard } from "../utils/generateDeckAndSqueakCards";
 
 interface IUseCardDrawFromSqueakDeck {
   value?: string;
@@ -11,7 +12,9 @@ interface IUseCardDrawFromSqueakDeck {
     { x, y }: { x: number; y: number },
     flip: boolean,
     rotate: boolean,
-    callbackFunction?: () => void
+    newPlayerCards?: IPlayer,
+    newBoard?: (ICard | null)[][]
+    // callbackFunction?: () => void,
   ) => void;
 }
 
@@ -38,13 +41,8 @@ function useCardDrawFromSqueakDeck({
     if (dataFromBackend !== null) {
       setDataFromBackend(null);
 
-      const {
-        playerID,
-        indexToDrawTo,
-        newCard,
-        updatedBoard,
-        updatedPlayerCards,
-      } = dataFromBackend;
+      const { playerID, indexToDrawTo, newCard, updatedPlayerCards } =
+        dataFromBackend;
 
       if (
         playerID !== ownerID ||
@@ -55,6 +53,8 @@ function useCardDrawFromSqueakDeck({
 
       const endID = `${playerID}squeakHand${indexToDrawTo}`;
 
+      console.log("endID: ", endID);
+
       const endLocation = document
         .getElementById(endID)
         ?.getBoundingClientRect();
@@ -63,13 +63,21 @@ function useCardDrawFromSqueakDeck({
         const endX = endLocation.x;
         const endY = endLocation.y;
 
-        moveCard({ x: endX, y: endY }, true, false, () => {
-          setGameData({
-            ...gameData,
-            board: updatedBoard || gameData?.board,
-            players: updatedPlayerCards || gameData?.players,
-          });
-        });
+        moveCard(
+          { x: endX, y: endY },
+          true,
+          false,
+          updatedPlayerCards
+          // () => {
+          // setGameData({
+          //   ...gameData,
+          //   players: {
+          //     ...gameData.players,
+          //     [playerID]: updatedPlayerCards,
+          //   },
+          // });
+          // }
+        );
       }
     }
   }, [dataFromBackend, moveCard, gameData, setGameData, suit, ownerID, value]);

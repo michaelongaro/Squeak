@@ -25,8 +25,8 @@ export function squeakToBoard({
   boardEndLocation,
 }: ISqueakToBoard) {
   const board = gameData[roomCode]?.board;
-  const startSqueakStackLocation =
-    gameData[roomCode]?.players?.[playerID]?.squeakHand[squeakStartLocation];
+  const player = gameData[roomCode]?.players?.[playerID];
+  const startSqueakStackLocation = player?.squeakHand[squeakStartLocation];
 
   if (!board || !startSqueakStackLocation) return;
 
@@ -63,8 +63,8 @@ export function squeakToBoard({
     io.in(roomCode).emit("cardDropApproved", {
       card,
       endID: `cell${row}${col}`,
-      updatedBoard: gameData[roomCode]?.board,
-      updatedPlayerCards: gameData[roomCode]?.players,
+      newBoard: board,
+      newPlayerCards: player,
       playerID,
     });
   } else {

@@ -55,8 +55,8 @@ export function deckToBoard({
     io.in(roomCode).emit("cardDropApproved", {
       card,
       endID: `cell${row}${col}`,
-      updatedBoard: gameData[roomCode]?.board,
-      updatedPlayerCards: gameData[roomCode]?.players,
+      newBoard: board,
+      newPlayerCards: player,
       playerID,
     });
   } else {

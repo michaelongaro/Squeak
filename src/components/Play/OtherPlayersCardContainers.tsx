@@ -206,17 +206,25 @@ function OtherPlayersCardContainers({
                       />
                     </div>
                   )}
-                  <div className="absolute top-0 left-0 h-full w-full select-none">
-                    <Card
-                      value={gameData.players[playerID]?.squeakDeck[0]!.value}
-                      suit={gameData.players[playerID]?.squeakDeck[0]!.suit}
-                      showCardBack={true} // this would need to be changed halfway through card flip
-                      draggable={false}
-                      ownerID={playerID}
-                      startID={`${playerID}squeakDeck`}
-                      rotation={rotationOrder[idx] as number}
-                    />
-                  </div>
+
+                  {gameData.players[playerID]?.squeakDeck.map(
+                    (card, cardIdx) => (
+                      <div
+                        key={`${playerID}squeakDeckCard${cardIdx}`}
+                        className="absolute top-0 left-0 h-full w-full select-none"
+                      >
+                        <Card
+                          value={card.value}
+                          suit={card.suit}
+                          showCardBack={true} // this would need to be changed halfway through card flip
+                          draggable={false}
+                          ownerID={playerID}
+                          startID={`${playerID}squeakDeck`}
+                          rotation={rotationOrder[idx] as number}
+                        />
+                      </div>
+                    )
+                  )}
                 </div>
               ) : (
                 <Buzzer

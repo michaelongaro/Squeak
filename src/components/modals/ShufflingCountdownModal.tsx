@@ -18,7 +18,7 @@ function ShufflingCountdownModal() {
   const { value: userID } = useUserIDContext();
 
   const [timersInitiated, setTimersInitiated] = useState<boolean>(false);
-  const [countdownTimerValue, setCountdownTimerValue] = useState<number>(3);
+  const [countdownTimerValue, setCountdownTimerValue] = useState<number>(5); //3
 
   useEffect(() => {
     if (timersInitiated || !showShufflingCountdown || !gameData.currentRound)
@@ -37,17 +37,25 @@ function ShufflingCountdownModal() {
     }, 150);
 
     setTimeout(() => {
-      setCountdownTimerValue(2);
+      setCountdownTimerValue(4);
     }, 1000);
 
     setTimeout(() => {
-      setCountdownTimerValue(1);
+      setCountdownTimerValue(3);
     }, 2000);
+
+    setTimeout(() => {
+      setCountdownTimerValue(2);
+    }, 3000);
+
+    setTimeout(() => {
+      setCountdownTimerValue(1);
+    }, 4000);
 
     setTimeout(() => {
       setShowShufflingCountdown(false);
       setTimersInitiated(false);
-    }, 3250); // full 4000ms delay felt too long
+    }, 5250); // full 4000ms delay felt too long
   }, [
     gameData.currentRound,
     roomConfig.code,
