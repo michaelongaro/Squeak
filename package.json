@@ -38,6 +38,7 @@
     "react-draggable": "^4.4.5",
     "react-icons": "^4.7.1",
     "react-range": "^1.8.14",
+    "sharp": "^0.31.3",
     "socket.io": "^4.6.1",
     "socket.io-client": "^4.6.1",
     "superjson": "1.12.2",
