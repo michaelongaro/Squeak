@@ -14,6 +14,7 @@ import {
   type IUpdatePlayerMetadata,
 } from "../../pages/api/socket";
 import useOnClickOutside from "../../hooks/useOnClickOutside";
+import { motion } from "framer-motion";
 
 import classes from "./PickerTooltip.module.css";
 
@@ -338,7 +339,12 @@ function PickerTooltip({
 
           {/* preview */}
           {playerMetadata && (
-            <div
+            <motion.div
+              key={"tutorialModal"}
+              initial={{ opacity: 0, scale: 0 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0 }}
+              transition={{ duration: 0.15 }}
               style={{
                 color: "hsl(120deg 100% 86%)",
               }}
@@ -367,7 +373,7 @@ function PickerTooltip({
                 />
               )}
               {type === "avatar" ? <div>Avatar</div> : <div>Color</div>}
-            </div>
+            </motion.div>
           )}
         </div>
       )}

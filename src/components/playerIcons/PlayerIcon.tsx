@@ -5,7 +5,7 @@ import { AiOutlinePlus, AiOutlineClose } from "react-icons/ai";
 import DangerButton from "../Buttons/DangerButton";
 import { useRoomContext } from "../../context/RoomContext";
 import { useUserIDContext } from "../../context/UserIDContext";
-
+import { motion } from "framer-motion";
 interface IPlayerIcon {
   avatarPath?: string;
   borderColor?: string;
@@ -37,7 +37,12 @@ function PlayerIcon({
   return (
     <>
       {avatarPath && borderColor ? (
-        <div
+        <motion.div
+          key={`playerIcon${playerID}`}
+          initial={{ opacity: 0, scale: 0 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0 }}
+          transition={{ duration: 0.15 }}
           style={{
             color: "hsl(120deg 100% 86%)",
             alignItems: avatarToUsernamePositioning
@@ -128,7 +133,7 @@ function PlayerIcon({
             )}
           </div>
           {username ? username : null}
-        </div>
+        </motion.div>
       ) : (
         <div className="skeletonLoading h-12 w-12 rounded-full"></div>
       )}
