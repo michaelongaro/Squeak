@@ -140,37 +140,40 @@ export const usersRouter = router({
       Object.keys(leaderboardStats).forEach((category) => {
         // not sure if best way to verify that that key exists
         // in the object
-        let currentlyCategory = leaderboardStats[category];
+        let currentCategory = leaderboardStats[category];
 
-        if (currentlyCategory === undefined) return;
+        if (currentCategory === undefined) return;
 
         if (category === "Total Squeaks") {
-          currentlyCategory = currentlyCategory
-            .sort((a, b) => b.value + a.value)
+          currentCategory = currentCategory
+            .sort((a, b) => b.value - a.value)
             .slice(0, 10);
         } else if (category === "Average rank") {
-          currentlyCategory = currentlyCategory
+          // removing all "0" values from the array
+          currentCategory = currentCategory.filter((stat) => stat.value !== 0);
+
+          currentCategory = currentCategory
             .sort((a, b) => a.value - b.value)
             .slice(0, 10);
         } else if (category === "Average left in Squeak") {
-          currentlyCategory = currentlyCategory
+          currentCategory = currentCategory
             .sort((a, b) => b.value - a.value)
             .slice(0, 10);
         } else if (category === "Highest score") {
-          currentlyCategory = currentlyCategory
+          currentCategory = currentCategory
             .sort((a, b) => b.value + a.value)
             .slice(0, 10);
         } else if (category === "Lowest score") {
-          currentlyCategory = currentlyCategory
+          currentCategory = currentCategory
             .sort((a, b) => a.value - b.value)
             .slice(0, 10);
         } else if (category === "Total games played") {
-          currentlyCategory = currentlyCategory
+          currentCategory = currentCategory
             .sort((a, b) => b.value + a.value)
             .slice(0, 10);
         }
 
-        leaderboardStats[category] = currentlyCategory;
+        leaderboardStats[category] = currentCategory;
       });
 
       return leaderboardStats;
