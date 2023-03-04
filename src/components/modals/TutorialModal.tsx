@@ -102,10 +102,10 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
               className="w-auto p-4 text-sm lg:w-[1000px] lg:text-base"
             >
               The goal of each round is to get rid of all the cards in your
-              Squeak pile, allowing you to press your &quot;Squeak&quot; button,
-              which ends the round and grants you ten extra points. You may
-              delay pressing the Squeak button if you think you can still get
-              more points.
+              Squeak pile, which reveals your &quot;Squeak&quot; button. When
+              pressed it ends the round and adds ten extra points to your total.
+              You may delay pressing the Squeak button if you think you can
+              still get more points.
             </div>
           </fieldset>
 
@@ -125,7 +125,6 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
               }}
               className="baseVertFlex w-auto !justify-start gap-4 p-4 text-sm lg:w-[1000px] lg:text-base"
             >
-              {/* use actual <Card />s in examples */}
               <div className="baseFlex w-full !items-start !justify-start gap-4">
                 <div className="baseFlex w-auto rounded-full border-2 border-white px-2 py-1 lg:w-[45px] lg:p-2">
                   1
@@ -135,7 +134,7 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
                   Placing a card on the board: each pile must start with an ace,
                   and every card placed afterwords on that pile must be of the
                   same suit and be one value higher than the previous card. (ex.
-                  ace of hearts, 2 of hearts, 3 of hearts)
+                  Ace of Hearts, 2 of Hearts, 3 of Hearts)
                   <Image
                     src={boardPlacementExample}
                     alt={"Example of a card being placed on the board"}
@@ -151,7 +150,7 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
                   Stacking cards on top of the cards next to your Squeak pile
                   (the squeak stacks) follows the same rules as Solitaire. Cards
                   can only be placed on cards of alternate color and exactly one
-                  higher rank. (ex. Jack of spades, 10 of hearts, 9 of clubs)
+                  higher rank. (ex. Jack of Spades, 10 of Hearts, 9 of Clubs)
                   <Image
                     src={squeakStackPlacementExample}
                     alt={"Example of a card being placed on the board"}
