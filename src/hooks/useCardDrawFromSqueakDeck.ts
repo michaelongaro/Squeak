@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import { useRoomContext } from "../context/RoomContext";
 import { socket } from "../pages";
-import { type IPlayer, type IDrawFromSqueakDeck } from "../pages/api/socket";
-import { type ICard } from "../utils/generateDeckAndSqueakCards";
+import { type IDrawFromSqueakDeck } from "../pages/api/socket";
 
 interface IUseCardDrawFromSqueakDeck {
   value?: string;
@@ -12,9 +11,7 @@ interface IUseCardDrawFromSqueakDeck {
     { x, y }: { x: number; y: number },
     flip: boolean,
     rotate: boolean,
-    newPlayerCards?: IPlayer,
-    newBoard?: (ICard | null)[][]
-    // callbackFunction?: () => void,
+    callbackFunction?: () => void
   ) => void;
 }
 
@@ -63,21 +60,15 @@ function useCardDrawFromSqueakDeck({
         const endX = endLocation.x;
         const endY = endLocation.y;
 
-        moveCard(
-          { x: endX, y: endY },
-          true,
-          false,
-          updatedPlayerCards
-          // () => {
-          // setGameData({
-          //   ...gameData,
-          //   players: {
-          //     ...gameData.players,
-          //     [playerID]: updatedPlayerCards,
-          //   },
-          // });
-          // }
-        );
+        moveCard({ x: endX, y: endY }, true, false, () => {
+          setGameData((prevGameData) => ({
+            ...prevGameData,
+            players: {
+              ...prevGameData.players,
+              [playerID]: updatedPlayerCards,
+            },
+          }));
+        });
       }
     }
   }, [dataFromBackend, moveCard, gameData, setGameData, suit, ownerID, value]);

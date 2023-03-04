@@ -16,8 +16,6 @@ export function drawFromSqueakDeck({
   gameData,
   io,
 }: IInitDrawFromSqueakDeck) {
-  console.log(playerID, indexToDrawTo);
-
   const player = gameData[roomCode]?.players?.[playerID];
   if (!player) return;
 

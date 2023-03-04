@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useRoomContext } from "../context/RoomContext";
 import { socket } from "../pages";
-import { type IPlayer, type ICardDropProposal } from "../pages/api/socket";
+import { type ICardDropProposal } from "../pages/api/socket";
 import { type ICard } from "../utils/generateDeckAndSqueakCards";
 
 interface ICardDropAccepted extends Partial<ICardDropProposal> {
@@ -23,8 +23,6 @@ interface IUseCardDropApproved {
     { x, y }: { x: number; y: number },
     flip: boolean,
     rotate: boolean,
-    newPlayerCards?: IPlayer,
-    newBoard?: (ICard | null)[][],
     callbackFunction?: () => void
   ) => void;
   setCardOffsetPosition: React.Dispatch<
@@ -126,14 +124,18 @@ function useCardDropApproved({
             { x: endX, y: endY },
             false,
             endID.includes("cell"),
-            newPlayerCards,
-            newBoard || gameData?.board,
+
             () => {
-              // setGameData({
-              //   ...gameData,
-              //   board: updatedBoard || gameData?.board,
-              //   players: updatedPlayerCards || gameData?.players,
-              // });
+              if (playerID && newPlayerCards) {
+                setGameData((prevGameData) => ({
+                  ...prevGameData,
+                  board: newBoard || gameData?.board,
+                  players: {
+                    ...prevGameData.players,
+                    [playerID]: newPlayerCards,
+                  },
+                }));
+              }
 
               if (playerID === userID) {
                 setProposedCardBoxShadow(null);
@@ -175,8 +177,8 @@ function useCardDropApproved({
     dataFromBackend,
     moveCard,
     gameData,
-    setSoundPlayStates,
     setGameData,
+    setSoundPlayStates,
     setProposedCardBoxShadow,
     suit,
     ownerID,
