@@ -140,14 +140,17 @@ function MainOptions() {
           {hoveringOnAboutMe && (
             <motion.div
               key={"aboutMe"}
-              initial={{ opacity: 0, scale: 0.25 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.25 }}
-              transition={{
-                opacity: { duration: 0.25 },
-                scale: { duration: 0.2 },
+              initial={{
+                opacity: 0,
+                translateX: -10000, // used to avoid jumping of text when animating in
               }}
-              className="baseFlex absolute left-[1rem] gap-2"
+              animate={{ opacity: 1, scale: 1, translateX: 0 }}
+              exit={{ opacity: 0, scale: 0 }}
+              transition={{
+                opacity: { duration: 0.15 },
+                scale: { duration: 0.15 },
+              }}
+              className="baseFlex absolute left-[1rem] gap-2 overflow-hidden"
             >
               Made by
               <a
