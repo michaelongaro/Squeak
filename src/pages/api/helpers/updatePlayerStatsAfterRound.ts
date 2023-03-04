@@ -79,10 +79,20 @@ export async function updatePlayerStatsAfterRound({
   playerStats.totalRoundsPlayed++;
 
   // prisma call to update Stats(userID)
-  prisma.stats.update({
+  await prisma.stats.update({
     where: {
-      userID: playerID,
+      id: playerStats.id,
     },
-    data: playerStats,
+    data: {
+      squeaks: playerStats.squeaks,
+      allFinishedPlacesValues: playerStats.allFinishedPlacesValues,
+      averageFinishingPlace: playerStats.averageFinishingPlace,
+      allLeftInSqueakValues: playerStats.allLeftInSqueakValues,
+      averageLeftInSqueak: playerStats.averageLeftInSqueak,
+      lowestScore: playerStats.lowestScore,
+      highestScore: playerStats.highestScore,
+      totalGamesPlayed: playerStats.totalGamesPlayed,
+      totalRoundsPlayed: playerStats.totalRoundsPlayed,
+    },
   });
 }
