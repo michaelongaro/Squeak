@@ -209,10 +209,13 @@ function Card({
         imageRef.current.style.opacity = "0";
         imageRef.current.style.zIndex = "500";
 
+        if (origin === "deck") {
+          imageRef.current.style.opacity = "0";
         setTimeout(() => {
           if (!imageRef.current) return;
           imageRef.current.style.opacity = "1";
         }, 0);
+        }
 
         if (origin === "hand" && ownerID) {
           setCardBeingMovedProgramatically({
@@ -250,7 +253,7 @@ function Card({
         }
       }, 265);
 
-      if (origin === "deck" && ownerID === userID) {
+      if (origin === "hand" && ownerID === userID) {
         setHoldingADeckCard(false);
       } else if (origin === "squeak" && ownerID === userID) {
         setHoldingASqueakCard(false);
