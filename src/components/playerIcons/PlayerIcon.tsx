@@ -17,8 +17,6 @@ interface IPlayerIcon {
   showRemovePlayerFromRoomButton?: boolean;
   onlineStatus?: boolean;
 }
-// TODO: probably just pass through the whole player object and allow it to be undefined,
-// if so then just show loading skeleton?
 
 function PlayerIcon({
   avatarPath,
