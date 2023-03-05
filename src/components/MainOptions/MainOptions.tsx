@@ -39,8 +39,9 @@ function MainOptions() {
       }
     };
 
-    window.addEventListener("resize", handleResize);
+    handleResize();
 
+    window.addEventListener("resize", handleResize);
     return () => {
       window.removeEventListener("resize", handleResize);
     };
