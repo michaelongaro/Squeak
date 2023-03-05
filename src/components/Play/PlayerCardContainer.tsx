@@ -431,6 +431,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
               borderColor={
                 playerMetadata[userID]?.color || "hsl(352deg, 69%, 61%)"
               }
+              avatarToUsernamePositioning={"left"}
               username={playerMetadata[userID]?.username}
               size={"3rem"}
             />
