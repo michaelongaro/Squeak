@@ -147,7 +147,7 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
                 <p className="baseVertFlex w-full gap-4">
                   To earn points, you must place cards on piles on the board.
                   Each pile must start with an ace, and every card placed
-                  afterwords on that pile must be of the same suit and be one
+                  afterwards on that pile must be of the same suit and be one
                   value higher than the previous card (ex. Ace of Hearts, 2 of
                   Hearts, 3 of Hearts). Each card placed is worth one point.
                   <Image
@@ -164,8 +164,8 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
                 <p className="baseVertFlex w-full gap-4">
                   You may place cards on your squeak stacks as well, however
                   each card must be of opposite color and one value lower than
-                  the previous card, similar to Solitare (ex. Jack of Spades, 10
-                  of Hearts, 9 of Clubs). Only the last card in your squeak
+                  the previous card, similar to Solitaire (ex. Jack of Spades,
+                  10 of Hearts, 9 of Clubs). Only the last card in your squeak
                   stack is able to be played on the board, however you can move
                   sections of one stack to another as long as the stacking rules
                   are followed.
