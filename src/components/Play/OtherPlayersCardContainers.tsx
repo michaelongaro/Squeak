@@ -54,53 +54,6 @@ function OtherPlayersCardContainers({
     [playerID: string]: [boolean, boolean, boolean, boolean];
   }>();
 
-  const [avatarIconAbsolutePositions, setAvatarIconAbsolutePositions] =
-    useState<{
-      [playerID: string]: {
-        bottom: string;
-        right: string;
-      };
-    }>();
-
-  useEffect(() => {
-    if (avatarIconAbsolutePositions) return;
-
-    const tempAvatarIconAbsolutePositions: {
-      [playerID: string]: {
-        bottom: string;
-        right: string;
-      };
-    } = {};
-
-    for (let i = 0; i < otherPlayerIDs.length; i++) {
-      const icon = document.getElementById(`${otherPlayerIDs[i]}icon`);
-
-      if (icon) {
-        const { width } = icon.getBoundingClientRect();
-
-        let adjBottom = "";
-        let adjRight = "";
-        if (i === 0) {
-          adjBottom = `20px`;
-          adjRight = `${(width + 15) * -1}px`;
-        } else if (i === 1) {
-          adjBottom = `0px`;
-          adjRight = `${(width + 25) * -1}px`;
-        } else if (i === 2) {
-          adjBottom = `${width * 0.1}px`;
-          adjRight = `${width * -1.15}px`;
-        }
-
-        tempAvatarIconAbsolutePositions[otherPlayerIDs[i]!] = {
-          bottom: adjBottom,
-          right: adjRight,
-        };
-      }
-    }
-
-    setAvatarIconAbsolutePositions(tempAvatarIconAbsolutePositions);
-  }, [otherPlayerIDs, avatarIconAbsolutePositions]);
-
   useEffect(() => {
     let tempDummyDeckCardStates = { ...showDummyDeckCardStates };
 
@@ -175,7 +128,7 @@ function OtherPlayersCardContainers({
                 ? 0.25
                 : 1,
             }}
-            className={`${internalOrderedGridClassNames[idx]} select-none`}
+            className={`${internalOrderedGridClassNames[idx]} relative select-none`}
           >
             <div
               id={`${playerID}squeakDeck`}
@@ -388,12 +341,24 @@ function OtherPlayersCardContainers({
 
             <div
               style={{
-                bottom: avatarIconAbsolutePositions?.[playerID]
-                  ? avatarIconAbsolutePositions[playerID]!.bottom
-                  : "-50px",
-                right: avatarIconAbsolutePositions?.[playerID]
-                  ? avatarIconAbsolutePositions[playerID]!.right
-                  : "-50px",
+                // way to dynamically position the avatar icon based
+                // on the length of the username
+                right: document
+                  .getElementById(`${playerID}icon`)
+                  ?.getBoundingClientRect()
+                  ? `${
+                      (document
+                        .getElementById(`${playerID}icon`)!
+                        .getBoundingClientRect().width +
+                        (30 - playerMetadata[playerID]!.username.length)) *
+                      -1
+                    }px`
+                  : "0px",
+                bottom: document
+                  .getElementById(`${playerID}icon`)
+                  ?.getBoundingClientRect()
+                  ? `${(playerMetadata[playerID]!.username.length / 16) * 30}px`
+                  : "0px",
               }}
               id={`${playerID}icon`}
               className={`${classes.playerAvatar}`}
