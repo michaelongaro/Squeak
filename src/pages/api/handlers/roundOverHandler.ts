@@ -94,7 +94,7 @@ export function roundOverHandler(
       );
 
       const squeakModifier =
-        squeakDeckCards.length === 0 ? 10 : squeakDeckCards.length * -1;
+        roundWinnerID === playerID ? 10 : squeakDeckCards.length * -1;
       const oldScore = player.totalPoints;
       const newScore = oldScore + cardsPlayed.length + squeakModifier;
       const oldRanking = player.rankInRoom;
