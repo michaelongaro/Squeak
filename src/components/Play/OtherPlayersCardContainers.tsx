@@ -110,12 +110,12 @@ function OtherPlayersCardContainers({
   const cardDimensions = useResponsiveCardDimensions();
   useRotatePlayerDecks();
 
-  const reverseSqueakDeck = (array: ICard[] | undefined) => {
-    if (!array) return [];
+  // const reverseSqueakDeck = (array: ICard[] | undefined) => {
+  //   if (!array) return [];
 
-    const revArray = array.reverse();
-    return [...revArray];
-  };
+  //   const revArray = array.reverse();
+  //   return [...revArray];
+  // };
 
   const filterCardsInHandFromDeck = (
     array: ICard[] | undefined,
@@ -128,11 +128,13 @@ function OtherPlayersCardContainers({
     if (!array || !deckIdx || !cardsInHand) return [];
 
     const filteredArray = array.filter(
-      (card, cardIdx) =>
-        cardIdx <= deckIdx - cardsInHand.length ||
-        cardIdx > deckIdx ||
-        deckIdx === -1
+      (card) =>
+        !cardsInHand.some(
+          (cardInHand) =>
+            cardInHand?.suit === card.suit && cardInHand?.value === card.value
+        )
     );
+
     return [...filteredArray];
   };
 
@@ -156,6 +158,54 @@ function OtherPlayersCardContainers({
             }}
             className={`${internalOrderedGridClassNames[idx]} relative select-none`}
           >
+            {gameData.players[playerID]?.squeakHand.map((cards, cardsIdx) => (
+              <div
+                key={`${playerID}squeakStack${cardsIdx}`}
+                // @ts-expect-error asdf
+                className={`${cardClassMap[cardsIdx]} relative h-full w-full select-none`}
+              >
+                <div
+                  id={`${playerID}squeakHand${cardsIdx}`}
+                  style={{
+                    height:
+                      cards.length === 0 || cards.length === 1
+                        ? `${cardDimensions.height}px`
+                        : `${
+                            (cards.length - 1) * (20 - cardsIdx) +
+                            cardDimensions.height
+                          }px`,
+                  }}
+                  className="absolute h-full w-full select-none"
+                >
+                  {cards.map((card, cardIdx) => (
+                    <div
+                      key={`${playerID}squeakCard${card.suit}${card.value}`}
+                      id={`${playerID}squeakStack${cardsIdx}${cardIdx}`}
+                      className={`absolute left-0 h-[64px] w-[48px] select-none tall:h-[87px] tall:w-[67px]`}
+                      style={{
+                        top: `${(20 - cards.length) * cardIdx}px`,
+                      }}
+                    >
+                      <Card
+                        value={card.value}
+                        suit={card.suit}
+                        draggable={false}
+                        origin={"squeak"}
+                        ownerID={playerID}
+                        startID={`${playerID}squeakStack${cardsIdx}${cardIdx}`}
+                        // implement this functionality in a refactor later
+                        // squeakStackLocation={[cardsIdx, cardIdx]}
+                        // offsetSqueakStackHeight={
+                        //   cardIdx === 0 ? 0 : (20 - cards.length) * cardIdx
+                        // }
+                        rotation={rotationOrder[idx] as number}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+
             <div
               id={`${playerID}squeakDeck`}
               className={`${classes.squeakDeck} baseFlex h-full w-full select-none`}
@@ -186,24 +236,27 @@ function OtherPlayersCardContainers({
                     </div>
                   )}
 
-                  {reverseSqueakDeck(
+                  {/* reverseSqueakDeck(
                     gameData.players[playerID]?.squeakDeck
-                  ).map((card, cardIdx) => (
-                    <div
-                      key={`${playerID}squeakDeckCard${cardIdx}`}
-                      className="absolute top-0 left-0 h-full w-full select-none"
-                    >
-                      <Card
-                        value={card.value}
-                        suit={card.suit}
-                        showCardBack={true} // this would need to be changed halfway through card flip
-                        draggable={false}
-                        ownerID={playerID}
-                        startID={`${playerID}squeakDeck`}
-                        rotation={rotationOrder[idx] as number}
-                      />
-                    </div>
-                  ))}
+                  ) */}
+                  {gameData.players[playerID]?.squeakDeck.map(
+                    (card, cardIdx) => (
+                      <div
+                        key={`${playerID}squeakDeckCard${card.suit}${card.value}`}
+                        className="absolute top-0 left-0 h-full w-full select-none"
+                      >
+                        <Card
+                          value={card.value}
+                          suit={card.suit}
+                          showCardBack={true} // this would need to be changed halfway through card flip
+                          draggable={false}
+                          ownerID={playerID}
+                          startID={`${playerID}squeakDeck`}
+                          rotation={rotationOrder[idx] as number}
+                        />
+                      </div>
+                    )
+                  )}
                 </div>
               ) : (
                 <Buzzer
@@ -213,53 +266,41 @@ function OtherPlayersCardContainers({
                 />
               )}
             </div>
-            {gameData.players[playerID]?.squeakHand.map((cards, cardsIdx) => (
-              <div
-                key={`${playerID}squeakStack${cardsIdx}`}
-                // @ts-expect-error asdf
-                className={`${cardClassMap[cardsIdx]} relative h-full w-full select-none`}
-              >
-                <div
-                  id={`${playerID}squeakHand${cardsIdx}`}
-                  style={{
-                    height:
-                      cards.length === 0 || cards.length === 1
-                        ? `${cardDimensions.height}px`
-                        : `${
-                            (cards.length - 1) * (20 - cardsIdx) +
-                            cardDimensions.height
-                          }px`,
-                  }}
-                  className="absolute h-full w-full select-none"
-                >
-                  {cards.map((card, cardIdx) => (
-                    <div
-                      key={`${playerID}card${cardIdx}`}
-                      id={`${playerID}squeakStack${cardsIdx}${cardIdx}`}
-                      className={`absolute left-0 h-[64px] w-[48px] select-none tall:h-[87px] tall:w-[67px]`}
-                      style={{
-                        top: `${(20 - cards.length) * cardIdx}px`,
-                      }}
-                    >
-                      <Card
-                        value={card.value}
-                        suit={card.suit}
-                        draggable={false}
-                        origin={"squeak"}
-                        ownerID={playerID}
-                        startID={`${playerID}squeakStack${cardsIdx}${cardIdx}`}
-                        // implement this functionality in a refactor later
-                        // squeakStackLocation={[cardsIdx, cardIdx]}
-                        // offsetSqueakStackHeight={
-                        //   cardIdx === 0 ? 0 : (20 - cards.length) * cardIdx
-                        // }
-                        rotation={rotationOrder[idx] as number}
-                      />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
+
+            <div
+              id={`${playerID}hand`}
+              style={{
+                zIndex:
+                  cardBeingMovedProgramatically[playerID] === true ? 501 : 499,
+              }}
+              className={`${classes.playerHand} relative h-[64px] w-[48px] select-none tall:h-[87px] tall:w-[67px]`}
+            >
+              <>
+                {gameData.players[playerID]?.topCardsInDeck.map(
+                  (card, topCardsIdx) =>
+                    card !== null && ( // necessary?
+                      <div
+                        key={`${playerID}card${card?.suit}${card?.value}`}
+                        className="absolute top-0 left-0 select-none"
+                        style={{
+                          top: `${-1 * (topCardsIdx * 2)}px`,
+                        }}
+                      >
+                        <Card
+                          value={card?.value}
+                          suit={card?.suit}
+                          draggable={true}
+                          origin={"hand"}
+                          ownerID={playerID}
+                          startID={`${playerID}hand`}
+                          rotation={rotationOrder[idx] as number}
+                        />
+                      </div>
+                    )
+                )}
+              </>
+            </div>
+
             <div
               className={`${classes.playerDeck} z-[500] h-[64px] w-[48px] select-none tall:h-[87px] tall:w-[67px]`}
             >
@@ -302,7 +343,7 @@ function OtherPlayersCardContainers({
                         playerID
                       ).map((card, cardIdx) => (
                         <div
-                          key={`${playerID}deckCard${cardIdx}`}
+                          key={`${playerID}deckCard${card.suit}${card.value}`}
                           style={{
                             zIndex:
                               gameData.players[playerID]?.deckIdx === cardIdx ||
@@ -344,39 +385,6 @@ function OtherPlayersCardContainers({
                   </div>
                 )}
               </div>
-            </div>
-            <div
-              id={`${playerID}hand`}
-              style={{
-                zIndex:
-                  cardBeingMovedProgramatically[playerID] === true ? 500 : 499,
-              }}
-              className={`${classes.playerHand} relative h-[64px] w-[48px] select-none tall:h-[87px] tall:w-[67px]`}
-            >
-              <>
-                {gameData.players[playerID]?.topCardsInDeck.map(
-                  (card, topCardsIdx) =>
-                    card !== null && ( // necessary?
-                      <div
-                        key={`${playerID}card${card?.suit}${card?.value}`}
-                        className="absolute top-0 left-0 select-none"
-                        style={{
-                          top: `${-1 * (topCardsIdx * 2)}px`,
-                        }}
-                      >
-                        <Card
-                          value={card?.value}
-                          suit={card?.suit}
-                          draggable={true}
-                          origin={"hand"}
-                          ownerID={playerID}
-                          startID={`${playerID}hand`}
-                          rotation={rotationOrder[idx] as number}
-                        />
-                      </div>
-                    )
-                )}
-              </>
             </div>
           </div>
 

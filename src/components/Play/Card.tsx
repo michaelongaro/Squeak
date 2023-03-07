@@ -93,8 +93,40 @@ function Card({
       rotate: boolean,
       callbackFunction?: () => void
     ) => {
-      if (!cardRef.current || !imageRef.current || cardIsMovingRef.current)
-        return;
+      if (!cardRef.current || !imageRef.current) return;
+
+      let start: number | undefined;
+      let done = false;
+
+      // const d0 = new Date().getTime();
+
+      function transitionEndHandler() {
+        if (!cardRef.current || !imageRef.current) return;
+
+        // const d1 = new Date().getTime();
+
+        // console.log("delta: ", d1 - d0);
+
+        cardRef.current.style.transition = "none";
+        cardRef.current.style.zIndex = "500";
+        imageRef.current.style.transition = "none";
+        imageRef.current.style.zIndex = "500";
+
+        if (origin === "hand" && ownerID) {
+          setCardBeingMovedProgramatically({
+            ...cardBeingMovedProgramatically,
+            [ownerID]: false,
+          });
+        }
+
+        cardIsMovingRef.current = false;
+
+        callbackFunction?.();
+
+        if (squeakStackLocation && ownerID === userID) {
+          setHeldSqueakStackLocation(null);
+        }
+      }
 
       cardIsMovingRef.current = true;
 
@@ -196,45 +228,25 @@ function Card({
         }, 125);
       }
 
-      setTimeout(() => {
-        if (!cardRef.current || !imageRef.current) return;
-        cardRef.current.style.transition = "none";
-        cardRef.current.style.zIndex = "500";
-        imageRef.current.style.transition = "none";
-        imageRef.current.style.zIndex = "500";
-
-        if (origin === "deck") {
-          imageRef.current.style.opacity = "0";
-          setTimeout(() => {
-            if (!imageRef.current) return;
-            imageRef.current.style.opacity = "1";
-          }, 0);
+      function step(timestamp: number) {
+        if (start === undefined) {
+          start = timestamp;
         }
+        const elapsed = timestamp - start;
 
-        if (origin === "hand" && ownerID) {
-          setCardBeingMovedProgramatically({
-            ...cardBeingMovedProgramatically,
-            [ownerID]: false,
-          });
+        // feels wrong because animation should only be running for 250ms, but 250
+        // resulted in the animation getting cut off before it finished
+        if (elapsed < (origin === "squeak" || origin === "deck" ? 250 : 300)) {
+          if (!done) {
+            window.requestAnimationFrame(step);
+          }
+        } else {
+          transitionEndHandler();
+          done = true;
         }
+      }
 
-        if (flip) {
-          cardRef.current.style.transform = "translate(0px, 0px)";
-          imageRef.current.style.transform = "";
-          setCardOffsetPosition({
-            x: 0,
-            y: 0,
-          });
-          setManuallyShowCardFront(false);
-        }
-        cardIsMovingRef.current = false;
-
-        callbackFunction?.();
-
-        if (squeakStackLocation && ownerID === userID) {
-          setHeldSqueakStackLocation(null);
-        }
-      }, 250);
+      window.requestAnimationFrame(step);
 
       if (origin === "hand" && ownerID === userID) {
         setHoldingADeckCard(false);
@@ -259,6 +271,8 @@ function Card({
       setCardBeingMovedProgramatically,
     ]
   );
+
+  console.log(value, suit, "hit");
 
   // hooks to handle socket emits from server
   useCardDrawFromDeck({
@@ -427,6 +441,19 @@ function Card({
       });
     }
   }
+
+  // try swapping deck + "hand" jsx blocks in both components + comment out any references to
+  // cardBeingMovedProgramatically and see if that makes it any better
+
+  // also really seems like hovering over ANY card/stack is calling *something* a ton of times,
+  // methodically figure out how you could test that...
+
+  // maybe find way to restructure to allow use of useMemo?
+  // ^^^^^^ look back at window on left monitor, I think you just ened to do () => functionCall(param1, param2)
+  // and you should be gucci
+
+  // ^ would/will need to make separate hook for
+  // maybe use memo on this component?
 
   return (
     <>
