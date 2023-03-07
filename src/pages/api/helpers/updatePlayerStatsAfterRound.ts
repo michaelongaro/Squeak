@@ -43,8 +43,11 @@ export async function updatePlayerStatsAfterRound({
 
   // averagePlace
   playerStats.averageFinishingPlace =
-    playerStats.allFinishedPlacesValues.reduce((a, b) => a + b, 0) /
-    playerStats.allFinishedPlacesValues.length;
+    Math.round(
+      (playerStats.allFinishedPlacesValues.reduce((a, b) => a + b, 0) /
+        playerStats.allFinishedPlacesValues.length) *
+        100
+    ) / 100;
 
   // leftInSqueak
   playerStats.allLeftInSqueakValues.push(
@@ -55,8 +58,11 @@ export async function updatePlayerStatsAfterRound({
 
   // averageLeftInSqueak
   playerStats.averageLeftInSqueak =
-    playerStats.allLeftInSqueakValues.reduce((a, b) => a + b, 0) /
-    playerStats.allLeftInSqueakValues.length;
+    Math.round(
+      (playerStats.allLeftInSqueakValues.reduce((a, b) => a + b, 0) /
+        playerStats.allLeftInSqueakValues.length) *
+        100
+    ) / 100;
 
   // lowestScore
   playerStats.lowestScore =
