@@ -94,7 +94,7 @@ function LeaderboardModal({ setShowModal }: ILeaderboardModal) {
                 borderColor: "hsl(120deg 100% 86%)",
                 color: "hsl(120deg 100% 86%)",
               }}
-              className="baseVertFlex min-h-auto mt-4 w-auto !justify-start gap-4 rounded-md border-2 p-4 lg:min-h-[500px] lg:w-[500px]"
+              className="baseVertFlex min-h-auto mt-4 w-auto !justify-start gap-4 rounded-md border-2 p-4 lg:min-h-[500px] lg:min-w-[500px]"
             >
               <div
                 style={{
@@ -126,7 +126,7 @@ function LeaderboardModal({ setShowModal }: ILeaderboardModal) {
                           {player.username}
                         </div>
                       </div>
-                      <div className="text-sm lg:text-xl">{player.value} </div>
+                      <div className="text-sm lg:text-xl">{player.value}</div>
                     </div>
                   )
                 )
