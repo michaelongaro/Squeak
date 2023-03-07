@@ -143,6 +143,11 @@ export function modifyFriendDataHandler(
         })
         .catch((err) => console.log(err));
 
+      io.emit("friendDataUpdated", {
+        playerID: initiatorID,
+        friendData: initiator,
+      });
+
       for (const friendID of initiator.friendIDs) {
         const friend = friendData[friendID];
 
