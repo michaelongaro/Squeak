@@ -16,6 +16,7 @@ import ResetRoundModal from "../modals/ResetRoundModal";
 import useManuallyResetRound from "../../hooks/useManuallyResetRound";
 import useScoreboardData from "../../hooks/useScoreboardData";
 import { cards } from "../../utils/cardAssetPaths";
+import OtherPlayerIcons from "./OtherPlayerIcons";
 
 function Play() {
   const {
@@ -90,7 +91,8 @@ function Play() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.15 }}
+      transition={{ duration: 0.3 }}
+      className="relative"
     >
       <div
         id={"playContainer"}
@@ -114,6 +116,8 @@ function Play() {
           </>
         )}
       </div>
+
+      {gameStarted && <OtherPlayerIcons />}
 
       <AnimatePresence
         initial={false}
