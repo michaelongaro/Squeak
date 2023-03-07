@@ -156,12 +156,15 @@ export const usersRouter = router({
             .sort((a, b) => a.value - b.value)
             .slice(0, 10);
         } else if (category === "Average left in Squeak") {
+          // removing all "0" values from the array
+          currentCategory = currentCategory.filter((stat) => stat.value !== 0);
+
           currentCategory = currentCategory
-            .sort((a, b) => b.value - a.value)
+            .sort((a, b) => a.value - b.value)
             .slice(0, 10);
         } else if (category === "Highest score") {
           currentCategory = currentCategory
-            .sort((a, b) => b.value + a.value)
+            .sort((a, b) => b.value - a.value)
             .slice(0, 10);
         } else if (category === "Lowest score") {
           currentCategory = currentCategory
@@ -169,7 +172,7 @@ export const usersRouter = router({
             .slice(0, 10);
         } else if (category === "Total games played") {
           currentCategory = currentCategory
-            .sort((a, b) => b.value + a.value)
+            .sort((a, b) => b.value - a.value)
             .slice(0, 10);
         }
 
