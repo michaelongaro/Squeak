@@ -87,13 +87,14 @@ function FriendsList({ setShowFriendsListModal }: IFriendsList) {
           <FiMail size={"1.5rem"} />
           <div className="baseFlex gap-2 ">
             Pending
-            {friendInviteIDs !== undefined && (
-              <div className="baseFlex gap-[0.1rem]">
-                <div>(</div>
-                <div>{friendInviteIDs.length}</div>
-                <div>)</div>
+            <div className="baseFlex gap-[0.1rem]">
+              <div>(</div>
+              <div>
+                {friendData.friendInviteIDs.length +
+                  friendData.roomInviteIDs.length}
               </div>
-            )}
+              <div>)</div>
+            </div>
           </div>
         </div>
         {friendInviteIDs ? (
