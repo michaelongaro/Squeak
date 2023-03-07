@@ -3,7 +3,6 @@ import { useUserIDContext } from "../../context/UserIDContext";
 import { useRoomContext } from "../../context/RoomContext";
 import useResponsiveCardDimensions from "../../hooks/useResponsiveCardDimensions";
 import Card from "./Card";
-import PlayerIcon from "../playerIcons/PlayerIcon";
 import { FaRedoAlt } from "react-icons/fa";
 import isEqual from "lodash.isequal";
 import classes from "./OtherPlayersCardContainers.module.css";
@@ -11,6 +10,7 @@ import useRotatePlayerDecks from "../../hooks/useRotatePlayerDecks";
 import Buzzer from "./Buzzer";
 import Image from "next/image";
 import disconnectIcon from "../../../public/disconnect/disconnect.svg";
+import { type ICard } from "../../utils/generateDeckAndSqueakCards";
 
 interface IOtherPlayersCardContainers {
   orderedClassNames: (string | undefined)[];
@@ -37,7 +37,6 @@ function OtherPlayersCardContainers({
   const {
     roomConfig,
     gameData,
-    playerMetadata,
     decksAreBeingRotated,
     soundPlayStates,
     cardBeingMovedProgramatically,
@@ -111,6 +110,32 @@ function OtherPlayersCardContainers({
   const cardDimensions = useResponsiveCardDimensions();
   useRotatePlayerDecks();
 
+  const reverseSqueakDeck = (array: ICard[] | undefined) => {
+    if (!array) return [];
+
+    const revArray = array.reverse();
+    return [...revArray];
+  };
+
+  const filterCardsInHandFromDeck = (
+    array: ICard[] | undefined,
+    playerID: string
+  ) => {
+    const deckIdx = gameData.players[playerID]?.deckIdx;
+    const cardsInHand = gameData.players[playerID]?.topCardsInDeck.filter(
+      (card) => card !== null
+    );
+    if (!array || !deckIdx || !cardsInHand) return [];
+
+    const filteredArray = array.filter(
+      (card, cardIdx) =>
+        cardIdx <= deckIdx - cardsInHand.length ||
+        cardIdx > deckIdx ||
+        deckIdx === -1
+    );
+    return [...filteredArray];
+  };
+
   return (
     <>
       <audio ref={audioRef0} src="/sounds/otherPlayerCardMove.wav" />
@@ -123,6 +148,7 @@ function OtherPlayersCardContainers({
           className={`${orderedClassNames[idx]} relative select-none`}
         >
           <div
+            id={`${playerID}container`}
             style={{
               opacity: gameData.playerIDsThatLeftMidgame.includes(playerID)
                 ? 0.25
@@ -160,24 +186,24 @@ function OtherPlayersCardContainers({
                     </div>
                   )}
 
-                  {gameData.players[playerID]?.squeakDeck.map(
-                    (card, cardIdx) => (
-                      <div
-                        key={`${playerID}squeakDeckCard${cardIdx}`}
-                        className="absolute top-0 left-0 h-full w-full select-none"
-                      >
-                        <Card
-                          value={card.value}
-                          suit={card.suit}
-                          showCardBack={true} // this would need to be changed halfway through card flip
-                          draggable={false}
-                          ownerID={playerID}
-                          startID={`${playerID}squeakDeck`}
-                          rotation={rotationOrder[idx] as number}
-                        />
-                      </div>
-                    )
-                  )}
+                  {reverseSqueakDeck(
+                    gameData.players[playerID]?.squeakDeck
+                  ).map((card, cardIdx) => (
+                    <div
+                      key={`${playerID}squeakDeckCard${cardIdx}`}
+                      className="absolute top-0 left-0 h-full w-full select-none"
+                    >
+                      <Card
+                        value={card.value}
+                        suit={card.suit}
+                        showCardBack={true} // this would need to be changed halfway through card flip
+                        draggable={false}
+                        ownerID={playerID}
+                        startID={`${playerID}squeakDeck`}
+                        rotation={rotationOrder[idx] as number}
+                      />
+                    </div>
+                  ))}
                 </div>
               ) : (
                 <Buzzer
@@ -271,20 +297,34 @@ function OtherPlayersCardContainers({
                       }}
                       className="topBackFacingCardInDeck absolute top-0 left-0 h-full w-full select-none"
                     >
-                      <Card
-                        value={
-                          gameData?.players[playerID]?.nextTopCardInDeck?.value
-                        }
-                        suit={
-                          gameData?.players[playerID]?.nextTopCardInDeck?.suit
-                        }
-                        showCardBack={true} // separate state inside overrides this halfway through flip
-                        draggable={false}
-                        ownerID={playerID}
-                        origin={"deck"}
-                        startID={`${playerID}deck`}
-                        rotation={rotationOrder[idx] as number}
-                      />
+                      {filterCardsInHandFromDeck(
+                        gameData.players[playerID]?.deck,
+                        playerID
+                      ).map((card, cardIdx) => (
+                        <div
+                          key={`${playerID}deckCard${cardIdx}`}
+                          style={{
+                            zIndex:
+                              gameData.players[playerID]?.deckIdx === cardIdx ||
+                              (gameData.players[playerID]?.deckIdx === -1 &&
+                                cardIdx === 2)
+                                ? 500
+                                : 499,
+                          }}
+                          className="absolute top-0 left-0 h-full w-full select-none"
+                        >
+                          <Card
+                            value={card.value}
+                            suit={card.suit}
+                            showCardBack={true} // separate state inside overrides this halfway through flip
+                            draggable={false}
+                            ownerID={playerID}
+                            origin={"deck"}
+                            startID={`${playerID}deck`}
+                            rotation={rotationOrder[idx] as number}
+                          />
+                        </div>
+                      ))}
                     </div>
                   </div>
                 ) : (
@@ -337,45 +377,6 @@ function OtherPlayersCardContainers({
                     )
                 )}
               </>
-            </div>
-
-            <div
-              style={{
-                // way to dynamically position the avatar icon based
-                // on the length of the username
-                right: document
-                  .getElementById(`${playerID}icon`)
-                  ?.getBoundingClientRect()
-                  ? `${
-                      (document
-                        .getElementById(`${playerID}icon`)!
-                        .getBoundingClientRect().width +
-                        (30 - playerMetadata[playerID]!.username.length)) *
-                      -1
-                    }px`
-                  : "0px",
-                bottom: document
-                  .getElementById(`${playerID}icon`)
-                  ?.getBoundingClientRect()
-                  ? `${(playerMetadata[playerID]!.username.length / 16) * 30}px`
-                  : "0px",
-              }}
-              id={`${playerID}icon`}
-              className={`${classes.playerAvatar}`}
-            >
-              <PlayerIcon
-                avatarPath={
-                  playerMetadata[playerID]?.avatarPath || "/avatars/rabbit.svg"
-                }
-                borderColor={
-                  playerMetadata[playerID]?.color || "hsl(352deg, 69%, 61%)"
-                }
-                username={playerMetadata[playerID]?.username}
-                avatarToUsernamePositioning={
-                  idx === 0 || idx === 2 ? "right" : "left"
-                }
-                size={"3rem"}
-              />
             </div>
           </div>
 

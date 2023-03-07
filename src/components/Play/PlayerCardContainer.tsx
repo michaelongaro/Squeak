@@ -13,6 +13,7 @@ import PlayerIcon from "../playerIcons/PlayerIcon";
 import useResponsiveCardDimensions from "../../hooks/useResponsiveCardDimensions";
 import { AnimatePresence, motion } from "framer-motion";
 import Buzzer from "./Buzzer";
+import { type ICard } from "../../utils/generateDeckAndSqueakCards";
 
 interface IPlayerCardContainer {
   cardContainerClass: string | undefined;
@@ -103,6 +104,34 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
     return "none";
   }
 
+  const reverseSqueakDeck = (array: ICard[] | undefined) => {
+    if (!array) return [];
+
+    const revArray = array.reverse();
+    return [...revArray];
+  };
+
+  const filterCardsInHandFromDeck = (
+    array: ICard[] | undefined,
+    playerID: string
+  ) => {
+    const deckIdx = gameData.players[playerID]?.deckIdx;
+    const cardsInHand = gameData.players[playerID]?.topCardsInDeck.filter(
+      (card) => card !== null
+    );
+    if (!array || !deckIdx || !cardsInHand) return [];
+
+    const filteredArray = array.filter(
+      (card, cardIdx) =>
+        cardIdx <= deckIdx - cardsInHand.length ||
+        cardIdx > deckIdx ||
+        deckIdx === -1
+    );
+
+    console.dir(filteredArray, { depth: null });
+    return [...filteredArray];
+  };
+
   return (
     <div className={`${cardContainerClass}`}>
       <audio ref={audioRef} src="/sounds/firstSuccessfulMove.wav" />
@@ -145,22 +174,24 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                   </div>
                 )}
 
-                {gameData.players[userID]?.squeakDeck.map((card, cardIdx) => (
-                  <div
-                    key={`${userID}squeakDeckCard${cardIdx}`}
-                    className="absolute top-0 left-0 h-full w-full select-none"
-                  >
-                    <Card
-                      value={card.value}
-                      suit={card.suit}
-                      showCardBack={true} // separate state inside overrides this halfway through flip
-                      draggable={false}
-                      ownerID={userID}
-                      startID={`${userID}squeakDeck`}
-                      rotation={0}
-                    />
-                  </div>
-                ))}
+                {reverseSqueakDeck(gameData.players[userID]?.squeakDeck).map(
+                  (card, cardIdx) => (
+                    <div
+                      key={`${userID}squeakDeckCard${cardIdx}`}
+                      className="absolute top-0 left-0 h-full w-full select-none"
+                    >
+                      <Card
+                        value={card.value}
+                        suit={card.suit}
+                        showCardBack={true} // separate state inside overrides this halfway through flip
+                        draggable={false}
+                        ownerID={userID}
+                        startID={`${userID}squeakDeck`}
+                        rotation={0}
+                      />
+                    </div>
+                  )
+                )}
               </div>
             ) : (
               <Buzzer
@@ -310,18 +341,34 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                     }}
                     className="topBackFacingCardInDeck absolute top-0 left-0 h-full w-full select-none"
                   >
-                    <Card
-                      value={
-                        gameData?.players[userID]?.nextTopCardInDeck?.value
-                      }
-                      suit={gameData?.players[userID]?.nextTopCardInDeck?.suit}
-                      showCardBack={true} // separate state inside overrides this halfway through flip
-                      draggable={false}
-                      ownerID={userID}
-                      origin={"deck"}
-                      startID={`${userID}deck`}
-                      rotation={0}
-                    />
+                    {filterCardsInHandFromDeck(
+                      gameData.players[userID]?.deck,
+                      userID
+                    ).map((card, cardIdx) => (
+                      <div
+                        key={`${userID}deckCard${cardIdx}`}
+                        style={{
+                          zIndex:
+                            gameData.players[userID]?.deckIdx === cardIdx ||
+                            (gameData.players[userID]?.deckIdx === -1 &&
+                              cardIdx === 2)
+                              ? 500
+                              : 499,
+                        }}
+                        className="absolute top-0 left-0 h-full w-full select-none"
+                      >
+                        <Card
+                          value={card.value}
+                          suit={card.suit}
+                          showCardBack={true} // separate state inside overrides this halfway through flip
+                          draggable={false}
+                          ownerID={userID}
+                          origin={"deck"}
+                          startID={`${userID}deck`}
+                          rotation={0}
+                        />
+                      </div>
+                    ))}
                   </div>
                 </div>
               ) : (
@@ -431,7 +478,6 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
               borderColor={
                 playerMetadata[userID]?.color || "hsl(352deg, 69%, 61%)"
               }
-              avatarToUsernamePositioning={"left"}
               username={playerMetadata[userID]?.username}
               size={"3rem"}
             />
