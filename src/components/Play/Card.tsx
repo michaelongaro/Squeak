@@ -234,7 +234,7 @@ function Card({
         if (squeakStackLocation && ownerID === userID) {
           setHeldSqueakStackLocation(null);
         }
-      }, 265);
+      }, 250);
 
       if (origin === "hand" && ownerID === userID) {
         setHoldingADeckCard(false);
