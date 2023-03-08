@@ -64,11 +64,16 @@ export async function updatePlayerStatsAfterRound({
         100
     ) / 100;
 
-  // lowestScore
-  playerStats.lowestScore =
-    playerRoundDetails.newScore < playerStats.lowestScore
-      ? playerRoundDetails.newScore
-      : playerStats.lowestScore;
+  // lowestScore, hacky -> I would ideally want to set lowestScore and highestScore
+  // to by default be null in the DB
+  if (playerStats.totalRoundsPlayed === 0) {
+    playerStats.lowestScore = playerRoundDetails.newScore;
+  } else {
+    playerStats.lowestScore =
+      playerRoundDetails.newScore < playerStats.lowestScore
+        ? playerRoundDetails.newScore
+        : playerStats.lowestScore;
+  }
 
   // highestScore
   playerStats.highestScore =
