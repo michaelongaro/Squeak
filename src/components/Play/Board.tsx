@@ -22,7 +22,6 @@ function Board({ boardClass }: IBoard) {
     holdingASqueakCard,
     proposedCardBoxShadow,
     hoveredCell,
-    setHoveredCell,
   } = useRoomContext();
 
   useTrackHoverOverBoardCells();
