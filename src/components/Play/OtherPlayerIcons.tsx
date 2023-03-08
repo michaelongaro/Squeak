@@ -36,6 +36,11 @@ function OtherPlayerIcons() {
 
     for (let i = 0; i < otherPlayerIDs.length; i++) {
       const playerID = otherPlayerIDs[i];
+      if (!playerID) continue;
+
+      const playerSqueakDeckEmpty =
+        gameData.players[playerID]?.squeakDeck.length === 0 ? true : false;
+
       const playerContainer = document
         .getElementById(`${playerID}container`)
         ?.getBoundingClientRect();
@@ -46,11 +51,17 @@ function OtherPlayerIcons() {
 
         tempAbsolutePositioning[0] = {
           top: `${playerContainer.top + 15}px`,
-          left: `${playerContainer.left - topPlayerIconWidth - 15}px`,
+          left: `${
+            playerContainer.left -
+            topPlayerIconWidth -
+            (playerSqueakDeckEmpty ? 35 : 15)
+          }px`,
         };
       } else if (i === 1 && playerContainer) {
         tempAbsolutePositioning[1] = {
-          top: `${playerContainer.bottom + 15}px`,
+          top: `${
+            playerContainer.bottom + (playerSqueakDeckEmpty ? 35 : 15)
+          }px`,
           left: `${playerContainer.left}px`, // + 15 too ?
         };
       } else if (i === 2 && playerContainer) {
@@ -58,14 +69,14 @@ function OtherPlayerIcons() {
           rightPlayerIconRef.current?.getBoundingClientRect().width || 0;
 
         tempAbsolutePositioning[2] = {
-          top: `${playerContainer.top - 85}px`,
+          top: `${playerContainer.top - (playerSqueakDeckEmpty ? 105 : 85)}}px`,
           left: `${playerContainer.right - rightPlayerIconWidth - 15}px`,
         };
       }
     }
 
     setAbsolutePositioning([...tempAbsolutePositioning]);
-  }, [absolutePositioning, otherPlayerIDs]);
+  }, [absolutePositioning, otherPlayerIDs, gameData.players]);
 
   return (
     <>
