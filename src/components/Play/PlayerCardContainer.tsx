@@ -104,16 +104,6 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
     return "none";
   }
 
-  const test = gameData.players[userID]?.deckIdx;
-
-  useEffect(() => {
-    console.log("deckIdx updated");
-  }, [test]);
-
-  useEffect(() => {
-    console.log("drawingCardsFromDeck updated");
-  }, [drawingCardsFromDeck]);
-
   // necessary to prevent card in hand + card in .mapped deck from both being
   // moved at the same time.
   const filteredCardsInHandFromDeck = useFilterCardsInHandFromDeck({
@@ -296,7 +286,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
 
                   setTimeout(() => {
                     setResettingDeck(false);
-                  }, 400);
+                  }, 425);
                 } else {
                   setDrawingCardsFromDeck(true);
                 }
