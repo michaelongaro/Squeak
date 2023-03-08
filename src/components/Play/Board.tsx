@@ -78,7 +78,7 @@ function Board({ boardClass }: IBoard) {
                 mode={"wait"}
                 onExitComplete={() => null}
               >
-                {cell?.value && cell?.suit && (
+                {cell && (
                   <motion.div
                     key={`board${rowIdx}${colIdx}AnimatedCell`}
                     exit={{ opacity: 0 }}
@@ -106,8 +106,8 @@ function Board({ boardClass }: IBoard) {
                     )}
 
                     <Card
-                      value={cell?.value}
-                      suit={cell?.suit}
+                      value={cell.value}
+                      suit={cell.suit}
                       showCardBack={false}
                       draggable={false}
                       rotation={0}
