@@ -25,13 +25,6 @@ interface IUseCardDropApproved {
     rotate: boolean,
     callbackFunction?: () => void
   ) => void;
-  setCardOffsetPosition: React.Dispatch<
-    React.SetStateAction<{
-      x: number;
-      y: number;
-    }>
-  >;
-  setCardHasBeenPlaced: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 function useCardDropApproved({
@@ -42,8 +35,6 @@ function useCardDropApproved({
   origin,
   rotation,
   moveCard,
-  setCardOffsetPosition,
-  setCardHasBeenPlaced,
 }: IUseCardDropApproved) {
   const {
     gameData,
@@ -140,12 +131,6 @@ function useCardDropApproved({
               if (playerID === userID) {
                 setProposedCardBoxShadow(null);
               }
-
-              if (ownerID !== userID && origin === "hand") {
-                setCardOffsetPosition({ x: 0, y: 0 });
-              } else {
-                setCardHasBeenPlaced(true);
-              }
             }
           );
 
@@ -185,8 +170,6 @@ function useCardDropApproved({
     value,
     origin,
     rotation,
-    setCardHasBeenPlaced,
-    setCardOffsetPosition,
     userID,
   ]);
 }

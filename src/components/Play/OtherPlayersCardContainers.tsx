@@ -258,41 +258,7 @@ function OtherPlayersCardContainers({
             </div>
 
             <div
-              id={`${playerID}hand`}
-              style={{
-                zIndex:
-                  cardBeingMovedProgramatically[playerID] === true ? 501 : 499,
-              }}
-              className={`${classes.playerHand} relative h-[64px] w-[48px] select-none tall:h-[87px] tall:w-[67px]`}
-            >
-              <>
-                {gameData.players[playerID]?.topCardsInDeck.map(
-                  (card, topCardsIdx) =>
-                    card !== null && ( // necessary?
-                      <div
-                        key={`${playerID}card${card.suit}${card.value}`}
-                        className="absolute top-0 left-0 select-none"
-                        style={{
-                          top: `${-1 * (topCardsIdx * 2)}px`,
-                        }}
-                      >
-                        <Card
-                          value={card.value}
-                          suit={card.suit}
-                          draggable={true}
-                          origin={"hand"}
-                          ownerID={playerID}
-                          startID={`${playerID}hand`}
-                          rotation={rotationOrder[idx] as number}
-                        />
-                      </div>
-                    )
-                )}
-              </>
-            </div>
-
-            <div
-              className={`${classes.playerDeck} z-[500] h-[64px] w-[48px] select-none tall:h-[87px] tall:w-[67px]`}
+              className={`${classes.playerDeck} h-[64px] w-[48px] select-none tall:h-[87px] tall:w-[67px]`}
             >
               <div id={`${playerID}deck`} className="h-full w-full">
                 {gameData?.players[playerID]?.nextTopCardInDeck ? (
@@ -375,6 +341,40 @@ function OtherPlayersCardContainers({
                   </div>
                 )}
               </div>
+            </div>
+
+            <div
+              id={`${playerID}hand`}
+              style={{
+                zIndex:
+                  cardBeingMovedProgramatically[playerID] === true ? 501 : 499,
+              }}
+              className={`${classes.playerHand} relative h-[64px] w-[48px] select-none tall:h-[87px] tall:w-[67px]`}
+            >
+              <>
+                {gameData.players[playerID]?.topCardsInDeck.map(
+                  (card, topCardsIdx) =>
+                    card !== null && ( // necessary?
+                      <div
+                        key={`${playerID}handCard${card.suit}${card.value}`}
+                        className="absolute top-0 left-0 select-none"
+                        style={{
+                          top: `${-1 * (topCardsIdx * 2)}px`,
+                        }}
+                      >
+                        <Card
+                          value={card.value}
+                          suit={card.suit}
+                          draggable={true}
+                          origin={"hand"}
+                          ownerID={playerID}
+                          startID={`${playerID}hand`}
+                          rotation={rotationOrder[idx] as number}
+                        />
+                      </div>
+                    )
+                )}
+              </>
             </div>
           </div>
 

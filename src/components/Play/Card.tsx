@@ -65,12 +65,9 @@ function Card({
   const { value: userID } = useUserIDContext();
 
   const [cardOffsetPosition, setCardOffsetPosition] = useState({ x: 0, y: 0 });
-  const [cardHasBeenPlaced, setCardHasBeenPlaced] = useState(false);
   const [manuallyShowCardFront, setManuallyShowCardFront] = useState(false);
 
-  const [hueRotationDegrees, setHueRotationDegrees] = useState<number | null>(
-    null
-  );
+  const [hueRotationDegrees, setHueRotationDegrees] = useState<number>(0);
 
   const cardRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
@@ -232,9 +229,7 @@ function Card({
 
         // feels wrong because animation should only be running for 250ms, but 250
         // resulted in the animation getting cut off before it finished
-        if (
-          elapsed < (origin === "deck" ? 300 : origin === "squeak" ? 250 : 300)
-        ) {
+        if (elapsed < 285) {
           if (!done) {
             window.requestAnimationFrame(step);
           }
@@ -289,13 +284,11 @@ function Card({
   useCardDropApproved({
     value,
     suit,
-    ownerID,
     userID,
+    ownerID,
     origin,
     rotation,
     moveCard,
-    setCardOffsetPosition,
-    setCardHasBeenPlaced,
   });
 
   useCardDropDenied({
@@ -440,72 +433,68 @@ function Card({
 
   return (
     <>
-      {(showCardBack || value || suit) &&
-        !cardHasBeenPlaced &&
-        userID &&
-        hueRotationDegrees !== null && (
-          <Draggable
-            disabled={!draggable}
-            onDrag={(e, data) => dragHandler(e, data)}
-            position={
-              // TODO: extract this to a state w/ an effect listener and/or refactor this
-              squeakStackLocation &&
-              heldSqueakStackLocation &&
-              heldSqueakStackLocation.squeakStack[0] ===
-                squeakStackLocation[0] &&
-              heldSqueakStackLocation.squeakStack[1] < squeakStackLocation[1]
-                ? heldSqueakStackLocation.location
-                : cardOffsetPosition
-            }
-            onStop={() => dropHandler()}
+      {(showCardBack || value || suit) && (
+        <Draggable
+          disabled={!draggable}
+          onDrag={(e, data) => dragHandler(e, data)}
+          position={
+            // TODO: extract this to a state w/ an effect listener and/or refactor this
+            squeakStackLocation &&
+            heldSqueakStackLocation &&
+            heldSqueakStackLocation.squeakStack[0] === squeakStackLocation[0] &&
+            heldSqueakStackLocation.squeakStack[1] < squeakStackLocation[1]
+              ? heldSqueakStackLocation.location
+              : cardOffsetPosition
+          }
+          onStop={() => dropHandler()}
+        >
+          <div
+            ref={cardRef}
+            style={{
+              transition:
+                squeakStackLocation &&
+                heldSqueakStackLocation &&
+                heldSqueakStackLocation.squeakStack[0] ===
+                  squeakStackLocation[0] &&
+                heldSqueakStackLocation.squeakStack[1] <
+                  squeakStackLocation[1] &&
+                heldSqueakStackLocation.location.x === 0 &&
+                heldSqueakStackLocation.location.y === 0
+                  ? "transform 0.25s linear"
+                  : "none",
+            }}
+            className={`baseFlex relative z-[500] h-full w-full select-none !items-start ${
+              draggable && "cursor-grab hover:active:cursor-grabbing"
+            }`}
           >
-            <div
-              ref={cardRef}
+            <Image
+              ref={imageRef}
               style={{
-                transition:
-                  squeakStackLocation &&
-                  heldSqueakStackLocation &&
-                  heldSqueakStackLocation.squeakStack[0] ===
-                    squeakStackLocation[0] &&
-                  heldSqueakStackLocation.squeakStack[1] <
-                    squeakStackLocation[1] &&
-                  heldSqueakStackLocation.location.x === 0 &&
-                  heldSqueakStackLocation.location.y === 0
-                    ? "transform 0.25s linear"
+                width: width,
+                height: height,
+                filter:
+                  showCardBack && !manuallyShowCardFront
+                    ? `hue-rotate(${hueRotationDegrees}deg)`
                     : "none",
               }}
-              className={`baseFlex relative z-[500] h-full w-full select-none !items-start ${
-                draggable && "cursor-grab hover:active:cursor-grabbing"
-              }`}
-            >
-              <Image
-                ref={imageRef}
-                style={{
-                  width: width,
-                  height: height,
-                  filter:
-                    showCardBack && !manuallyShowCardFront
-                      ? `hue-rotate(${hueRotationDegrees}deg)`
-                      : "none",
-                }}
-                className="pointer-events-none h-[64px] w-[48px] select-none tall:h-[87px] tall:w-[67px]"
-                src={
-                  showCardBack && !manuallyShowCardFront
-                    ? cards["cardBack"]
-                    : // @ts-expect-error asdf
-                      cards[`${suit}${value}`]
-                }
-                alt={
-                  showCardBack && !manuallyShowCardFront
-                    ? "Back of card"
-                    : `${value}${suit} card`
-                }
-                priority={true}
-                draggable="false"
-              />
-            </div>
-          </Draggable>
-        )}
+              className="pointer-events-none h-[64px] w-[48px] select-none tall:h-[87px] tall:w-[67px]"
+              src={
+                showCardBack && !manuallyShowCardFront
+                  ? cards["cardBack"]
+                  : // @ts-expect-error asdf
+                    cards[`${suit}${value}`]
+              }
+              alt={
+                showCardBack && !manuallyShowCardFront
+                  ? "Back of card"
+                  : `${value}${suit} card`
+              }
+              priority={true}
+              draggable="false"
+            />
+          </div>
+        </Draggable>
+      )}
     </>
   );
 }

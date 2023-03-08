@@ -251,51 +251,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
           </div>
 
           <div
-            id={`${userID}hand`}
-            style={{
-              zIndex:
-                cardBeingMovedProgramatically[userID] === true ||
-                holdingADeckCard
-                  ? 501
-                  : 499,
-            }}
-            className={`${classes.playerHand} relative h-[64px] w-[48px] select-none tall:h-[87px] tall:w-[67px]`}
-          >
-            <>
-              {gameData.players[userID]?.topCardsInDeck.map(
-                (card, idx) =>
-                  card !== null && ( // necessary?
-                    <div
-                      key={`${userID}card${card.suit}${card.value}`}
-                      className="absolute top-0 left-0 select-none"
-                      style={{
-                        top: `${-1 * (idx * 2)}px`,
-                      }}
-                      onMouseDown={() => {
-                        setHoldingADeckCard(true);
-                      }}
-                      onMouseUp={() => {
-                        setHoldingADeckCard(false);
-                        setHoveredSqueakStack(null);
-                      }}
-                    >
-                      <Card
-                        value={card.value}
-                        suit={card.suit}
-                        draggable={true}
-                        origin={"hand"}
-                        ownerID={userID}
-                        startID={`${userID}hand`}
-                        rotation={0}
-                      />
-                    </div>
-                  )
-              )}
-            </>
-          </div>
-
-          <div
-            className={`${classes.playerDeck} z-[500] h-[64px] w-[48px] select-none tall:h-[87px] tall:w-[67px]`}
+            className={`${classes.playerDeck} h-[64px] w-[48px] select-none tall:h-[87px] tall:w-[67px]`}
           >
             <div
               id={`${userID}deck`}
@@ -407,6 +363,60 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                 </div>
               )}
             </div>
+          </div>
+
+          <div
+            id={`${userID}hand`}
+            style={{
+              zIndex:
+                cardBeingMovedProgramatically[userID] === true ||
+                holdingADeckCard
+                  ? 500
+                  : 499,
+            }}
+            className={`${classes.playerHand} relative h-[64px] w-[48px] select-none tall:h-[87px] tall:w-[67px]`}
+          >
+            <>
+              {gameData.players[userID]?.topCardsInDeck.map(
+                (card, idx) =>
+                  card !== null && ( // necessary?
+                    <div
+                      key={`${userID}handCard${card.suit}${card.value}`}
+                      className="absolute top-0 left-0 select-none"
+                      style={{
+                        top: `${-1 * (idx * 2)}px`,
+                      }}
+                      onMouseEnter={() => {
+                        setHoveringOverDeck(false);
+                      }}
+                      onMouseDown={() => {
+                        if (
+                          idx ===
+                          gameData.players[userID]!.topCardsInDeck.length - 1
+                        )
+                          setHoldingADeckCard(true);
+                      }}
+                      onMouseUp={() => {
+                        setHoldingADeckCard(false);
+                        setHoveredSqueakStack(null);
+                      }}
+                    >
+                      <Card
+                        value={card.value}
+                        suit={card.suit}
+                        draggable={
+                          idx ===
+                          gameData.players[userID]!.topCardsInDeck.length - 1
+                        }
+                        origin={"hand"}
+                        ownerID={userID}
+                        startID={`${userID}hand`}
+                        rotation={0}
+                      />
+                    </div>
+                  )
+              )}
+            </>
           </div>
 
           <AnimatePresence

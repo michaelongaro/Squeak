@@ -100,6 +100,8 @@ function Play() {
       >
         {gameStarted && (
           <>
+            <Board boardClass={classes.board} />
+
             <OtherPlayersCardContainers
               orderedClassNames={[
                 classes.topPlayerCards,
@@ -107,8 +109,6 @@ function Play() {
                 classes.rightPlayerCards,
               ]}
             />
-
-            <Board boardClass={classes.board} />
 
             <PlayerCardContainer
               cardContainerClass={classes.currentPlayerCards}
