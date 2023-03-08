@@ -104,6 +104,16 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
     return "none";
   }
 
+  const test = gameData.players[userID]?.deckIdx;
+
+  useEffect(() => {
+    console.log("deckIdx updated");
+  }, [test]);
+
+  useEffect(() => {
+    console.log("drawingCardsFromDeck updated");
+  }, [drawingCardsFromDeck]);
+
   // necessary to prevent card in hand + card in .mapped deck from both being
   // moved at the same time.
   const filteredCardsInHandFromDeck = useFilterCardsInHandFromDeck({
@@ -257,10 +267,14 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
               id={`${userID}deck`}
               style={{
                 boxShadow:
-                  hoveringOverDeck && !holdingADeckCard && !drawingCardsFromDeck
+                  hoveringOverDeck &&
+                  !holdingADeckCard &&
+                  !drawingCardsFromDeck &&
+                  !resettingDeck
                     ? "0px 0px 4px 3px rgba(184,184,184,1)"
                     : "none",
-                cursor: drawingCardsFromDeck ? "auto" : "pointer",
+                cursor:
+                  drawingCardsFromDeck || resettingDeck ? "auto" : "pointer",
               }}
               className="h-full w-full select-none transition-shadow"
               onMouseEnter={() => {
@@ -282,10 +296,11 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
 
                   setTimeout(() => {
                     setResettingDeck(false);
-                  }, 300);
+                  }, 400);
+                } else {
+                  setDrawingCardsFromDeck(true);
                 }
 
-                setDrawingCardsFromDeck(true);
                 socket.emit("playerDrawFromDeck", {
                   playerID: userID,
                   roomCode: roomConfig.code,
@@ -387,7 +402,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
             <>
               {gameData.players[userID]?.topCardsInDeck.map(
                 (card, idx) =>
-                  card !== null && ( // necessary?
+                  card !== null && (
                     <div
                       key={`${userID}handCard${card.suit}${card.value}`}
                       className="absolute top-0 left-0 select-none"
