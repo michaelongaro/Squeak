@@ -14,6 +14,7 @@ import useResponsiveCardDimensions from "../../hooks/useResponsiveCardDimensions
 import { AnimatePresence, motion } from "framer-motion";
 import Buzzer from "./Buzzer";
 import { type ICard } from "../../utils/generateDeckAndSqueakCards";
+import useFilterCardsInHandFromDeck from "../../hooks/useFilterCardsInHandFromDeck";
 interface IPlayerCardContainer {
   cardContainerClass: string | undefined;
 }
@@ -103,42 +104,12 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
     return "none";
   }
 
-  // const reverseSqueakDeck = (array: ICard[] | undefined) => {
-  //   if (!array) return [];
-
-  //   const revArray = array.reverse();
-  //   return [...revArray];
-  // };
-
-  const filterCardsInHandFromDeck = useCallback(
-    (array: ICard[] | undefined, playerID: string) => {
-      const deckIdx = gameData.players[playerID]?.deckIdx;
-      const cardsInHand = gameData.players[playerID]?.topCardsInDeck.filter(
-        (card) => card !== null
-      );
-      if (!array || !deckIdx || !cardsInHand) return [];
-
-      console.log("called");
-
-      const filteredArray = array.filter(
-        (card) =>
-          !cardsInHand.some(
-            (cardInHand) =>
-              cardInHand?.suit === card.suit && cardInHand?.value === card.value
-          )
-      );
-
-      return [...filteredArray];
-    },
-    [gameData.players]
-  );
-
-  const userDeck = gameData.players[userID]?.deck;
-
-  const memoizedFilterCardsInHandFromDeck = useMemo(
-    () => filterCardsInHandFromDeck(userDeck, userID),
-    [userDeck, userID, filterCardsInHandFromDeck]
-  );
+  // necessary to prevent card in hand + card in .mapped deck from both being
+  // moved at the same time.
+  const filteredCardsInHandFromDeck = useFilterCardsInHandFromDeck({
+    array: gameData.players[userID]?.deck,
+    playerID: userID,
+  });
 
   return (
     <div className={`${cardContainerClass}`}>
@@ -295,7 +266,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                 (card, idx) =>
                   card !== null && ( // necessary?
                     <div
-                      key={`${userID}card${card?.suit}${card?.value}`}
+                      key={`${userID}card${card.suit}${card.value}`}
                       className="absolute top-0 left-0 select-none"
                       style={{
                         top: `${-1 * (idx * 2)}px`,
@@ -309,8 +280,8 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                       }}
                     >
                       <Card
-                        value={card?.value}
-                        suit={card?.suit}
+                        value={card.value}
+                        suit={card.suit}
                         draggable={true}
                         origin={"hand"}
                         ownerID={userID}
@@ -392,7 +363,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                     }}
                     className="topBackFacingCardInDeck absolute top-0 left-0 h-full w-full select-none"
                   >
-                    {memoizedFilterCardsInHandFromDeck.map((card, cardIdx) => (
+                    {filteredCardsInHandFromDeck?.map((card, cardIdx) => (
                       <div
                         key={`${userID}deckCard${card.suit}${card.value}`}
                         style={{

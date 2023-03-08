@@ -68,7 +68,9 @@ function Card({
   const [cardHasBeenPlaced, setCardHasBeenPlaced] = useState(false);
   const [manuallyShowCardFront, setManuallyShowCardFront] = useState(false);
 
-  const [hueRotationDegrees, setHueRotationDegrees] = useState(0);
+  const [hueRotationDegrees, setHueRotationDegrees] = useState<number | null>(
+    null
+  );
 
   const cardRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
@@ -98,14 +100,8 @@ function Card({
       let start: number | undefined;
       let done = false;
 
-      // const d0 = new Date().getTime();
-
       function transitionEndHandler() {
         if (!cardRef.current || !imageRef.current) return;
-
-        // const d1 = new Date().getTime();
-
-        // console.log("delta: ", d1 - d0);
 
         cardRef.current.style.transition = "none";
         cardRef.current.style.zIndex = "500";
@@ -236,7 +232,9 @@ function Card({
 
         // feels wrong because animation should only be running for 250ms, but 250
         // resulted in the animation getting cut off before it finished
-        if (elapsed < (origin === "squeak" || origin === "deck" ? 250 : 300)) {
+        if (
+          elapsed < (origin === "deck" ? 300 : origin === "squeak" ? 250 : 300)
+        ) {
           if (!done) {
             window.requestAnimationFrame(step);
           }
@@ -271,8 +269,6 @@ function Card({
       setCardBeingMovedProgramatically,
     ]
   );
-
-  console.log(value, suit, "hit");
 
   // hooks to handle socket emits from server
   useCardDrawFromDeck({
@@ -442,83 +438,74 @@ function Card({
     }
   }
 
-  // try swapping deck + "hand" jsx blocks in both components + comment out any references to
-  // cardBeingMovedProgramatically and see if that makes it any better
-
-  // also really seems like hovering over ANY card/stack is calling *something* a ton of times,
-  // methodically figure out how you could test that...
-
-  // maybe find way to restructure to allow use of useMemo?
-  // ^^^^^^ look back at window on left monitor, I think you just ened to do () => functionCall(param1, param2)
-  // and you should be gucci
-
-  // ^ would/will need to make separate hook for
-  // maybe use memo on this component?
-
   return (
     <>
-      {(showCardBack || value || suit) && !cardHasBeenPlaced && userID && (
-        <Draggable
-          disabled={!draggable}
-          onDrag={(e, data) => dragHandler(e, data)}
-          position={
-            // TODO: extract this to a state w/ an effect listener and/or refactor this
-            squeakStackLocation &&
-            heldSqueakStackLocation &&
-            heldSqueakStackLocation.squeakStack[0] === squeakStackLocation[0] &&
-            heldSqueakStackLocation.squeakStack[1] < squeakStackLocation[1]
-              ? heldSqueakStackLocation.location
-              : cardOffsetPosition
-          }
-          onStop={() => dropHandler()}
-        >
-          <div
-            ref={cardRef}
-            style={{
-              transition:
-                squeakStackLocation &&
-                heldSqueakStackLocation &&
-                heldSqueakStackLocation.squeakStack[0] ===
-                  squeakStackLocation[0] &&
-                heldSqueakStackLocation.squeakStack[1] <
-                  squeakStackLocation[1] &&
-                heldSqueakStackLocation.location.x === 0 &&
-                heldSqueakStackLocation.location.y === 0
-                  ? "transform 0.25s linear"
-                  : "none",
-            }}
-            className={`baseFlex relative z-[500] h-full w-full select-none !items-start ${
-              draggable && "cursor-grab hover:active:cursor-grabbing"
-            }`}
+      {(showCardBack || value || suit) &&
+        !cardHasBeenPlaced &&
+        userID &&
+        hueRotationDegrees !== null && (
+          <Draggable
+            disabled={!draggable}
+            onDrag={(e, data) => dragHandler(e, data)}
+            position={
+              // TODO: extract this to a state w/ an effect listener and/or refactor this
+              squeakStackLocation &&
+              heldSqueakStackLocation &&
+              heldSqueakStackLocation.squeakStack[0] ===
+                squeakStackLocation[0] &&
+              heldSqueakStackLocation.squeakStack[1] < squeakStackLocation[1]
+                ? heldSqueakStackLocation.location
+                : cardOffsetPosition
+            }
+            onStop={() => dropHandler()}
           >
-            <Image
-              ref={imageRef}
+            <div
+              ref={cardRef}
               style={{
-                width: width,
-                height: height,
-                filter:
-                  showCardBack && !manuallyShowCardFront
-                    ? `hue-rotate(${hueRotationDegrees}deg)`
+                transition:
+                  squeakStackLocation &&
+                  heldSqueakStackLocation &&
+                  heldSqueakStackLocation.squeakStack[0] ===
+                    squeakStackLocation[0] &&
+                  heldSqueakStackLocation.squeakStack[1] <
+                    squeakStackLocation[1] &&
+                  heldSqueakStackLocation.location.x === 0 &&
+                  heldSqueakStackLocation.location.y === 0
+                    ? "transform 0.25s linear"
                     : "none",
               }}
-              className="pointer-events-none h-[64px] w-[48px] select-none tall:h-[87px] tall:w-[67px]"
-              src={
-                showCardBack && !manuallyShowCardFront
-                  ? cards["cardBack"]
-                  : // @ts-expect-error asdf
-                    cards[`${suit}${value}`]
-              }
-              alt={
-                showCardBack && !manuallyShowCardFront
-                  ? "Back of card"
-                  : `${value}${suit} card`
-              }
-              priority={true}
-              draggable="false"
-            />
-          </div>
-        </Draggable>
-      )}
+              className={`baseFlex relative z-[500] h-full w-full select-none !items-start ${
+                draggable && "cursor-grab hover:active:cursor-grabbing"
+              }`}
+            >
+              <Image
+                ref={imageRef}
+                style={{
+                  width: width,
+                  height: height,
+                  filter:
+                    showCardBack && !manuallyShowCardFront
+                      ? `hue-rotate(${hueRotationDegrees}deg)`
+                      : "none",
+                }}
+                className="pointer-events-none h-[64px] w-[48px] select-none tall:h-[87px] tall:w-[67px]"
+                src={
+                  showCardBack && !manuallyShowCardFront
+                    ? cards["cardBack"]
+                    : // @ts-expect-error asdf
+                      cards[`${suit}${value}`]
+                }
+                alt={
+                  showCardBack && !manuallyShowCardFront
+                    ? "Back of card"
+                    : `${value}${suit} card`
+                }
+                priority={true}
+                draggable="false"
+              />
+            </div>
+          </Draggable>
+        )}
     </>
   );
 }
