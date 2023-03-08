@@ -354,7 +354,7 @@ function OtherPlayersCardContainers({
               <>
                 {gameData.players[playerID]?.topCardsInDeck.map(
                   (card, topCardsIdx) =>
-                    card !== null && ( // necessary?
+                    card !== null && (
                       <div
                         key={`${playerID}handCard${card.suit}${card.value}`}
                         className="absolute top-0 left-0 select-none"
@@ -365,7 +365,7 @@ function OtherPlayersCardContainers({
                         <Card
                           value={card.value}
                           suit={card.suit}
-                          draggable={true}
+                          draggable={false}
                           origin={"hand"}
                           ownerID={playerID}
                           startID={`${playerID}hand`}
