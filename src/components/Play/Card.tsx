@@ -52,6 +52,7 @@ function Card({
     hoveredCell,
     holdingADeckCard,
     holdingASqueakCard,
+    setDrawingCardsFromDeck,
     hoveredSqueakStack,
     originIndexForHeldSqueakCard,
     heldSqueakStackLocation,
@@ -115,6 +116,10 @@ function Card({
         cardIsMovingRef.current = false;
 
         callbackFunction?.();
+
+        if (ownerID === userID && origin === "deck") {
+          setDrawingCardsFromDeck(false);
+        }
 
         if (squeakStackLocation && ownerID === userID) {
           setHeldSqueakStackLocation(null);
@@ -260,6 +265,7 @@ function Card({
       setHoldingADeckCard,
       setHoldingASqueakCard,
       setProposedCardBoxShadow,
+      setDrawingCardsFromDeck,
       cardBeingMovedProgramatically,
       setCardBeingMovedProgramatically,
     ]
