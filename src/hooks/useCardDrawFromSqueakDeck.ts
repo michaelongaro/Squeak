@@ -50,8 +50,6 @@ function useCardDrawFromSqueakDeck({
 
       const endID = `${playerID}squeakHand${indexToDrawTo}`;
 
-      console.log("endID: ", endID);
-
       const endLocation = document
         .getElementById(endID)
         ?.getBoundingClientRect();
