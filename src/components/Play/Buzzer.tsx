@@ -121,8 +121,8 @@ function Buzzer({ playerID, roomCode, interactive }: IBuzzer) {
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
-          height: playExpandingPulseWaveAnimation ? "185vh" : "0",
-          width: playExpandingPulseWaveAnimation ? "175vw" : "0",
+          height: playExpandingPulseWaveAnimation ? "165vh" : "0",
+          width: playExpandingPulseWaveAnimation ? "155vw" : "0",
           backgroundColor: playerMetadata[playerIDWhoSqueaked!]?.color,
           opacity: playExpandingPulseWaveAnimation ? "0.5" : "0",
           transition: playExpandingPulseWaveAnimation
