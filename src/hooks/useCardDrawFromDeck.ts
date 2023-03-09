@@ -48,9 +48,6 @@ function useCardDrawFromDeck({
         updatedPlayerCards,
       } = dataFromBackend;
 
-      console.log("carddraw");
-      console.dir(dataFromBackend);
-
       if (
         ownerID !== playerID ||
         currentTopCardInDeck?.value !== value ||

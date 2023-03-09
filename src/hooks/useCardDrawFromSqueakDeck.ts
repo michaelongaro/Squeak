@@ -46,9 +46,6 @@ function useCardDrawFromSqueakDeck({
         updatedPlayerCards,
       } = dataFromBackend;
 
-      console.log("squeakDraw");
-      console.dir(dataFromBackend);
-
       if (
         playerID !== ownerID ||
         newCard?.suit !== suit ||
