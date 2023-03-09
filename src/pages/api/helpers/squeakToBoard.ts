@@ -25,10 +25,11 @@ export function squeakToBoard({
   boardEndLocation,
 }: ISqueakToBoard) {
   const board = gameData[roomCode]?.board;
+  const players = gameData[roomCode]?.players;
   const player = gameData[roomCode]?.players?.[playerID];
   const startSqueakStackLocation = player?.squeakHand[squeakStartLocation];
 
-  if (!board || !startSqueakStackLocation) return;
+  if (!board || !players || !startSqueakStackLocation) return;
 
   const { row, col } = boardEndLocation;
   const cell = board[row]?.[col]; // idk why only need to ?. on col but w/e?
@@ -61,11 +62,11 @@ export function squeakToBoard({
     gameData[roomCode]!.board[row]![col] = card.value === "K" ? null : card;
 
     io.in(roomCode).emit("cardDropApproved", {
+      playerID,
       card,
       endID: `cell${row}${col}`,
-      newBoard: board,
-      newPlayerCards: player,
-      playerID,
+      updatedBoard: board,
+      updatedPlayerCards: players,
     });
   } else {
     io.in(roomCode).emit("cardDropDenied", { playerID });

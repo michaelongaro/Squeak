@@ -16,8 +16,10 @@ export function drawFromSqueakDeck({
   gameData,
   io,
 }: IInitDrawFromSqueakDeck) {
+  const board = gameData[roomCode]?.board;
+  const players = gameData[roomCode]?.players;
   const player = gameData[roomCode]?.players?.[playerID];
-  if (!player) return;
+  if (!board || !players || !player) return;
 
   const card = player.squeakDeck.shift();
   if (card) {
@@ -27,7 +29,8 @@ export function drawFromSqueakDeck({
       playerID,
       indexToDrawTo,
       newCard: card,
-      updatedPlayerCards: player,
+      updatedBoard: board,
+      updatedPlayerCards: players,
     });
   }
 }

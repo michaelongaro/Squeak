@@ -44,8 +44,12 @@ function useCardDrawFromDeck({
       const {
         nextTopCardInDeck: currentTopCardInDeck, // is actually referencing the current top card in deck
         playerID,
+        updatedBoard,
         updatedPlayerCards,
       } = dataFromBackend;
+
+      console.log("carddraw");
+      console.dir(dataFromBackend);
 
       if (
         ownerID !== playerID ||
@@ -75,13 +79,11 @@ function useCardDrawFromDeck({
         }
 
         moveCard({ x: endX, y: endY }, true, false, () => {
-          setGameData((prevGameData) => ({
-            ...prevGameData,
-            players: {
-              ...prevGameData.players,
-              [playerID]: updatedPlayerCards,
-            },
-          }));
+          setGameData({
+            ...gameData,
+            board: updatedBoard,
+            players: updatedPlayerCards,
+          });
         });
       }
     }

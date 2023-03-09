@@ -11,7 +11,7 @@ import Buzzer from "./Buzzer";
 import Image from "next/image";
 import disconnectIcon from "../../../public/disconnect/disconnect.svg";
 import { type ICard } from "../../utils/generateDeckAndSqueakCards";
-import useFilterCardsInHandFromDeck from "../../hooks/useFilterCardsInHandFromDeck";
+// import useFilterCardsInHandFromDeck from "../../hooks/useFilterCardsInHandFromDeck";
 
 interface IOtherPlayersCardContainers {
   orderedClassNames: (string | undefined)[];
@@ -113,20 +113,42 @@ function OtherPlayersCardContainers({
 
   // necessary to prevent card in hand + card in .mapped deck from both being
   // moved at the same time.
-  const filteredCardsInHandFromDeck = [
-    useFilterCardsInHandFromDeck({
-      array: gameData.players[otherPlayerIDs[0]!]?.deck,
-      playerID: otherPlayerIDs[0],
-    }),
-    useFilterCardsInHandFromDeck({
-      array: gameData.players[otherPlayerIDs[1]!]?.deck,
-      playerID: otherPlayerIDs[1],
-    }),
-    useFilterCardsInHandFromDeck({
-      array: gameData.players[otherPlayerIDs[2]!]?.deck,
-      playerID: otherPlayerIDs[2],
-    }),
-  ];
+  // const filteredCardsInHandFromDeck = [
+  //   useFilterCardsInHandFromDeck({
+  //     array: gameData.players[otherPlayerIDs[0]!]?.deck,
+  //     playerID: otherPlayerIDs[0],
+  //   }),
+  //   useFilterCardsInHandFromDeck({
+  //     array: gameData.players[otherPlayerIDs[1]!]?.deck,
+  //     playerID: otherPlayerIDs[1],
+  //   }),
+  //   useFilterCardsInHandFromDeck({
+  //     array: gameData.players[otherPlayerIDs[2]!]?.deck,
+  //     playerID: otherPlayerIDs[2],
+  //   }),
+  // ];
+  function filteredCardsInHandFromDeck(
+    array: ICard[] | undefined,
+    playerID: string | undefined
+  ) {
+    if (!playerID) return;
+
+    const deckIdx = gameData.players[playerID]?.deckIdx;
+    const cardsInHand = gameData.players[playerID]?.topCardsInDeck.filter(
+      (card) => card !== null
+    );
+    if (!array || !deckIdx || !cardsInHand) return [];
+
+    const filteredArray = array.filter(
+      (card) =>
+        !cardsInHand.some(
+          (cardInHand) =>
+            cardInHand?.suit === card.suit && cardInHand?.value === card.value
+        )
+    );
+
+    return [...filteredArray];
+  }
 
   return (
     <>
@@ -294,34 +316,34 @@ function OtherPlayersCardContainers({
                       }}
                       className="topBackFacingCardInDeck absolute top-0 left-0 h-full w-full select-none"
                     >
-                      {filteredCardsInHandFromDeck[idx]?.map(
-                        (card, cardIdx) => (
-                          <div
-                            key={`${playerID}deckCard${card.suit}${card.value}`}
-                            style={{
-                              zIndex:
-                                gameData.players[playerID]?.deckIdx ===
-                                  cardIdx ||
-                                (gameData.players[playerID]?.deckIdx === -1 &&
-                                  cardIdx === 2)
-                                  ? 500
-                                  : 499,
-                            }}
-                            className="absolute top-0 left-0 h-full w-full select-none"
-                          >
-                            <Card
-                              value={card.value}
-                              suit={card.suit}
-                              showCardBack={true} // separate state inside overrides this halfway through flip
-                              draggable={false}
-                              ownerID={playerID}
-                              origin={"deck"}
-                              startID={`${playerID}deck`}
-                              rotation={rotationOrder[idx] as number}
-                            />
-                          </div>
-                        )
-                      )}
+                      {filteredCardsInHandFromDeck(
+                        gameData.players[playerID]?.deck,
+                        playerID
+                      )?.map((card, cardIdx) => (
+                        <div
+                          key={`${playerID}deckCard${card.suit}${card.value}`}
+                          style={{
+                            zIndex:
+                              gameData.players[playerID]?.deckIdx === cardIdx ||
+                              (gameData.players[playerID]?.deckIdx === -1 &&
+                                cardIdx === 2)
+                                ? 500
+                                : 499,
+                          }}
+                          className="absolute top-0 left-0 h-full w-full select-none"
+                        >
+                          <Card
+                            value={card.value}
+                            suit={card.suit}
+                            showCardBack={true} // separate state inside overrides this halfway through flip
+                            draggable={false}
+                            ownerID={playerID}
+                            origin={"deck"}
+                            startID={`${playerID}deck`}
+                            rotation={rotationOrder[idx] as number}
+                          />
+                        </div>
+                      ))}
                     </div>
                   </div>
                 ) : (

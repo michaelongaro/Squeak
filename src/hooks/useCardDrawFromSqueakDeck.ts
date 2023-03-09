@@ -38,8 +38,16 @@ function useCardDrawFromSqueakDeck({
     if (dataFromBackend !== null) {
       setDataFromBackend(null);
 
-      const { playerID, indexToDrawTo, newCard, updatedPlayerCards } =
-        dataFromBackend;
+      const {
+        playerID,
+        indexToDrawTo,
+        newCard,
+        updatedBoard,
+        updatedPlayerCards,
+      } = dataFromBackend;
+
+      console.log("squeakDraw");
+      console.dir(dataFromBackend);
 
       if (
         playerID !== ownerID ||
@@ -59,13 +67,11 @@ function useCardDrawFromSqueakDeck({
         const endY = endLocation.y;
 
         moveCard({ x: endX, y: endY }, true, false, () => {
-          setGameData((prevGameData) => ({
-            ...prevGameData,
-            players: {
-              ...prevGameData.players,
-              [playerID]: updatedPlayerCards,
-            },
-          }));
+          setGameData({
+            ...gameData,
+            board: updatedBoard,
+            players: updatedPlayerCards,
+          });
         });
       }
     }

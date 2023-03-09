@@ -13,7 +13,8 @@ import PlayerIcon from "../playerIcons/PlayerIcon";
 import useResponsiveCardDimensions from "../../hooks/useResponsiveCardDimensions";
 import { AnimatePresence, motion } from "framer-motion";
 import Buzzer from "./Buzzer";
-import useFilterCardsInHandFromDeck from "../../hooks/useFilterCardsInHandFromDeck";
+import { type ICard } from "../../utils/generateDeckAndSqueakCards";
+// import useFilterCardsInHandFromDeck from "../../hooks/useFilterCardsInHandFromDeck";
 interface IPlayerCardContainer {
   cardContainerClass: string | undefined;
 }
@@ -106,10 +107,33 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
 
   // necessary to prevent card in hand + card in .mapped deck from both being
   // moved at the same time.
-  const filteredCardsInHandFromDeck = useFilterCardsInHandFromDeck({
-    array: gameData.players[userID]?.deck,
-    playerID: userID,
-  });
+  // const filteredCardsInHandFromDeck = useFilterCardsInHandFromDeck({
+  //   array: gameData.players[userID]?.deck,
+  //   playerID: userID,
+  // });
+
+  function filteredCardsInHandFromDeck(
+    array: ICard[] | undefined,
+    playerID: string | undefined
+  ) {
+    if (!playerID) return;
+
+    const deckIdx = gameData.players[playerID]?.deckIdx;
+    const cardsInHand = gameData.players[playerID]?.topCardsInDeck.filter(
+      (card) => card !== null
+    );
+    if (!array || !deckIdx || !cardsInHand) return [];
+
+    const filteredArray = array.filter(
+      (card) =>
+        !cardsInHand.some(
+          (cardInHand) =>
+            cardInHand?.suit === card.suit && cardInHand?.value === card.value
+        )
+    );
+
+    return [...filteredArray];
+  }
 
   return (
     <div className={`${cardContainerClass}`}>
@@ -332,7 +356,10 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                     }}
                     className="topBackFacingCardInDeck absolute top-0 left-0 h-full w-full select-none"
                   >
-                    {filteredCardsInHandFromDeck?.map((card, cardIdx) => (
+                    {filteredCardsInHandFromDeck(
+                      gameData.players[userID]?.deck,
+                      userID
+                    )?.map((card, cardIdx) => (
                       <div
                         key={`${userID}deckCard${card.suit}${card.value}`}
                         style={{

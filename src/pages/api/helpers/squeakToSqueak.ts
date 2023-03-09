@@ -22,6 +22,8 @@ export function squeakToSqueak({
   squeakStartLocation,
   squeakEndLocation,
 }: ISqueakToSqueak) {
+  const board = gameData[roomCode]?.board;
+  const players = gameData[roomCode]?.players;
   const player = gameData[roomCode]?.players?.[playerID];
   const startSqueakStack = player?.squeakHand[squeakStartLocation];
 
@@ -32,6 +34,9 @@ export function squeakToSqueak({
   );
 
   if (
+    !board ||
+    !players ||
+    !player ||
     !startSqueakStack ||
     !endSqueakStack ||
     indexOfCardInStartStack === undefined
@@ -70,14 +75,14 @@ export function squeakToSqueak({
       .length;
 
   io.in(roomCode).emit("cardDropApproved", {
+    playerID,
     card,
     squeakEndCoords: {
       offsetHeight: indexWithinSqueakStack * (20 - squeakStackLength),
       stackOfCardsMoved: cardsToMove,
     },
     endID: `${playerID}squeakHand${squeakEndLocation}`,
-    // updatedBoard: gameData[roomCode]?.board, // ideally shouldn't have to send this
-    newPlayerCards: player,
-    playerID,
+    updatedBoard: board,
+    updatedPlayerCards: players,
   });
 }

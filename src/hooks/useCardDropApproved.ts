@@ -62,8 +62,8 @@ function useCardDropApproved({
         card,
         endID,
         squeakEndCoords,
-        newBoard,
-        newPlayerCards,
+        updatedBoard,
+        updatedPlayerCards,
         playerID,
       } = dataFromBackend;
 
@@ -117,15 +117,12 @@ function useCardDropApproved({
             endID.includes("cell"),
 
             () => {
-              if (playerID && newPlayerCards) {
-                setGameData((prevGameData) => ({
-                  ...prevGameData,
-                  board: newBoard || gameData?.board,
-                  players: {
-                    ...prevGameData.players,
-                    [playerID]: newPlayerCards,
-                  },
-                }));
+              if (playerID && updatedPlayerCards) {
+                setGameData({
+                  ...gameData,
+                  board: updatedBoard!,
+                  players: updatedPlayerCards,
+                });
               }
 
               if (playerID === userID) {

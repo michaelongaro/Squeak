@@ -7,11 +7,21 @@ export function drawFromDeckHandler(
   gameData: IGameData
 ) {
   function drawFromDeck({ playerID, roomCode }: IDrawFromDeck) {
+    const board = gameData[roomCode]?.board;
+    const players = gameData[roomCode]?.players;
     const playerCards = gameData[roomCode]?.players[playerID];
     let deckIdx = playerCards?.deckIdx;
     const deck = playerCards?.deck;
     let topCardsInDeck = playerCards?.topCardsInDeck;
-    if (!playerCards || !deck || !deckIdx || !topCardsInDeck) return;
+    if (
+      !playerCards ||
+      !players ||
+      !board ||
+      !deck ||
+      !deckIdx ||
+      !topCardsInDeck
+    )
+      return;
 
     // resets the deck if the player has drawn all the cards
     if (playerCards.nextTopCardInDeck === null) {
@@ -21,16 +31,17 @@ export function drawFromDeckHandler(
       playerCards.topCardsInDeck = [null, null, null];
 
       io.in(roomCode).emit("playerDrawnFromDeck", {
-        nextTopCardInDeck: deck[2] || null,
+        nextTopCardInDeck: playerCards.nextTopCardInDeck,
         resetDeck: true,
         playerID,
-        // updatedBoard: gameData[roomCode]?.board,
-        updatedPlayerCards: playerCards, //
+        updatedBoard: board,
+        updatedPlayerCards: players,
       });
       return;
     }
 
-    // cards are rendered with the last card in the array at the top of stack
+    // cards are rendered on the client with the last card in the array at
+    // the top of stack
     if (deckIdx + 3 <= deck.length - 1) {
       topCardsInDeck = [
         deck[deckIdx + 1] || null,
@@ -40,8 +51,6 @@ export function drawFromDeckHandler(
 
       deckIdx + 3 === deck.length - 1 ? (deckIdx = -1) : (deckIdx += 3);
     } else {
-      // maybe should be comparing to deck.length - 1 for all of these
-
       if (deckIdx + 2 === deck.length - 1) {
         topCardsInDeck = [
           null,
@@ -72,7 +81,8 @@ export function drawFromDeckHandler(
     io.in(roomCode).emit("playerDrawnFromDeck", {
       nextTopCardInDeck: currentTopCardInDeck,
       playerID,
-      updatedPlayerCards: playerCards,
+      updatedBoard: board,
+      updatedPlayerCards: players,
     });
   }
 

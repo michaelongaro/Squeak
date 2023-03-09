@@ -102,8 +102,8 @@ export interface ICardDropProposal {
   squeakStartLocation?: number;
   boardEndLocation?: { row: number; col: number };
   squeakEndLocation?: number;
-  newPlayerCards: IPlayer;
-  newBoard?: (ICard | null)[][];
+  updatedBoard: (ICard | null)[][];
+  updatedPlayerCards: IPlayerCardsMetadata;
   playerID: string;
   roomCode: string;
 }
@@ -113,7 +113,8 @@ export interface IDrawFromSqueakDeck {
   indexToDrawTo: number;
   playerID: string;
   newCard?: ICard;
-  updatedPlayerCards: IPlayer;
+  updatedBoard: (ICard | null)[][];
+  updatedPlayerCards: IPlayerCardsMetadata;
 }
 
 export interface IDrawFromDeck {
@@ -122,7 +123,8 @@ export interface IDrawFromDeck {
   topCardsInDeck: (ICard | null)[];
   playerID: string;
   roomCode: string;
-  updatedPlayerCards: IPlayer;
+  updatedBoard: (ICard | null)[][];
+  updatedPlayerCards: IPlayerCardsMetadata;
 }
 
 export interface IRoundOver {

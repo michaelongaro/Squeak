@@ -19,11 +19,14 @@ export function deckToSqueak({
   roomCode,
   io,
 }: IDeckToSqueak) {
+  const board = gameData[roomCode]?.board;
+  const players = gameData[roomCode]?.players;
   const player = gameData[roomCode]?.players?.[playerID];
+
   const squeakStackLocation =
     gameData[roomCode]?.players?.[playerID]?.squeakHand[squeakEndLocation];
 
-  if (!player || !squeakStackLocation) return;
+  if (!player || !board || !players || !squeakStackLocation) return;
 
   squeakStackLocation.push(card);
 
@@ -55,8 +58,8 @@ export function deckToSqueak({
       offsetHeight: indexWithinSqueakStack * (20 - squeakStackLength),
     },
     endID: `${playerID}squeakHand${squeakEndLocation}`,
-    // updatedBoard: gameData[roomCode]?.board, // ideally shouldn't have to send this
-    newPlayerCards: player,
+    updatedBoard: board,
+    updatedPlayerCards: players,
     playerID,
   });
 }
