@@ -59,7 +59,9 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
   const [showSecondDummyCardBeneathDeck, setShowSecondDummyCardBeneathDeck] =
     useState(false);
 
-  const [resettingDeck, setResettingDeck] = useState(false);
+  // const [resettingDeck, setResettingDeck] = useState(false);
+
+  const [drawingFromDeck, setDrawingFromDeck] = useState(false);
 
   useTrackHoverOverSqueakStacks();
   useRotatePlayerDecks();
@@ -283,12 +285,14 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                 boxShadow:
                   hoveringOverDeck &&
                   !holdingADeckCard &&
-                  !drawingCardsFromDeck &&
-                  !resettingDeck
+                  // !drawingCardsFromDeck &&
+                  // !resettingDeck
+                  drawingFromDeck
                     ? "0px 0px 4px 3px rgba(184,184,184,1)"
                     : "none",
                 cursor:
-                  drawingCardsFromDeck || resettingDeck ? "auto" : "pointer",
+                  //drawingCardsFromDeck || resettingDeck
+                  drawingFromDeck ? "auto" : "pointer",
               }}
               className="h-full w-full select-none transition-shadow"
               onMouseEnter={() => {
@@ -298,22 +302,30 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                 setHoveringOverDeck(false);
               }}
               onClick={() => {
-                if (
-                  (drawingCardsFromDeck &&
-                    gameData.players[userID]?.deckIdx !== -1) ||
-                  resettingDeck
-                )
-                  return;
+                // if (
+                //   (drawingCardsFromDeck &&
+                //     gameData.players[userID]?.deckIdx !== -1) ||
+                //   resettingDeck
+                // )
+                //   return;
 
-                if (gameData.players[userID]?.deckIdx === -1) {
-                  setResettingDeck(true);
+                // if (gameData.players[userID]?.deckIdx === -1) {
+                //   setResettingDeck(true);
 
-                  setTimeout(() => {
-                    setResettingDeck(false);
-                  }, 425);
-                } else {
-                  setDrawingCardsFromDeck(true);
-                }
+                //   setTimeout(() => {
+                //     setResettingDeck(false);
+                //   }, 425);
+                // } else {
+                //   setDrawingCardsFromDeck(true);
+                // }
+
+                if (drawingFromDeck) return;
+
+                setDrawingFromDeck(true);
+
+                setTimeout(() => {
+                  setDrawingFromDeck(false);
+                }, 350);
 
                 socket.emit("playerDrawFromDeck", {
                   playerID: userID,

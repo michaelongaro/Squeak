@@ -117,9 +117,9 @@ function Card({
 
         callbackFunction?.();
 
-        if (ownerID === userID && origin === "deck") {
-          setDrawingCardsFromDeck(false);
-        }
+        // if (ownerID === userID && origin === "deck") {
+        //   setDrawingCardsFromDeck(false);
+        // }
 
         if (squeakStackLocation && ownerID === userID) {
           setHeldSqueakStackLocation(null);
@@ -234,7 +234,8 @@ function Card({
 
         // feels wrong because animation should only be running for 250ms, but 250
         // resulted in the animation getting cut off before it finished
-        if (elapsed < 285) {
+        if (elapsed < 300) {
+          // 285
           if (!done) {
             window.requestAnimationFrame(step);
           }
@@ -265,7 +266,7 @@ function Card({
       setHoldingADeckCard,
       setHoldingASqueakCard,
       setProposedCardBoxShadow,
-      setDrawingCardsFromDeck,
+      // setDrawingCardsFromDeck,
       cardBeingMovedProgramatically,
       setCardBeingMovedProgramatically,
     ]
