@@ -4,12 +4,7 @@ import {
   type ICard,
 } from "../../../utils/generateDeckAndSqueakCards";
 import { updatePlayerStatsAfterRound } from "../helpers/updatePlayerStatsAfterRound";
-import {
-  type IGameData,
-  type IRoomData,
-  type IGameMetadata,
-  type IRoundOver,
-} from "../socket";
+import { type IGameData, type IRoomData, type IRoundOver } from "../socket";
 
 export interface IScoreboardMetadata {
   gameWinnerID: string | null;
@@ -170,15 +165,26 @@ export function roundOverHandler(
 
     let gameWinnerID = null;
 
-    // check if player has won the game
+    let playerWithHighestEndScore: [string, number] | null = null;
+
+    // find player with highest score to determine game winner
     for (const playerID of Object.keys(playerCards)) {
       const player = playerCards[playerID];
 
       if (!player) return;
 
-      if (player.totalPoints >= pointsToWin) {
-        gameWinnerID = playerID;
+      if (!playerWithHighestEndScore) {
+        playerWithHighestEndScore = [playerID, player.totalPoints];
+      } else if (player.totalPoints > playerWithHighestEndScore[1]) {
+        playerWithHighestEndScore = [playerID, player.totalPoints];
       }
+    }
+
+    if (
+      playerWithHighestEndScore &&
+      playerWithHighestEndScore[1] >= pointsToWin
+    ) {
+      gameWinnerID = playerWithHighestEndScore[0];
     }
 
     // updating stats for each user in the room
@@ -189,6 +195,9 @@ export function roundOverHandler(
         roundWinnerID,
         gameWinnerID,
         playerRankForThisRound: playerRanksForThisRound[playerID]!,
+        playerScoreForThisRound: playerScoresForThisRound.find(
+          (player) => player[0] === playerID
+        )![1],
       });
     }
 

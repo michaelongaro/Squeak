@@ -9,6 +9,7 @@ interface IUpdatePlayerStatsAfterRound {
   gameWinnerID: string | null;
   playerRoundDetails: IPlayerRoundDetails;
   playerRankForThisRound: number;
+  playerScoreForThisRound: number;
 }
 
 export async function updatePlayerStatsAfterRound({
@@ -17,6 +18,7 @@ export async function updatePlayerStatsAfterRound({
   roundWinnerID,
   gameWinnerID,
   playerRankForThisRound,
+  playerScoreForThisRound,
 }: IUpdatePlayerStatsAfterRound) {
   if (!prisma) return;
 
@@ -67,18 +69,18 @@ export async function updatePlayerStatsAfterRound({
   // lowestScore, hacky -> I would ideally want to set lowestScore and highestScore
   // to by default be null in the DB
   if (playerStats.totalRoundsPlayed === 0) {
-    playerStats.lowestScore = playerRoundDetails.newScore;
+    playerStats.lowestScore = playerScoreForThisRound;
   } else {
     playerStats.lowestScore =
-      playerRoundDetails.newScore < playerStats.lowestScore
-        ? playerRoundDetails.newScore
+      playerScoreForThisRound < playerStats.lowestScore
+        ? playerScoreForThisRound
         : playerStats.lowestScore;
   }
 
   // highestScore
   playerStats.highestScore =
-    playerRoundDetails.newScore > playerStats.highestScore
-      ? playerRoundDetails.newScore
+    playerScoreForThisRound > playerStats.highestScore
+      ? playerScoreForThisRound
       : playerStats.highestScore;
 
   // totalGamesPlayed
