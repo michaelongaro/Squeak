@@ -52,7 +52,6 @@ function Card({
     hoveredCell,
     holdingADeckCard,
     holdingASqueakCard,
-    setDrawingCardsFromDeck,
     hoveredSqueakStack,
     originIndexForHeldSqueakCard,
     heldSqueakStackLocation,
@@ -72,7 +71,6 @@ function Card({
 
   const cardRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
-  const cardIsMovingRef = useRef(false);
 
   useEffect(() => {
     const ownerMetadata = ownerID ? playerMetadata[ownerID] : undefined;
@@ -113,20 +111,19 @@ function Card({
           });
         }
 
-        cardIsMovingRef.current = false;
-
         callbackFunction?.();
 
-        // if (ownerID === userID && origin === "deck") {
-        //   setDrawingCardsFromDeck(false);
-        // }
+        if (origin === "deck") {
+          setCardOffsetPosition({
+            x: 0,
+            y: 0,
+          });
+        }
 
         if (squeakStackLocation && ownerID === userID) {
           setHeldSqueakStackLocation(null);
         }
       }
-
-      cardIsMovingRef.current = true;
 
       if (origin === "hand" && ownerID) {
         setCardBeingMovedProgramatically({
@@ -135,10 +132,10 @@ function Card({
         });
       }
 
-      cardRef.current.style.transition = "all 0.25s linear"; // ease-in-out
+      cardRef.current.style.transition = "all 0.25s ease-in-out"; // ease-in-out
       // make sure card is on top, but below shuffling modal while moving over other cards
       cardRef.current.style.zIndex = "998";
-      imageRef.current.style.transition = "transform 0.125s linear"; // ease-in-out
+      imageRef.current.style.transition = "transform 0.125s ease-in-out"; // ease-in-out
       imageRef.current.style.zIndex = "998";
 
       const currentTransform = imageRef.current.style.transform;
@@ -235,7 +232,6 @@ function Card({
         // feels wrong because animation should only be running for 250ms, but 250
         // resulted in the animation getting cut off before it finished
         if (elapsed < 300) {
-          // 285
           if (!done) {
             window.requestAnimationFrame(step);
           }
@@ -266,7 +262,6 @@ function Card({
       setHoldingADeckCard,
       setHoldingASqueakCard,
       setProposedCardBoxShadow,
-      // setDrawingCardsFromDeck,
       cardBeingMovedProgramatically,
       setCardBeingMovedProgramatically,
     ]
