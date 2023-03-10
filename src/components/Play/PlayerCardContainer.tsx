@@ -104,6 +104,13 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
     return "none";
   }
 
+  const reverseSqueakDeck = (array: ICard[] | undefined) => {
+    if (!array) return [];
+
+    const revArray = array.reverse();
+    return [...revArray];
+  };
+
   function filteredCardsInHandFromDeck(
     array: ICard[] | undefined,
     playerID: string | undefined
@@ -239,23 +246,24 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                   </div>
                 )}
 
-                {/* reverseSqueakDeck(gameData.players[userID]?.squeakDeck) */}
-                {gameData.players[userID]?.squeakDeck.map((card, cardIdx) => (
-                  <div
-                    key={`${userID}squeakDeckCard${card.suit}${card.value}`}
-                    className="absolute top-0 left-0 h-full w-full select-none"
-                  >
-                    <Card
-                      value={card.value}
-                      suit={card.suit}
-                      showCardBack={true} // separate state inside overrides this halfway through flip
-                      draggable={false}
-                      ownerID={userID}
-                      startID={`${userID}squeakDeck`}
-                      rotation={0}
-                    />
-                  </div>
-                ))}
+                {reverseSqueakDeck(gameData.players[userID]?.squeakDeck).map(
+                  (card, cardIdx) => (
+                    <div
+                      key={`${userID}squeakDeckCard${card.suit}${card.value}`}
+                      className="absolute top-0 left-0 h-full w-full select-none"
+                    >
+                      <Card
+                        value={card.value}
+                        suit={card.suit}
+                        showCardBack={true} // separate state inside overrides this halfway through flip
+                        draggable={false}
+                        ownerID={userID}
+                        startID={`${userID}squeakDeck`}
+                        rotation={0}
+                      />
+                    </div>
+                  )
+                )}
               </div>
             ) : (
               <Buzzer
@@ -264,6 +272,65 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                 interactive={true}
               />
             )}
+          </div>
+
+          <div
+            id={`${userID}hand`}
+            style={{
+              zIndex:
+                cardBeingMovedProgramatically[userID] === true ||
+                holdingADeckCard
+                  ? 501
+                  : 499,
+            }}
+            className={`${classes.playerHand} relative h-[64px] w-[48px] select-none tall:h-[87px] tall:w-[67px]`}
+          >
+            <>
+              {gameData.players[userID]?.topCardsInDeck.map(
+                (card, idx) =>
+                  card !== null && (
+                    <div
+                      key={`${userID}handCard${card.suit}${card.value}`}
+                      className="absolute top-0 left-0 select-none"
+                      style={{
+                        top: `${-1 * (idx * 2)}px`,
+                        zIndex:
+                          cardBeingMovedProgramatically[userID] === true ||
+                          holdingADeckCard
+                            ? 501
+                            : 499,
+                      }}
+                      onMouseEnter={() => {
+                        setHoveringOverDeck(false);
+                      }}
+                      onMouseDown={() => {
+                        if (
+                          idx ===
+                          gameData.players[userID]!.topCardsInDeck.length - 1
+                        )
+                          setHoldingADeckCard(true);
+                      }}
+                      onMouseUp={() => {
+                        setHoldingADeckCard(false);
+                        setHoveredSqueakStack(null);
+                      }}
+                    >
+                      <Card
+                        value={card.value}
+                        suit={card.suit}
+                        draggable={
+                          idx ===
+                          gameData.players[userID]!.topCardsInDeck.length - 1
+                        }
+                        origin={"hand"}
+                        ownerID={userID}
+                        startID={`${userID}hand`}
+                        rotation={0}
+                      />
+                    </div>
+                  )
+              )}
+            </>
           </div>
 
           <div
@@ -383,60 +450,6 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                 </div>
               )}
             </div>
-          </div>
-
-          <div
-            id={`${userID}hand`}
-            style={{
-              zIndex:
-                cardBeingMovedProgramatically[userID] === true ||
-                holdingADeckCard
-                  ? 500
-                  : 499,
-            }}
-            className={`${classes.playerHand} relative h-[64px] w-[48px] select-none tall:h-[87px] tall:w-[67px]`}
-          >
-            <>
-              {gameData.players[userID]?.topCardsInDeck.map(
-                (card, idx) =>
-                  card !== null && (
-                    <div
-                      key={`${userID}handCard${card.suit}${card.value}`}
-                      className="absolute top-0 left-0 select-none"
-                      style={{
-                        top: `${-1 * (idx * 2)}px`,
-                      }}
-                      onMouseEnter={() => {
-                        setHoveringOverDeck(false);
-                      }}
-                      onMouseDown={() => {
-                        if (
-                          idx ===
-                          gameData.players[userID]!.topCardsInDeck.length - 1
-                        )
-                          setHoldingADeckCard(true);
-                      }}
-                      onMouseUp={() => {
-                        setHoldingADeckCard(false);
-                        setHoveredSqueakStack(null);
-                      }}
-                    >
-                      <Card
-                        value={card.value}
-                        suit={card.suit}
-                        draggable={
-                          idx ===
-                          gameData.players[userID]!.topCardsInDeck.length - 1
-                        }
-                        origin={"hand"}
-                        ownerID={userID}
-                        startID={`${userID}hand`}
-                        rotation={0}
-                      />
-                    </div>
-                  )
-              )}
-            </>
           </div>
 
           <AnimatePresence
