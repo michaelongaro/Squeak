@@ -102,8 +102,6 @@ interface IRoomContext {
   setPlayerIDToStartNextRound: React.Dispatch<
     React.SetStateAction<string | null>
   >;
-  drawingCardsFromDeck: boolean;
-  setDrawingCardsFromDeck: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const RoomContext = createContext<IRoomContext | null>(null);
@@ -194,9 +192,6 @@ export function RoomProvider(props: { children: React.ReactNode }) {
   const [playerIDToStartNextRound, setPlayerIDToStartNextRound] = useState<
     string | null
   >(null);
-
-  const [drawingCardsFromDeck, setDrawingCardsFromDeck] =
-    useState<boolean>(false);
 
   // might want to move into a hook eventually
   useEffect(() => {
@@ -389,8 +384,6 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     setShowResetRoundModal,
     playerIDToStartNextRound,
     setPlayerIDToStartNextRound,
-    drawingCardsFromDeck,
-    setDrawingCardsFromDeck,
   };
 
   return (
