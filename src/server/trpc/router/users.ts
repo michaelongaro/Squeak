@@ -95,10 +95,10 @@ export const usersRouter = router({
 
       const leaderboardStats: IFormattedStats = {
         "Total Squeaks": [],
-        "Average rank": [],
+        "Average rank per round": [],
         "Average left in Squeak": [],
-        "Highest score": [],
-        "Lowest score": [],
+        "Highest score per round": [],
+        "Lowest score per round": [],
         "Total games played": [],
       };
 
@@ -114,7 +114,7 @@ export const usersRouter = router({
           ...baseUserMetadata,
           value: user?.stats?.squeaks || 0,
         });
-        leaderboardStats["Average rank"]?.push({
+        leaderboardStats["Average rank per round"]?.push({
           ...baseUserMetadata,
           value: user?.stats?.averageFinishingPlace || 0,
         });
@@ -122,11 +122,11 @@ export const usersRouter = router({
           ...baseUserMetadata,
           value: user?.stats?.averageLeftInSqueak || 0,
         });
-        leaderboardStats["Highest score"]?.push({
+        leaderboardStats["Highest score per round"]?.push({
           ...baseUserMetadata,
           value: user?.stats?.highestScore || 0,
         });
-        leaderboardStats["Lowest score"]?.push({
+        leaderboardStats["Lowest score per round"]?.push({
           ...baseUserMetadata,
           value: user?.stats?.lowestScore || 0,
         });
@@ -148,7 +148,7 @@ export const usersRouter = router({
           currentCategory = currentCategory
             .sort((a, b) => b.value - a.value)
             .slice(0, 10);
-        } else if (category === "Average rank") {
+        } else if (category === "Average rank per round") {
           // removing all "0" values from the array
           currentCategory = currentCategory.filter((stat) => stat.value !== 0);
 
@@ -162,11 +162,11 @@ export const usersRouter = router({
           currentCategory = currentCategory
             .sort((a, b) => a.value - b.value)
             .slice(0, 10);
-        } else if (category === "Highest score") {
+        } else if (category === "Highest score per round") {
           currentCategory = currentCategory
             .sort((a, b) => b.value - a.value)
             .slice(0, 10);
-        } else if (category === "Lowest score") {
+        } else if (category === "Lowest score per round") {
           currentCategory = currentCategory
             .sort((a, b) => a.value - b.value)
             .slice(0, 10);
