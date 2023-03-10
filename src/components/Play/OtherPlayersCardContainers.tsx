@@ -11,7 +11,6 @@ import Buzzer from "./Buzzer";
 import Image from "next/image";
 import disconnectIcon from "../../../public/disconnect/disconnect.svg";
 import { type ICard } from "../../utils/generateDeckAndSqueakCards";
-// import useFilterCardsInHandFromDeck from "../../hooks/useFilterCardsInHandFromDeck";
 
 interface IOtherPlayersCardContainers {
   orderedClassNames: (string | undefined)[];
@@ -111,22 +110,6 @@ function OtherPlayersCardContainers({
   const cardDimensions = useResponsiveCardDimensions();
   useRotatePlayerDecks();
 
-  // necessary to prevent card in hand + card in .mapped deck from both being
-  // moved at the same time.
-  // const filteredCardsInHandFromDeck = [
-  //   useFilterCardsInHandFromDeck({
-  //     array: gameData.players[otherPlayerIDs[0]!]?.deck,
-  //     playerID: otherPlayerIDs[0],
-  //   }),
-  //   useFilterCardsInHandFromDeck({
-  //     array: gameData.players[otherPlayerIDs[1]!]?.deck,
-  //     playerID: otherPlayerIDs[1],
-  //   }),
-  //   useFilterCardsInHandFromDeck({
-  //     array: gameData.players[otherPlayerIDs[2]!]?.deck,
-  //     playerID: otherPlayerIDs[2],
-  //   }),
-  // ];
   function filteredCardsInHandFromDeck(
     array: ICard[] | undefined,
     playerID: string | undefined
@@ -324,9 +307,10 @@ function OtherPlayersCardContainers({
                           key={`${playerID}deckCard${card.suit}${card.value}`}
                           style={{
                             zIndex:
-                              gameData.players[playerID]?.deckIdx === cardIdx ||
-                              (gameData.players[playerID]?.deckIdx === -1 &&
-                                cardIdx === 2)
+                              gameData.players[playerID]?.nextTopCardInDeck
+                                ?.suit === card.suit &&
+                              gameData.players[playerID]?.nextTopCardInDeck
+                                ?.value === card.value
                                 ? 500
                                 : 499,
                           }}

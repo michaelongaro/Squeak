@@ -14,7 +14,6 @@ import useResponsiveCardDimensions from "../../hooks/useResponsiveCardDimensions
 import { AnimatePresence, motion } from "framer-motion";
 import Buzzer from "./Buzzer";
 import { type ICard } from "../../utils/generateDeckAndSqueakCards";
-// import useFilterCardsInHandFromDeck from "../../hooks/useFilterCardsInHandFromDeck";
 interface IPlayerCardContainer {
   cardContainerClass: string | undefined;
 }
@@ -36,8 +35,6 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
     holdingADeckCard,
     proposedCardBoxShadow,
     decksAreBeingRotated,
-    drawingCardsFromDeck,
-    setDrawingCardsFromDeck,
     soundPlayStates,
     setSoundPlayStates,
     currentVolume,
@@ -106,13 +103,6 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
 
     return "none";
   }
-
-  // necessary to prevent card in hand + card in .mapped deck from both being
-  // moved at the same time.
-  // const filteredCardsInHandFromDeck = useFilterCardsInHandFromDeck({
-  //   array: gameData.players[userID]?.deck,
-  //   playerID: userID,
-  // });
 
   function filteredCardsInHandFromDeck(
     array: ICard[] | undefined,
@@ -283,16 +273,10 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
               id={`${userID}deck`}
               style={{
                 boxShadow:
-                  hoveringOverDeck &&
-                  !holdingADeckCard &&
-                  // !drawingCardsFromDeck &&
-                  // !resettingDeck
-                  drawingFromDeck
+                  hoveringOverDeck && !holdingADeckCard && !drawingFromDeck
                     ? "0px 0px 4px 3px rgba(184,184,184,1)"
                     : "none",
-                cursor:
-                  //drawingCardsFromDeck || resettingDeck
-                  drawingFromDeck ? "auto" : "pointer",
+                cursor: drawingFromDeck ? "auto" : "pointer",
               }}
               className="h-full w-full select-none transition-shadow"
               onMouseEnter={() => {
@@ -302,23 +286,6 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                 setHoveringOverDeck(false);
               }}
               onClick={() => {
-                // if (
-                //   (drawingCardsFromDeck &&
-                //     gameData.players[userID]?.deckIdx !== -1) ||
-                //   resettingDeck
-                // )
-                //   return;
-
-                // if (gameData.players[userID]?.deckIdx === -1) {
-                //   setResettingDeck(true);
-
-                //   setTimeout(() => {
-                //     setResettingDeck(false);
-                //   }, 425);
-                // } else {
-                //   setDrawingCardsFromDeck(true);
-                // }
-
                 if (drawingFromDeck) return;
 
                 setDrawingFromDeck(true);
@@ -376,9 +343,10 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                         key={`${userID}deckCard${card.suit}${card.value}`}
                         style={{
                           zIndex:
-                            gameData.players[userID]?.deckIdx === cardIdx ||
-                            (gameData.players[userID]?.deckIdx === -1 &&
-                              cardIdx === 2)
+                            gameData.players[userID]?.nextTopCardInDeck
+                              ?.suit === card.suit &&
+                            gameData.players[userID]?.nextTopCardInDeck
+                              ?.value === card.value
                               ? 500
                               : 499,
                         }}
