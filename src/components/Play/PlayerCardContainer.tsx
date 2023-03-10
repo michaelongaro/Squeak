@@ -325,7 +325,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
 
                 setTimeout(() => {
                   setDrawingFromDeck(false);
-                }, 350);
+                }, 375);
 
                 socket.emit("playerDrawFromDeck", {
                   playerID: userID,
