@@ -49,17 +49,17 @@ function Stats() {
       style={{
         color: "hsl(120deg 100% 86%)",
       }}
-      className="baseVertFlex w-[700px] gap-8 bg-green-800 p-8"
+      className="baseVertFlex w-[700px] bg-green-800 p-8"
     >
       <div
         style={{
           borderColor: "hsl(120deg 100% 86%)",
           color: "hsl(120deg 100% 86%)",
         }}
-        className="baseVertFlex gap-4 rounded-md border-2 p-4"
+        className="baseVertFlex gap-6 rounded-md border-2 p-4"
       >
         {rowNames.map((rowName, index) => (
-          <div key={index} className="baseFlex w-full !justify-between gap-8">
+          <div key={index} className="baseFlex w-full !justify-between gap-12">
             <div className="text-xl">{rowName}</div>
             {filteredStats ? (
               <div className="text-xl">
