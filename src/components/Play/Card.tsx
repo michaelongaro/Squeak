@@ -132,10 +132,10 @@ function Card({
         });
       }
 
-      cardRef.current.style.transition = "all 0.25s ease-in-out"; // ease-in-out
+      cardRef.current.style.transition = "all 0.25s linear";
       // make sure card is on top, but below shuffling modal while moving over other cards
       cardRef.current.style.zIndex = "998";
-      imageRef.current.style.transition = "transform 0.125s ease-in-out"; // ease-in-out
+      imageRef.current.style.transition = "transform 0.125s linear";
       imageRef.current.style.zIndex = "998";
 
       const currentTransform = imageRef.current.style.transform;
