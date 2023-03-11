@@ -73,11 +73,7 @@ function TopRightControls({ forPlayScreen }: ITopRightControls) {
             onClickFunction={() => setShowFriendsList(!showFriendsList)}
           />
 
-          <AnimatePresence
-            initial={false}
-            mode={"wait"}
-            onExitComplete={() => null}
-          >
+          <AnimatePresence mode={"wait"}>
             {newInviteNotification && (
               <motion.div
                 key={"friendsListInviteNotification"}
@@ -90,11 +86,7 @@ function TopRightControls({ forPlayScreen }: ITopRightControls) {
             )}
           </AnimatePresence>
 
-          <AnimatePresence
-            initial={false}
-            mode={"wait"}
-            onExitComplete={() => null}
-          >
+          <AnimatePresence mode={"wait"}>
             {showFriendsList && (
               <FriendsList setShowFriendsListModal={setShowFriendsList} />
             )}
@@ -102,11 +94,7 @@ function TopRightControls({ forPlayScreen }: ITopRightControls) {
         </div>
       )}
 
-      <AnimatePresence
-        initial={false}
-        mode={"wait"}
-        onExitComplete={() => null}
-      >
+      <AnimatePresence mode={"wait"}>
         {showSettingsModal && (
           <UserSettingsAndStatsModal setShowModal={setShowSettingsModal} />
         )}

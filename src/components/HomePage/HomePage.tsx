@@ -31,22 +31,14 @@ function HomePage() {
 
   return (
     <div className="relative pb-8 pt-8 lg:pt-0 lg:pb-0">
-      <AnimatePresence
-        initial={false}
-        mode={"wait"}
-        onExitComplete={() => null}
-      >
+      <AnimatePresence mode={"wait"}>
         {pageToRender === "home" && <MainOptions />}
         {pageToRender === "createRoom" && <CreateRoom />}
         {pageToRender === "joinRoom" && <JoinRoom />}
         {pageToRender === "play" && connectedToRoom && <Play />}
       </AnimatePresence>
 
-      <AnimatePresence
-        initial={false}
-        mode={"wait"}
-        onExitComplete={() => null}
-      >
+      <AnimatePresence mode={"wait"}>
         {allowedToShowMobileWarningModal && (
           <MobileWarningModal
             setShowModal={setAllowedToShowMobileWarningModal}

@@ -73,11 +73,7 @@ function Board({ boardClass }: IBoard) {
               }}
               className="baseFlex relative h-[65px] min-h-fit w-[48px] min-w-fit select-none rounded-lg p-1 transition-all tall:h-[95px] tall:w-[70px]"
             >
-              <AnimatePresence
-                initial={false}
-                mode={"wait"}
-                onExitComplete={() => null}
-              >
+              <AnimatePresence mode={"wait"}>
                 {cell && (
                   <motion.div
                     key={`board${rowIdx}${colIdx}AnimatedCell`}

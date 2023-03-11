@@ -119,27 +119,15 @@ function Play() {
 
       {gameStarted && <OtherPlayerIcons />}
 
-      <AnimatePresence
-        initial={false}
-        mode={"wait"}
-        onExitComplete={() => null}
-      >
+      <AnimatePresence mode={"wait"}>
         {showShufflingCountdown && <ShufflingCountdownModal />}
       </AnimatePresence>
 
-      <AnimatePresence
-        initial={false}
-        mode={"wait"}
-        onExitComplete={() => null}
-      >
+      <AnimatePresence mode={"wait"}>
         {showResetRoundModal && <ResetRoundModal />}
       </AnimatePresence>
 
-      <AnimatePresence
-        initial={false}
-        mode={"wait"}
-        onExitComplete={() => null}
-      >
+      <AnimatePresence mode={"wait"}>
         {showScoreboard && <Scoreboard />}
       </AnimatePresence>
     </motion.div>

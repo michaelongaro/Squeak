@@ -137,7 +137,7 @@ function MainOptions() {
         onMouseEnter={() => setHoveringOnAboutMe(true)}
         onMouseLeave={() => setHoveringOnAboutMe(false)}
       >
-        <AnimatePresence initial={false}>
+        <AnimatePresence>
           {hoveringOnAboutMe && (
             <motion.div
               key={"aboutMe"}
@@ -171,21 +171,13 @@ function MainOptions() {
         <div className="select-none text-2xl">i</div>
       </div>
 
-      <AnimatePresence
-        initial={false}
-        mode={"wait"}
-        onExitComplete={() => null}
-      >
+      <AnimatePresence mode={"wait"}>
         {showTutorialModal && (
           <TutorialModal setShowModal={setShowTutorialModal} />
         )}
       </AnimatePresence>
 
-      <AnimatePresence
-        initial={false}
-        mode={"wait"}
-        onExitComplete={() => null}
-      >
+      <AnimatePresence mode={"wait"}>
         {showLeaderboardModal && (
           <LeaderboardModal setShowModal={setShowLeaderboardModal} />
         )}

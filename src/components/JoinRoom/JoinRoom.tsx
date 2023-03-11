@@ -275,11 +275,7 @@ function JoinRoom() {
                 showLoadingSpinnerOnClick={true}
               />
 
-              <AnimatePresence
-                initial={false}
-                mode={"wait"}
-                onExitComplete={() => null}
-              >
+              <AnimatePresence mode={"wait"}>
                 {roomError && (
                   <motion.div
                     key={"joinRoomError"}

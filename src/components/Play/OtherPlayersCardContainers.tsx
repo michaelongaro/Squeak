@@ -11,6 +11,7 @@ import Buzzer from "./Buzzer";
 import Image from "next/image";
 import disconnectIcon from "../../../public/disconnect/disconnect.svg";
 import { type ICard } from "../../utils/generateDeckAndSqueakCards";
+import { AnimatePresence } from "framer-motion";
 
 interface IOtherPlayersCardContainers {
   orderedClassNames: (string | undefined)[];
@@ -257,13 +258,15 @@ function OtherPlayersCardContainers({
                     </div>
                   ))}
                 </div>
-              ) : (
+              <AnimatePresence mode={"popLayout"}>
+                {gameData.players[playerID]!.squeakDeck.length === 0 && (
                 <Buzzer
                   playerID={playerID}
                   roomCode={roomConfig.code}
                   interactive={false}
                 />
               )}
+              </AnimatePresence>
             </div>
 
             <div

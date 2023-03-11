@@ -217,6 +217,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
 
           <div
             id={`${userID}squeakDeck`}
+            style={{
             className={`${classes.squeakDeck} baseFlex h-full w-full select-none`}
           >
             {gameData.players[userID]!.squeakDeck.length > 0 ? (
@@ -265,13 +266,17 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                   )
                 )}
               </div>
-            ) : (
+            )}
+
+            <AnimatePresence mode={"popLayout"}>
+              {gameData.players[userID]!.squeakDeck.length === 0 && (
               <Buzzer
                 playerID={userID}
                 roomCode={roomConfig.code}
                 interactive={true}
               />
             )}
+            </AnimatePresence>
           </div>
 
           <div
@@ -452,11 +457,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
             </div>
           </div>
 
-          <AnimatePresence
-            initial={false}
-            mode={"wait"}
-            onExitComplete={() => null}
-          >
+          <AnimatePresence mode={"wait"}>
             {decksAreBeingRotated && (
               <motion.div
                 key={"decksAreBeingRotatedTooltip"}

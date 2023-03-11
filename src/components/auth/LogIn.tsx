@@ -37,11 +37,7 @@ function LogIn({ gap }: ILogIn) {
           }}
         />
       </div>
-      <AnimatePresence
-        initial={false}
-        mode={"wait"}
-        onExitComplete={() => null}
-      >
+      <AnimatePresence mode={"wait"}>
         {showModal && (
           <OAuthSignInButtons
             forSignup={forSignup}

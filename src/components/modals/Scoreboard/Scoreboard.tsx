@@ -318,11 +318,7 @@ function Scoreboard() {
                       }}
                       className="baseFlex w-full gap-2 rounded-b-md p-2"
                     >
-                      <AnimatePresence
-                        initial={false}
-                        mode={"wait"}
-                        onExitComplete={() => null}
-                      >
+                      <AnimatePresence mode={"wait"}>
                         {showNewRankings && (
                           <motion.div
                             key={`newRanking${player.playerID}`}
@@ -336,11 +332,7 @@ function Scoreboard() {
                           </motion.div>
                         )}
                       </AnimatePresence>
-                      <AnimatePresence
-                        initial={false}
-                        mode={"wait"}
-                        onExitComplete={() => null}
-                      >
+                      <AnimatePresence mode={"wait"}>
                         {!showNewRankings && (
                           <motion.div
                             key={`oldRanking${player.playerID}`}

@@ -98,11 +98,7 @@ function DangerButton({
         }
       }}
     >
-      <AnimatePresence
-        initial={false}
-        mode={"wait"}
-        onExitComplete={() => null}
-      >
+      <AnimatePresence mode={"wait"}>
         {showTooltip && (
           <motion.div
             key={innerTooltipText}
