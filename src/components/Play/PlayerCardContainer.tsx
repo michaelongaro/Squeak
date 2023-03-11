@@ -218,9 +218,16 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
           <div
             id={`${userID}squeakDeck`}
             style={{
+              zIndex:
+                holdingADeckCard ||
+                holdingASqueakCard ||
+                cardBeingMovedProgramatically[userID]
+                  ? 500
+                  : 600,
+            }}
             className={`${classes.squeakDeck} baseFlex h-full w-full select-none`}
           >
-            {gameData.players[userID]!.squeakDeck.length > 0 ? (
+            {gameData.players[userID]!.squeakDeck.length > 0 && (
               <div className="relative h-full w-full">
                 {/* dummy cards to show "depth" of deck visually */}
                 {gameData.players[userID]!.squeakDeck.length > 2 && (
@@ -270,12 +277,12 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
 
             <AnimatePresence mode={"popLayout"}>
               {gameData.players[userID]!.squeakDeck.length === 0 && (
-              <Buzzer
-                playerID={userID}
-                roomCode={roomConfig.code}
-                interactive={true}
-              />
-            )}
+                <Buzzer
+                  playerID={userID}
+                  roomCode={roomConfig.code}
+                  interactive={true}
+                />
+              )}
             </AnimatePresence>
           </div>
 
@@ -299,11 +306,6 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                       className="absolute top-0 left-0 select-none"
                       style={{
                         top: `${-1 * (idx * 2)}px`,
-                        zIndex:
-                          cardBeingMovedProgramatically[userID] === true ||
-                          holdingADeckCard
-                            ? 501
-                            : 499,
                       }}
                       onMouseEnter={() => {
                         setHoveringOverDeck(false);
@@ -339,7 +341,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
           </div>
 
           <div
-            className={`${classes.playerDeck} h-[64px] w-[48px] select-none tall:h-[87px] tall:w-[67px]`}
+            className={`${classes.playerDeck} z-[500] h-[64px] w-[48px] select-none tall:h-[87px] tall:w-[67px]`}
           >
             <div
               id={`${userID}deck`}
@@ -418,7 +420,8 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                             gameData.players[userID]?.nextTopCardInDeck
                               ?.suit === card.suit &&
                             gameData.players[userID]?.nextTopCardInDeck
-                              ?.value === card.value
+                              ?.value === card.value &&
+                            !holdingADeckCard
                               ? 500
                               : 499,
                         }}

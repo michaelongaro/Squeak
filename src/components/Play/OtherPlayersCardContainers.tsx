@@ -211,9 +211,12 @@ function OtherPlayersCardContainers({
 
             <div
               id={`${playerID}squeakDeck`}
+              style={{
+                zIndex: cardBeingMovedProgramatically[playerID] ? 500 : 600,
+              }}
               className={`${classes.squeakDeck} baseFlex h-full w-full select-none`}
             >
-              {gameData.players[playerID]!.squeakDeck.length > 0 ? (
+              {gameData.players[playerID]!.squeakDeck.length > 0 && (
                 <div className="relative h-full w-full">
                   {showDummyDeckCardStates?.[playerID]?.[2] && (
                     <div className="absolute top-[2px] left-0 h-full w-full select-none">
@@ -258,14 +261,16 @@ function OtherPlayersCardContainers({
                     </div>
                   ))}
                 </div>
+              )}
+
               <AnimatePresence mode={"popLayout"}>
                 {gameData.players[playerID]!.squeakDeck.length === 0 && (
-                <Buzzer
-                  playerID={playerID}
-                  roomCode={roomConfig.code}
-                  interactive={false}
-                />
-              )}
+                  <Buzzer
+                    playerID={playerID}
+                    roomCode={roomConfig.code}
+                    interactive={false}
+                  />
+                )}
               </AnimatePresence>
             </div>
 
@@ -304,7 +309,7 @@ function OtherPlayersCardContainers({
             </div>
 
             <div
-              className={`${classes.playerDeck} h-[64px] w-[48px] select-none tall:h-[87px] tall:w-[67px]`}
+              className={`${classes.playerDeck} z-[500] h-[64px] w-[48px] select-none tall:h-[87px] tall:w-[67px]`}
             >
               <div id={`${playerID}deck`} className="h-full w-full">
                 {gameData?.players[playerID]?.nextTopCardInDeck ? (
