@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useRoomContext } from "../../context/RoomContext";
 import { useUserIDContext } from "../../context/UserIDContext";
 import { socket } from "../../pages";
+import { motion } from "framer-motion";
 import Image from "next/image";
 import baseplate from "../../../public/buzzer/baseplate.png";
 import squeakBuzzer from "../../../public/buzzer/buzzerButton.png";
@@ -60,12 +61,16 @@ function Buzzer({ playerID, roomCode, interactive }: IBuzzer) {
   }, [playerIDWhoSqueaked, playerID, currentVolume, userID]);
 
   return (
-    <div
+    <motion.div
+      key={`${playerID}Buzzer`}
+      initial={{ opacity: 0, scale: 0 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0 }}
+      transition={{ duration: 0.25 }}
       style={{
-        boxShadow:
-          interactive && hoveringOnButton
-            ? "0px 0px 10px 3px rgba(184,184,184,1)"
-            : "none",
+        boxShadow: hoveringOnButton
+          ? "0px 0px 10px 3px rgba(184,184,184,1)"
+          : "none",
         cursor: interactive ? "pointer" : "default",
       }}
       className="relative z-[999] h-[40px] w-[75px] rounded-[50%] transition-all"
@@ -85,10 +90,12 @@ function Buzzer({ playerID, roomCode, interactive }: IBuzzer) {
         if (interactive) setMouseDownOnButton(false);
       }}
       onClick={() => {
-        socket.emit("roundOver", {
-          roundWinnerID: playerID,
-          roomCode,
-        });
+        if (interactive) {
+          socket.emit("roundOver", {
+            roundWinnerID: playerID,
+            roomCode,
+          });
+        }
       }}
     >
       <audio ref={squeakButtonAudioRef} src="/sounds/squeakButtonPress.mp3" />
@@ -121,17 +128,17 @@ function Buzzer({ playerID, roomCode, interactive }: IBuzzer) {
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
-          height: playExpandingPulseWaveAnimation ? "165vh" : "0",
-          width: playExpandingPulseWaveAnimation ? "155vw" : "0",
+          height: playExpandingPulseWaveAnimation ? "350px" : "0",
+          width: playExpandingPulseWaveAnimation ? "350px" : "0",
           backgroundColor: playerMetadata[playerIDWhoSqueaked!]?.color,
           opacity: playExpandingPulseWaveAnimation ? "0.5" : "0",
           transition: playExpandingPulseWaveAnimation
             ? "all 1s linear"
             : "all 0.25s linear",
         }}
-        className="absolute z-[999] rounded-full"
+        className="absolute z-[999] rounded-[50%]"
       ></div>
-    </div>
+    </motion.div>
   );
 }
 
