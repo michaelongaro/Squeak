@@ -16,6 +16,7 @@
   border-radius: 0.375rem;
   border: 2px solid hsl(120deg 100% 86%);
   max-width: 70%;
+  transition: all 150ms;
 }
 
 .leftInnerGridContainer,
@@ -76,21 +77,4 @@
 
 .playerHand {
   grid-area: playerHand;
-}
-
-.playerAvatar {
-  position: absolute;
-}
-
-/* adjustment rotations to make sure player avatars are shown upright */
-.topInnerGridContainer .playerAvatar {
-  rotate: 180deg !important;
-}
-
-.leftInnerGridContainer .playerAvatar {
-  rotate: 270deg !important;
-}
-
-.rightInnerGridContainer .playerAvatar {
-  rotate: 90deg !important;
 }

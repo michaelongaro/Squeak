@@ -14,6 +14,7 @@
   padding: 0.5rem;
   border-radius: 0.375rem;
   border: 2px solid hsl(120deg 100% 86%);
+  transition: all 150ms;
 }
 
 .reversedGridContainer {
@@ -32,6 +33,7 @@
   padding: 0.5rem;
   border-radius: 0.375rem;
   border: 2px solid hsl(120deg 100% 86%);
+  transition: all 150ms;
 }
 
 @media (max-height: 768px) or (max-width: 1500px) {
