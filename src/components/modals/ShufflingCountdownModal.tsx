@@ -27,7 +27,7 @@ function ShufflingCountdownModal() {
     if (gameData.currentRound !== 1 && playerIDToStartNextRound === userID) {
       socket.emit("startGame", {
         roomCode: roomConfig.code,
-        firstRound: gameData.currentRound === 1,
+        firstRound: false,
       });
       setPlayerIDToStartNextRound(null);
     }
@@ -55,7 +55,7 @@ function ShufflingCountdownModal() {
     setTimeout(() => {
       setShowShufflingCountdown(false);
       setTimersInitiated(false);
-    }, 5250); // full 4000ms delay felt too long
+    }, 5000); // test if this delay feels okay
   }, [
     gameData.currentRound,
     roomConfig.code,
@@ -88,7 +88,7 @@ function ShufflingCountdownModal() {
         }}
         className="h-fit w-fit rounded-md p-8 pl-16 pr-16 font-medium shadow-md"
       >
-        <div className="baseVertFlex gap-6">
+        <div className="baseVertFlex gap-8">
           <div className="text-xl">Shuffling decks</div>
 
           <div className="relative mt-16 h-[64px] w-[48px] tall:h-[87px] tall:w-[67px]">
