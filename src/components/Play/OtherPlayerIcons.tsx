@@ -24,8 +24,28 @@ function OtherPlayerIcons() {
     { top: "0px", left: "0px" },
   ]);
 
+  // this is needed because the squeak button is wider than a
+  // regular card, and pushes the container to be wider
+  // since the other player icons are positioned absolutely,
+  // we need to update to the new location so it doesn't get cut off.
+  const [
+    prevNumPlayersShowingSqueakButton,
+    setPrevNumPlayersShowingSqueakButton,
+  ] = useState<number>(0);
+
+  let numPlayersShowingSqueakButton = 0;
+
+  for (const id of otherPlayerIDs) {
+    if (gameData.players[id]?.squeakDeck.length === 0) {
+      numPlayersShowingSqueakButton++;
+    }
+  }
+
   useEffect(() => {
-    if (absolutePositioning[0]?.top !== "0px" || otherPlayerIDs.length === 0)
+    if (
+      absolutePositioning[0]?.top !== "0px" &&
+      prevNumPlayersShowingSqueakButton === numPlayersShowingSqueakButton
+    )
       return;
 
     const tempAbsolutePositioning = [
@@ -38,9 +58,6 @@ function OtherPlayerIcons() {
       const playerID = otherPlayerIDs[i];
       if (!playerID) continue;
 
-      const playerSqueakDeckEmpty =
-        gameData.players[playerID]?.squeakDeck.length === 0 ? true : false;
-
       const playerContainer = document
         .getElementById(`${playerID}container`)
         ?.getBoundingClientRect();
@@ -51,17 +68,11 @@ function OtherPlayerIcons() {
 
         tempAbsolutePositioning[0] = {
           top: `${playerContainer.top + 15}px`,
-          left: `${
-            playerContainer.left -
-            topPlayerIconWidth -
-            (playerSqueakDeckEmpty ? 35 : 15)
-          }px`,
+          left: `${playerContainer.left - topPlayerIconWidth - 15}px`,
         };
       } else if (i === 1 && playerContainer) {
         tempAbsolutePositioning[1] = {
-          top: `${
-            playerContainer.bottom + (playerSqueakDeckEmpty ? 35 : 15)
-          }px`,
+          top: `${playerContainer.bottom + 15}px`,
           left: `${playerContainer.left}px`, // + 15 too ?
         };
       } else if (i === 2 && playerContainer) {
@@ -69,14 +80,21 @@ function OtherPlayerIcons() {
           rightPlayerIconRef.current?.getBoundingClientRect().width || 0;
 
         tempAbsolutePositioning[2] = {
-          top: `${playerContainer.top - (playerSqueakDeckEmpty ? 105 : 85)}}px`,
+          top: `${playerContainer.top - 85}px`,
           left: `${playerContainer.right - rightPlayerIconWidth - 15}px`,
         };
       }
     }
 
-    setAbsolutePositioning([...tempAbsolutePositioning]);
-  }, [absolutePositioning, otherPlayerIDs, gameData.players]);
+    setAbsolutePositioning(tempAbsolutePositioning);
+    setPrevNumPlayersShowingSqueakButton(numPlayersShowingSqueakButton);
+  }, [
+    absolutePositioning,
+    numPlayersShowingSqueakButton,
+    prevNumPlayersShowingSqueakButton,
+    otherPlayerIDs,
+    gameData.players,
+  ]);
 
   return (
     <>
