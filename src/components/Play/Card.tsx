@@ -96,7 +96,7 @@ function Card({
       let start: number | undefined;
       let done = false;
 
-      function transitionEndHandler() {
+      function animationEndHandler() {
         if (!cardRef.current || !imageRef.current) return;
 
         cardRef.current.style.transition = "none";
@@ -132,8 +132,8 @@ function Card({
         });
       }
 
+      // make sure card stays on top, but below shuffling modal while moving over other cards
       cardRef.current.style.transition = "all 0.25s linear";
-      // make sure card is on top, but below shuffling modal while moving over other cards
       cardRef.current.style.zIndex = "998";
       imageRef.current.style.transition = "transform 0.125s linear";
       imageRef.current.style.zIndex = "998";
@@ -236,7 +236,7 @@ function Card({
             window.requestAnimationFrame(step);
           }
         } else {
-          transitionEndHandler();
+          animationEndHandler();
           done = true;
         }
       }
