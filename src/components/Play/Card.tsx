@@ -60,6 +60,8 @@ function Card({
     setHoldingADeckCard,
     cardBeingMovedProgramatically,
     setCardBeingMovedProgramatically,
+    squeakDeckBeingMovedProgramatically,
+    setSqueakDeckBeingMovedProgramatically,
     setHoldingASqueakCard,
   } = useRoomContext();
   const { value: userID } = useUserIDContext();
@@ -111,6 +113,13 @@ function Card({
           });
         }
 
+        if (origin === "squeak" && ownerID) {
+          setSqueakDeckBeingMovedProgramatically({
+            ...squeakDeckBeingMovedProgramatically,
+            [ownerID]: false,
+          });
+        }
+
         callbackFunction?.();
 
         if (origin === "deck") {
@@ -132,10 +141,17 @@ function Card({
         });
       }
 
+      if (origin === "squeak" && ownerID) {
+        setSqueakDeckBeingMovedProgramatically({
+          ...squeakDeckBeingMovedProgramatically,
+          [ownerID]: true,
+        });
+      }
+
       // make sure card stays on top, but below shuffling modal while moving over other cards
-      cardRef.current.style.transition = "all 0.25s linear";
+      cardRef.current.style.transition = "all 300ms linear";
       cardRef.current.style.zIndex = "998";
-      imageRef.current.style.transition = "transform 0.125s linear";
+      imageRef.current.style.transition = "transform 150ms linear";
       imageRef.current.style.zIndex = "998";
 
       const currentTransform = imageRef.current.style.transform;
@@ -220,7 +236,7 @@ function Card({
           );
 
           setManuallyShowCardFront(true);
-        }, 125);
+        }, 150);
       }
 
       function step(timestamp: number) {
@@ -229,9 +245,7 @@ function Card({
         }
         const elapsed = timestamp - start;
 
-        // feels wrong because animation should only be running for 250ms, but 250
-        // resulted in the animation getting cut off before it finished
-        if (elapsed < 300) {
+        if (elapsed < 400) {
           if (!done) {
             window.requestAnimationFrame(step);
           }
@@ -264,6 +278,8 @@ function Card({
       setProposedCardBoxShadow,
       cardBeingMovedProgramatically,
       setCardBeingMovedProgramatically,
+      squeakDeckBeingMovedProgramatically,
+      setSqueakDeckBeingMovedProgramatically,
     ]
   );
 
@@ -462,7 +478,7 @@ function Card({
                   squeakStackLocation[1] &&
                 heldSqueakStackLocation.location.x === 0 &&
                 heldSqueakStackLocation.location.y === 0
-                  ? "transform 0.25s linear"
+                  ? "transform 300ms linear"
                   : "none",
             }}
             className={`baseFlex relative z-[500] h-full w-full select-none !items-start ${

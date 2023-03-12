@@ -41,6 +41,7 @@ function OtherPlayersCardContainers({
     decksAreBeingRotated,
     soundPlayStates,
     cardBeingMovedProgramatically,
+    squeakDeckBeingMovedProgramatically,
     setSoundPlayStates,
     currentVolume,
   } = useRoomContext();
@@ -114,8 +115,7 @@ function OtherPlayersCardContainers({
   const reverseSqueakDeck = (array: ICard[] | undefined) => {
     if (!array) return [];
 
-    const revArray = array.reverse();
-    return [...revArray];
+    return array.reverse();
   };
 
   function filteredCardsInHandFromDeck(
@@ -138,7 +138,7 @@ function OtherPlayersCardContainers({
         )
     );
 
-    return [...filteredArray];
+    return filteredArray;
   }
 
   return (
@@ -211,10 +211,7 @@ function OtherPlayersCardContainers({
 
             <div
               id={`${playerID}squeakDeck`}
-              style={{
-                zIndex: cardBeingMovedProgramatically[playerID] ? 500 : 600,
-              }}
-              className={`${classes.squeakDeck} baseFlex h-full w-full select-none`}
+              className={`${classes.squeakDeck} baseFlex z-[500] h-full w-full select-none`}
             >
               {gameData.players[playerID]!.squeakDeck.length > 0 && (
                 <div className="relative h-full w-full">
@@ -247,6 +244,13 @@ function OtherPlayersCardContainers({
                   ).map((card, cardIdx) => (
                     <div
                       key={`${playerID}squeakDeckCard${card.suit}${card.value}`}
+                      style={{
+                        zIndex:
+                          cardBeingMovedProgramatically[playerID] &&
+                          !squeakDeckBeingMovedProgramatically[playerID]
+                            ? 500
+                            : 501,
+                      }}
                       className="absolute top-0 left-0 h-full w-full select-none"
                     >
                       <Card

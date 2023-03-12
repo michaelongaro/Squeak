@@ -41,6 +41,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
     originIndexForHeldSqueakCard,
     setHoldingADeckCard,
     cardBeingMovedProgramatically,
+    squeakDeckBeingMovedProgramatically,
     setOriginIndexForHeldSqueakCard,
     setHoldingASqueakCard,
     setHoveredSqueakStack,
@@ -107,8 +108,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
   const reverseSqueakDeck = (array: ICard[] | undefined) => {
     if (!array) return [];
 
-    const revArray = array.reverse();
-    return [...revArray];
+    return array.reverse();
   };
 
   function filteredCardsInHandFromDeck(
@@ -131,7 +131,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
         )
     );
 
-    return [...filteredArray];
+    return filteredArray;
   }
 
   return (
@@ -217,15 +217,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
 
           <div
             id={`${userID}squeakDeck`}
-            style={{
-              zIndex:
-                holdingADeckCard ||
-                holdingASqueakCard ||
-                cardBeingMovedProgramatically[userID]
-                  ? 500
-                  : 600,
-            }}
-            className={`${classes.squeakDeck} baseFlex h-full w-full select-none`}
+            className={`${classes.squeakDeck} baseFlex z-[500] h-full w-full select-none`}
           >
             {gameData.players[userID]!.squeakDeck.length > 0 && (
               <div className="relative h-full w-full">
@@ -258,6 +250,15 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                   (card, cardIdx) => (
                     <div
                       key={`${userID}squeakDeckCard${card.suit}${card.value}`}
+                      style={{
+                        zIndex:
+                          (holdingADeckCard ||
+                            holdingASqueakCard ||
+                            cardBeingMovedProgramatically[userID]) &&
+                          !squeakDeckBeingMovedProgramatically[userID]
+                            ? 500
+                            : 501,
+                      }}
                       className="absolute top-0 left-0 h-full w-full select-none"
                     >
                       <Card
@@ -413,6 +414,9 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                       gameData.players[userID]?.deck,
                       userID
                     )?.map((card, cardIdx) => (
+                      // as a reminder, we are putting the nextTopCardInDeck calculation of which card it
+                      // should be on the chopping block here, seems to be off by one (if in face the regular
+                      // hand cards are correct)
                       <div
                         key={`${userID}deckCard${card.suit}${card.value}`}
                         style={{

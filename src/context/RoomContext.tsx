@@ -102,6 +102,10 @@ interface IRoomContext {
   setPlayerIDToStartNextRound: React.Dispatch<
     React.SetStateAction<string | null>
   >;
+  squeakDeckBeingMovedProgramatically: ICardBeingMovedProgramatically;
+  setSqueakDeckBeingMovedProgramatically: React.Dispatch<
+    React.SetStateAction<ICardBeingMovedProgramatically>
+  >;
 }
 
 const RoomContext = createContext<IRoomContext | null>(null);
@@ -182,6 +186,12 @@ export function RoomProvider(props: { children: React.ReactNode }) {
 
   const [cardBeingMovedProgramatically, setCardBeingMovedProgramatically] =
     useState<ICardBeingMovedProgramatically>({});
+
+  // planning on combining below and above into generic [] that has "deck" "squeak" etc..
+  const [
+    squeakDeckBeingMovedProgramatically,
+    setSqueakDeckBeingMovedProgramatically,
+  ] = useState<ICardBeingMovedProgramatically>({});
 
   const [newInviteNotification, setNewInviteNotification] =
     useState<boolean>(false);
@@ -384,6 +394,8 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     setShowResetRoundModal,
     playerIDToStartNextRound,
     setPlayerIDToStartNextRound,
+    squeakDeckBeingMovedProgramatically,
+    setSqueakDeckBeingMovedProgramatically,
   };
 
   return (
