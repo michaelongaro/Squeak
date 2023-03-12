@@ -50,7 +50,7 @@ function Board({ boardClass }: IBoard) {
         outline: "4px ridge hsl(120deg 100% 86%)",
         boxShadow: "inset 0px 0px 16px 0px hsl(106deg 100% 5%)",
       }}
-      className={`${boardClass} z-[400] grid w-full select-none grid-cols-5 gap-1 rounded-md p-2`}
+      className={`${boardClass} grid w-full select-none grid-cols-5 gap-1 rounded-md p-2`}
     >
       {gameData?.board.map((row, rowIdx) => (
         <Fragment key={`boardRow${rowIdx}`}>
@@ -71,7 +71,7 @@ function Board({ boardClass }: IBoard) {
                     ? 0.35
                     : 1,
               }}
-              className="baseFlex relative h-[65px] min-h-fit w-[48px] min-w-fit select-none rounded-lg p-1 transition-all tall:h-[95px] tall:w-[70px]"
+              className="baseFlex relative z-0 h-[65px] min-h-fit w-[48px] min-w-fit select-none rounded-lg p-1 transition-all tall:h-[95px] tall:w-[70px]"
             >
               <AnimatePresence mode={"wait"}>
                 {cell && (
