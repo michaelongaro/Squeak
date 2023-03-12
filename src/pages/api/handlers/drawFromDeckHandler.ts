@@ -40,6 +40,13 @@ export function drawFromDeckHandler(
       return;
     }
 
+    // adjusting deckIdx to account for the # of cards that were played since
+    // last draw
+    // below potentially prone to bugs when there are only 2 cards left in the deck
+    if (deckIdx !== -1) {
+      deckIdx -= topCardsInDeck.filter((card) => card === null).length;
+    }
+
     // cards are rendered on the client with the last card in the array at
     // the top of stack
     if (deckIdx + 3 <= deck.length - 1) {
