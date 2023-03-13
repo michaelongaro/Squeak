@@ -110,6 +110,26 @@ function Board({ boardClass }: IBoard) {
                     />
                   </motion.div>
                 )}
+
+                <AnimatePresence mode={"wait"}>
+                  {proposedCardBoxShadow?.id === `cell${rowIdx}${colIdx}` &&
+                    proposedCardBoxShadow?.boxShadowValue ===
+                      `0px 0px 4px 3px rgba(29, 232, 7, 1)` && (
+                      <motion.div
+                        key={`board${rowIdx}${colIdx}AnimatedPlusOneIndicator`}
+                        initial={{ opacity: 0, scale: 0.9, translateY: 10 }}
+                        animate={{ opacity: 1, scale: 1, translateY: 0 }}
+                        exit={{ opacity: 0, scale: 0.9, translateY: -5 }}
+                        transition={{ duration: 0.5 }}
+                        style={{
+                          color: "hsl(120deg 100% 86%)",
+                        }}
+                        className="absolute top-0 right-[-1.75rem] select-none text-xl tracking-wider"
+                      >
+                        +1
+                      </motion.div>
+                    )}
+                </AnimatePresence>
               </AnimatePresence>
             </div>
           ))}
