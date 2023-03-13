@@ -34,7 +34,7 @@ function Buzzer({ playerID, roomCode, interactive }: IBuzzer) {
       setMouseDownOnButton(true);
       setTimeout(() => {
         setMouseDownOnButton(false);
-      }, 100);
+      }, 150);
     }
 
     if (squeakButtonAudioRef.current) {
@@ -128,8 +128,8 @@ function Buzzer({ playerID, roomCode, interactive }: IBuzzer) {
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
-          height: playExpandingPulseWaveAnimation ? "350px" : "0",
-          width: playExpandingPulseWaveAnimation ? "350px" : "0",
+          height: playExpandingPulseWaveAnimation ? "500px" : "0",
+          width: playExpandingPulseWaveAnimation ? "500px" : "0",
           backgroundColor: playerMetadata[playerIDWhoSqueaked!]?.color,
           opacity: playExpandingPulseWaveAnimation ? "0.5" : "0",
           transition: playExpandingPulseWaveAnimation
