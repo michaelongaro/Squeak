@@ -34,7 +34,7 @@ function Board({ boardClass }: IBoard) {
     if (holdingADeckCard || holdingASqueakCard) {
       return `0px 0px 4px ${
         hoveredCell?.[0] === rowIdx && hoveredCell?.[1] === colIdx
-          ? "4px"
+          ? "5px"
           : "3px"
       } rgba(184,184,184,1)`;
     } else if (proposedCardBoxShadow?.id === id) {

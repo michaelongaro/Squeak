@@ -95,7 +95,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
     if (holdingADeckCard || holdingASqueakCard) {
       return `0px 0px 4px ${
         hoveredSqueakStack && hoveredSqueakStack === squeakStackIdx
-          ? "4px"
+          ? "5px"
           : "3px"
       } rgba(184,184,184,1)`;
     } else if (proposedCardBoxShadow?.id === id) {
