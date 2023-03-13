@@ -10,8 +10,8 @@ import useRotatePlayerDecks from "../../hooks/useRotatePlayerDecks";
 import Buzzer from "./Buzzer";
 import Image from "next/image";
 import disconnectIcon from "../../../public/disconnect/disconnect.svg";
-import { type ICard } from "../../utils/generateDeckAndSqueakCards";
 import { AnimatePresence } from "framer-motion";
+import useFilterCardsInHandFromDeck from "../../hooks/useFilterCardsInHandFromDeck";
 
 interface IOtherPlayersCardContainers {
   orderedClassNames: (string | undefined)[];
@@ -112,34 +112,22 @@ function OtherPlayersCardContainers({
   const cardDimensions = useResponsiveCardDimensions();
   useRotatePlayerDecks();
 
-  const reverseSqueakDeck = (array: ICard[] | undefined) => {
-    if (!array) return [];
-
-    return array.reverse();
-  };
-
-  function filteredCardsInHandFromDeck(
-    array: ICard[] | undefined,
-    playerID: string | undefined
-  ) {
-    if (!playerID) return;
-
-    const deckIdx = gameData.players[playerID]?.deckIdx;
-    const cardsInHand = gameData.players[playerID]?.topCardsInDeck.filter(
-      (card) => card !== null
-    );
-    if (!array || !deckIdx || !cardsInHand) return [];
-
-    const filteredArray = array.filter(
-      (card) =>
-        !cardsInHand.some(
-          (cardInHand) =>
-            cardInHand?.suit === card.suit && cardInHand?.value === card.value
-        )
-    );
-
-    return filteredArray;
-  }
+  // necessary to prevent card in hand + card in .mapped deck from both being
+  // moved at the same time.
+  const filteredCardsInHandFromDeck = [
+    useFilterCardsInHandFromDeck({
+      array: gameData.players[otherPlayerIDs[0]!]?.deck,
+      playerID: otherPlayerIDs[0],
+    }),
+    useFilterCardsInHandFromDeck({
+      array: gameData.players[otherPlayerIDs[1]!]?.deck,
+      playerID: otherPlayerIDs[1],
+    }),
+    useFilterCardsInHandFromDeck({
+      array: gameData.players[otherPlayerIDs[2]!]?.deck,
+      playerID: otherPlayerIDs[2],
+    }),
+  ];
 
   return (
     <>
@@ -239,31 +227,33 @@ function OtherPlayersCardContainers({
                     </div>
                   )}
 
-                  {reverseSqueakDeck(
-                    gameData.players[playerID]?.squeakDeck
-                  ).map((card, cardIdx) => (
-                    <div
-                      key={`${playerID}squeakDeckCard${card.suit}${card.value}`}
-                      style={{
-                        zIndex:
-                          cardBeingMovedProgramatically[playerID] &&
-                          !squeakDeckBeingMovedProgramatically[playerID]
-                            ? 500
-                            : 501,
-                      }}
-                      className="absolute top-0 left-0 h-full w-full select-none"
-                    >
-                      <Card
-                        value={card.value}
-                        suit={card.suit}
-                        showCardBack={true} // this would need to be changed halfway through card flip
-                        draggable={false}
-                        ownerID={playerID}
-                        startID={`${playerID}squeakDeck`}
-                        rotation={rotationOrder[idx] as number}
-                      />
-                    </div>
-                  ))}
+                  {gameData.players[playerID]?.squeakDeck.map(
+                    (card, cardIdx) => (
+                      <div
+                        key={`${playerID}squeakDeckCard${card.suit}${card.value}`}
+                        style={{
+                          zIndex:
+                            cardIdx === 0 &&
+                            squeakDeckBeingMovedProgramatically[playerID] &&
+                            !cardBeingMovedProgramatically[playerID]
+                              ? 502
+                              : 499,
+                        }}
+                        className="absolute top-0 left-0 h-full w-full select-none"
+                      >
+                        <Card
+                          value={card.value}
+                          suit={card.suit}
+                          showCardBack={true} // this would need to be changed halfway through card flip
+                          draggable={false}
+                          ownerID={playerID}
+                          startID={`${playerID}squeakDeck`}
+                          origin={"squeak"}
+                          rotation={rotationOrder[idx] as number}
+                        />
+                      </div>
+                    )
+                  )}
                 </div>
               )}
 
@@ -349,35 +339,34 @@ function OtherPlayersCardContainers({
                       }}
                       className="topBackFacingCardInDeck absolute top-0 left-0 h-full w-full select-none"
                     >
-                      {filteredCardsInHandFromDeck(
-                        gameData.players[playerID]?.deck,
-                        playerID
-                      )?.map((card, cardIdx) => (
-                        <div
-                          key={`${playerID}deckCard${card.suit}${card.value}`}
-                          style={{
-                            zIndex:
-                              gameData.players[playerID]?.nextTopCardInDeck
-                                ?.suit === card.suit &&
-                              gameData.players[playerID]?.nextTopCardInDeck
-                                ?.value === card.value
-                                ? 500
-                                : 499,
-                          }}
-                          className="absolute top-0 left-0 h-full w-full select-none"
-                        >
-                          <Card
-                            value={card.value}
-                            suit={card.suit}
-                            showCardBack={true} // separate state inside overrides this halfway through flip
-                            draggable={false}
-                            ownerID={playerID}
-                            origin={"deck"}
-                            startID={`${playerID}deck`}
-                            rotation={rotationOrder[idx] as number}
-                          />
-                        </div>
-                      ))}
+                      {filteredCardsInHandFromDeck[idx]?.map(
+                        (card, cardIdx) => (
+                          <div
+                            key={`${playerID}deckCard${card.suit}${card.value}`}
+                            style={{
+                              zIndex:
+                                gameData.players[playerID]?.nextTopCardInDeck
+                                  ?.suit === card.suit &&
+                                gameData.players[playerID]?.nextTopCardInDeck
+                                  ?.value === card.value
+                                  ? 500
+                                  : 499,
+                            }}
+                            className="absolute top-0 left-0 h-full w-full select-none"
+                          >
+                            <Card
+                              value={card.value}
+                              suit={card.suit}
+                              showCardBack={true} // separate state inside overrides this halfway through flip
+                              draggable={false}
+                              ownerID={playerID}
+                              origin={"deck"}
+                              startID={`${playerID}deck`}
+                              rotation={rotationOrder[idx] as number}
+                            />
+                          </div>
+                        )
+                      )}
                     </div>
                   </div>
                 ) : (
