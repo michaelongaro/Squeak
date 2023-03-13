@@ -257,7 +257,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                             cardBeingMovedProgramatically[userID]) &&
                           !squeakDeckBeingMovedProgramatically[userID]
                             ? 500
-                            : 501,
+                            : 502,
                       }}
                       className="absolute top-0 left-0 h-full w-full select-none"
                     >
