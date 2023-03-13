@@ -111,6 +111,22 @@ function useCardDropApproved({
             }
           }
 
+          if (endID.includes("cell")) {
+            if (rotation === 0) {
+              endX += 4;
+              endY += 4;
+            } else if (rotation === 90) {
+              endX -= 4;
+              endY += 4;
+            } else if (rotation === 180) {
+              endX -= 4;
+              endY -= 4;
+            } else if (rotation === 270) {
+              endX += 4;
+              endY -= 4;
+            }
+          }
+
           moveCard(
             { x: endX, y: endY },
             false,
