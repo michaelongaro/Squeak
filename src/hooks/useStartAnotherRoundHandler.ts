@@ -37,7 +37,7 @@ function useStartAnotherRoundHandler() {
 
       setTimeout(() => {
         setShowShufflingCountdown(true);
-      }, 3000);
+      }, 2200);
     }
   }, [
     dataFromBackend,
