@@ -51,6 +51,7 @@ function PickerTooltip({
   const [hoveredTooltip, setHoveredTooltip] = useState<
     ["avatar" | "color", number] | null
   >(null);
+  const [hoveringOnTooltip, setHoveringOnTooltip] = useState<boolean>(false);
 
   const [userAvatarIndex, setUserAvatarIndex] = useState<number>(-1);
   const [userDeckIndex, setUserDeckIndex] = useState<number>(-1);
@@ -347,8 +348,11 @@ function PickerTooltip({
               transition={{ duration: 0.15 }}
               style={{
                 color: "hsl(120deg 100% 86%)",
+                filter: `brightness(${hoveringOnTooltip ? 0.75 : 1})`,
               }}
-              className="baseVertFlex cursor-pointer gap-2"
+              className="baseVertFlex cursor-pointer gap-2 transition-all"
+              onMouseEnter={() => setHoveringOnTooltip(true)}
+              onMouseLeave={() => setHoveringOnTooltip(false)}
               onClick={() => setShowTooltip(true)}
             >
               {type === "avatar" ? (
