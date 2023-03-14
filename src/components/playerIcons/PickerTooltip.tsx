@@ -210,7 +210,7 @@ function PickerTooltip({
                           ? "auto"
                           : "none",
                     }}
-                    className="relative rounded-full outline-offset-4 transition-all"
+                    className="relative rounded-[50%] outline-offset-4 transition-all"
                     onMouseEnter={() => setHoveredTooltip(["avatar", index])}
                     onMouseLeave={() => setHoveredTooltip(null)}
                     onClick={() => {
@@ -253,7 +253,7 @@ function PickerTooltip({
                               "avatar"
                             ),
                           }}
-                          className="absolute bottom-[-0.75rem] right-[-0.75rem] h-4 w-4 rounded-full"
+                          className="absolute bottom-[-0.75rem] right-[-0.75rem] h-4 w-4 rounded-[50%]"
                         ></div>
                       )}
                   </div>
@@ -319,7 +319,7 @@ function PickerTooltip({
                         ]
                       }
                     />
-                    <div className="absolute bottom-[-0.75rem] right-[-0.75rem] z-[999] h-12 w-12 rounded-full">
+                    <div className="absolute bottom-[-0.75rem] right-[-0.75rem] z-[999] h-12 w-12 rounded-[50%]">
                       {getMetadataOfPlayerByAttribute(color, "color") !==
                         playerMetadata[userID]?.avatarPath &&
                         getMetadataOfPlayerByAttribute(color, "color") !==

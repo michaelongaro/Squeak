@@ -48,7 +48,7 @@ function PlayerIcon({
             style={{
               outline: `4px solid ${borderColor}`,
             }}
-            className="relative rounded-full bg-white bg-opacity-80"
+            className="relative rounded-[50%] bg-white bg-opacity-80"
           >
             <img
               style={{
@@ -119,14 +119,14 @@ function PlayerIcon({
                     ? "hsl(120deg 100% 35%)"
                     : "hsl(0deg 100% 40%)",
                 }}
-                className="absolute right-[-0.25rem] bottom-0 h-4 w-4 rounded-full"
+                className="absolute right-[-0.25rem] bottom-0 h-4 w-4 rounded-[50%]"
               ></div>
             )}
           </div>
           {username ? username : null}
         </motion.div>
       ) : (
-        <div className="skeletonLoading h-12 w-12 rounded-full"></div>
+        <div className="skeletonLoading h-12 w-12 rounded-[50%]"></div>
       )}
     </>
   );

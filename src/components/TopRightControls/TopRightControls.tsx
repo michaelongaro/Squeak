@@ -81,7 +81,7 @@ function TopRightControls({ forPlayScreen }: ITopRightControls) {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.15 }}
-                className="absolute bottom-[-5px] right-[-5px] h-4 w-4 rounded-full bg-red-600"
+                className="absolute bottom-[-5px] right-[-5px] h-4 w-4 rounded-[50%] bg-red-600"
               ></motion.div>
             )}
           </AnimatePresence>
