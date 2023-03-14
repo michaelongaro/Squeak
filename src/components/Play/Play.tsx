@@ -15,7 +15,6 @@ import useResetDeckFromCardDraw from "../../hooks/useResetDeckFromCardDraw";
 import ResetRoundModal from "../modals/ResetRoundModal";
 import useManuallyResetRound from "../../hooks/useManuallyResetRound";
 import useScoreboardData from "../../hooks/useScoreboardData";
-import { cards } from "../../utils/cardAssetPaths";
 import OtherPlayerIcons from "./OtherPlayerIcons";
 
 function Play() {
@@ -29,14 +28,6 @@ function Play() {
     setShowShufflingCountdown,
   } = useRoomContext();
   const { value: userID } = useUserIDContext();
-
-  // prefetching card assets
-  useEffect(() => {
-    for (const imagePath of Object.values(cards)) {
-      const image = new Image();
-      image.src = imagePath.src;
-    }
-  }, []);
 
   const [gameStarted, setGameStarted] = useState<boolean>(false);
 

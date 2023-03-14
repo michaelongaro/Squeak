@@ -9,6 +9,7 @@ import TopRightControls from "../TopRightControls/TopRightControls";
 import usePlayerLeftRoom from "../../hooks/usePlayerLeftRoom";
 import MobileWarningModal from "../modals/MobileWarningModal";
 import { isMobile } from "react-device-detect";
+import { cards } from "../../utils/cardAssetPaths";
 
 function HomePage() {
   const { connectedToRoom, pageToRender } = useRoomContext();
@@ -25,6 +26,15 @@ function HomePage() {
         setAllowedToShowMobileWarningModal(true);
       }
     }, 1500);
+
+    // prefetching/caching card assets to prevent lag for the very
+    // first time a player plays a round
+    setTimeout(() => {
+      for (const imagePath of Object.values(cards)) {
+        const image = new Image();
+        image.src = imagePath.src;
+      }
+    }, 10000);
   }, []);
 
   usePlayerLeftRoom();
