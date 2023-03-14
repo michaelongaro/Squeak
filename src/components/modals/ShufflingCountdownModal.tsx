@@ -10,6 +10,7 @@ function ShufflingCountdownModal() {
   const {
     roomConfig,
     gameData,
+    playerMetadata,
     showShufflingCountdown,
     playerIDToStartNextRound,
     setPlayerIDToStartNextRound,
@@ -97,6 +98,7 @@ function ShufflingCountdownModal() {
                 showCardBack={true}
                 draggable={false}
                 rotation={0}
+                hueRotation={playerMetadata[userID]?.deckHueRotation || 0}
                 ownerID={userID}
               />
             </div>
@@ -110,6 +112,7 @@ function ShufflingCountdownModal() {
                 showCardBack={true}
                 draggable={false}
                 rotation={0}
+                hueRotation={playerMetadata[userID]?.deckHueRotation || 0}
                 ownerID={userID}
               />
             </div>

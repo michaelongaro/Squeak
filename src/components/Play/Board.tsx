@@ -86,6 +86,7 @@ function Board({ boardClass }: IBoard) {
                         <Card
                           showCardBack={true}
                           draggable={false}
+                          hueRotation={0}
                           rotation={0}
                         />
                       </div>
@@ -96,6 +97,7 @@ function Board({ boardClass }: IBoard) {
                         <Card
                           showCardBack={true}
                           draggable={false}
+                          hueRotation={0}
                           rotation={0}
                         />
                       </div>
@@ -106,6 +108,7 @@ function Board({ boardClass }: IBoard) {
                       suit={cell.suit}
                       showCardBack={false}
                       draggable={false}
+                      hueRotation={0}
                       rotation={0}
                     />
                   </motion.div>

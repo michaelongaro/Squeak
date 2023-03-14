@@ -182,6 +182,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                       //   cardIdx === 0 ? 0 : (20 - cards.length) * cardIdx
                       // }
                       ownerID={userID}
+                      hueRotation={playerMetadata[userID]?.deckHueRotation || 0}
                       startID={`${userID}squeakStack${cardsIdx}${cardIdx}`}
                       rotation={0}
                     />
@@ -204,6 +205,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                       showCardBack={true}
                       draggable={false}
                       ownerID={userID}
+                      hueRotation={playerMetadata[userID]?.deckHueRotation || 0}
                       startID={`${userID}squeakDeck`}
                       rotation={0}
                     />
@@ -216,6 +218,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                       showCardBack={true}
                       draggable={false}
                       ownerID={userID}
+                      hueRotation={playerMetadata[userID]?.deckHueRotation || 0}
                       startID={`${userID}squeakDeck`}
                       rotation={0}
                     />
@@ -243,6 +246,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                       showCardBack={true} // separate state inside overrides this halfway through flip
                       draggable={false}
                       ownerID={userID}
+                      hueRotation={playerMetadata[userID]?.deckHueRotation || 0}
                       startID={`${userID}squeakDeck`}
                       origin={"squeak"}
                       rotation={0}
@@ -308,6 +312,9 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                         }
                         origin={"hand"}
                         ownerID={userID}
+                        hueRotation={
+                          playerMetadata[userID]?.deckHueRotation || 0
+                        }
                         startID={`${userID}hand`}
                         rotation={0}
                       />
@@ -360,6 +367,9 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                         showCardBack={true}
                         draggable={false}
                         ownerID={userID}
+                        hueRotation={
+                          playerMetadata[userID]?.deckHueRotation || 0
+                        }
                         startID={`${userID}deck`}
                         rotation={0}
                       />
@@ -372,6 +382,9 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                         showCardBack={true}
                         draggable={false}
                         ownerID={userID}
+                        hueRotation={
+                          playerMetadata[userID]?.deckHueRotation || 0
+                        }
                         startID={`${userID}deck`}
                         rotation={0}
                       />
@@ -407,6 +420,9 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                           showCardBack={true} // separate state inside overrides this halfway through flip
                           draggable={false}
                           ownerID={userID}
+                          hueRotation={
+                            playerMetadata[userID]?.deckHueRotation || 0
+                          }
                           origin={"deck"}
                           startID={`${userID}deck`}
                           rotation={0}
@@ -425,6 +441,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                       showCardBack={true}
                       draggable={false}
                       ownerID={userID}
+                      hueRotation={playerMetadata[userID]?.deckHueRotation || 0}
                       startID={`${userID}deck`}
                       rotation={0}
                     />

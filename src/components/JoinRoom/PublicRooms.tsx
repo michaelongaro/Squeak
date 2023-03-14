@@ -83,7 +83,7 @@ function PublicRooms() {
                 }}
                 className="grid w-full grid-cols-3 place-items-center p-4 pr-8 font-medium"
               >
-                <div>Name</div>
+                <div>Owner</div>
                 <div>Points to win</div>
                 <div>Players</div>
               </div>

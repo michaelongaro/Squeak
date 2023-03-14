@@ -1,5 +1,6 @@
 import anime from "animejs";
 import React, { useEffect, useState } from "react";
+import { useRoomContext } from "../../../context/RoomContext";
 import { type ICard } from "../../../utils/generateDeckAndSqueakCards";
 import Card from "../../Play/Card";
 
@@ -10,6 +11,7 @@ interface IAnimatedCard {
 }
 
 function AnimatedCard({ card, index, playerID }: IAnimatedCard) {
+  const { playerMetadata } = useRoomContext();
   const [animationStarted, setAnimationStarted] = useState(false); // not sure if necessary
 
   useEffect(() => {
@@ -79,6 +81,7 @@ function AnimatedCard({ card, index, playerID }: IAnimatedCard) {
         value={card.value}
         suit={card.suit}
         draggable={false}
+        hueRotation={playerMetadata[playerID]?.deckHueRotation || 0}
         rotation={0}
       />
     </div>

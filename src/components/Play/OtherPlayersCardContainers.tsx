@@ -38,6 +38,7 @@ function OtherPlayersCardContainers({
   const {
     roomConfig,
     gameData,
+    playerMetadata,
     decksAreBeingRotated,
     soundPlayStates,
     cardBeingMovedProgramatically,
@@ -183,6 +184,9 @@ function OtherPlayersCardContainers({
                         draggable={false}
                         origin={"squeak"}
                         ownerID={playerID}
+                        hueRotation={
+                          playerMetadata[playerID]?.deckHueRotation || 0
+                        }
                         startID={`${playerID}squeakStack${cardsIdx}${cardIdx}`}
                         // implement this functionality in a refactor later
                         // squeakStackLocation={[cardsIdx, cardIdx]}
@@ -209,6 +213,9 @@ function OtherPlayersCardContainers({
                         showCardBack={true}
                         draggable={false}
                         ownerID={playerID}
+                        hueRotation={
+                          playerMetadata[playerID]?.deckHueRotation || 0
+                        }
                         startID={`${playerID}squeakDeck`}
                         rotation={rotationOrder[idx] as number}
                       />
@@ -221,6 +228,9 @@ function OtherPlayersCardContainers({
                         showCardBack={true}
                         draggable={false}
                         ownerID={playerID}
+                        hueRotation={
+                          playerMetadata[playerID]?.deckHueRotation || 0
+                        }
                         startID={`${playerID}squeakDeck`}
                         rotation={rotationOrder[idx] as number}
                       />
@@ -247,6 +257,9 @@ function OtherPlayersCardContainers({
                           showCardBack={true} // this would need to be changed halfway through card flip
                           draggable={false}
                           ownerID={playerID}
+                          hueRotation={
+                            playerMetadata[playerID]?.deckHueRotation || 0
+                          }
                           startID={`${playerID}squeakDeck`}
                           origin={"squeak"}
                           rotation={rotationOrder[idx] as number}
@@ -293,6 +306,9 @@ function OtherPlayersCardContainers({
                           draggable={false}
                           origin={"hand"}
                           ownerID={playerID}
+                          hueRotation={
+                            playerMetadata[playerID]?.deckHueRotation || 0
+                          }
                           startID={`${playerID}hand`}
                           rotation={rotationOrder[idx] as number}
                         />
@@ -314,6 +330,9 @@ function OtherPlayersCardContainers({
                           showCardBack={true}
                           draggable={false}
                           ownerID={playerID}
+                          hueRotation={
+                            playerMetadata[playerID]?.deckHueRotation || 0
+                          }
                           startID={`${playerID}deck`}
                           rotation={rotationOrder[idx] as number}
                         />
@@ -326,6 +345,9 @@ function OtherPlayersCardContainers({
                           showCardBack={true}
                           draggable={false}
                           ownerID={playerID}
+                          hueRotation={
+                            playerMetadata[playerID]?.deckHueRotation || 0
+                          }
                           startID={`${playerID}deck`}
                           rotation={rotationOrder[idx] as number}
                         />
@@ -360,6 +382,9 @@ function OtherPlayersCardContainers({
                               showCardBack={true} // separate state inside overrides this halfway through flip
                               draggable={false}
                               ownerID={playerID}
+                              hueRotation={
+                                playerMetadata[playerID]?.deckHueRotation || 0
+                              }
                               origin={"deck"}
                               startID={`${playerID}deck`}
                               rotation={rotationOrder[idx] as number}
@@ -379,6 +404,9 @@ function OtherPlayersCardContainers({
                         showCardBack={true}
                         draggable={false}
                         ownerID={playerID}
+                        hueRotation={
+                          playerMetadata[playerID]?.deckHueRotation || 0
+                        }
                         startID={`${playerID}deck`}
                         rotation={rotationOrder[idx] as number}
                       />

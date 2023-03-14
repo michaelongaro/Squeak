@@ -26,7 +26,7 @@ interface ICardComponent {
   startID?: string;
   squeakStackLocation?: [number, number];
   rotation: number;
-  hueRotation?: number;
+  hueRotation: number;
   width?: string;
   height?: string;
 }
@@ -69,22 +69,24 @@ function Card({
   const [cardOffsetPosition, setCardOffsetPosition] = useState({ x: 0, y: 0 });
   const [manuallyShowCardFront, setManuallyShowCardFront] = useState(false);
 
-  const [hueRotationDegrees, setHueRotationDegrees] = useState<number>(0);
+  // // set to -1 to know whether it has been initialized yet, since 0 is a valid value.
+  // const [hueRotationDegrees, setHueRotationDegrees] = useState<number>(-1);
 
   const cardRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
 
-  useEffect(() => {
-    const ownerMetadata = ownerID ? playerMetadata[ownerID] : undefined;
+  // useEffect(() => {
+  //   const ownerMetadata = ownerID ? playerMetadata[ownerID] : undefined;
 
-    if (hueRotation) {
-      setHueRotationDegrees(hueRotation);
-    } else if (ownerMetadata) {
-      setHueRotationDegrees(ownerMetadata.deckHueRotation);
-    } else {
-      setHueRotationDegrees(0);
-    }
-  }, [hueRotation, ownerID, playerMetadata]);
+  //   if (hueRotation) {
+  //     setHueRotationDegrees(hueRotation);
+  //   } else if (ownerMetadata) {
+  //     setHueRotationDegrees(ownerMetadata.deckHueRotation);
+  //   }
+  //   // else {
+  //   //   setHueRotationDegrees(0);
+  //   // }
+  // }, [hueRotation, ownerID, playerMetadata]);
 
   const moveCard = useCallback(
     (
@@ -154,7 +156,7 @@ function Card({
       imageRef.current.style.transition = "transform 150ms linear";
       imageRef.current.style.zIndex = "998";
 
-      const currentTransform = imageRef.current.style.transform;
+      const currentImageTransform = imageRef.current.style.transform;
 
       if (x === 0 && y === 0) {
         if (hoveredCell) {
@@ -218,19 +220,20 @@ function Card({
         // in correct orientation relative to how it will look on the board
         if (rotate) {
           imageRef.current.style.transform =
-            currentTransform + ` rotateZ(${rotation}deg)`;
+            currentImageTransform + ` rotateZ(${rotation * -1}deg)`;
         }
       }
 
       if (flip) {
         if (!cardRef.current) return;
 
-        imageRef.current.style.transform = currentTransform + " rotateY(90deg)";
+        imageRef.current.style.transform =
+          currentImageTransform + " rotateY(90deg)";
 
         setTimeout(() => {
           if (!imageRef.current) return;
 
-          imageRef.current.style.transform = currentTransform.replace(
+          imageRef.current.style.transform = currentImageTransform.replace(
             "rotateY(90deg)",
             "rotateY(0deg)"
           );
@@ -492,7 +495,7 @@ function Card({
                 height: height,
                 filter:
                   showCardBack && !manuallyShowCardFront
-                    ? `hue-rotate(${hueRotationDegrees}deg)`
+                    ? `hue-rotate(${hueRotation}deg)`
                     : "none",
               }}
               className="pointer-events-none h-[64px] w-[48px] select-none tall:h-[87px] tall:w-[67px]"
