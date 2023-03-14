@@ -111,19 +111,21 @@ function useCardDropApproved({
             }
           }
 
+          // offsets to account for rotation of card + padding on cell
+          // honestly not too sure why rotation of 180 has a different offset
+          // entirely from rotation of 0, but this mostly does the trick.
           if (endID.includes("cell")) {
             if (rotation === 0) {
               endX += 4;
               endY += 4;
             } else if (rotation === 90) {
-              endX -= 4;
-              endY += 4;
+              endX -= 8;
+              endY += 14;
             } else if (rotation === 180) {
-              endX -= 4;
-              endY -= 4;
+              endX += 3;
             } else if (rotation === 270) {
-              endX += 4;
-              endY -= 4;
+              endX -= 8;
+              endY += 14;
             }
           }
 
