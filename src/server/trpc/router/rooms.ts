@@ -34,13 +34,15 @@ export const roomsRouter = router({
     }),
   getAllAvailableRooms: publicProcedure.query(async ({ ctx }) => {
     try {
-      const rooms = await ctx.prisma.room.findMany({
+      let rooms = await ctx.prisma.room.findMany({
         where: {
           isPublic: true,
           gameStarted: false,
-          playersInRoom: { lt: 4 },
         },
       });
+
+      rooms = rooms.filter((room) => room.playersInRoom < room.maxPlayers);
+
       return rooms;
     } catch (error) {
       console.log(error);
