@@ -51,6 +51,8 @@ import CK from "../../public/cards/KC.svg";
 import DK from "../../public/cards/KD.svg";
 import HK from "../../public/cards/KH.svg";
 import SK from "../../public/cards/KS.svg";
+import squeakBuzzerBase from "../../public/buzzer/baseplate.png";
+import squeakBuzzer from "../../public/buzzer/buzzerButton.png";
 
 export const cards = {
   cardBack: cardBack,
@@ -106,4 +108,6 @@ export const cards = {
   DK: DK,
   HK: HK,
   SK: SK,
+  squeakBuzzerBase: squeakBuzzerBase,
+  squeakBuzzer: squeakBuzzer,
 };
