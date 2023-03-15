@@ -64,7 +64,7 @@ function AnimatedCard({ card, index, playerID }: IAnimatedCard) {
       rotateZ: [`${initZRotation}deg`, `${finalZRotation}deg`],
 
       delay: index * 100,
-      duration: 4500,
+      duration: 5000,
       loop: false,
       direction: "normal",
       easing: "easeOutQuad", // easeInOut?,
