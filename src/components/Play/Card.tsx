@@ -248,7 +248,12 @@ function Card({
         }
         const elapsed = timestamp - start;
 
-        if (elapsed < 400) {
+        // longer delay for other players to allow for animation to
+        // play out better. I feel like this shouldn't be necessary
+        // since every animation has same duration
+        const delay = ownerID === userID ? 385 : 425;
+
+        if (elapsed < delay) {
           if (!done) {
             window.requestAnimationFrame(step);
           }
