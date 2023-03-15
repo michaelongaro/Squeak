@@ -27,7 +27,7 @@ function Play() {
     showResetRoundModal,
     setShowShufflingCountdown,
   } = useRoomContext();
-  const { value: userID } = useUserIDContext();
+  const userID = useUserIDContext();
 
   const [gameStarted, setGameStarted] = useState<boolean>(false);
 

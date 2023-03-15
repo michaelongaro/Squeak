@@ -37,7 +37,7 @@ function FriendsList({ setShowFriendsListModal }: IFriendsList) {
     playerMetadata,
   } = useRoomContext();
   const { newInviteNotification, setNewInviteNotification } = useRoomContext();
-  const { value: userID } = useUserIDContext();
+  const userID = useUserIDContext();
 
   const { data: friends } = trpc.users.getUsersFromIDList.useQuery(
     friendData.friendIDs

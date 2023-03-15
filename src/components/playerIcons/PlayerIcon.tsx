@@ -28,7 +28,7 @@ function PlayerIcon({
   onlineStatus,
 }: IPlayerIcon) {
   const { roomConfig } = useRoomContext();
-  const { value: userID } = useUserIDContext();
+  const userID = useUserIDContext();
 
   return (
     <>

@@ -14,7 +14,7 @@ function usePlayerLeftRoom() {
     connectedToRoom,
     leaveRoom,
   } = useRoomContext();
-  const { value: userID } = useUserIDContext();
+  const userID = useUserIDContext();
 
   const updateRoomInDatabase = trpc.rooms.updateRoomConfig.useMutation();
 

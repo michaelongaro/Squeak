@@ -21,7 +21,7 @@ interface IFilteredStats {
 }
 
 function Stats() {
-  const { value: userID } = useUserIDContext();
+  const userID = useUserIDContext();
 
   const { data: userStats } = trpc.stats.getStatsByID.useQuery(userID);
 

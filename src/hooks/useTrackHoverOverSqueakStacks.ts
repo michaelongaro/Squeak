@@ -5,7 +5,7 @@ import { useRoomContext } from "../context/RoomContext";
 function useTrackHoverOverSqueakStacks() {
   const { originIndexForHeldSqueakCard, setHoveredSqueakStack } =
     useRoomContext();
-  const { value: userID } = useUserIDContext();
+  const userID = useUserIDContext();
 
   useEffect(() => {
     // mousemove listener to check which squeak stack is being hovered over

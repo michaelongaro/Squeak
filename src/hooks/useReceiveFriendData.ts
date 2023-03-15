@@ -12,7 +12,7 @@ function useReceiveFriendData() {
     setNewInviteNotification,
   } = useRoomContext();
 
-  const { value: userID } = useUserIDContext();
+  const userID = useUserIDContext();
 
   const [dataFromBackend, setDataFromBackend] =
     useState<IReceiveFriendData | null>(null);

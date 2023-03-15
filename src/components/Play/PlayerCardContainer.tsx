@@ -47,7 +47,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
     setHoveredSqueakStack,
   } = useRoomContext();
   const { mirrorPlayerContainer } = useRoomContext();
-  const { value: userID } = useUserIDContext();
+  const userID = useUserIDContext();
 
   const [hoveringOverDeck, setHoveringOverDeck] = useState(false);
 

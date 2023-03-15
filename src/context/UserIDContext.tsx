@@ -2,11 +2,7 @@ import cryptoRandomString from "crypto-random-string";
 import { useSession } from "next-auth/react";
 import { createContext, useContext, useState, useEffect } from "react";
 
-interface IUserIDContext {
-  value: string;
-}
-
-const UserIDContext = createContext<IUserIDContext | null>(null);
+const UserIDContext = createContext<string | null>(null);
 
 export function UserIDProvider(props: { children: React.ReactNode }) {
   const { data: session, status } = useSession();
@@ -33,12 +29,8 @@ export function UserIDProvider(props: { children: React.ReactNode }) {
     }
   }, [status, session]);
 
-  const context: IUserIDContext = {
-    value,
-  };
-
   return (
-    <UserIDContext.Provider value={context}>
+    <UserIDContext.Provider value={value}>
       {props.children}
     </UserIDContext.Provider>
   );

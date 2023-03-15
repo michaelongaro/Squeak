@@ -63,7 +63,7 @@ function Card({
     setSqueakDeckBeingMovedProgramatically,
     setHoldingASqueakCard,
   } = useRoomContext();
-  const { value: userID } = useUserIDContext();
+  const userID = useUserIDContext();
 
   const [cardOffsetPosition, setCardOffsetPosition] = useState({ x: 0, y: 0 });
   const [manuallyShowCardFront, setManuallyShowCardFront] = useState(false);

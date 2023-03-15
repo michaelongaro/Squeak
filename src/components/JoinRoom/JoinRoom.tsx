@@ -32,7 +32,7 @@ function JoinRoom() {
     setPageToRender,
     leaveRoom,
   } = useRoomContext();
-  const { value: userID } = useUserIDContext();
+  const userID = useUserIDContext();
   const { data: session, status } = useSession();
 
   const [roomCode, setRoomCode] = useState<string>("");

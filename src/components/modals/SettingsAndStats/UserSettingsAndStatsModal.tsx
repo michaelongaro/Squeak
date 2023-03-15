@@ -40,7 +40,7 @@ function UserSettingsAndStatsModal({
     connectedToRoom,
     setMirrorPlayerContainer,
   } = useRoomContext();
-  const { value: userID } = useUserIDContext();
+  const userID = useUserIDContext();
 
   const utils = trpc.useContext();
   const { data: user } = trpc.users.getUserByID.useQuery(userID);

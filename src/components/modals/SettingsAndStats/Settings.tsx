@@ -32,7 +32,7 @@ function Settings({
   usernameIsProfane,
   setUsernameIsProfane,
 }: ISettings) {
-  const { value: userID } = useUserIDContext();
+  const userID = useUserIDContext();
 
   const [focusedInInput, setFocusedInInput] = useState<boolean>(false);
 

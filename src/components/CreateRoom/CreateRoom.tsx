@@ -43,7 +43,7 @@ function CreateRoom() {
     setPageToRender,
     leaveRoom,
   } = useRoomContext();
-  const { value: userID } = useUserIDContext();
+  const userID = useUserIDContext();
   const { data: session, status } = useSession();
 
   const createRoomInDatabase = trpc.rooms.createRoom.useMutation();

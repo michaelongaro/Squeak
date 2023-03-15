@@ -46,7 +46,7 @@ function OtherPlayersCardContainers({
     setSoundPlayStates,
     currentVolume,
   } = useRoomContext();
-  const { value: userID } = useUserIDContext();
+  const userID = useUserIDContext();
 
   const otherPlayerIDs = Object.keys(gameData.players).filter(
     (playerID) => playerID !== userID

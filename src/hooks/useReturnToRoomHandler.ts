@@ -13,7 +13,7 @@ function useReturnToRoomHandler() {
     setPlayerMetadata,
     setGameData,
   } = useRoomContext();
-  const { value: userID } = useUserIDContext();
+  const userID = useUserIDContext();
   const updateRoomInDatabase = trpc.rooms.updateRoomConfig.useMutation();
 
   const [dataFromBackend, setDataFromBackend] =

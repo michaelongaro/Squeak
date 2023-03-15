@@ -13,7 +13,7 @@ function useScoreboardData() {
     setScoreboardMetadata,
   } = useRoomContext();
 
-  const { value: userID } = useUserIDContext();
+  const userID = useUserIDContext();
 
   const [dataFromBackend, setDataFromBackend] =
     useState<IScoreboardMetadata | null>(null);

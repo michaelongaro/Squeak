@@ -112,7 +112,7 @@ const RoomContext = createContext<IRoomContext | null>(null);
 
 export function RoomProvider(props: { children: React.ReactNode }) {
   const { data: session, status } = useSession();
-  const { value: userID } = useUserIDContext();
+  const userID = useUserIDContext();
 
   // probably want to remove the default "refetch on page focus" behavior
   const { data: user } = trpc.users.getUserByID.useQuery(userID);

@@ -13,7 +13,7 @@ const filter = new Filter();
 function PublicRooms() {
   const { setRoomConfig, playerMetadata, connectedToRoom, setConnectedToRoom } =
     useRoomContext();
-  const { value: userID } = useUserIDContext();
+  const userID = useUserIDContext();
   const { data: publicRooms, refetch } =
     trpc.rooms.getAllAvailableRooms.useQuery(undefined, {
       refetchInterval: 30000,

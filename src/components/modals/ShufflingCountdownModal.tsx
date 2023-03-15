@@ -16,7 +16,7 @@ function ShufflingCountdownModal() {
     setPlayerIDToStartNextRound,
     setShowShufflingCountdown,
   } = useRoomContext();
-  const { value: userID } = useUserIDContext();
+  const userID = useUserIDContext();
 
   const [timersInitiated, setTimersInitiated] = useState<boolean>(false);
   const [countdownTimerValue, setCountdownTimerValue] = useState<number>(5); //3

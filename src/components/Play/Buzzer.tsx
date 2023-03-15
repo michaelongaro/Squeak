@@ -16,7 +16,7 @@ function Buzzer({ playerID, roomCode, interactive }: IBuzzer) {
   const { currentVolume, playerMetadata, playerIDWhoSqueaked } =
     useRoomContext();
 
-  const { value: userID } = useUserIDContext();
+  const userID = useUserIDContext();
 
   const [hoveringOnButton, setHoveringOnButton] = useState<boolean>(false);
   const [mouseDownOnButton, setMouseDownOnButton] = useState<boolean>(false);

@@ -45,7 +45,7 @@ function PickerTooltip({
   const setPlayerMetadata = setLocalPlayerMetadata || ctxSetPlayerMetadata;
   const connectedToRoom = localPlayerMetadata ? false : ctxConnectedToRoom;
 
-  const { value: userID } = useUserIDContext();
+  const userID = useUserIDContext();
 
   const [showTooltip, setShowTooltip] = useState<boolean>(false);
   const [hoveredTooltip, setHoveredTooltip] = useState<
