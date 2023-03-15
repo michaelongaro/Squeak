@@ -47,7 +47,7 @@ export function UserIDProvider(props: { children: React.ReactNode }) {
 export function useUserIDContext() {
   const context = useContext(UserIDContext);
   if (context === null) {
-    throw new Error("useUserIDContext must be used within a RoomProvider");
+    throw new Error("useUserIDContext must be used within a UserIDProvider");
   }
   return context;
 }
