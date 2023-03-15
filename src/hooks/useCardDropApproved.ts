@@ -116,8 +116,8 @@ function useCardDropApproved({
           // entirely from rotation of 0, but this mostly does the trick.
           if (endID.includes("cell")) {
             if (rotation === 0) {
-              endX += 4;
-              endY += 4;
+              endX += 2;
+              endY += 9;
             } else if (rotation === 90) {
               endX -= 8;
               endY += 14;
