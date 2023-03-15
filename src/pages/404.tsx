@@ -4,7 +4,7 @@ import PrimaryButton from "../components/Buttons/PrimaryButton";
 
 function Custom404() {
   return (
-    <div className="baseVertFlex min-h-[100vh] w-[100vw]">
+    <div className="baseVertFlex min-h-[100dvh] w-[100vw]">
       <div
         style={{
           color: "hsl(120, 100%, 86%)",

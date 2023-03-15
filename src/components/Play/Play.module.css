@@ -1,6 +1,6 @@
 .fullBoardGrid {
   width: 100vw;
-  height: 100vh;
+  height: 100dvh;
   display: grid;
   overflow: hidden;
   grid-template-rows: 0.25fr 0.5fr 0.25fr;

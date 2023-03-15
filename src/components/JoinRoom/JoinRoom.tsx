@@ -137,7 +137,7 @@ function JoinRoom() {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.15 }}
-      className="baseVertFlex relative min-h-[100vh]"
+      className="baseVertFlex relative min-h-[100dvh]"
     >
       <div className="baseVertFlex relative gap-2 ">
         <div className="absolute top-0 left-0">

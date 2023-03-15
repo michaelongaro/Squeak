@@ -54,7 +54,7 @@ function MainOptions() {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.15 }}
-      className="baseFlex relative min-h-[100vh]"
+      className="baseFlex relative min-h-[100dvh]"
     >
       {status !== "loading" && (
         <div className="baseVertFlex w-[18rem] rounded-md border-2 border-white bg-green-800 p-4 shadow-lg lg:w-[22.25rem] lg:p-8">

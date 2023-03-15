@@ -14,7 +14,7 @@ function MobileWarningModal({ setShowModal }: IMobileWarningModal) {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.15 }}
-      className="baseFlex fixed top-0 left-0 z-[9999] min-h-[100vh] min-w-[100vw] bg-black/50 transition-all"
+      className="baseFlex fixed top-0 left-0 z-[9999] min-h-[100dvh] min-w-[100vw] bg-black/50 transition-all"
     >
       <motion.div
         key={"mobileWarningModalInner"}
