@@ -358,7 +358,7 @@ function Scoreboard() {
                 opacity: showWinningPlayerMessage ? 1 : 0,
                 pointerEvents: showWinningPlayerMessage ? "auto" : "none",
                 backgroundColor:
-                  playerColorVariants[scoreboardMetadata.roundWinnerID!]
+                  playerColorVariants[scoreboardMetadata.roundWinnerID]
                     ?.baseColor ?? "black",
               }}
               className="baseFlex gap-4 rounded-md p-4 transition-all"
@@ -377,14 +377,13 @@ function Scoreboard() {
                 alt={"left celebratory confetti cannon"}
               />
 
-              {/* remove "!"s when using actual hook */}
               <PlayerIcon
                 avatarPath={
-                  playerMetadata[scoreboardMetadata.roundWinnerID!]
+                  playerMetadata[scoreboardMetadata.roundWinnerID]
                     ?.avatarPath ?? "/avatars/rabbit.svg"
                 }
                 borderColor={
-                  playerMetadata[scoreboardMetadata.roundWinnerID!]?.color ??
+                  playerMetadata[scoreboardMetadata.roundWinnerID]?.color ??
                   "hsl(352deg, 69%, 61%)"
                 }
                 size={"3rem"}
@@ -392,12 +391,14 @@ function Scoreboard() {
               <div
                 style={{
                   color:
-                    playerColorVariants[scoreboardMetadata.roundWinnerID!]
+                    playerColorVariants[scoreboardMetadata.roundWinnerID]
                       ?.textColor ?? "black",
                 }}
                 className="text-xl"
               >
-                {playerMetadata[scoreboardMetadata.roundWinnerID!]?.username}
+                {scoreboardMetadata.gameWinnerID
+                  ? playerMetadata[scoreboardMetadata.gameWinnerID]?.username
+                  : playerMetadata[scoreboardMetadata.roundWinnerID]?.username}
                 {` won the ${
                   scoreboardMetadata.gameWinnerID ? "game" : "round"
                 }!`}
