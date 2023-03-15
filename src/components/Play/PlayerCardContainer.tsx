@@ -346,6 +346,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
               onClick={() => {
                 if (drawingFromDeck) return;
 
+                setHoldingADeckCard(false);
                 setDrawingFromDeck(true);
 
                 setTimeout(() => {
