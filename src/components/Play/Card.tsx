@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useRef, useCallback } from "react";
 import React from "react";
 import Draggable, {
   type DraggableData,
@@ -48,7 +48,6 @@ function Card({
   const {
     gameData,
     roomConfig,
-    playerMetadata,
     hoveredCell,
     holdingADeckCard,
     holdingASqueakCard,
@@ -69,24 +68,8 @@ function Card({
   const [cardOffsetPosition, setCardOffsetPosition] = useState({ x: 0, y: 0 });
   const [manuallyShowCardFront, setManuallyShowCardFront] = useState(false);
 
-  // // set to -1 to know whether it has been initialized yet, since 0 is a valid value.
-  // const [hueRotationDegrees, setHueRotationDegrees] = useState<number>(-1);
-
   const cardRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
-
-  // useEffect(() => {
-  //   const ownerMetadata = ownerID ? playerMetadata[ownerID] : undefined;
-
-  //   if (hueRotation) {
-  //     setHueRotationDegrees(hueRotation);
-  //   } else if (ownerMetadata) {
-  //     setHueRotationDegrees(ownerMetadata.deckHueRotation);
-  //   }
-  //   // else {
-  //   //   setHueRotationDegrees(0);
-  //   // }
-  // }, [hueRotation, ownerID, playerMetadata]);
 
   const moveCard = useCallback(
     (
