@@ -23,7 +23,6 @@ function PrimaryButton({
   iconOnLeft,
   onClickFunction,
 }: IPrimaryButton) {
-  const [hoveringOnButton, setHoveringOnButton] = useState<boolean>(false);
   const [brightness, setBrightness] = useState<number>(1);
   const [showLoadingSpinner, setShowLoadingSpinner] = useState<boolean>(false);
   const [tempDisabled, setTempDisabled] = useState<boolean>(false);
@@ -42,11 +41,9 @@ function PrimaryButton({
       }}
       className="baseFlex relative gap-2 rounded-md transition-all"
       onMouseEnter={() => {
-        setHoveringOnButton(true);
         setBrightness(0.9);
       }}
       onMouseLeave={() => {
-        setHoveringOnButton(false);
         setBrightness(1);
       }}
       onMouseDown={() => setBrightness(0.75)}
