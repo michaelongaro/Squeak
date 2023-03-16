@@ -33,12 +33,8 @@ export function leaveRoomHandler(
     // per player who called it
     if (!room.players[playerID]) return;
 
-    // remove player from room
-    delete room.players[playerID];
-    room.roomConfig.playersInRoom--;
-
     if (game) {
-      // remove player from game
+      // extra precaution to make sure playerID isn't added to array more than once
       if (game.playerIDsThatLeftMidgame.includes(playerID)) return;
       game.playerIDsThatLeftMidgame.push(playerID);
     }
