@@ -23,7 +23,6 @@ function DangerButton({
   innerTooltipText,
   forFriendsList,
   setShowingDeleteFriendConfirmationModal,
-  showLoadingSpinnerOnClick = false,
   hoverTooltipText,
   width,
   height,
@@ -33,9 +32,7 @@ function DangerButton({
 }: IDangerButton) {
   const [hoveringOnButton, setHoveringOnButton] = useState<boolean>(false);
   const [brightness, setBrightness] = useState<number>(1);
-  const [showLoadingSpinner, setShowLoadingSpinner] = useState<boolean>(false);
   const [showTooltip, setShowTooltip] = useState<boolean>(false);
-  const [tempDisabled, setTempDisabled] = useState<boolean>(false);
 
   return (
     <button
@@ -74,19 +71,6 @@ function DangerButton({
         }
       }}
       onClick={() => {
-        // if (showLoadingSpinnerOnClick) {
-        //   setShowLoadingSpinner(true);
-        //   setTempDisabled(true);
-
-        //   setTimeout(() => {
-        //     setShowLoadingSpinner(false);
-        //     setTempDisabled(false);
-        //     onClickFunction?.();
-        //   }, 1500);
-        // } else {
-        //   onClickFunction?.();
-        // }
-
         if (innerTooltipText && !showTooltip) {
           setShowTooltip(true);
 
@@ -143,35 +127,10 @@ function DangerButton({
 
       {/* do you need to gate on !innerTooltipText below? */}
       {!innerTooltipText && innerText}
-      {!showLoadingSpinner && icon}
-      {showLoadingSpinner && (
-        <div
-          style={{
-            width: "1.5rem",
-            height: "1.5rem",
-            borderTop: `0.35rem solid hsla(120deg, 100%, ${
-              hoveringOnButton ? "18%" : "86%"
-            }, 40%)`,
-            borderRight: `0.35rem solid hsla(120deg, 100%, ${
-              hoveringOnButton ? "18%" : "86%"
-            }, 40%)`,
-            borderBottom: `0.35rem solid hsla(120deg, 100%, ${
-              hoveringOnButton ? "18%" : "86%"
-            }, 40%)`,
-            borderLeft: `0.35rem solid hsl(120deg 100% ${
-              hoveringOnButton ? "18%" : "86%"
-            })`,
-          }}
-          className="loadingSpinner"
-        ></div>
-      )}
+      {icon}
 
       {hoverTooltipText && !showTooltip && (
         <div
-          // shouldn't this be below styles? test it
-          // top: "50%",
-          //         left: "50%",
-          //         transform: "translate(-50%, -50%)",
           style={{
             position: "absolute",
             top: forFriendsList ? "2.25rem" : "100%",
