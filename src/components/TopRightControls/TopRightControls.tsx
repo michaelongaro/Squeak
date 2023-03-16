@@ -1,5 +1,5 @@
+import { useState } from "react";
 import { useSession } from "next-auth/react";
-import React from "react";
 import { useRoomContext } from "../../context/RoomContext";
 import SecondaryButton from "../Buttons/SecondaryButton";
 import UserSettingsAndStatsModal from "../modals/SettingsAndStats/UserSettingsAndStatsModal";
@@ -22,9 +22,7 @@ function TopRightControls({ forPlayScreen }: ITopRightControls) {
     leaveRoom,
     newInviteNotification,
   } = useRoomContext();
-  const [showFriendsList, setShowFriendsList] = React.useState<boolean>(false);
-
-  // volume state
+  const [showFriendsList, setShowFriendsList] = useState<boolean>(false);
 
   return (
     <div
