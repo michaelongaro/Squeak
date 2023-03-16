@@ -196,6 +196,7 @@ function SecondaryButton({
             })`,
           }}
           className="loadingSpinner"
+          data-testid="loadingSpinner"
         ></div>
       )}
 
