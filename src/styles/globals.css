@@ -122,11 +122,6 @@ legend {
   }
 }
 
-.errorAnimation {
-  /* animation: errorAnimation 0.55s linear infinite; */
-  /* animation-play-state: paused; */
-}
-
 @keyframes errorAnimation {
   0% {
     transform: translate(0px);
@@ -150,5 +145,33 @@ legend {
 
   100% {
     transform: translate(0px);
+  }
+}
+
+@keyframes regularCardDropShadow {
+  0% {
+    filter: drop-shadow(0px 0px 4px rgba(0, 0, 0, 0));
+  }
+
+  50% {
+    filter: drop-shadow(10px 10px 4px rgba(0, 0, 0, 0.25));
+  }
+
+  100% {
+    filter: drop-shadow(0px 0px 4px rgba(0, 0, 0, 0));
+  }
+}
+
+@keyframes shallowCardDropShadow {
+  0% {
+    filter: drop-shadow(0px 0px 4px rgba(0, 0, 0, 0));
+  }
+
+  50% {
+    filter: drop-shadow(5px 5px 4px rgba(0, 0, 0, 0.15));
+  }
+
+  100% {
+    filter: drop-shadow(0px 0px 4px rgba(0, 0, 0, 0));
   }
 }

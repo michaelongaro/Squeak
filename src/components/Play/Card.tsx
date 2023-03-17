@@ -466,18 +466,30 @@ function Card({
           <div
             ref={cardRef}
             style={{
+              animation:
+                ownerID !== userID &&
+                (cardOffsetPosition.x !== 0 ||
+                  cardOffsetPosition.y !== 0 ||
+                  inMovingSqueakStack)
+                  ? origin === "hand" || origin === "squeakHand"
+                    ? "regularCardDropShadow 0.3s linear"
+                    : origin === "deck" || origin === "squeakDeck"
+                    ? "shallowCardDropShadow 0.3s linear"
+                    : "none"
+                  : "none",
               filter:
-                cardOffsetPosition.x !== 0 ||
-                cardOffsetPosition.y !== 0 ||
-                inMovingSqueakStack
+                ownerID === userID &&
+                (cardOffsetPosition.x !== 0 ||
+                  cardOffsetPosition.y !== 0 ||
+                  inMovingSqueakStack)
                   ? origin === "hand" || origin === "squeakHand"
                     ? `drop-shadow(10px 10px 4px rgba(0, 0, 0, ${
                         inMovingSqueakStack ? 0.1 : 0.25
                       }))`
                     : origin === "deck" || origin === "squeakDeck"
                     ? "drop-shadow(5px 5px 4px rgba(0, 0, 0, 0.15))"
-                    : "none"
-                  : "none",
+                    : "drop-shadow(0px 0px 4px rgba(0, 0, 0, 0))"
+                  : "drop-shadow(0px 0px 4px rgba(0, 0, 0, 0))",
               transition:
                 squeakStackLocation &&
                 heldSqueakStackLocation &&
@@ -487,8 +499,10 @@ function Card({
                   squeakStackLocation[1] &&
                 heldSqueakStackLocation.location.x === 0 &&
                 heldSqueakStackLocation.location.y === 0
-                  ? "transform 300ms linear filter 150ms linear"
-                  : `filter 100ms linear`,
+                  ? "transform 300ms linear filter 300ms linear"
+                  : ownerID === userID
+                  ? `filter 300ms linear`
+                  : "none",
             }}
             className={`baseFlex relative z-[500] h-full w-full select-none !items-start ${
               draggable && "cursor-grab hover:active:cursor-grabbing"
