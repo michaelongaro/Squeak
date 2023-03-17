@@ -154,7 +154,6 @@ function getReachableCardsFromDeck(player: IPlayerCards): ICard[] {
       tempIdx = deck.length - 1;
     }
   }
-  // console.dir(availCards, { maxArrayLength: null });
 
   return availCards;
 }
