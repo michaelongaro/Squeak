@@ -491,15 +491,10 @@ function Card({
                     : "drop-shadow(0px 0px 4px rgba(0, 0, 0, 0))"
                   : "drop-shadow(0px 0px 4px rgba(0, 0, 0, 0))",
               transition:
-                squeakStackLocation &&
-                heldSqueakStackLocation &&
-                heldSqueakStackLocation.squeakStack[0] ===
-                  squeakStackLocation[0] &&
-                heldSqueakStackLocation.squeakStack[1] <
-                  squeakStackLocation[1] &&
-                heldSqueakStackLocation.location.x === 0 &&
-                heldSqueakStackLocation.location.y === 0
-                  ? "transform 300ms linear filter 300ms linear"
+                inMovingSqueakStack &&
+                heldSqueakStackLocation?.location.x === 0 &&
+                heldSqueakStackLocation?.location.y === 0
+                  ? "transform 300ms linear, filter 300ms linear"
                   : ownerID === userID
                   ? `filter 300ms linear`
                   : "none",
