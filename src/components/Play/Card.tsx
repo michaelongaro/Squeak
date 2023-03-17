@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import React from "react";
 import Draggable, {
   type DraggableData,
@@ -21,7 +21,7 @@ interface ICardComponent {
   suit?: string;
   showCardBack?: boolean;
   draggable: boolean;
-  origin?: "deck" | "hand" | "squeak";
+  origin?: "deck" | "hand" | "squeakHand" | "squeakDeck";
   ownerID?: string;
   startID?: string;
   squeakStackLocation?: [number, number];
@@ -67,9 +67,20 @@ function Card({
 
   const [cardOffsetPosition, setCardOffsetPosition] = useState({ x: 0, y: 0 });
   const [manuallyShowCardFront, setManuallyShowCardFront] = useState(false);
+  const [inMovingSqueakStack, setInMovingSqueakStack] = useState(false);
 
   const cardRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
+
+  useEffect(() => {
+    setInMovingSqueakStack(
+      (squeakStackLocation &&
+        heldSqueakStackLocation &&
+        heldSqueakStackLocation.squeakStack[0] === squeakStackLocation[0] &&
+        heldSqueakStackLocation.squeakStack[1] < squeakStackLocation[1]) ??
+        false
+    );
+  }, [heldSqueakStackLocation, squeakStackLocation]);
 
   const moveCard = useCallback(
     (
@@ -98,7 +109,7 @@ function Card({
           });
         }
 
-        if (origin === "squeak" && ownerID) {
+        if (origin === "squeakDeck" && ownerID) {
           setSqueakDeckBeingMovedProgramatically({
             ...squeakDeckBeingMovedProgramatically,
             [ownerID]: false,
@@ -126,7 +137,7 @@ function Card({
         });
       }
 
-      if (origin === "squeak" && ownerID) {
+      if (origin === "squeakDeck" && ownerID) {
         setSqueakDeckBeingMovedProgramatically({
           ...squeakDeckBeingMovedProgramatically,
           [ownerID]: true,
@@ -250,7 +261,7 @@ function Card({
 
       if (origin === "hand" && ownerID === userID) {
         setHoldingADeckCard(false);
-      } else if (origin === "squeak" && ownerID === userID) {
+      } else if (origin === "squeakDeck" && ownerID === userID) {
         setHoldingASqueakCard(false);
       }
     },
@@ -295,7 +306,6 @@ function Card({
     suit,
     userID,
     ownerID,
-    origin,
     rotation,
     moveCard,
   });
@@ -447,12 +457,8 @@ function Card({
           disabled={!draggable}
           onDrag={(e, data) => dragHandler(e, data)}
           position={
-            // TODO: extract this to a state w/ an effect listener and/or refactor this
-            squeakStackLocation &&
-            heldSqueakStackLocation &&
-            heldSqueakStackLocation.squeakStack[0] === squeakStackLocation[0] &&
-            heldSqueakStackLocation.squeakStack[1] < squeakStackLocation[1]
-              ? heldSqueakStackLocation.location
+            inMovingSqueakStack
+              ? heldSqueakStackLocation?.location
               : cardOffsetPosition
           }
           onStop={() => dropHandler()}
@@ -460,6 +466,18 @@ function Card({
           <div
             ref={cardRef}
             style={{
+              filter:
+                cardOffsetPosition.x !== 0 ||
+                cardOffsetPosition.y !== 0 ||
+                inMovingSqueakStack
+                  ? origin === "hand" || origin === "squeakHand"
+                    ? `drop-shadow(10px 10px 4px rgba(0, 0, 0, ${
+                        inMovingSqueakStack ? 0.1 : 0.25
+                      }))`
+                    : origin === "deck" || origin === "squeakDeck"
+                    ? "drop-shadow(5px 5px 4px rgba(0, 0, 0, 0.15))"
+                    : "none"
+                  : "none",
               transition:
                 squeakStackLocation &&
                 heldSqueakStackLocation &&
@@ -469,8 +487,8 @@ function Card({
                   squeakStackLocation[1] &&
                 heldSqueakStackLocation.location.x === 0 &&
                 heldSqueakStackLocation.location.y === 0
-                  ? "transform 300ms linear"
-                  : "none",
+                  ? "transform 300ms linear filter 150ms linear"
+                  : `filter 100ms linear`,
             }}
             className={`baseFlex relative z-[500] h-full w-full select-none !items-start ${
               draggable && "cursor-grab hover:active:cursor-grabbing"
