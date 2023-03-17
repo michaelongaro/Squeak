@@ -175,7 +175,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                       value={card.value}
                       suit={card.suit}
                       draggable={true}
-                      origin={"squeak"}
+                      origin={"squeakHand"}
                       squeakStackLocation={[cardsIdx, cardIdx]}
                       // implement this functionality in a refactor later
                       // offsetSqueakStackHeight={
@@ -248,7 +248,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                       ownerID={userID}
                       hueRotation={playerMetadata[userID]?.deckHueRotation || 0}
                       startID={`${userID}squeakDeck`}
-                      origin={"squeak"}
+                      origin={"squeakDeck"}
                       rotation={0}
                     />
                   </div>

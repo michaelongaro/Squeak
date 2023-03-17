@@ -182,7 +182,7 @@ function OtherPlayersCardContainers({
                         value={card.value}
                         suit={card.suit}
                         draggable={false}
-                        origin={"squeak"}
+                        origin={"squeakHand"}
                         ownerID={playerID}
                         hueRotation={
                           playerMetadata[playerID]?.deckHueRotation || 0
@@ -261,7 +261,7 @@ function OtherPlayersCardContainers({
                             playerMetadata[playerID]?.deckHueRotation || 0
                           }
                           startID={`${playerID}squeakDeck`}
-                          origin={"squeak"}
+                          origin={"squeakDeck"}
                           rotation={rotationOrder[idx] as number}
                         />
                       </div>
