@@ -250,7 +250,7 @@ function JoinRoom() {
             <div
               style={{
                 animation: showAnimation
-                  ? "errorAnimation 0.55s linear"
+                  ? "errorAnimation 0.65s linear"
                   : "none",
               }}
               className="baseFlex relative h-full w-full"
