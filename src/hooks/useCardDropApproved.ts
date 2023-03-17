@@ -18,7 +18,6 @@ interface IUseCardDropApproved {
   ownerID?: string;
   userID: string | null;
   rotation: number;
-  origin?: "deck" | "hand" | "squeak";
   moveCard: (
     { x, y }: { x: number; y: number },
     flip: boolean,
@@ -32,7 +31,6 @@ function useCardDropApproved({
   suit,
   ownerID,
   userID,
-  origin,
   rotation,
   moveCard,
 }: IUseCardDropApproved) {
@@ -183,7 +181,6 @@ function useCardDropApproved({
     suit,
     ownerID,
     value,
-    origin,
     rotation,
     userID,
   ]);
