@@ -103,8 +103,13 @@ function OtherPlayerIcons() {
           ref={topPlayerIconRef}
           style={{
             ...absolutePositioning[0],
+            opacity: gameData.playerIDsThatLeftMidgame.includes(
+              otherPlayerIDs[0]
+            )
+              ? 0.25
+              : 1,
           }}
-          className="absolute"
+          className="absolute transition-opacity"
         >
           <PlayerIcon
             avatarPath={
@@ -125,8 +130,13 @@ function OtherPlayerIcons() {
         <div
           style={{
             ...absolutePositioning[1],
+            opacity: gameData.playerIDsThatLeftMidgame.includes(
+              otherPlayerIDs[1]
+            )
+              ? 0.25
+              : 1,
           }}
-          className="absolute"
+          className="absolute transition-opacity"
         >
           <PlayerIcon
             avatarPath={
@@ -148,8 +158,13 @@ function OtherPlayerIcons() {
           ref={rightPlayerIconRef}
           style={{
             ...absolutePositioning[2],
+            opacity: gameData.playerIDsThatLeftMidgame.includes(
+              otherPlayerIDs[2]
+            )
+              ? 0.25
+              : 1,
           }}
-          className="absolute"
+          className="absolute transition-opacity"
         >
           <PlayerIcon
             avatarPath={
