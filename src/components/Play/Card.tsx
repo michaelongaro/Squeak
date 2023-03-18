@@ -102,7 +102,7 @@ function Card({
         imageRef.current.style.transition = "none";
         imageRef.current.style.zIndex = "500";
 
-        if (origin === "hand" && ownerID) {
+        if ((origin === "hand" || origin === "squeakHand") && ownerID) {
           setCardBeingMovedProgramatically({
             ...cardBeingMovedProgramatically,
             [ownerID]: false,
@@ -130,7 +130,7 @@ function Card({
         }
       }
 
-      if (origin === "hand" && ownerID) {
+      if ((origin === "hand" || origin === "squeakHand") && ownerID) {
         setCardBeingMovedProgramatically({
           ...cardBeingMovedProgramatically,
           [ownerID]: true,
@@ -144,11 +144,15 @@ function Card({
         });
       }
 
-      // make sure card stays on top, but below shuffling modal while moving over other cards
       cardRef.current.style.transition = "all 300ms linear";
-      cardRef.current.style.zIndex = "998";
       imageRef.current.style.transition = "transform 150ms linear";
-      imageRef.current.style.zIndex = "998";
+
+      // workaround to have cards played on board from squeak stacks stay above all
+      // other cards
+      if (squeakStackLocation && !flip) {
+        cardRef.current.style.zIndex = "998";
+        imageRef.current.style.zIndex = "998";
+      }
 
       const currentImageTransform = imageRef.current.style.transform;
 
