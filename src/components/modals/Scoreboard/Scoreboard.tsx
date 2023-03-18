@@ -316,7 +316,7 @@ function Scoreboard() {
                           playerColorVariants[player.playerID]?.textColor ??
                           "black",
                       }}
-                      className="baseFlex w-full gap-2 rounded-b-md p-2"
+                      className="grid w-full grid-cols-1 items-center justify-items-center gap-2 rounded-b-md p-2"
                     >
                       <AnimatePresence mode={"wait"}>
                         {showNewRankings && (
@@ -326,7 +326,7 @@ function Scoreboard() {
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             transition={{ duration: 0.15 }}
-                            className="font-semibold"
+                            className="col-start-1 row-start-1 font-semibold"
                           >
                             {ranking[player.newRanking]}
                           </motion.div>
@@ -340,7 +340,7 @@ function Scoreboard() {
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             transition={{ duration: 0.15 }}
-                            className="font-semibold"
+                            className="col-start-1 row-start-1 font-semibold"
                           >
                             {ranking[player.oldRanking] ?? "-"}
                           </motion.div>
@@ -379,20 +379,29 @@ function Scoreboard() {
 
               <PlayerIcon
                 avatarPath={
-                  playerMetadata[scoreboardMetadata.roundWinnerID]
-                    ?.avatarPath ?? "/avatars/rabbit.svg"
+                  playerMetadata[
+                    scoreboardMetadata.gameWinnerID
+                      ? scoreboardMetadata.gameWinnerID
+                      : scoreboardMetadata.roundWinnerID
+                  ]?.avatarPath ?? "/avatars/rabbit.svg"
                 }
                 borderColor={
-                  playerMetadata[scoreboardMetadata.roundWinnerID]?.color ??
-                  "hsl(352deg, 69%, 61%)"
+                  playerMetadata[
+                    scoreboardMetadata.gameWinnerID
+                      ? scoreboardMetadata.gameWinnerID
+                      : scoreboardMetadata.roundWinnerID
+                  ]?.color ?? "hsl(352deg, 69%, 61%)"
                 }
                 size={"3rem"}
               />
               <div
                 style={{
                   color:
-                    playerColorVariants[scoreboardMetadata.roundWinnerID]
-                      ?.textColor ?? "black",
+                    playerColorVariants[
+                      scoreboardMetadata.gameWinnerID
+                        ? scoreboardMetadata.gameWinnerID
+                        : scoreboardMetadata.roundWinnerID
+                    ]?.textColor ?? "black",
                 }}
                 className="text-xl"
               >
@@ -403,6 +412,7 @@ function Scoreboard() {
                   scoreboardMetadata.gameWinnerID ? "game" : "round"
                 }!`}
               </div>
+
               {/* right confetti cannon */}
               <Image
                 style={{
