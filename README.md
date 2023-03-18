@@ -2,7 +2,7 @@
 
 https://user-images.githubusercontent.com/35980684/226094702-9f1192a9-c957-4c45-9b6a-4e65732e2510.mp4
 
-<br>
+<br><br>
 Visit the live site: [Squeak](https://playsqueak.com/).
 
 ## Description
