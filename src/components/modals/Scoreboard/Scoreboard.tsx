@@ -358,8 +358,11 @@ function Scoreboard() {
                 opacity: showWinningPlayerMessage ? 1 : 0,
                 pointerEvents: showWinningPlayerMessage ? "auto" : "none",
                 backgroundColor:
-                  playerColorVariants[scoreboardMetadata.roundWinnerID]
-                    ?.baseColor ?? "black",
+                  playerColorVariants[
+                    scoreboardMetadata.gameWinnerID
+                      ? scoreboardMetadata.gameWinnerID
+                      : scoreboardMetadata.roundWinnerID
+                  ]?.baseColor ?? "black",
               }}
               className="baseFlex gap-4 rounded-md p-4 transition-all"
             >
