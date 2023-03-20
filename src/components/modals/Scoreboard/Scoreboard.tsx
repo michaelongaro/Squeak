@@ -258,7 +258,8 @@ function Scoreboard() {
                                   ? player.cardsPlayed.length
                                   : 0
                               }
-                              duration={animateCardsPlayedValue ? 1500 : 0}
+                              duration={animateCardsPlayedValue ? 1000 : 0}
+                              order={"asc"}
                               size={18}
                             />
                           </div>
@@ -281,7 +282,8 @@ function Scoreboard() {
                                   ? player.squeakModifier
                                   : 0
                               }
-                              duration={animateSqueakModifierValue ? 1500 : 0}
+                              duration={animateSqueakModifierValue ? 1000 : 0}
+                              order={player.squeakModifier > 0 ? "asc" : "desc"}
                               size={18}
                             />
                           </div>
@@ -294,7 +296,10 @@ function Scoreboard() {
                                 ? player.newScore
                                 : player.oldScore
                             }
-                            duration={animateTotalValue ? 1500 : 0}
+                            duration={animateTotalValue ? 1000 : 0}
+                            order={
+                              player.newScore > player.oldScore ? "asc" : "desc"
+                            }
                             size={22}
                           />
                         </div>
@@ -443,6 +448,7 @@ function Scoreboard() {
               <AnimatedNumber
                 value={countdownTimerValue}
                 duration={1000}
+                order={"desc"}
                 size={20}
               />
             </div>
