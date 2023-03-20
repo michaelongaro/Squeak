@@ -40,13 +40,13 @@ function FriendsList({ setShowFriendsListModal }: IFriendsList) {
   const userID = useUserIDContext();
 
   const { data: friends } = trpc.users.getUsersFromIDList.useQuery(
-    friendData.friendIDs
+    friendData.friendIDs ?? []
   );
   const { data: friendInviteIDs } = trpc.users.getUsersFromIDList.useQuery(
-    friendData.friendInviteIDs
+    friendData.friendInviteIDs ?? []
   );
   const { data: roomInviteIDs } = trpc.users.getUsersFromIDList.useQuery(
-    friendData.roomInviteIDs
+    friendData.roomInviteIDs ?? []
   );
 
   const [
