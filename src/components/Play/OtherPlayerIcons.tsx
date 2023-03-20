@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useLayoutEffect, useRef } from "react";
 import { useRoomContext } from "../../context/RoomContext";
 import { useUserIDContext } from "../../context/UserIDContext";
 import PlayerIcon from "../playerIcons/PlayerIcon";
@@ -6,10 +6,6 @@ import PlayerIcon from "../playerIcons/PlayerIcon";
 function OtherPlayerIcons() {
   const { gameData, playerMetadata } = useRoomContext();
   const userID = useUserIDContext();
-
-  const otherPlayerIDs = Object.keys(gameData.players).filter(
-    (playerID) => playerID !== userID
-  );
 
   // don't need leftPlayerIconRef since it is flows left-to-right already
   // and doesn't need any offset positioning wise.
@@ -33,6 +29,10 @@ function OtherPlayerIcons() {
     setPrevNumPlayersShowingSqueakButton,
   ] = useState<number>(0);
 
+  const otherPlayerIDs = Object.keys(gameData.players).filter(
+    (playerID) => playerID !== userID
+  );
+
   let numPlayersShowingSqueakButton = 0;
 
   for (const id of otherPlayerIDs) {
@@ -41,53 +41,57 @@ function OtherPlayerIcons() {
     }
   }
 
-  useEffect(() => {
+  // probably easier to adj offsets for squeak button based on initial position of
+  // containers, and only recalculate if those values have changed
+  useLayoutEffect(() => {
     if (
       absolutePositioning[0]?.top !== "0px" &&
       prevNumPlayersShowingSqueakButton === numPlayersShowingSqueakButton
     )
       return;
 
-    const tempAbsolutePositioning = [
-      { top: "0px", left: "0px" },
-      { top: "0px", left: "0px" },
-      { top: "0px", left: "0px" },
-    ];
+    setTimeout(() => {
+      const tempAbsolutePositioning = [
+        { top: "0px", left: "0px" },
+        { top: "0px", left: "0px" },
+        { top: "0px", left: "0px" },
+      ];
 
-    for (let i = 0; i < otherPlayerIDs.length; i++) {
-      const playerID = otherPlayerIDs[i];
-      if (!playerID) continue;
+      for (let i = 0; i < otherPlayerIDs.length; i++) {
+        const playerID = otherPlayerIDs[i];
+        if (!playerID) continue;
 
-      const playerContainer = document
-        .getElementById(`${playerID}container`)
-        ?.getBoundingClientRect();
+        const playerContainer = document
+          .getElementById(`${playerID}container`)
+          ?.getBoundingClientRect();
 
-      if (i === 0 && playerContainer) {
-        const topPlayerIconWidth =
-          topPlayerIconRef.current?.getBoundingClientRect().width || 0;
+        if (i === 0 && playerContainer) {
+          const topPlayerIconWidth =
+            topPlayerIconRef.current?.getBoundingClientRect().width || 0;
 
-        tempAbsolutePositioning[0] = {
-          top: `${playerContainer.top + 15}px`,
-          left: `${playerContainer.left - topPlayerIconWidth - 15}px`,
-        };
-      } else if (i === 1 && playerContainer) {
-        tempAbsolutePositioning[1] = {
-          top: `${playerContainer.bottom + 15}px`,
-          left: `${playerContainer.left}px`, // + 15 too ?
-        };
-      } else if (i === 2 && playerContainer) {
-        const rightPlayerIconWidth =
-          rightPlayerIconRef.current?.getBoundingClientRect().width || 0;
+          tempAbsolutePositioning[0] = {
+            top: `${playerContainer.top + 15}px`,
+            left: `${playerContainer.left - topPlayerIconWidth - 15}px`,
+          };
+        } else if (i === 1 && playerContainer) {
+          tempAbsolutePositioning[1] = {
+            top: `${playerContainer.bottom + 15}px`,
+            left: `${playerContainer.left}px`, // + 15 too ?
+          };
+        } else if (i === 2 && playerContainer) {
+          const rightPlayerIconWidth =
+            rightPlayerIconRef.current?.getBoundingClientRect().width || 0;
 
-        tempAbsolutePositioning[2] = {
-          top: `${playerContainer.top - 85}px`,
-          left: `${playerContainer.right - rightPlayerIconWidth - 15}px`,
-        };
+          tempAbsolutePositioning[2] = {
+            top: `${playerContainer.top - 85}px`,
+            left: `${playerContainer.right - rightPlayerIconWidth - 15}px`,
+          };
+        }
       }
-    }
 
-    setAbsolutePositioning(tempAbsolutePositioning);
-    setPrevNumPlayersShowingSqueakButton(numPlayersShowingSqueakButton);
+      setAbsolutePositioning(tempAbsolutePositioning);
+      setPrevNumPlayersShowingSqueakButton(numPlayersShowingSqueakButton);
+    }, 50);
   }, [
     absolutePositioning,
     numPlayersShowingSqueakButton,
