@@ -4,7 +4,7 @@ import {
   type ICard,
 } from "../../../utils/generateDeckAndSqueakCards";
 import { updatePlayerStatsAfterRound } from "../helpers/updatePlayerStatsAfterRound";
-import { type IGameData, type IRoomData, type IRoundOver } from "../socket";
+import { type IGameData, type IRoomData } from "../socket";
 
 export interface IScoreboardMetadata {
   gameWinnerID: string | null;
@@ -30,188 +30,218 @@ export interface IPlayerRankings {
   [playerID: string]: number;
 }
 
+interface IRoundOverBackendVersion {
+  io: Server;
+  gameData: IGameData;
+  roomData: IRoomData;
+  roundWinnerID: string;
+  roomCode: string;
+}
+
 export function roundOverHandler(
   io: Server,
   socket: Socket,
   gameData: IGameData,
   roomData: IRoomData
 ) {
-  function generateAndEmitScoreboard({ roundWinnerID, roomCode }: IRoundOver) {
-    const playerCards = gameData[roomCode]?.players;
-    const pointsToWin = roomData[roomCode]?.roomConfig.pointsToWin;
+  socket.on(
+    "roundOver",
+    ({ playerID, roomCode }: { playerID: string; roomCode: string }) =>
+      generateAndEmitScoreboard({
+        io,
+        gameData,
+        roomData,
+        roundWinnerID: playerID,
+        roomCode,
+      })
+  );
+}
 
-    if (!playerCards || !pointsToWin) return;
+export function generateAndEmitScoreboard({
+  roundWinnerID,
+  roomCode,
+  gameData,
+  roomData,
+  io,
+}: IRoundOverBackendVersion) {
+  const playerCards = gameData[roomCode]?.players;
+  const pointsToWin = roomData[roomCode]?.roomConfig.pointsToWin;
 
-    const playerRoundDetails = {} as IPlayerRoundDetailsMetadata;
+  if (!playerCards || !pointsToWin) return;
 
-    const playerScoresForThisRound: [string, number][] = [];
-    const playerRanksForThisRound = {} as IPlayerRankings;
+  const playerRoundDetails = {} as IPlayerRoundDetailsMetadata;
 
-    // calculate final score for each player from this round
-    for (const playerID of Object.keys(playerCards)) {
-      const player = playerCards[playerID];
+  const playerScoresForThisRound: [string, number][] = [];
+  const playerRanksForThisRound = {} as IPlayerRankings;
 
-      if (!player) return;
+  // calculate final score for each player from this round
+  for (const playerID of Object.keys(playerCards)) {
+    const player = playerCards[playerID];
 
-      const deckCards = player.deck;
-      const squeakDeckCards = player.squeakDeck;
-      const squeakHandCards = player.squeakHand.flat();
+    if (!player) return;
 
-      const cardsPlayed = calculateCardsPlayedDuringRound(
-        deckCards,
-        squeakDeckCards,
-        squeakHandCards
-      );
+    const deckCards = player.deck;
+    const squeakDeckCards = player.squeakDeck;
+    const squeakHandCards = player.squeakHand.flat();
 
-      const squeakModifier =
-        squeakDeckCards.length === 0 ? 10 : squeakDeckCards.length * -1;
+    const cardsPlayed = calculateCardsPlayedDuringRound(
+      deckCards,
+      squeakDeckCards,
+      squeakHandCards
+    );
 
-      playerScoresForThisRound.push([
-        playerID,
-        cardsPlayed.length + squeakModifier,
-      ]);
-    }
+    const squeakModifier =
+      roundWinnerID === playerID ? 10 : squeakDeckCards.length * -1;
 
-    // calculate and store playerRoundDetails for each player
-    for (const playerID of Object.keys(playerCards)) {
-      const player = playerCards[playerID];
+    playerScoresForThisRound.push([
+      playerID,
+      cardsPlayed.length + squeakModifier,
+    ]);
+  }
 
-      if (!player) return;
+  // calculate and store playerRoundDetails for each player
+  for (const playerID of Object.keys(playerCards)) {
+    const player = playerCards[playerID];
 
-      const deckCards = player.deck;
-      const squeakDeckCards = player.squeakDeck;
-      const squeakHandCards = player.squeakHand.flat();
+    if (!player) return;
 
-      const cardsPlayed = calculateCardsPlayedDuringRound(
-        deckCards,
-        squeakDeckCards,
-        squeakHandCards
-      );
+    const deckCards = player.deck;
+    const squeakDeckCards = player.squeakDeck;
+    const squeakHandCards = player.squeakHand.flat();
 
-      const squeakModifier =
-        roundWinnerID === playerID ? 10 : squeakDeckCards.length * -1;
-      const oldScore = player.totalPoints;
-      const newScore = oldScore + cardsPlayed.length + squeakModifier;
-      const oldRanking = player.rankInRoom;
-      const newRanking = oldRanking; // we calculate this value down later once playerRoundDetails is populated
+    const cardsPlayed = calculateCardsPlayedDuringRound(
+      deckCards,
+      squeakDeckCards,
+      squeakHandCards
+    );
 
-      playerRoundDetails[playerID] = {
-        playerID,
-        cardsPlayed,
-        squeakModifier,
-        oldScore,
-        newScore,
-        oldRanking,
-        newRanking,
-      };
-    }
+    const squeakModifier =
+      roundWinnerID === playerID ? 10 : squeakDeckCards.length * -1;
+    const oldScore = player.totalPoints;
+    const newScore = oldScore + cardsPlayed.length + squeakModifier;
+    const oldRanking = player.rankInRoom;
+    const newRanking = oldRanking; // we calculate this value down later once playerRoundDetails is populated
 
-    // calculate new total scores for each player
-    const newPlayerRanks: [string, number][] = [];
+    playerRoundDetails[playerID] = {
+      playerID,
+      cardsPlayed,
+      squeakModifier,
+      oldScore,
+      newScore,
+      oldRanking,
+      newRanking,
+    };
+  }
 
-    for (const playerID of Object.keys(playerCards)) {
-      const player = playerCards[playerID];
+  // calculate new total scores for each player
+  const newPlayerRanks: [string, number][] = [];
 
-      const idx = playerScoresForThisRound.findIndex(
-        (playerRank) => playerRank[0] === playerID
-      );
+  for (const playerID of Object.keys(playerCards)) {
+    const player = playerCards[playerID];
 
-      const currPlayerRoundDetails = playerRoundDetails[playerID];
+    const idx = playerScoresForThisRound.findIndex(
+      (playerRank) => playerRank[0] === playerID
+    );
 
-      const currPlayerScoreForThisRound = playerScoresForThisRound[idx];
+    const currPlayerRoundDetails = playerRoundDetails[playerID];
 
-      if (
-        !player ||
-        !currPlayerRoundDetails ||
-        !currPlayerScoreForThisRound ||
-        !playerScoresForThisRound
-      )
-        return;
-
-      newPlayerRanks.push([
-        playerID,
-        currPlayerRoundDetails.oldScore + currPlayerScoreForThisRound[1],
-      ]);
-    }
-
-    // adding sorted ranks for this round + overall new ranks to playerRoundDetails
-    for (const playerID of Object.keys(playerCards)) {
-      const player = playerCards[playerID];
-
-      if (!player || !playerRoundDetails) return;
-
-      playerRoundDetails[playerID]!.newRanking =
-        newPlayerRanks
-          .sort((a, b) => b[1] - a[1])
-          .findIndex((playerRank) => playerRank[0] === playerID) + 1;
-
-      playerRanksForThisRound[playerID] =
-        playerScoresForThisRound
-          .sort((a, b) => b[1] - a[1])
-          .findIndex((playerRank) => playerRank[0] === playerID) + 1;
-    }
-
-    // updating players in gameData with their new values
-    for (const playerID of Object.keys(playerCards)) {
-      const player = playerCards[playerID];
-
-      if (!player || !playerRoundDetails) return;
-
-      // @ts-expect-error asdf
-      player.totalPoints = playerRoundDetails[playerID].newScore;
-      // @ts-expect-error asdf
-      player.rankInRoom = playerRoundDetails[playerID].newRanking;
-    }
-
-    let gameWinnerID = null;
-
-    let playerWithHighestEndScore: [string, number] | null = null;
-
-    // find player with highest score to determine game winner
-    for (const playerID of Object.keys(playerCards)) {
-      const player = playerCards[playerID];
-
-      if (!player) return;
-
-      if (!playerWithHighestEndScore) {
-        playerWithHighestEndScore = [playerID, player.totalPoints];
-      } else if (player.totalPoints > playerWithHighestEndScore[1]) {
-        playerWithHighestEndScore = [playerID, player.totalPoints];
-      }
-    }
+    const currPlayerScoreForThisRound = playerScoresForThisRound[idx];
 
     if (
-      playerWithHighestEndScore &&
-      playerWithHighestEndScore[1] >= pointsToWin
-    ) {
-      gameWinnerID = playerWithHighestEndScore[0];
-    }
+      !player ||
+      !currPlayerRoundDetails ||
+      !currPlayerScoreForThisRound ||
+      !playerScoresForThisRound
+    )
+      return;
 
-    // updating stats for each user in the room
-    for (const playerID of Object.keys(playerRoundDetails)) {
-      updatePlayerStatsAfterRound({
-        playerID,
-        playerRoundDetails: playerRoundDetails[playerID]!,
-        roundWinnerID,
-        gameWinnerID,
-        playerRankForThisRound: playerRanksForThisRound[playerID]!,
-        playerScoreForThisRound: playerScoresForThisRound.find(
-          (player) => player[0] === playerID
-        )![1],
-      });
-    }
+    newPlayerRanks.push([
+      playerID,
+      currPlayerRoundDetails.oldScore + currPlayerScoreForThisRound[1],
+    ]);
+  }
 
-    io.in(roomCode).emit("scoreboardMetadata", {
+  // adding sorted ranks for this round + overall new ranks to playerRoundDetails
+  for (const playerID of Object.keys(playerCards)) {
+    const player = playerCards[playerID];
+
+    if (!player || !playerRoundDetails) return;
+
+    playerRoundDetails[playerID]!.newRanking =
+      newPlayerRanks
+        .sort((a, b) => b[1] - a[1])
+        .findIndex((playerRank) => playerRank[0] === playerID) + 1;
+
+    playerRanksForThisRound[playerID] =
+      playerScoresForThisRound
+        .sort((a, b) => b[1] - a[1])
+        .findIndex((playerRank) => playerRank[0] === playerID) + 1;
+  }
+
+  // updating players in gameData with their new values
+  for (const playerID of Object.keys(playerCards)) {
+    const player = playerCards[playerID];
+
+    if (!player || !playerRoundDetails) return;
+
+    // @ts-expect-error asdf
+    player.totalPoints = playerRoundDetails[playerID].newScore;
+    // @ts-expect-error asdf
+    player.rankInRoom = playerRoundDetails[playerID].newRanking;
+  }
+
+  let gameWinnerID = null;
+
+  let playerWithHighestEndScore: [string, number] | null = null;
+
+  // find player with highest score to determine game winner
+  for (const playerID of Object.keys(playerCards)) {
+    const player = playerCards[playerID];
+
+    if (!player) return;
+
+    if (!playerWithHighestEndScore) {
+      playerWithHighestEndScore = [playerID, player.totalPoints];
+    } else if (player.totalPoints > playerWithHighestEndScore[1]) {
+      playerWithHighestEndScore = [playerID, player.totalPoints];
+    }
+  }
+
+  if (
+    playerWithHighestEndScore &&
+    playerWithHighestEndScore[1] >= pointsToWin
+  ) {
+    gameWinnerID = playerWithHighestEndScore[0];
+  }
+
+  // updating stats for each user in the room
+  for (const playerID of Object.keys(playerRoundDetails)) {
+    updatePlayerStatsAfterRound({
+      playerID,
+      playerRoundDetails: playerRoundDetails[playerID]!,
       roundWinnerID,
       gameWinnerID,
-      playerRoundDetails,
+      playerRankForThisRound: playerRanksForThisRound[playerID]!,
+      playerScoreForThisRound: playerScoresForThisRound.find(
+        (player) => player[0] === playerID
+      )![1],
     });
   }
 
-  socket.on("roundOver", generateAndEmitScoreboard);
+  io.in(roomCode).emit("scoreboardMetadata", {
+    roundWinnerID,
+    gameWinnerID,
+    playerRoundDetails,
+  });
+
+  return {
+    roundWinnerID,
+    gameWinnerID,
+    playerRoundDetails,
+  };
 }
 
-function calculateCardsPlayedDuringRound(
+export function calculateCardsPlayedDuringRound(
   cardsLeftInDeck: ICard[],
   cardsLeftInSqueakDeck: ICard[],
   cardsLeftInSqueakHands: ICard[]
