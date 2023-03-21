@@ -73,7 +73,7 @@ function Board({ boardClass }: IBoard) {
               }}
               className="baseFlex relative z-0 h-[65px] min-h-fit w-[48px] min-w-fit select-none rounded-lg p-1 transition-all tall:h-[95px] tall:w-[70px]"
             >
-              <AnimatePresence mode={"wait"}>
+              <AnimatePresence>
                 {cell && (
                   <motion.div
                     key={`board${rowIdx}${colIdx}AnimatedCell`}
@@ -114,7 +114,7 @@ function Board({ boardClass }: IBoard) {
                   </motion.div>
                 )}
 
-                <AnimatePresence mode={"wait"}>
+                <AnimatePresence>
                   {proposedCardBoxShadow?.id === `cell${rowIdx}${colIdx}` &&
                     proposedCardBoxShadow?.boxShadowValue ===
                       `0px 0px 4px 3px rgba(29, 232, 7, 1)` && (
