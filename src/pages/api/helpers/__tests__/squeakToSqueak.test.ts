@@ -339,7 +339,6 @@ describe("squeakToSqueak", () => {
       endID: `${playerID}squeakHand${squeakEndLocation}`,
       squeakEndCoords: {
         offsetHeight: indexWithinSqueakStack * (20 - squeakStackLength),
-        stackOfCardsMoved: [card],
       },
       updatedBoard: gameData.room123?.board,
       updatedPlayerCards: gameData.room123?.players,
