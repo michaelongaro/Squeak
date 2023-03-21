@@ -2,12 +2,10 @@ import { useState, useEffect } from "react";
 import { useRoomContext } from "../context/RoomContext";
 import { socket } from "../pages";
 import { type ICardDropProposal } from "../pages/api/socket";
-import { type ICard } from "../utils/generateDeckAndSqueakCards";
 
 interface ICardDropAccepted extends Partial<ICardDropProposal> {
   squeakEndCoords?: {
     offsetHeight: number;
-    stackOfCardsMoved?: ICard[];
   };
   endID: string; // have this here or on main interface?
 }
@@ -65,30 +63,12 @@ function useCardDropApproved({
         playerID,
       } = dataFromBackend;
 
-      // check to see if current card is a child of the card that was dropped
-      let childOfCardThatWasDropped = false;
-      if (
-        // squeakEndCoords implies that it was a squeak -> squeak move
-        squeakEndCoords &&
-        value &&
-        suit
-      ) {
-        if (
-          squeakEndCoords.stackOfCardsMoved?.some(
-            (card) => card.value === value && card.suit === suit
-          )
-        ) {
-          childOfCardThatWasDropped = true;
-        }
-      }
-
       // making sure card + playerID match up to this <Card />
       if (
-        (card &&
-          card.value === value &&
-          card.suit === suit &&
-          playerID === ownerID) ||
-        (childOfCardThatWasDropped && playerID === ownerID)
+        card &&
+        card.value === value &&
+        card.suit === suit &&
+        playerID === ownerID
       ) {
         const endLocation = document
           .getElementById(endID)

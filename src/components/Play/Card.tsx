@@ -156,6 +156,12 @@ function Card({
 
       const currentImageTransform = imageRef.current.style.transform;
 
+      if (origin === "hand" && ownerID === userID) {
+        setHoldingADeckCard(false);
+      } else if (origin === "squeakDeck" && ownerID === userID) {
+        setHoldingASqueakCard(false);
+      }
+
       if (x === 0 && y === 0) {
         if (hoveredCell) {
           setProposedCardBoxShadow({
@@ -262,12 +268,6 @@ function Card({
       }
 
       window.requestAnimationFrame(step);
-
-      if (origin === "hand" && ownerID === userID) {
-        setHoldingADeckCard(false);
-      } else if (origin === "squeakDeck" && ownerID === userID) {
-        setHoldingASqueakCard(false);
-      }
     },
     [
       origin,
@@ -437,18 +437,17 @@ function Card({
   }
 
   function dragHandler(e: DraggableEvent, data: DraggableData) {
-    const { x, y } = cardOffsetPosition;
     setCardOffsetPosition({
-      x: x + data.deltaX,
-      y: y + data.deltaY,
+      x: data.x,
+      y: data.y,
     });
 
     if (squeakStackLocation) {
       setHeldSqueakStackLocation({
         squeakStack: squeakStackLocation,
         location: {
-          x: x + data.deltaX,
-          y: y + data.deltaY,
+          x: data.x,
+          y: data.y,
         },
       });
     }
@@ -496,12 +495,18 @@ function Card({
                   : "drop-shadow(0px 0px 4px rgba(0, 0, 0, 0))",
               transition:
                 inMovingSqueakStack &&
-                heldSqueakStackLocation?.location.x === 0 &&
-                heldSqueakStackLocation?.location.y === 0
+                (!holdingASqueakCard ||
+                  (heldSqueakStackLocation?.location.x === 0 &&
+                    heldSqueakStackLocation?.location.y === 0) ||
+                  (heldSqueakStackLocation?.location.x ===
+                    cardOffsetPosition.x &&
+                    heldSqueakStackLocation?.location.y ===
+                      cardOffsetPosition.y))
                   ? "transform 300ms linear, filter 300ms linear"
                   : ownerID === userID
                   ? `filter 300ms linear`
                   : "none",
+              zIndex: inMovingSqueakStack ? 1000 : 500, // makes sure child cards stay on top of parent in moving stack
             }}
             className={`baseFlex relative z-[500] h-full w-full select-none !items-start ${
               draggable && "cursor-grab hover:active:cursor-grabbing"

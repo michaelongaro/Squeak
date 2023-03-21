@@ -79,7 +79,6 @@ export function squeakToSqueak({
     card,
     squeakEndCoords: {
       offsetHeight: indexWithinSqueakStack * (20 - squeakStackLength),
-      stackOfCardsMoved: cardsToMove,
     },
     endID: `${playerID}squeakHand${squeakEndLocation}`,
     updatedBoard: board,
