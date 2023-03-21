@@ -33,6 +33,16 @@ export function leaveRoomHandler(
     // per player who called it
     if (!room.players[playerID]) return;
 
+    if (!game) {
+      // remove player from room, while keeping user metadata to still show for
+      // their icon
+      delete room.players[playerID];
+    }
+
+    // testing this outside to make sure room still gets deleted if no other players
+    // are in the room
+    room.roomConfig.playersInRoom--;
+
     if (game) {
       // extra precaution to make sure playerID isn't added to array more than once
       if (game.playerIDsThatLeftMidgame.includes(playerID)) return;

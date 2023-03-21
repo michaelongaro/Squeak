@@ -43,7 +43,7 @@ export function resetGameHandler(
       for (const playerID of game.playerIDsThatLeftMidgame) {
         // remove player from room
         delete room.players[playerID];
-        room.roomConfig.playersInRoom = room.roomConfig.playersInRoom - 1;
+        room.roomConfig.playersInRoom--;
         room.roomConfig.hostUserID = Object.keys(room.players)[0] || "";
         room.roomConfig.hostUsername =
           Object.values(room.players)[0]?.username || "";
