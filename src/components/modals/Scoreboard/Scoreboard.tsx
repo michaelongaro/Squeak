@@ -364,9 +364,8 @@ function Scoreboard() {
                 pointerEvents: showWinningPlayerMessage ? "auto" : "none",
                 backgroundColor:
                   playerColorVariants[
-                    scoreboardMetadata.gameWinnerID
-                      ? scoreboardMetadata.gameWinnerID
-                      : scoreboardMetadata.roundWinnerID
+                    scoreboardMetadata.gameWinnerID ??
+                      scoreboardMetadata.roundWinnerID
                   ]?.baseColor ?? "black",
               }}
               className="baseFlex gap-4 rounded-md p-4 transition-all"
@@ -388,16 +387,14 @@ function Scoreboard() {
               <PlayerIcon
                 avatarPath={
                   playerMetadata[
-                    scoreboardMetadata.gameWinnerID
-                      ? scoreboardMetadata.gameWinnerID
-                      : scoreboardMetadata.roundWinnerID
+                    scoreboardMetadata.gameWinnerID ??
+                      scoreboardMetadata.roundWinnerID
                   ]?.avatarPath ?? "/avatars/rabbit.svg"
                 }
                 borderColor={
                   playerMetadata[
-                    scoreboardMetadata.gameWinnerID
-                      ? scoreboardMetadata.gameWinnerID
-                      : scoreboardMetadata.roundWinnerID
+                    scoreboardMetadata.gameWinnerID ??
+                      scoreboardMetadata.roundWinnerID
                   ]?.color ?? "hsl(352deg, 69%, 61%)"
                 }
                 size={"3rem"}
@@ -406,9 +403,8 @@ function Scoreboard() {
                 style={{
                   color:
                     playerColorVariants[
-                      scoreboardMetadata.gameWinnerID
-                        ? scoreboardMetadata.gameWinnerID
-                        : scoreboardMetadata.roundWinnerID
+                      scoreboardMetadata.gameWinnerID ??
+                        scoreboardMetadata.roundWinnerID
                     ]?.textColor ?? "black",
                 }}
                 className="text-xl"
