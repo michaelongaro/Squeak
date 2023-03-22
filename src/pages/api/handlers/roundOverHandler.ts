@@ -46,23 +46,29 @@ export function roundOverHandler(
 ) {
   socket.on(
     "roundOver",
-    ({ playerID, roomCode }: { playerID: string; roomCode: string }) =>
+    ({
+      roundWinnerID,
+      roomCode,
+    }: {
+      roundWinnerID: string;
+      roomCode: string;
+    }) =>
       generateAndEmitScoreboard({
         io,
         gameData,
         roomData,
-        roundWinnerID: playerID,
+        roundWinnerID,
         roomCode,
       })
   );
 }
 
 export function generateAndEmitScoreboard({
-  roundWinnerID,
-  roomCode,
+  io,
   gameData,
   roomData,
-  io,
+  roundWinnerID,
+  roomCode,
 }: IRoundOverBackendVersion) {
   const playerCards = gameData[roomCode]?.players;
   const pointsToWin = roomData[roomCode]?.roomConfig.pointsToWin;

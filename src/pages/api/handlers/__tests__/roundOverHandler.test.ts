@@ -332,24 +332,22 @@ describe("roundOverHandler", () => {
   it("should calculate each player's scores correctly based on their actions during the round", () => {
     const gameData = { ...samplePlayerCardData };
     const roomData = { ...sampleRoomData };
-    const playerID = "player1";
     const roomCode = "room123";
     const io = {
       in: vi.fn().mockReturnThis(),
       emit: vi.fn(),
     };
 
-    // player1 moved 3 cards from their squeak, and 13 cards from their deck
-    // player2 moved all 9 cards from their squeak, and 21 cards from their deck
+    // player1 moved 3 cards from their squeak pile, and 13 cards from their deck
+    // player2 squeaked (moved all 9 cards from their squeak pile), and 21 cards from their deck
 
     const returnedScoreboard = generateAndEmitScoreboard({
       // @ts-expect-error io implementation is mocked
       io,
       gameData,
       roomData,
-      playerID,
-      roomCode,
       roundWinnerID: "player2",
+      roomCode,
     });
 
     // using hack to calculate whether the cards played are valid
