@@ -98,6 +98,7 @@ function Buzzer({ playerID, roomCode, interactive }: IBuzzer) {
       }}
     >
       <audio ref={squeakButtonAudioRef} src="/sounds/squeakButtonPress.mp3" />
+
       {/* grey baseplate for button */}
       <div className="absolute top-0 left-0 z-[998]">
         <Image
