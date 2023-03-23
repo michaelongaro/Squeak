@@ -90,8 +90,9 @@ function FriendsList({ setShowFriendsListModal }: IFriendsList) {
             <div className="baseFlex gap-[0.1rem]">
               <div>(</div>
               <div>
-                {friendData.friendInviteIDs.length +
-                  friendData.roomInviteIDs.length}
+                {friendInviteIDs && roomInviteIDs
+                  ? friendInviteIDs.length + roomInviteIDs.length
+                  : ""}
               </div>
               <div>)</div>
             </div>
