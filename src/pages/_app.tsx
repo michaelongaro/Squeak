@@ -33,3 +33,12 @@ const MyApp: AppType<{ session: Session | null }> = ({
 };
 
 export default trpc.withTRPC(MyApp);
+
+export async function getStaticProps() {
+  return {
+    // Next.js will attempt to re-generate the page:
+    // - When a request comes in
+    // - At most once every 10 seconds
+    revalidate: 86400, // In seconds
+  };
+}
