@@ -13,18 +13,5 @@ const config = {
     locales: ["en"],
     defaultLocale: "en",
   },
-  async headers() {
-    return [
-      {
-        source: "/:path*",
-        headers: [
-          {
-            key: "Cache-Control",
-            value: "max-age=86400, must-revalidate",
-          },
-        ],
-      },
-    ];
-  },
 };
 export default config;
