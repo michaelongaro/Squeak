@@ -17,7 +17,7 @@ import Image from "next/image";
 import logo from "../../../public/logo/squeakLogo.svg";
 
 function MainOptions() {
-  const { data: session, status } = useSession();
+  const { status } = useSession();
   const userID = useUserIDContext();
 
   // probably want to remove the default "refetch on page focus" behavior

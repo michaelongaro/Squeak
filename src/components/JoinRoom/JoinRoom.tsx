@@ -33,7 +33,7 @@ function JoinRoom() {
     leaveRoom,
   } = useRoomContext();
   const userID = useUserIDContext();
-  const { data: session, status } = useSession();
+  const { status } = useSession();
 
   const [roomCode, setRoomCode] = useState<string>("");
   const [submittedRoomCode, setSubmittedRoomCode] = useState<string>("");
