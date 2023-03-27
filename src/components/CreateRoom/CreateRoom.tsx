@@ -63,14 +63,20 @@ function CreateRoom() {
   // otherwise they would be overwriting the current room config
   useEffect(() => {
     if (!configAndMetadataInitialized && userID && !connectedToRoom) {
-      setRoomConfig((prevRoomConfig) => ({
-        ...prevRoomConfig,
-        code: cryptoRandomString({ length: 6 }),
-        hostUsername: playerMetadata[userID]?.username || "",
-        hostUserID: userID,
-      }));
+      // timeout necessary because user could be coming back from leaving their
+      // current room which will delete the room config from the database
+      // this timeout gives the database time to update before the room config
+      // is set to it's new values below.
+      setTimeout(() => {
+        setRoomConfig((prevRoomConfig) => ({
+          ...prevRoomConfig,
+          code: cryptoRandomString({ length: 6 }),
+          hostUsername: playerMetadata[userID]?.username || "",
+          hostUserID: userID,
+        }));
 
-      setConfigAndMetadataInitialized(true);
+        setConfigAndMetadataInitialized(true);
+      }, 35);
     }
   }, [
     playerMetadata,
