@@ -25,7 +25,7 @@ function HomePage() {
       ) {
         setAllowedToShowMobileWarningModal(true);
       }
-    }, 1500);
+    }, 2000);
 
     // prefetching/caching card assets to prevent lag for the very
     // first time a player plays a round
