@@ -92,7 +92,7 @@ function FriendsList({ setShowFriendsListModal }: IFriendsList) {
               <div>
                 {friendInviteIDs && roomInviteIDs
                   ? friendInviteIDs.length + roomInviteIDs.length
-                  : ""}
+                  : 0}
               </div>
               <div>)</div>
             </div>
