@@ -32,6 +32,7 @@ export function resetGameHandler(
       const miscRoomDataObj = miscRoomData[roomCode];
 
       if (miscRoomDataObj) {
+        miscRoomDataObj.preventOtherPlayersFromSqueaking = false;
         clearInterval(miscRoomDataObj.gameStuckInterval);
       }
 
@@ -100,6 +101,7 @@ export function resetGameHandler(
     }
 
     if (miscRoomDataObj) {
+      miscRoomDataObj.preventOtherPlayersFromSqueaking = false;
       clearInterval(miscRoomDataObj.gameStuckInterval);
     }
 

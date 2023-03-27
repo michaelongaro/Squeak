@@ -44,6 +44,7 @@ export interface IMiscRoomData {
 interface IMiscRoomMetadata {
   numberOfPlayersReady: number;
   rotateDecksCounter: number;
+  preventOtherPlayersFromSqueaking: boolean;
   gameStuckInterval?: NodeJS.Timeout;
 }
 
@@ -209,6 +210,7 @@ export default function SocketHandler(req, res) {
         miscRoomData[roomConfig.code] = {
           numberOfPlayersReady: 0,
           rotateDecksCounter: 0,
+          preventOtherPlayersFromSqueaking: false,
         };
 
         io.in(roomConfig.code).emit("roomWasCreated");
@@ -447,7 +449,7 @@ export default function SocketHandler(req, res) {
 
     proposedCardDropHandler(io, socket, gameData);
 
-    roundOverHandler(io, socket, gameData, roomData);
+    roundOverHandler(io, socket, gameData, roomData, miscRoomData);
 
     resetGameHandler(io, socket, gameData, roomData, miscRoomData);
 

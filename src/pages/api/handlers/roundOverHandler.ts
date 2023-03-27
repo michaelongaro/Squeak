@@ -4,7 +4,7 @@ import {
   type ICard,
 } from "../../../utils/generateDeckAndSqueakCards";
 import { updatePlayerStatsAfterRound } from "../helpers/updatePlayerStatsAfterRound";
-import { type IGameData, type IRoomData } from "../socket";
+import { type IGameData, type IRoomData, type IMiscRoomData } from "../socket";
 
 export interface IScoreboardMetadata {
   gameWinnerID: string | null;
@@ -34,6 +34,7 @@ interface IRoundOverBackendVersion {
   io: Server;
   gameData: IGameData;
   roomData: IRoomData;
+  miscRoomData: IMiscRoomData;
   roundWinnerID: string;
   roomCode: string;
 }
@@ -42,7 +43,8 @@ export function roundOverHandler(
   io: Server,
   socket: Socket,
   gameData: IGameData,
-  roomData: IRoomData
+  roomData: IRoomData,
+  miscRoomData: IMiscRoomData
 ) {
   socket.on(
     "roundOver",
@@ -57,6 +59,7 @@ export function roundOverHandler(
         io,
         gameData,
         roomData,
+        miscRoomData,
         roundWinnerID,
         roomCode,
       })
@@ -67,13 +70,24 @@ export function generateAndEmitScoreboard({
   io,
   gameData,
   roomData,
+  miscRoomData,
   roundWinnerID,
   roomCode,
 }: IRoundOverBackendVersion) {
   const playerCards = gameData[roomCode]?.players;
   const pointsToWin = roomData[roomCode]?.roomConfig.pointsToWin;
+  // don't like this var name
+  const miscRoomDataObj = miscRoomData[roomCode];
 
-  if (!playerCards || !pointsToWin) return;
+  if (
+    !playerCards ||
+    !pointsToWin ||
+    !miscRoomDataObj ||
+    miscRoomDataObj?.preventOtherPlayersFromSqueaking
+  )
+    return;
+
+  miscRoomDataObj.preventOtherPlayersFromSqueaking = true;
 
   const playerRoundDetails = {} as IPlayerRoundDetailsMetadata;
 
