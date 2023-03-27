@@ -220,7 +220,7 @@ export function RoomProvider(props: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
-    if (userID && friendData && Object.keys(friendData).length === 0) {
+    if (userID && friendData === undefined) {
       socket.emit("initializeAuthorizedPlayer", userID);
     }
   }, [userID, friendData]);
