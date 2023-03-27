@@ -47,8 +47,10 @@ interface IRoomContext {
   setPlayerMetadata: React.Dispatch<React.SetStateAction<IRoomPlayersMetadata>>;
   gameData: IGameMetadata;
   setGameData: React.Dispatch<React.SetStateAction<IGameMetadata>>;
-  friendData: IFriendsMetadata;
-  setFriendData: React.Dispatch<React.SetStateAction<IFriendsMetadata>>;
+  friendData: IFriendsMetadata | undefined;
+  setFriendData: React.Dispatch<
+    React.SetStateAction<IFriendsMetadata | undefined>
+  >;
   hoveredCell: [number, number] | null;
   setHoveredCell: React.Dispatch<React.SetStateAction<[number, number] | null>>;
   hoveredSqueakStack: number | null;
@@ -139,9 +141,8 @@ export function RoomProvider(props: { children: React.ReactNode }) {
 
   // safe, because we are only ever accessing/mutating gameData when it is defined
   const [gameData, setGameData] = useState<IGameMetadata>({} as IGameMetadata);
-  const [friendData, setFriendData] = useState<IFriendsMetadata>(
-    {} as IFriendsMetadata
-  );
+
+  const [friendData, setFriendData] = useState<IFriendsMetadata | undefined>();
 
   const [hoveredCell, setHoveredCell] = useState<[number, number] | null>(null);
   const [hoveredSqueakStack, setHoveredSqueakStack] = useState<number | null>(
@@ -203,6 +204,10 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     string | null
   >(null);
 
+  useEffect(() => {
+    fetch("/api/socket");
+  }, []);
+
   // might want to move into a hook eventually
   useEffect(() => {
     setTimeout(() => {
@@ -215,23 +220,10 @@ export function RoomProvider(props: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
-    fetch("/api/socket");
-  }, []);
-
-  useEffect(() => {
     if (userID && friendData && Object.keys(friendData).length === 0) {
       socket.emit("initializeAuthorizedPlayer", userID);
-
-      if (status === "authenticated") {
-        setTimeout(() => {
-          socket.emit("modifyFriendData", {
-            action: "goOnline",
-            initiatorID: userID,
-          });
-        }, 2500);
-      }
     }
-  }, [userID, friendData, status]);
+  }, [userID, friendData]);
 
   useEffect(() => {
     function leaveRoomOnPageClose() {

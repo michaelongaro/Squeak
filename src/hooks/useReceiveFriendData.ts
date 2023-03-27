@@ -1,3 +1,4 @@
+import { useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
 import { useRoomContext } from "../context/RoomContext";
 import { useUserIDContext } from "../context/UserIDContext";
@@ -12,6 +13,7 @@ function useReceiveFriendData() {
     setNewInviteNotification,
   } = useRoomContext();
 
+  const { status } = useSession();
   const userID = useUserIDContext();
 
   const [dataFromBackend, setDataFromBackend] =
@@ -32,6 +34,14 @@ function useReceiveFriendData() {
       const { friendData: newFriendData, playerID } = dataFromBackend;
 
       if (playerID === userID) {
+        // send "go online" emit if friendData hasn't been initialized yet
+        if (status === "authenticated" && !friendData) {
+          socket.emit("modifyFriendData", {
+            action: "goOnline",
+            initiatorID: userID,
+          });
+        }
+
         if (
           !newInviteNotification &&
           friendData?.friendInviteIDs &&
@@ -61,6 +71,7 @@ function useReceiveFriendData() {
     }
   }, [
     dataFromBackend,
+    status,
     userID,
     friendData,
     setFriendData,
