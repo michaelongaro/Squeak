@@ -167,7 +167,7 @@ function CreateRoom() {
       className="baseVertFlex relative min-h-[100dvh]"
     >
       <div className="baseVertFlex relative gap-2 ">
-        <div className="absolute top-0 left-0">
+        <div className="absolute top-0 left-[-3.5rem]">
           <SecondaryButton
             icon={<BiArrowBack size={"1.5rem"} />}
             extraPadding={false}
