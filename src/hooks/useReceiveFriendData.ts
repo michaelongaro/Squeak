@@ -35,7 +35,7 @@ function useReceiveFriendData() {
 
       if (playerID === userID) {
         // send "go online" emit if friendData hasn't been initialized yet
-        if (status === "authenticated" && !friendData) {
+        if (status === "authenticated" && friendData === undefined) {
           socket.emit("modifyFriendData", {
             action: "goOnline",
             initiatorID: userID,
