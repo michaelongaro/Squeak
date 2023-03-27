@@ -76,7 +76,7 @@ function CreateRoom() {
         }));
 
         setConfigAndMetadataInitialized(true);
-      }, 35);
+      }, 75);
     }
   }, [
     playerMetadata,
