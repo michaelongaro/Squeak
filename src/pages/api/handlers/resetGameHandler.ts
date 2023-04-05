@@ -4,6 +4,7 @@ import {
   type IMoveBackToLobby,
   type IGameData,
   type IRoomData,
+  type IGameMetadata,
   type IMiscRoomData,
   type IPlayerCardsMetadata,
 } from "../socket";
@@ -51,9 +52,6 @@ export function resetGameHandler(
         room.roomConfig.hostUserID = Object.keys(room.players)[0] || "";
         room.roomConfig.hostUsername =
           Object.values(room.players)[0]?.username || "";
-
-        // remove player from game
-        delete game.players[playerID]; // maybe not needed? probably already starts with correct players when new game starts
       }
 
       game = {} as IGameMetadata;
@@ -81,14 +79,6 @@ export function resetGameHandler(
           },
         });
       }
-
-      const emitData: IMoveBackToLobby = {
-        roomConfig: room.roomConfig,
-        players: room.players,
-        gameData: game,
-      };
-
-      io.in(roomCode).emit("moveBackToLobby", emitData);
       return;
     }
 
