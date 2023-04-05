@@ -42,8 +42,7 @@ export function leaveRoomHandler(
     if (!room.players[playerID]) return;
 
     if (!game) {
-      // remove player from room, while keeping user metadata to still show for
-      // their icon
+      // safe to directly delete player if game hasn't started yet
       delete room.players[playerID];
     }
 
@@ -77,7 +76,22 @@ export function leaveRoomHandler(
         clearInterval(miscRoomDataObj.gameStuckInterval);
         delete miscRoomData[roomCode];
       }
+    }
 
+    const emitData: IPlayerHasLeftRoom = {
+      roomConfig: room.roomConfig,
+      players: room.players,
+      gameData: game ?? ({} as IGameMetadata),
+      playerWhoLeftID: playerID,
+      newHostID,
+      playerWasKicked,
+    };
+
+    io.in(roomCode).emit("playerHasLeftRoom", emitData);
+
+    // prisma operations are async, so this needs to be called after the emit
+    // to reduce on delay on the client side
+    if (room.roomConfig.playersInRoom === 0) {
       await prisma.room.delete({
         where: {
           code: roomCode,
@@ -97,17 +111,6 @@ export function leaveRoomHandler(
         },
       });
     }
-
-    const emitData: IPlayerHasLeftRoom = {
-      roomConfig: room.roomConfig,
-      players: room.players,
-      gameData: game ?? ({} as IGameMetadata),
-      playerWhoLeftID: playerID,
-      newHostID,
-      playerWasKicked,
-    };
-
-    io.in(roomCode).emit("playerHasLeftRoom", emitData);
   }
 
   socket.on("leaveRoom", resetGame);

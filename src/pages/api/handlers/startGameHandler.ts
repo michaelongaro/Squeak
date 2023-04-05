@@ -71,6 +71,16 @@ export function startGameHandler(
         }, 3000 + parseInt(index) * 400);
       }
 
+      // start interval that checks + handles if game is stuck
+      // (no player has a valid move available)
+      const miscRoomDataObj = miscRoomData[roomCode];
+
+      if (!miscRoomDataObj) return;
+
+      miscRoomDataObj.gameStuckInterval = setInterval(() => {
+        gameStuckHandler(io, roomCode, gameData, miscRoomData);
+      }, 15000);
+
       if (firstRound && prisma) {
         io.in(roomCode).emit("navigateToPlayScreen");
 
@@ -83,16 +93,6 @@ export function startGameHandler(
           },
         });
       }
-
-      // start interval that checks + handles if game is stuck
-      // (no player has a valid move available)
-      const miscRoomDataObj = miscRoomData[roomCode];
-
-      if (!miscRoomDataObj) return;
-
-      miscRoomDataObj.gameStuckInterval = setInterval(() => {
-        gameStuckHandler(io, roomCode, gameData, miscRoomData);
-      }, 15000);
     }
   );
 }

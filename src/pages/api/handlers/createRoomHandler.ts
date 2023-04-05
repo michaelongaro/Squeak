@@ -33,6 +33,8 @@ export function createRoomHandler(
         preventOtherPlayersFromSqueaking: false,
       };
 
+      io.in(roomConfig.code).emit("roomWasCreated");
+
       await prisma.room.create({
         data: {
           pointsToWin: roomConfig.pointsToWin,
@@ -45,8 +47,6 @@ export function createRoomHandler(
           gameStarted: roomConfig.gameStarted,
         },
       });
-
-      io.in(roomConfig.code).emit("roomWasCreated");
     }
   );
 }
