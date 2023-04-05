@@ -401,8 +401,6 @@ function CreateRoom() {
               innerTextWhenLoading={"Starting game"}
               disabled={roomConfig.playersInRoom < 2}
               onClickFunction={() => {
-                setGameData({} as IGameMetadata);
-
                 socket.emit("startGame", {
                   roomCode: roomConfig.code,
                   firstRound: true,

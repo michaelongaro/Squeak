@@ -40,7 +40,7 @@ export function resetGameHandler(
       }
 
       const room = roomData[roomCode];
-      const game = gameData[roomCode];
+      let game = gameData[roomCode];
 
       if (!room || !game) return;
 
@@ -56,7 +56,17 @@ export function resetGameHandler(
         delete game.players[playerID]; // maybe not needed? probably already starts with correct players when new game starts
       }
 
+      game = {} as IGameMetadata;
+
       room.roomConfig.gameStarted = false;
+
+      const emitData: IMoveBackToLobby = {
+        roomConfig: room.roomConfig,
+        players: room.players,
+        gameData: game,
+      };
+
+      io.in(roomCode).emit("moveBackToLobby", emitData);
 
       if (prisma) {
         await prisma.room.update({
