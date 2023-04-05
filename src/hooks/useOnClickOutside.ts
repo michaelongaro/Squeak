@@ -2,7 +2,7 @@ import { useEffect } from "react";
 
 interface IOnClickOutside {
   ref: React.RefObject<HTMLDivElement>;
-  setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowModal: (showSettingsModal: boolean) => void;
 }
 
 export default function useOnClickOutside({
@@ -12,14 +12,14 @@ export default function useOnClickOutside({
   useEffect(() => {
     const clickListener = (event: MouseEvent) => {
       // Do nothing if clicking ref's element or descendent elements
-
       if (!ref.current?.contains(event.target as Node)) {
         setShowModal(false);
       }
     };
 
     const keydownListener = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
+      // @ts-expect-error - event.target is not always an element
+      if (event.key === "Escape" && event.target?.tagName !== "INPUT") {
         setShowModal(false);
       }
     };

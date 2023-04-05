@@ -9,7 +9,7 @@ export function modifyFriendDataHandler(
   socket: Socket,
   friendData: IFriendsData
 ) {
-  function modifyFriendData({
+  async function modifyFriendData({
     action,
     initiatorID,
     targetID,
@@ -25,7 +25,7 @@ export function modifyFriendDataHandler(
     if (action === "sendFriendInvite" && targetID && target) {
       target.friendInviteIDs.push(initiatorID);
 
-      prisma.user
+      await prisma.user
         .update({
           where: {
             id: targetID,
@@ -48,7 +48,7 @@ export function modifyFriendDataHandler(
         (id) => id !== targetID
       );
 
-      prisma.user
+      await prisma.user
         .update({
           where: {
             id: initiatorID,
@@ -60,7 +60,7 @@ export function modifyFriendDataHandler(
         })
         .catch((err) => console.log(err));
 
-      prisma.user
+      await prisma.user
         .update({
           where: {
             id: targetID,
@@ -85,7 +85,7 @@ export function modifyFriendDataHandler(
         (id) => id !== targetID
       );
 
-      prisma.user
+      await prisma.user
         .update({
           where: {
             id: initiatorID,
@@ -103,7 +103,7 @@ export function modifyFriendDataHandler(
     } else if (action === "sendRoomInvite" && targetID && target) {
       target.roomInviteIDs.push(initiatorID);
 
-      prisma.user
+      await prisma.user
         .update({
           where: {
             id: targetID,
@@ -129,7 +129,7 @@ export function modifyFriendDataHandler(
         (id) => id !== targetID
       );
 
-      prisma.user
+      await prisma.user
         .update({
           where: {
             id: initiatorID,
@@ -163,7 +163,7 @@ export function modifyFriendDataHandler(
         (id) => id !== targetID
       );
 
-      prisma.user
+      await prisma.user
         .update({
           where: {
             id: initiatorID,
@@ -183,7 +183,7 @@ export function modifyFriendDataHandler(
 
       target.friendIDs = target.friendIDs.filter((id) => id !== initiatorID);
 
-      prisma.user
+      await prisma.user
         .update({
           where: {
             id: initiatorID,
@@ -194,7 +194,7 @@ export function modifyFriendDataHandler(
         })
         .catch((err) => console.log(err));
 
-      prisma.user
+      await prisma.user
         .update({
           where: {
             id: targetID,
@@ -219,7 +219,7 @@ export function modifyFriendDataHandler(
       roomCode !== undefined &&
       currentRoomIsPublic !== undefined
     ) {
-      prisma.user
+      await prisma.user
         .update({
           where: {
             id: initiatorID,
@@ -247,7 +247,7 @@ export function modifyFriendDataHandler(
       (currentRoomIsPublic !== undefined || currentRoomIsFull !== undefined)
     ) {
       if (currentRoomIsPublic !== undefined) {
-        prisma.user
+        await prisma.user
           .update({
             where: {
               id: initiatorID,
@@ -260,7 +260,7 @@ export function modifyFriendDataHandler(
       }
 
       if (currentRoomIsFull !== undefined) {
-        prisma.user
+        await prisma.user
           .update({
             where: {
               id: initiatorID,
@@ -283,7 +283,7 @@ export function modifyFriendDataHandler(
         });
       }
     } else if (action === "startGame") {
-      prisma.user
+      await prisma.user
         .update({
           where: {
             id: initiatorID,
@@ -305,7 +305,7 @@ export function modifyFriendDataHandler(
         });
       }
     } else if (action === "leaveRoom") {
-      prisma.user
+      await prisma.user
         .update({
           where: {
             id: initiatorID,
@@ -329,7 +329,7 @@ export function modifyFriendDataHandler(
         });
       }
     } else if (action === "goOffline") {
-      prisma.user
+      await prisma.user
         .update({
           where: {
             id: initiatorID,
@@ -354,7 +354,7 @@ export function modifyFriendDataHandler(
         });
       }
     } else if (action === "goOnline") {
-      prisma.user
+      await prisma.user
         .update({
           where: {
             id: initiatorID,

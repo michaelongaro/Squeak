@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { useRoomContext } from "../context/RoomContext";
 import { socket } from "../pages";
+import { useRoomContext } from "../context/RoomContext";
 import { type IDrawFromSqueakDeck } from "../pages/api/socket";
 
 interface IUseCardDrawFromSqueakDeck {
@@ -21,16 +21,20 @@ function useCardDrawFromSqueakDeck({
   ownerID,
   moveCard,
 }: IUseCardDrawFromSqueakDeck) {
-  const { gameData, setGameData } = useRoomContext();
+  const { setGameData } = useRoomContext();
 
   const [dataFromBackend, setDataFromBackend] =
     useState<IDrawFromSqueakDeck | null>(null);
 
   useEffect(() => {
-    socket.on("cardDrawnFromSqueakDeck", (data) => setDataFromBackend(data));
+    function handleCardDrawnFromSqueakDeck(data: IDrawFromSqueakDeck) {
+      setDataFromBackend(data);
+    }
+
+    socket.on("cardDrawnFromSqueakDeck", handleCardDrawnFromSqueakDeck);
 
     return () => {
-      socket.off("cardDrawnFromSqueakDeck", (data) => setDataFromBackend(data));
+      socket.off("cardDrawnFromSqueakDeck", handleCardDrawnFromSqueakDeck);
     };
   }, []);
 
@@ -38,13 +42,8 @@ function useCardDrawFromSqueakDeck({
     if (dataFromBackend !== null) {
       setDataFromBackend(null);
 
-      const {
-        playerID,
-        indexToDrawTo,
-        newCard,
-        updatedBoard,
-        updatedPlayerCards,
-      } = dataFromBackend;
+      const { playerID, indexToDrawTo, newCard, updatedGameData } =
+        dataFromBackend;
 
       if (
         playerID !== ownerID ||
@@ -64,15 +63,11 @@ function useCardDrawFromSqueakDeck({
         const endY = endLocation.y;
 
         moveCard({ x: endX, y: endY }, true, false, () => {
-          setGameData({
-            ...gameData,
-            board: updatedBoard,
-            players: updatedPlayerCards,
-          });
+          setGameData(updatedGameData);
         });
       }
     }
-  }, [dataFromBackend, moveCard, gameData, setGameData, suit, ownerID, value]);
+  }, [dataFromBackend, moveCard, ownerID, setGameData, suit, value]);
 }
 
 export default useCardDrawFromSqueakDeck;

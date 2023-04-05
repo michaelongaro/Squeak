@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from "react";
 import { socket } from "../../pages";
+import { trpc } from "../../utils/trpc";
 import { FiMail } from "react-icons/fi";
 import { FaUserFriends } from "react-icons/fa";
+import { useUserIDContext } from "../../context/UserIDContext";
 import { useRoomContext } from "../../context/RoomContext";
-import { trpc } from "../../utils/trpc";
 import PlayerIcon from "../playerIcons/PlayerIcon";
 import { motion } from "framer-motion";
 import SecondaryButton from "../Buttons/SecondaryButton";
@@ -11,7 +12,6 @@ import { AiOutlineCheck, AiOutlineClose } from "react-icons/ai";
 import { FaTrashAlt } from "react-icons/fa";
 import { BiMailSend } from "react-icons/bi";
 import { IoEnterOutline } from "react-icons/io5";
-import { useUserIDContext } from "../../context/UserIDContext";
 import DangerButton from "../Buttons/DangerButton";
 import { ImEnter } from "react-icons/im";
 import useOnClickOutside from "../../hooks/useOnClickOutside";
@@ -28,16 +28,18 @@ interface IFriendsList {
 }
 
 function FriendsList({ setShowFriendsListModal }: IFriendsList) {
-  const {
-    friendData,
-    setPageToRender,
-    connectedToRoom,
-    setConnectedToRoom,
-    roomConfig,
-    playerMetadata,
-  } = useRoomContext();
-  const { newInviteNotification, setNewInviteNotification } = useRoomContext();
   const userID = useUserIDContext();
+
+  const {
+    playerMetadata,
+    connectedToRoom,
+    friendData,
+    newInviteNotification,
+    setNewInviteNotification,
+    roomConfig,
+    setPageToRender,
+    setConnectedToRoom,
+  } = useRoomContext();
 
   const { data: friends } = trpc.users.getUsersFromIDList.useQuery(
     friendData?.friendIDs ?? []
@@ -57,6 +59,7 @@ function FriendsList({ setShowFriendsListModal }: IFriendsList) {
   const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    // clears red notification dot if it exists
     if (newInviteNotification) {
       setNewInviteNotification(false);
     }
@@ -206,6 +209,7 @@ function FriendsList({ setShowFriendsListModal }: IFriendsList) {
                       socket.emit("leaveRoom", {
                         roomCode: roomConfig.code,
                         userID,
+                        playerWasKicked: false,
                       });
                     }
 
@@ -355,6 +359,7 @@ function FriendsList({ setShowFriendsListModal }: IFriendsList) {
                           socket.emit("leaveRoom", {
                             roomCode: roomConfig.code,
                             userID,
+                            playerWasKicked: false,
                           });
                         }
 

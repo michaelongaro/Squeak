@@ -81,7 +81,6 @@ export function squeakToSqueak({
       offsetHeight: indexWithinSqueakStack * (20 - squeakStackLength),
     },
     endID: `${playerID}squeakHand${squeakEndLocation}`,
-    updatedBoard: board,
-    updatedPlayerCards: players,
+    updatedGameData: gameData[roomCode],
   });
 }

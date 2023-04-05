@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import CreateRoom from "../CreateRoom/CreateRoom";
 import JoinRoom from "../JoinRoom/JoinRoom";
 import Play from "../Play/Play";
-import { useRoomContext } from "../../context/RoomContext";
 import MainOptions from "../MainOptions/MainOptions";
 import { AnimatePresence } from "framer-motion";
 import TopRightControls from "../TopRightControls/TopRightControls";
@@ -10,9 +9,12 @@ import usePlayerLeftRoom from "../../hooks/usePlayerLeftRoom";
 import MobileWarningModal from "../modals/MobileWarningModal";
 import { isMobile } from "react-device-detect";
 import { cards } from "../../utils/cardAssetPaths";
+import { useRoomContext } from "../../context/RoomContext";
+import useInitializeUserVolume from "../../hooks/useInitializeUserVolume";
+import useAttachUnloadEventListener from "../../hooks/useAttachUnloadEventListener";
 
 function HomePage() {
-  const { connectedToRoom, pageToRender } = useRoomContext();
+  const { pageToRender, connectedToRoom } = useRoomContext();
 
   const [allowedToShowMobileWarningModal, setAllowedToShowMobileWarningModal] =
     useState<boolean>(false);
@@ -37,7 +39,9 @@ function HomePage() {
     }, 10000);
   }, []);
 
+  useInitializeUserVolume();
   usePlayerLeftRoom();
+  useAttachUnloadEventListener();
 
   return (
     <div className="relative pb-8 pt-8 lg:pt-0 lg:pb-0">

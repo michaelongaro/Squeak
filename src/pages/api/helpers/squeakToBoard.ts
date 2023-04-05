@@ -65,8 +65,7 @@ export function squeakToBoard({
       playerID,
       card,
       endID: `cell${row}${col}`,
-      updatedBoard: board,
-      updatedPlayerCards: players,
+      updatedGameData: gameData[roomCode],
     });
   } else {
     io.in(roomCode).emit("cardDropDenied", { playerID });

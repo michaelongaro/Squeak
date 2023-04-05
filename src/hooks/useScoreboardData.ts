@@ -1,19 +1,19 @@
 import { useState, useEffect } from "react";
-import { useRoomContext } from "../context/RoomContext";
-import { useUserIDContext } from "../context/UserIDContext";
 import { socket } from "../pages";
+import { useUserIDContext } from "../context/UserIDContext";
+import { useRoomContext } from "../context/RoomContext";
 import { type IScoreboardMetadata } from "../pages/api/handlers/roundOverHandler";
 
 function useScoreboardData() {
+  const userID = useUserIDContext();
+
   const {
-    setGameData,
     roomConfig,
+    setGameData,
+    setScoreboardMetadata,
     setShowScoreboard,
     setPlayerIDWhoSqueaked,
-    setScoreboardMetadata,
   } = useRoomContext();
-
-  const userID = useUserIDContext();
 
   const [dataFromBackend, setDataFromBackend] =
     useState<IScoreboardMetadata | null>(null);

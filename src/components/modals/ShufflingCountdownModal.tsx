@@ -1,22 +1,23 @@
 import { useEffect, useState } from "react";
 import { socket } from "../../pages/";
+import { useUserIDContext } from "../../context/UserIDContext";
 import { useRoomContext } from "../../context/RoomContext";
 import Card from "../Play/Card";
 import AnimatedNumber from "react-awesome-animated-number";
-import { useUserIDContext } from "../../context/UserIDContext";
 import { motion } from "framer-motion";
 
 function ShufflingCountdownModal() {
+  const userID = useUserIDContext();
+
   const {
-    roomConfig,
     gameData,
-    playerMetadata,
-    showShufflingCountdown,
+    roomConfig,
     playerIDToStartNextRound,
     setPlayerIDToStartNextRound,
+    playerMetadata,
     setShowShufflingCountdown,
+    showShufflingCountdown,
   } = useRoomContext();
-  const userID = useUserIDContext();
 
   const [timersInitiated, setTimersInitiated] = useState<boolean>(false);
   const [countdownTimerValue, setCountdownTimerValue] = useState<number>(5); //3
@@ -56,7 +57,7 @@ function ShufflingCountdownModal() {
     setTimeout(() => {
       setShowShufflingCountdown(false);
       setTimersInitiated(false);
-    }, 5000); // test if this delay feels okay
+    }, 5000);
   }, [
     gameData.currentRound,
     roomConfig.code,

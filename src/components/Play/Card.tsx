@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useRef, useCallback } from "react";
 import React from "react";
 import Draggable, {
   type DraggableData,
@@ -6,8 +6,8 @@ import Draggable, {
 } from "react-draggable";
 import { socket } from "../../pages/";
 import Image from "next/image";
-import { useRoomContext } from "../../context/RoomContext";
 import { useUserIDContext } from "../../context/UserIDContext";
+import { useRoomContext } from "../../context/RoomContext";
 import cardPlacementIsValid from "../../utils/cardPlacementIsValid";
 import useCardDrawFromDeck from "../../hooks/useCardDrawFromDeck";
 import useCardDrawFromSqueakDeck from "../../hooks/useCardDrawFromSqueakDeck";
@@ -45,9 +45,11 @@ function Card({
   width,
   height,
 }: ICardComponent) {
+  const userID = useUserIDContext();
+
   const {
-    gameData,
     roomConfig,
+    gameData,
     hoveredCell,
     holdingADeckCard,
     holdingASqueakCard,
@@ -56,31 +58,26 @@ function Card({
     heldSqueakStackLocation,
     setProposedCardBoxShadow,
     setHeldSqueakStackLocation,
-    setHoldingADeckCard,
     cardBeingMovedProgramatically,
     setCardBeingMovedProgramatically,
     squeakDeckBeingMovedProgramatically,
     setSqueakDeckBeingMovedProgramatically,
+    setHoldingADeckCard,
     setHoldingASqueakCard,
   } = useRoomContext();
-  const userID = useUserIDContext();
 
   const [cardOffsetPosition, setCardOffsetPosition] = useState({ x: 0, y: 0 });
   const [manuallyShowCardFront, setManuallyShowCardFront] = useState(false);
-  const [inMovingSqueakStack, setInMovingSqueakStack] = useState(false);
 
   const cardRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
 
-  useEffect(() => {
-    setInMovingSqueakStack(
-      (squeakStackLocation &&
-        heldSqueakStackLocation &&
-        heldSqueakStackLocation.squeakStack[0] === squeakStackLocation[0] &&
-        heldSqueakStackLocation.squeakStack[1] < squeakStackLocation[1]) ??
-        false
-    );
-  }, [heldSqueakStackLocation, squeakStackLocation]);
+  const inMovingSqueakStack =
+    (squeakStackLocation &&
+      heldSqueakStackLocation &&
+      heldSqueakStackLocation.squeakStack[0] === squeakStackLocation[0] &&
+      heldSqueakStackLocation.squeakStack[1] < squeakStackLocation[1]) ??
+    false;
 
   const moveCard = useCallback(
     (

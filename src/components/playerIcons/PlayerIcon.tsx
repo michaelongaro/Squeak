@@ -1,11 +1,11 @@
 import React from "react";
 import { socket } from "../../pages";
-import SecondaryButton from "../Buttons/SecondaryButton";
-import { AiOutlinePlus, AiOutlineClose } from "react-icons/ai";
-import DangerButton from "../Buttons/DangerButton";
-import { useRoomContext } from "../../context/RoomContext";
-import { useUserIDContext } from "../../context/UserIDContext";
 import { motion } from "framer-motion";
+import { useUserIDContext } from "../../context/UserIDContext";
+import { useRoomContext } from "../../context/RoomContext";
+import SecondaryButton from "../Buttons/SecondaryButton";
+import DangerButton from "../Buttons/DangerButton";
+import { AiOutlinePlus, AiOutlineClose } from "react-icons/ai";
 interface IPlayerIcon {
   avatarPath?: string;
   borderColor?: string;
@@ -27,8 +27,9 @@ function PlayerIcon({
   showRemovePlayerFromRoomButton,
   onlineStatus,
 }: IPlayerIcon) {
-  const { roomConfig } = useRoomContext();
   const userID = useUserIDContext();
+
+  const { roomConfig } = useRoomContext();
 
   return (
     <>
@@ -98,6 +99,7 @@ function PlayerIcon({
                   socket.emit("leaveRoom", {
                     playerID,
                     roomCode: roomConfig.code,
+                    playerWasKicked: true,
                   });
                 }}
                 width={"30px"}

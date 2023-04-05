@@ -6,10 +6,14 @@ import {
   type IRoomData,
   type IMiscRoomData,
 } from "../socket";
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
 
 interface ILeaveRoomHandler {
   playerID: string;
   roomCode: string;
+  playerWasKicked: boolean;
 }
 
 export function leaveRoomHandler(
@@ -19,14 +23,18 @@ export function leaveRoomHandler(
   roomData: IRoomData,
   miscRoomData: IMiscRoomData
 ) {
-  function resetGame({ playerID, roomCode }: ILeaveRoomHandler) {
+  async function resetGame({
+    playerID,
+    roomCode,
+    playerWasKicked,
+  }: ILeaveRoomHandler) {
     const game = gameData[roomCode];
     const room = roomData[roomCode];
     const miscRoomDataObj = miscRoomData[roomCode];
     const previousHostID = room?.roomConfig.hostUserID;
     let newHostID = "";
 
-    if (!room) return;
+    if (!room || !prisma) return;
 
     // workaround because I couldn't get "leaveRoom" emit to work properly on client
     // without calling it multiple times, this gate keeps it from running more than once
@@ -69,6 +77,25 @@ export function leaveRoomHandler(
         clearInterval(miscRoomDataObj.gameStuckInterval);
         delete miscRoomData[roomCode];
       }
+
+      await prisma.room.delete({
+        where: {
+          code: roomCode,
+        },
+      });
+    } else {
+      // if there are still players in the room, update the room in the database
+
+      await prisma.room.update({
+        where: {
+          code: roomCode,
+        },
+        data: {
+          playersInRoom: room.roomConfig.playersInRoom,
+          hostUserID: room.roomConfig.hostUserID,
+          hostUsername: room.roomConfig.hostUsername,
+        },
+      });
     }
 
     const emitData: IPlayerHasLeftRoom = {
@@ -77,6 +104,7 @@ export function leaveRoomHandler(
       gameData: game ?? ({} as IGameMetadata),
       playerWhoLeftID: playerID,
       newHostID,
+      playerWasKicked,
     };
 
     io.in(roomCode).emit("playerHasLeftRoom", emitData);

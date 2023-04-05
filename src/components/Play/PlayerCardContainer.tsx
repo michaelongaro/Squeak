@@ -26,10 +26,14 @@ const cardClassMap = {
 };
 
 function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
+  const userID = useUserIDContext();
+
   const {
-    gameData,
+    mirrorPlayerContainer,
     roomConfig,
     playerMetadata,
+    currentVolume,
+    gameData,
     holdingASqueakCard,
     hoveredSqueakStack,
     holdingADeckCard,
@@ -37,7 +41,6 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
     decksAreBeingRotated,
     soundPlayStates,
     setSoundPlayStates,
-    currentVolume,
     originIndexForHeldSqueakCard,
     setHoldingADeckCard,
     cardBeingMovedProgramatically,
@@ -46,8 +49,6 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
     setHoldingASqueakCard,
     setHoveredSqueakStack,
   } = useRoomContext();
-  const { mirrorPlayerContainer } = useRoomContext();
-  const userID = useUserIDContext();
 
   const [hoveringOverDeck, setHoveringOverDeck] = useState(false);
 

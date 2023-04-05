@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import useOnClickOutside from "../../hooks/useOnClickOutside";
 import { trpc } from "../../utils/trpc";

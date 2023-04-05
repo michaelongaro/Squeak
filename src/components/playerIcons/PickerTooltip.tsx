@@ -4,7 +4,6 @@ import { useRoomContext } from "../../context/RoomContext";
 import { socket } from "../../pages";
 import Card from "../Play/Card";
 import PlayerIcon from "./PlayerIcon";
-
 import { avatarPaths } from "../../utils/avatarPaths";
 import { deckHueRotations } from "../../utils/deckHueRotations";
 import { hslToDeckHueRotations } from "../../utils/hslToDeckHueRotations";
@@ -15,7 +14,6 @@ import {
 } from "../../pages/api/socket";
 import useOnClickOutside from "../../hooks/useOnClickOutside";
 import { motion } from "framer-motion";
-
 import classes from "./PickerTooltip.module.css";
 
 interface IPickerTooltip {
@@ -33,19 +31,19 @@ function PickerTooltip({
   setLocalPlayerMetadata,
   openAbove = false,
 }: IPickerTooltip) {
+  const userID = useUserIDContext();
+
   const {
-    playerMetadata: ctxPlayerMetadata,
-    connectedToRoom: ctxConnectedToRoom,
+    playerMetadata: storePlayerMetadata,
+    setPlayerMetadata: storeSetPlayerMetadata,
+    connectedToRoom: storeConnectedToRoom,
     roomConfig,
-    setPlayerMetadata: ctxSetPlayerMetadata,
   } = useRoomContext();
 
   // dynamic values depending on if parent is being used in <Settings /> or not
-  const playerMetadata = localPlayerMetadata || ctxPlayerMetadata;
-  const setPlayerMetadata = setLocalPlayerMetadata || ctxSetPlayerMetadata;
-  const connectedToRoom = localPlayerMetadata ? false : ctxConnectedToRoom;
-
-  const userID = useUserIDContext();
+  const playerMetadata = localPlayerMetadata ?? storePlayerMetadata;
+  const setPlayerMetadata = setLocalPlayerMetadata ?? storeSetPlayerMetadata;
+  const connectedToRoom = localPlayerMetadata ? false : storeConnectedToRoom;
 
   const [showTooltip, setShowTooltip] = useState<boolean>(false);
   const [hoveredTooltip, setHoveredTooltip] = useState<
@@ -227,13 +225,13 @@ function PickerTooltip({
                       }
                       // if user is not connected to room
                       else {
-                        setPlayerMetadata((prev) => ({
-                          ...prev,
+                        setPlayerMetadata({
+                          ...playerMetadata,
                           [userID]: {
-                            ...prev[userID],
+                            ...playerMetadata[userID],
                             avatarPath,
                           } as IRoomPlayer,
-                        }));
+                        });
                       }
                     }}
                   >
@@ -293,17 +291,17 @@ function PickerTooltip({
                       }
                       // if user is not connected to room
                       else {
-                        setPlayerMetadata((prev) => ({
-                          ...prev,
+                        setPlayerMetadata({
+                          ...playerMetadata,
                           [userID]: {
-                            ...prev[userID],
+                            ...playerMetadata[userID],
                             color,
                             deckHueRotation:
                               hslToDeckHueRotations[
                                 color as keyof typeof hslToDeckHueRotations // seems hacky
                               ],
                           } as IRoomPlayer,
-                        }));
+                        });
                       }
                     }}
                   >

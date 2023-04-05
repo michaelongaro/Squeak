@@ -1,22 +1,25 @@
 import { useState, useEffect } from "react";
-import { useRoomContext } from "../context/RoomContext";
-import { useUserIDContext } from "../context/UserIDContext";
 import { socket } from "../pages";
-import { trpc } from "../utils/trpc";
+import { useSession } from "next-auth/react";
+import { useUserIDContext } from "../context/UserIDContext";
+import { useRoomContext } from "../context/RoomContext";
 import { type IPlayerHasLeftRoom } from "./../pages/api/socket";
+import useLeaveRoom from "./useLeaveRoom";
 
 function usePlayerLeftRoom() {
-  const {
-    setGameData,
-    setRoomConfig,
-    setPlayerMetadata,
-    setPageToRender,
-    connectedToRoom,
-    leaveRoom,
-  } = useRoomContext();
+  const { status } = useSession();
+
   const userID = useUserIDContext();
 
-  const updateRoomInDatabase = trpc.rooms.updateRoomConfig.useMutation();
+  const {
+    setRoomConfig,
+    setPlayerMetadata,
+    setGameData,
+    connectedToRoom,
+    setPageToRender,
+  } = useRoomContext();
+
+  const leaveRoom = useLeaveRoom();
 
   const [dataFromBackend, setDataFromBackend] =
     useState<IPlayerHasLeftRoom | null>(null);
@@ -35,22 +38,28 @@ function usePlayerLeftRoom() {
     if (dataFromBackend !== null) {
       setDataFromBackend(null);
 
-      const { roomConfig, gameData, players, newHostID, playerWhoLeftID } =
-        dataFromBackend;
+      const {
+        roomConfig,
+        gameData,
+        players,
+        newHostID,
+        playerWhoLeftID,
+        playerWasKicked,
+      } = dataFromBackend;
 
       // gets called if current user was kicked from room by host
-      if (playerWhoLeftID === userID) {
+      if (playerWhoLeftID === userID && playerWasKicked) {
         leaveRoom(false);
 
         socket.emit("directlyLeaveRoom", roomConfig.code);
         return;
       }
 
-      setRoomConfig(roomConfig);
-      setPlayerMetadata(players);
-      setGameData(gameData);
-
-      updateRoomInDatabase.mutate(roomConfig);
+      if (playerWhoLeftID !== userID) {
+        setRoomConfig(roomConfig);
+        setPlayerMetadata(players);
+        setGameData(gameData);
+      }
 
       if (newHostID === userID && !roomConfig.gameStarted) {
         setPageToRender("createRoom");
@@ -58,9 +67,9 @@ function usePlayerLeftRoom() {
     }
   }, [
     dataFromBackend,
+    status,
     setGameData,
     setPlayerMetadata,
-    updateRoomInDatabase,
     setRoomConfig,
     setPageToRender,
     userID,

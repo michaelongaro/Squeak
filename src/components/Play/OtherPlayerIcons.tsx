@@ -1,11 +1,12 @@
 import { useState, useLayoutEffect, useRef } from "react";
-import { useRoomContext } from "../../context/RoomContext";
 import { useUserIDContext } from "../../context/UserIDContext";
+import { useRoomContext } from "../../context/RoomContext";
 import PlayerIcon from "../playerIcons/PlayerIcon";
 
 function OtherPlayerIcons() {
-  const { gameData, playerMetadata } = useRoomContext();
   const userID = useUserIDContext();
+
+  const { gameData, playerMetadata } = useRoomContext();
 
   // don't need leftPlayerIconRef since it is flows left-to-right already
   // and doesn't need any offset positioning wise.

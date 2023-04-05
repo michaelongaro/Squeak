@@ -29,8 +29,7 @@ export function drawFromSqueakDeck({
       playerID,
       indexToDrawTo,
       newCard: card,
-      updatedBoard: board,
-      updatedPlayerCards: players,
+      updatedGameData: gameData[roomCode],
     });
   }
 }

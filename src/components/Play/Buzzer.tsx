@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from "react";
-import { useRoomContext } from "../../context/RoomContext";
-import { useUserIDContext } from "../../context/UserIDContext";
 import { socket } from "../../pages";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import { useUserIDContext } from "../../context/UserIDContext";
+import { useRoomContext } from "../../context/RoomContext";
 import baseplate from "../../../public/buzzer/baseplate.png";
 import squeakBuzzer from "../../../public/buzzer/buzzerButton.png";
 interface IBuzzer {
@@ -13,10 +13,10 @@ interface IBuzzer {
 }
 
 function Buzzer({ playerID, roomCode, interactive }: IBuzzer) {
+  const userID = useUserIDContext();
+
   const { currentVolume, playerMetadata, playerIDWhoSqueaked } =
     useRoomContext();
-
-  const userID = useUserIDContext();
 
   const [hoveringOnButton, setHoveringOnButton] = useState<boolean>(false);
   const [mouseDownOnButton, setMouseDownOnButton] = useState<boolean>(false);

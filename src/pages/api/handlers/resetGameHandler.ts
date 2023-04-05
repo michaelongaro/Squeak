@@ -7,12 +7,15 @@ import {
   type IMiscRoomData,
   type IPlayerCardsMetadata,
 } from "../socket";
+import { PrismaClient } from "@prisma/client";
 
 interface IResetGame {
   gameIsFinished: boolean;
   resettingRoundFromExcessiveDeckRotations: boolean;
   roomCode: string;
 }
+
+const prisma = new PrismaClient();
 
 export function resetGameHandler(
   io: Server,
@@ -21,7 +24,7 @@ export function resetGameHandler(
   roomData: IRoomData,
   miscRoomData: IMiscRoomData
 ) {
-  function resetGame({
+  async function resetGame({
     gameIsFinished,
     resettingRoundFromExcessiveDeckRotations,
     roomCode,
@@ -54,6 +57,20 @@ export function resetGameHandler(
       }
 
       room.roomConfig.gameStarted = false;
+
+      if (prisma) {
+        await prisma.room.update({
+          where: {
+            code: roomCode,
+          },
+          data: {
+            playersInRoom: room.roomConfig.playersInRoom,
+            hostUserID: room.roomConfig.hostUserID,
+            hostUsername: room.roomConfig.hostUsername,
+            gameStarted: room.roomConfig.gameStarted,
+          },
+        });
+      }
 
       const emitData: IMoveBackToLobby = {
         roomConfig: room.roomConfig,

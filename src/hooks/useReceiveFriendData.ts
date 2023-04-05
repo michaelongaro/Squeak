@@ -1,20 +1,21 @@
-import { useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
-import { useRoomContext } from "../context/RoomContext";
-import { useUserIDContext } from "../context/UserIDContext";
+import { useSession } from "next-auth/react";
 import { socket } from "../pages";
+import { useUserIDContext } from "../context/UserIDContext";
+import { useRoomContext } from "../context/RoomContext";
 import { type IReceiveFriendData } from "../pages/api/socket";
 
 function useReceiveFriendData() {
+  const { status } = useSession();
+
+  const userID = useUserIDContext();
+
   const {
     friendData,
     setFriendData,
     newInviteNotification,
     setNewInviteNotification,
   } = useRoomContext();
-
-  const { status } = useSession();
-  const userID = useUserIDContext();
 
   const [dataFromBackend, setDataFromBackend] =
     useState<IReceiveFriendData | null>(null);

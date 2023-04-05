@@ -81,7 +81,6 @@ interface IRoomContext {
   setShowShufflingCountdown: React.Dispatch<React.SetStateAction<boolean>>;
   connectedToRoom: boolean;
   setConnectedToRoom: React.Dispatch<React.SetStateAction<boolean>>;
-  leaveRoom: (moveBackToHome: boolean) => void;
   soundPlayStates: ISoundStates;
   setSoundPlayStates: React.Dispatch<React.SetStateAction<ISoundStates>>;
   currentVolume: number;
@@ -123,7 +122,6 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     "home" | "createRoom" | "joinRoom" | "play"
   >("home");
   const [showSettingsModal, setShowSettingsModal] = useState<boolean>(false);
-  const deleteRoomInDatabase = trpc.rooms.deleteRoom.useMutation();
 
   const [roomConfig, setRoomConfig] = useState<IRoomConfig>({
     pointsToWin: 100,
@@ -221,40 +219,9 @@ export function RoomProvider(props: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (userID && friendData === undefined) {
-      socket.emit("initializeAuthorizedPlayer", userID);
+      socket.emit("initializePlayerInFriendsObj", userID);
     }
   }, [userID, friendData]);
-
-  useEffect(() => {
-    function leaveRoomOnPageClose() {
-      if (connectedToRoom) {
-        socket.emit("leaveRoom", {
-          playerID: userID,
-          roomCode: roomConfig.code,
-        });
-
-        if (roomConfig.playersInRoom === 1) {
-          deleteRoomInDatabase.mutate(roomConfig.code);
-        }
-      }
-
-      if (status === "authenticated") {
-        socket.emit("modifyFriendData", {
-          action: "goOffline",
-          initiatorID: userID,
-        });
-      }
-    }
-
-    window.addEventListener("unload", leaveRoomOnPageClose);
-  }, [
-    userID,
-    roomConfig.code,
-    roomConfig.playersInRoom,
-    connectedToRoom,
-    deleteRoomInDatabase,
-    status,
-  ]);
 
   useEffect(() => {
     if (status === "authenticated") {
@@ -289,48 +256,6 @@ export function RoomProvider(props: { children: React.ReactNode }) {
 
     setMirrorPlayerContainer(user ? !user.squeakPileOnLeft : false);
   }, [userID, user, playerMetadata, session, status]);
-
-  function leaveRoom(moveBackToHome: boolean) {
-    if (moveBackToHome) {
-      setPageToRender("home");
-    }
-    setRoomConfig({
-      pointsToWin: 100,
-      maxPlayers: 2,
-      playersInRoom: 1,
-      isPublic: true,
-      code: "",
-      hostUsername: "",
-      hostUserID: "",
-      gameStarted: false,
-    });
-    setPlayerMetadata({
-      [userID]: {
-        username: user ? user.username : "",
-        avatarPath: user ? user.avatarPath : "/avatars/rabbit.svg",
-        color: user ? user.color : "hsl(352deg, 69%, 61%)",
-        deckHueRotation: user ? user.deckHueRotation : 232,
-      } as IRoomPlayer,
-    } as IRoomPlayersMetadata);
-    setGameData({} as IGameMetadata);
-
-    if (connectedToRoom) {
-      setConnectedToRoom(false);
-
-      socket.emit("leaveRoom", { playerID: userID, roomCode: roomConfig.code });
-
-      if (status === "authenticated") {
-        socket.emit("modifyFriendData", {
-          action: "leaveRoom",
-          initiatorID: userID,
-        });
-      }
-
-      if (roomConfig.playersInRoom === 1) {
-        deleteRoomInDatabase.mutate(roomConfig.code);
-      }
-    }
-  }
 
   const context: IRoomContext = {
     pageToRender,
@@ -371,7 +296,6 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     setScoreboardMetadata,
     connectedToRoom,
     setConnectedToRoom,
-    leaveRoom,
     soundPlayStates,
     setSoundPlayStates,
     currentVolume,

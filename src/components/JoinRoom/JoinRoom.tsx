@@ -1,8 +1,8 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { trpc } from "../../utils/trpc";
 import { socket } from "../../pages";
-import { useRoomContext } from "../../context/RoomContext";
 import { useUserIDContext } from "../../context/UserIDContext";
+import { useRoomContext } from "../../context/RoomContext";
 import { type IRoomPlayer, type IGameMetadata } from "../../pages/api/socket";
 import PickerTooltip from "../playerIcons/PickerTooltip";
 import PlayerIcon from "../playerIcons/PlayerIcon";
@@ -16,24 +16,27 @@ import PublicRooms from "./PublicRooms";
 import Filter from "bad-words";
 import { useSession } from "next-auth/react";
 import { type Room } from "@prisma/client";
+import useLeaveRoom from "../../hooks/useLeaveRoom";
 
 const filter = new Filter();
 
 function JoinRoom() {
+  const { status } = useSession();
+  const userID = useUserIDContext();
+
   const {
-    roomConfig,
-    setRoomConfig,
     playerMetadata,
     setPlayerMetadata,
-    friendData,
-    connectedToRoom,
-    setConnectedToRoom,
+    roomConfig,
+    setRoomConfig,
     setGameData,
     setPageToRender,
-    leaveRoom,
+    connectedToRoom,
+    setConnectedToRoom,
+    friendData,
   } = useRoomContext();
-  const userID = useUserIDContext();
-  const { status } = useSession();
+
+  const leaveRoom = useLeaveRoom();
 
   const [roomCode, setRoomCode] = useState<string>("");
   const [submittedRoomCode, setSubmittedRoomCode] = useState<string>("");
@@ -89,7 +92,7 @@ function JoinRoom() {
   }, [queriedRoom]);
 
   useEffect(() => {
-    // rough way to check whether context data has been initialized
+    // rough way to check whether store data has been initialized
     if (room && !connectedToRoom) {
       setRoomConfig(room);
       setSubmittedRoomCode("");
@@ -182,13 +185,13 @@ function JoinRoom() {
                     onChange={(e) => {
                       setUsernameIsProfane(filter.isProfane(e.target.value));
 
-                      setPlayerMetadata((prevMetadata) => ({
-                        ...prevMetadata,
+                      setPlayerMetadata({
+                        ...playerMetadata,
                         [userID]: {
-                          ...prevMetadata[userID],
+                          ...playerMetadata[userID],
                           username: e.target.value,
                         } as IRoomPlayer,
-                      }));
+                      });
                     }}
                     value={playerMetadata[userID]?.username}
                   />

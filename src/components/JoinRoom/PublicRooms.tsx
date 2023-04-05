@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { socket } from "../../pages";
 import { ImEnter } from "react-icons/im";
-import { useRoomContext } from "../../context/RoomContext";
 import { useUserIDContext } from "../../context/UserIDContext";
+import { useRoomContext } from "../../context/RoomContext";
 import { trpc } from "../../utils/trpc";
 import SecondaryButton from "../Buttons/SecondaryButton";
 import { HiOutlineRefresh } from "react-icons/hi";
@@ -11,9 +11,11 @@ import Filter from "bad-words";
 const filter = new Filter();
 
 function PublicRooms() {
-  const { setRoomConfig, playerMetadata, connectedToRoom, setConnectedToRoom } =
-    useRoomContext();
   const userID = useUserIDContext();
+
+  const { playerMetadata, setConnectedToRoom, connectedToRoom, setRoomConfig } =
+    useRoomContext();
+
   const { data: publicRooms, refetch } =
     trpc.rooms.getAllAvailableRooms.useQuery(undefined, {
       refetchInterval: 30000,

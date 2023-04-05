@@ -35,18 +35,19 @@ const rotationOrder = [180, 90, 270];
 function OtherPlayersCardContainers({
   orderedClassNames,
 }: IOtherPlayersCardContainers) {
+  const userID = useUserIDContext();
+
   const {
-    roomConfig,
-    gameData,
+    currentVolume,
     playerMetadata,
+    gameData,
     decksAreBeingRotated,
-    soundPlayStates,
-    cardBeingMovedProgramatically,
     squeakDeckBeingMovedProgramatically,
     setSoundPlayStates,
-    currentVolume,
+    soundPlayStates,
+    cardBeingMovedProgramatically,
+    roomConfig,
   } = useRoomContext();
-  const userID = useUserIDContext();
 
   const otherPlayerIDs = Object.keys(gameData.players).filter(
     (playerID) => playerID !== userID

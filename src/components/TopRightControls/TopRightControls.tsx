@@ -8,6 +8,7 @@ import { FaUserFriends } from "react-icons/fa";
 import { AnimatePresence, motion } from "framer-motion";
 import FriendsList from "../modals/FriendsList";
 import AudioLevelSlider from "./AudioLevelSlider";
+import useLeaveRoom from "../../hooks/useLeaveRoom";
 
 interface ITopRightControls {
   forPlayScreen: boolean;
@@ -16,12 +17,11 @@ interface ITopRightControls {
 function TopRightControls({ forPlayScreen }: ITopRightControls) {
   const { status } = useSession();
 
-  const {
-    showSettingsModal,
-    setShowSettingsModal,
-    leaveRoom,
-    newInviteNotification,
-  } = useRoomContext();
+  const { showSettingsModal, setShowSettingsModal, newInviteNotification } =
+    useRoomContext();
+
+  const leaveRoom = useLeaveRoom();
+
   const [showFriendsList, setShowFriendsList] = useState<boolean>(false);
 
   return (

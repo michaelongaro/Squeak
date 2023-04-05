@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { useRoomContext } from "../../context/RoomContext";
 import { socket } from "../../pages";
 import Board from "./Board";
 import PlayerCardContainer from "./PlayerCardContainer";
@@ -9,25 +8,26 @@ import ShufflingCountdownModal from "../modals/ShufflingCountdownModal";
 import useStartAnotherRoundHandler from "../../hooks/useStartAnotherRoundHandler";
 import useReturnToRoomHandler from "../../hooks/useReturnToRoomHandler";
 import { AnimatePresence, motion } from "framer-motion";
-import classes from "./Play.module.css";
 import { useUserIDContext } from "../../context/UserIDContext";
+import { useRoomContext } from "../../context/RoomContext";
 import useResetDeckFromCardDraw from "../../hooks/useResetDeckFromCardDraw";
 import ResetRoundModal from "../modals/ResetRoundModal";
 import useManuallyResetRound from "../../hooks/useManuallyResetRound";
 import useScoreboardData from "../../hooks/useScoreboardData";
 import OtherPlayerIcons from "./OtherPlayerIcons";
+import classes from "./Play.module.css";
 
 function Play() {
+  const userID = useUserIDContext();
   const {
-    gameData,
     roomConfig,
+    gameData,
     setGameData,
     showScoreboard,
+    setShowShufflingCountdown,
     showShufflingCountdown,
     showResetRoundModal,
-    setShowShufflingCountdown,
   } = useRoomContext();
-  const userID = useUserIDContext();
 
   const [gameStarted, setGameStarted] = useState<boolean>(false);
 

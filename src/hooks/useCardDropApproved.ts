@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { useRoomContext } from "../context/RoomContext";
 import { socket } from "../pages";
+import { useRoomContext } from "../context/RoomContext";
 import { type ICardDropProposal } from "../pages/api/socket";
 
 interface ICardDropAccepted extends Partial<ICardDropProposal> {
@@ -33,9 +33,9 @@ function useCardDropApproved({
   moveCard,
 }: IUseCardDropApproved) {
   const {
-    gameData,
     setGameData,
     setProposedCardBoxShadow,
+    soundPlayStates,
     setSoundPlayStates,
   } = useRoomContext();
 
@@ -52,16 +52,8 @@ function useCardDropApproved({
 
   useEffect(() => {
     if (dataFromBackend !== null) {
-      setDataFromBackend(null);
-
-      const {
-        card,
-        endID,
-        squeakEndCoords,
-        updatedBoard,
-        updatedPlayerCards,
-        playerID,
-      } = dataFromBackend;
+      const { card, endID, squeakEndCoords, updatedGameData, playerID } =
+        dataFromBackend;
 
       // making sure card + playerID match up to this <Card />
       if (
@@ -113,12 +105,8 @@ function useCardDropApproved({
             endID.includes("cell"),
 
             () => {
-              if (playerID && updatedPlayerCards) {
-                setGameData({
-                  ...gameData,
-                  board: updatedBoard!,
-                  players: updatedPlayerCards,
-                });
+              if (playerID && updatedGameData) {
+                setGameData(updatedGameData);
               }
 
               if (playerID === userID) {
@@ -129,10 +117,10 @@ function useCardDropApproved({
 
           if (playerID === userID) {
             if (endID.includes("cell")) {
-              setSoundPlayStates((prevState) => ({
-                ...prevState,
+              setSoundPlayStates({
+                ...soundPlayStates,
                 currentPlayer: true,
-              }));
+              });
             }
 
             setProposedCardBoxShadow({
@@ -140,22 +128,24 @@ function useCardDropApproved({
               boxShadowValue: `0px 0px 4px 3px rgba(29, 232, 7, 1)`,
             });
           } else if (playerID && endID.includes("cell")) {
-            setSoundPlayStates((prevState) => ({
-              ...prevState,
+            setSoundPlayStates({
+              ...soundPlayStates,
               otherPlayers: {
-                ...prevState.otherPlayers,
+                ...soundPlayStates.otherPlayers,
                 [playerID]: true,
               },
-            }));
+            });
           }
         }
       }
+
+      setDataFromBackend(null);
     }
   }, [
     dataFromBackend,
     moveCard,
-    gameData,
     setGameData,
+    soundPlayStates,
     setSoundPlayStates,
     setProposedCardBoxShadow,
     suit,

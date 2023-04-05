@@ -4,8 +4,9 @@ import { useUserIDContext } from "../context/UserIDContext";
 import { trpc } from "../utils/trpc";
 
 function useInitializeUserStats() {
-  const userID = useUserIDContext();
   const { status } = useSession();
+
+  const userID = useUserIDContext();
 
   // also hook to query to see if user exists in db already
   const { data: currentUserStats } = trpc.stats.getStatsByID.useQuery(userID);

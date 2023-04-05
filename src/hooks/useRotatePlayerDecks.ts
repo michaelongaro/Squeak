@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { useRoomContext } from "../context/RoomContext";
 import { socket } from "../pages";
+import { useRoomContext } from "../context/RoomContext";
 import { type IGameMetadata } from "./../pages/api/socket";
 
 function useRotatePlayerDecks() {

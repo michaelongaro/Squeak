@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { useRoomContext } from "../context/RoomContext";
 import { socket } from "../pages";
+import { useRoomContext } from "../context/RoomContext";
 import { type IDrawFromDeck } from "../pages/api/socket";
 
 interface IUseCardDrawFromDeck {
@@ -23,7 +23,7 @@ function useCardDrawFromDeck({
   rotation,
   moveCard,
 }: IUseCardDrawFromDeck) {
-  const { gameData, setGameData } = useRoomContext();
+  const { setGameData } = useRoomContext();
 
   const [dataFromBackend, setDataFromBackend] = useState<IDrawFromDeck | null>(
     null
@@ -44,8 +44,7 @@ function useCardDrawFromDeck({
       const {
         nextTopCardInDeck: currentTopCardInDeck, // is actually referencing the current top card in deck
         playerID,
-        updatedBoard,
-        updatedPlayerCards,
+        updatedGameData,
       } = dataFromBackend;
 
       if (
@@ -76,24 +75,11 @@ function useCardDrawFromDeck({
         }
 
         moveCard({ x: endX, y: endY }, true, false, () => {
-          setGameData({
-            ...gameData,
-            board: updatedBoard,
-            players: updatedPlayerCards,
-          });
+          setGameData(updatedGameData);
         });
       }
     }
-  }, [
-    dataFromBackend,
-    moveCard,
-    gameData,
-    setGameData,
-    rotation,
-    suit,
-    ownerID,
-    value,
-  ]);
+  }, [dataFromBackend, moveCard, setGameData, rotation, suit, ownerID, value]);
 }
 
 export default useCardDrawFromDeck;

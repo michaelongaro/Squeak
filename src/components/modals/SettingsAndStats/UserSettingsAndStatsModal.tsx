@@ -8,8 +8,8 @@ import {
   type IRoomPlayersMetadata,
   type IRoomPlayer,
 } from "../../../pages/api/socket";
-import { useRoomContext } from "../../../context/RoomContext";
 import { useUserIDContext } from "../../../context/UserIDContext";
+import { useRoomContext } from "../../../context/RoomContext";
 import { trpc } from "../../../utils/trpc";
 import { motion } from "framer-motion";
 import SecondaryButton from "../../Buttons/SecondaryButton";
@@ -28,19 +28,20 @@ export interface ILocalPlayerSettings {
 }
 
 interface IUserSettingsAndStatsModalProps {
-  setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowModal: (showSettingsModal: boolean) => void;
 }
 
 function UserSettingsAndStatsModal({
   setShowModal,
 }: IUserSettingsAndStatsModalProps) {
+  const userID = useUserIDContext();
+
   const {
     playerMetadata,
     setPlayerMetadata,
     connectedToRoom,
     setMirrorPlayerContainer,
   } = useRoomContext();
-  const userID = useUserIDContext();
 
   const utils = trpc.useContext();
   const { data: user } = trpc.users.getUserByID.useQuery(userID);

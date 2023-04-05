@@ -1,4 +1,8 @@
 import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
+import { trpc } from "../../utils/trpc";
+import { AnimatePresence, motion } from "framer-motion";
+import { useUserIDContext } from "../../context/UserIDContext";
 import { useRoomContext } from "../../context/RoomContext";
 import LogIn from "../auth/LogIn";
 import SecondaryButton from "../Buttons/SecondaryButton";
@@ -6,11 +10,7 @@ import TutorialModal from "../modals/TutorialModal";
 import { ImEnter } from "react-icons/im";
 import { AiOutlinePlusCircle, AiOutlineInfoCircle } from "react-icons/ai";
 import { IoStatsChart } from "react-icons/io5";
-import { useSession } from "next-auth/react";
 import PlayerIcon from "../playerIcons/PlayerIcon";
-import { useUserIDContext } from "../../context/UserIDContext";
-import { trpc } from "../../utils/trpc";
-import { AnimatePresence, motion } from "framer-motion";
 import LeaderboardModal from "../modals/LeaderboardModal";
 import { HiExternalLink } from "react-icons/hi";
 import Image from "next/image";
@@ -22,6 +22,7 @@ function MainOptions() {
 
   // probably want to remove the default "refetch on page focus" behavior
   const { data: user } = trpc.users.getUserByID.useQuery(userID);
+
   const { setPageToRender } = useRoomContext();
 
   const [hoveringOnAboutMe, setHoveringOnAboutMe] = useState(false);

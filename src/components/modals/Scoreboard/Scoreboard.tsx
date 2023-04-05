@@ -1,11 +1,11 @@
 import { useState, useEffect, useRef } from "react";
-import { useRoomContext } from "../../../context/RoomContext";
 import AnimatedCardContainer from "./AnimatedCardContainer";
-import PlayerIcon from "../../playerIcons/PlayerIcon";
 import AnimatedNumber from "react-awesome-animated-number";
 import confetti from "canvas-confetti";
-import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
+import { AnimatePresence, motion } from "framer-motion";
+import { useRoomContext } from "../../../context/RoomContext";
+import PlayerIcon from "../../playerIcons/PlayerIcon";
 import confettiCannon from "../../../../public/scoreboard/confettiCannon.svg";
 
 interface IRanking {

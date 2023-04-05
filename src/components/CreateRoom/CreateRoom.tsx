@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
 import cryptoRandomString from "crypto-random-string";
 import { trpc } from "../../utils/trpc";
 import { socket } from "../../pages";
-import { useRoomContext } from "../../context/RoomContext";
 import { useUserIDContext } from "../../context/UserIDContext";
+import { useRoomContext } from "../../context/RoomContext";
 import { type IRoomPlayer, type IGameMetadata } from "../../pages/api/socket";
 import PickerTooltip from "../playerIcons/PickerTooltip";
 import PlayerIcon from "../playerIcons/PlayerIcon";
@@ -15,7 +16,7 @@ import { BiArrowBack } from "react-icons/bi";
 import { FiCheck } from "react-icons/fi";
 import { AnimatePresence, motion } from "framer-motion";
 import Filter from "bad-words";
-import { useSession } from "next-auth/react";
+import useLeaveRoom from "../../hooks/useLeaveRoom";
 
 const filter = new Filter();
 
@@ -31,23 +32,23 @@ export interface IRoomConfig {
 }
 
 function CreateRoom() {
+  const { status } = useSession();
+
+  const userID = useUserIDContext();
+
   const {
     roomConfig,
     setRoomConfig,
     playerMetadata,
     setPlayerMetadata,
-    friendData,
     connectedToRoom,
     setConnectedToRoom,
+    friendData,
     setGameData,
     setPageToRender,
-    leaveRoom,
   } = useRoomContext();
-  const userID = useUserIDContext();
-  const { status } = useSession();
 
-  const createRoomInDatabase = trpc.rooms.createRoom.useMutation();
-  const updateRoomInDatabase = trpc.rooms.updateRoomConfig.useMutation();
+  const leaveRoom = useLeaveRoom();
 
   const { data: authenticatedUsers } = trpc.users.getUsersFromIDList.useQuery(
     Object.keys(playerMetadata)
@@ -63,27 +64,22 @@ function CreateRoom() {
   // otherwise they would be overwriting the current room config
   useEffect(() => {
     if (!configAndMetadataInitialized && userID && !connectedToRoom) {
-      // timeout necessary because user could be coming back from leaving their
-      // current room which will delete the room config from the database
-      // this timeout gives the database time to update before the room config
-      // is set to it's new values below.
-      setTimeout(() => {
-        setRoomConfig((prevRoomConfig) => ({
-          ...prevRoomConfig,
-          code: cryptoRandomString({ length: 6 }),
-          hostUsername: playerMetadata[userID]?.username || "",
-          hostUserID: userID,
-        }));
+      setRoomConfig({
+        ...roomConfig,
+        code: cryptoRandomString({ length: 6 }),
+        hostUsername: playerMetadata[userID]?.username || "",
+        hostUserID: userID,
+      });
 
-        setConfigAndMetadataInitialized(true);
-      }, 75);
+      setConfigAndMetadataInitialized(true);
     }
   }, [
-    playerMetadata,
-    setRoomConfig,
-    userID,
     configAndMetadataInitialized,
+    userID,
     connectedToRoom,
+    playerMetadata,
+    roomConfig,
+    setRoomConfig,
   ]);
 
   useEffect(() => {
@@ -93,10 +89,7 @@ function CreateRoom() {
       setPlayerMetadata(newUsers);
     });
 
-    // here db update
-    socket.on("roomConfigUpdated", (roomConfig) =>
-      updateContextAndDatabaseRoomConfig(roomConfig)
-    );
+    socket.on("roomConfigUpdated", (roomConfig) => setRoomConfig(roomConfig));
 
     socket.on("navigateToPlayScreen", () => setPageToRender("play"));
 
@@ -106,7 +99,7 @@ function CreateRoom() {
         setPlayerMetadata(newUsers)
       );
       socket.off("roomConfigUpdated", (roomConfig) =>
-        updateContextAndDatabaseRoomConfig(roomConfig)
+        setRoomConfig(roomConfig)
       );
       socket.off("navigateToPlayScreen", () => setPageToRender("play"));
     };
@@ -127,24 +120,7 @@ function CreateRoom() {
           currentRoomIsPublic: roomConfig.isPublic,
         });
       }
-
-      createRoomInDatabase.mutate(roomConfig);
     }
-  }
-
-  // separate this out into a hook?
-  function updateContextAndDatabaseRoomConfig(newRoomConfig: IRoomConfig) {
-    setRoomConfig(newRoomConfig);
-    updateRoomInDatabase.mutate({
-      pointsToWin: newRoomConfig.pointsToWin,
-      maxPlayers: newRoomConfig.maxPlayers,
-      isPublic: newRoomConfig.isPublic,
-      code: newRoomConfig.code,
-      hostUsername: newRoomConfig.hostUsername,
-      hostUserID: newRoomConfig.hostUserID,
-      playersInRoom: newRoomConfig.playersInRoom,
-      gameStarted: newRoomConfig.gameStarted,
-    });
   }
 
   function updateRoomConfig(key: string, value: any) {
@@ -213,13 +189,13 @@ function CreateRoom() {
                   onChange={(e) => {
                     setUsernameIsProfane(filter.isProfane(e.target.value));
 
-                    setPlayerMetadata((prevMetadata) => ({
-                      ...prevMetadata,
+                    setPlayerMetadata({
+                      ...playerMetadata,
                       [userID]: {
-                        ...prevMetadata[userID],
+                        ...playerMetadata[userID],
                         username: e.target.value,
                       } as IRoomPlayer,
-                    }));
+                    });
                     updateRoomConfig("hostUsername", e.target.value);
                   }}
                   value={playerMetadata[userID]?.username}
@@ -430,11 +406,6 @@ function CreateRoom() {
                 socket.emit("startGame", {
                   roomCode: roomConfig.code,
                   firstRound: true,
-                });
-
-                updateRoomInDatabase.mutate({
-                  ...roomConfig,
-                  gameStarted: true,
                 });
               }}
               showLoadingSpinnerOnClick={true}

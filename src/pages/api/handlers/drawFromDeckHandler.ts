@@ -58,8 +58,7 @@ export function drawFromDeck({
       nextTopCardInDeck: playerCards.nextTopCardInDeck,
       resetDeck: true,
       playerID,
-      updatedBoard: board,
-      updatedPlayerCards: players,
+      updatedGameData: gameData[roomCode],
     });
     return;
   }
@@ -112,7 +111,6 @@ export function drawFromDeck({
   io.in(roomCode).emit("playerDrawnFromDeck", {
     nextTopCardInDeck: currentTopCardInDeck,
     playerID,
-    updatedBoard: board,
-    updatedPlayerCards: players,
+    updatedGameData: gameData[roomCode],
   });
 }
