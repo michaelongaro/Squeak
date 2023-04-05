@@ -439,7 +439,11 @@ function Scoreboard() {
               }}
               className="baseFlex gap-2 text-lg transition-all"
             >
-              <div>Next round starts in:</div>
+              <div>
+                {scoreboardMetadata.gameWinnerID
+                  ? "Returning to room in:"
+                  : "Next round starts in:"}
+              </div>
 
               <AnimatedNumber
                 value={countdownTimerValue}
