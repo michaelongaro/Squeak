@@ -4,18 +4,20 @@ import {
   type IPlayerCards,
   type ICard,
 } from "../../utils/generateDeckAndSqueakCards";
-import generateDeckAndSqueakCards from "../../utils/generateDeckAndSqueakCards";
 import { drawFromDeckHandler } from "./handlers/drawFromDeckHandler";
 import { proposedCardDropHandler } from "./handlers/proposedCardDropHandler";
-import { gameStuckHandler } from "./handlers/gameStuckHandler";
-import { drawFromSqueakDeck } from "./helpers/drawFromSqueakDeck";
 import { roundOverHandler } from "./handlers/roundOverHandler";
 import { resetGameHandler } from "./handlers/resetGameHandler";
-import { avatarPaths } from "../../utils/avatarPaths";
-import { hslToDeckHueRotations } from "../../utils/hslToDeckHueRotations";
 import { leaveRoomHandler } from "./handlers/leaveRoomHandler";
-import { initializeAuthorizedPlayerInFriendsObject } from "./handlers/initializeAuthorizedPlayerInFriendsObject";
+import { initializePlayerInFriendsObject } from "./handlers/initializePlayerInFriendsObject";
 import { modifyFriendDataHandler } from "./handlers/modifyFriendDataHandler";
+import { updateRoomConfigHandler } from "./handlers/updateRoomConfigHandler";
+import { startGameHandler } from "./handlers/startGameHandler";
+import { createRoomHandler } from "./handlers/createRoomHandler";
+import { joinRoomHandler } from "./handlers/joinRoomHandler";
+import { updatePlayerMetadataHandler } from "./handlers/updatePlayerMetadataHandler";
+import { playerReadyToReceiveInitGameDataHandler } from "./handlers/playerReadyToReceiveInitGameDataHandler";
+import { playerFullyReadyHandler } from "./handlers/playerFullyReadyHandler";
 
 // TODO: is there a better way to type these?
 export interface IFriendsData {
@@ -103,8 +105,7 @@ export interface ICardDropProposal {
   squeakStartLocation?: number;
   boardEndLocation?: { row: number; col: number };
   squeakEndLocation?: number;
-  updatedBoard: (ICard | null)[][];
-  updatedPlayerCards: IPlayerCardsMetadata;
+  updatedGameData: IGameMetadata;
   playerID: string;
   roomCode: string;
 }
@@ -114,8 +115,7 @@ export interface IDrawFromSqueakDeck {
   indexToDrawTo: number;
   playerID: string;
   newCard?: ICard;
-  updatedBoard: (ICard | null)[][];
-  updatedPlayerCards: IPlayerCardsMetadata;
+  updatedGameData: IGameMetadata;
 }
 
 export interface IDrawFromDeck {
@@ -124,8 +124,7 @@ export interface IDrawFromDeck {
   topCardsInDeck: (ICard | null)[];
   playerID: string;
   roomCode: string;
-  updatedBoard: (ICard | null)[][];
-  updatedPlayerCards: IPlayerCardsMetadata;
+  updatedGameData: IGameMetadata;
 }
 
 export interface IRoundOver {
@@ -161,17 +160,7 @@ export interface IPlayerHasLeftRoom {
   gameData: IGameMetadata;
   newHostID: string;
   playerWhoLeftID: string;
-}
-
-interface IStartGame {
-  roomCode: string;
-  firstRound: boolean;
-}
-
-interface IJoinRoomConfig {
-  code: string;
-  userID: string;
-  playerMetadata: IRoomPlayer;
+  playerWasKicked: boolean;
 }
 
 const roomData: IRoomData = {};
@@ -187,262 +176,32 @@ export default function SocketHandler(req, res) {
     return;
   }
 
-  //8081
   const io = new Server(res.socket.server, {
     path: "/api/socket",
   });
   res.socket.server.io = io;
 
   const onConnection = (socket: Socket) => {
-    // room logic
-    socket.on(
-      "createRoom",
-      (roomConfig: IRoomConfig, playerMetadata: IRoomPlayer) => {
-        socket.join(roomConfig.code);
+    // pregame/room handlers
+    createRoomHandler(io, socket, roomData, miscRoomData);
 
-        roomData[roomConfig.code] = {
-          roomConfig,
-          players: {
-            [roomConfig.hostUserID]: playerMetadata,
-          },
-        };
+    joinRoomHandler(io, socket, roomData);
 
-        miscRoomData[roomConfig.code] = {
-          numberOfPlayersReady: 0,
-          rotateDecksCounter: 0,
-          preventOtherPlayersFromSqueaking: false,
-        };
+    updateRoomConfigHandler(io, socket, roomData);
 
-        io.in(roomConfig.code).emit("roomWasCreated");
-      }
+    updatePlayerMetadataHandler(io, socket, roomData);
+
+    playerReadyToReceiveInitGameDataHandler(
+      io,
+      socket,
+      roomData,
+      gameData,
+      miscRoomData
     );
 
-    socket.on(
-      "joinRoom",
-      ({ userID, playerMetadata, code }: IJoinRoomConfig) => {
-        const room = roomData[code];
-        const players = roomData[code]?.players;
+    playerFullyReadyHandler(io, socket, roomData, miscRoomData);
 
-        if (!room || !players) return;
-
-        socket.join(code);
-
-        // checking to see if the playerMetadata is available,
-        // if not it will auto select random available settings
-
-        for (const player of Object.values(players)) {
-          if (player.avatarPath === playerMetadata.avatarPath) {
-            playerMetadata.avatarPath = getAvailableAttribute(
-              "avatarPath",
-              players
-            );
-          }
-
-          if (player.color === playerMetadata.color) {
-            playerMetadata.color = getAvailableAttribute("color", players);
-          }
-
-          playerMetadata.deckHueRotation =
-            hslToDeckHueRotations[
-              playerMetadata.color as keyof typeof hslToDeckHueRotations
-            ];
-        }
-
-        function getAvailableAttribute(
-          attribute: "avatarPath" | "color",
-          players: IRoomPlayersMetadata
-        ): string {
-          if (attribute === "avatarPath") {
-            const usedAttributes = Object.values(players).map(
-              (player) => player.avatarPath
-            );
-
-            const availableAttributes = [
-              ...usedAttributes,
-              ...avatarPaths,
-            ].filter((avatarPath) => !usedAttributes.includes(avatarPath));
-
-            return availableAttributes[
-              Math.floor(Math.random() * availableAttributes.length)
-            ]!;
-          }
-
-          const usedAttributes = Object.values(players).map(
-            (player) => player.color
-          );
-
-          const availableAttributes = [
-            ...usedAttributes,
-            ...Object.keys(hslToDeckHueRotations),
-          ].filter((color) => !usedAttributes.includes(color));
-
-          return availableAttributes[
-            Math.floor(Math.random() * availableAttributes.length)
-          ]!;
-        }
-
-        players[userID] = playerMetadata;
-
-        io.in(code).emit("playerMetadataUpdated", players);
-
-        room.roomConfig.playersInRoom++;
-
-        io.in(code).emit("roomConfigUpdated", room.roomConfig);
-      }
-    );
-
-    socket.on("updateRoomConfig", (roomConfig: IRoomConfig) => {
-      const room = roomData[roomConfig.code];
-      if (!room) return;
-      room.roomConfig = roomConfig;
-      io.in(roomConfig.code).emit("roomConfigUpdated", roomConfig);
-    });
-
-    socket.on(
-      "updatePlayerMetadata",
-      ({ newPlayerMetadata, playerID, roomCode }: IUpdatePlayerMetadata) => {
-        const room = roomData[roomCode];
-        const user = roomData[roomCode]?.players[playerID];
-
-        if (!room || !user) return;
-
-        user.avatarPath = newPlayerMetadata.avatarPath;
-        user.color = newPlayerMetadata.color;
-        user.deckHueRotation = newPlayerMetadata.deckHueRotation;
-        user.username = newPlayerMetadata.username;
-
-        io.in(roomCode).emit("playerMetadataUpdated", room.players);
-      }
-    );
-
-    socket.on("startGame", ({ roomCode, firstRound }: IStartGame) => {
-      if (firstRound) {
-        io.in(roomCode).emit("navigateToPlayScreen");
-      }
-
-      // loop through all players and flip their squeak deck cards
-      const currentRoomPlayers = roomData[roomCode]?.players;
-      if (!currentRoomPlayers) return;
-
-      for (const index in Object.keys(currentRoomPlayers)) {
-        const playerID = Object.keys(currentRoomPlayers)[parseInt(index)];
-        if (playerID === undefined) return;
-
-        setTimeout(() => {
-          drawFromSqueakDeck({
-            indexToDrawTo: 0,
-            playerID,
-            roomCode,
-            gameData,
-            io,
-          });
-        }, 1500 + parseInt(index) * 400);
-
-        setTimeout(() => {
-          drawFromSqueakDeck({
-            indexToDrawTo: 1,
-            playerID,
-            roomCode,
-            gameData,
-            io,
-          });
-        }, 2000 + parseInt(index) * 400);
-
-        setTimeout(() => {
-          drawFromSqueakDeck({
-            indexToDrawTo: 2,
-            playerID,
-            roomCode,
-            gameData,
-            io,
-          });
-        }, 2500 + parseInt(index) * 400);
-
-        setTimeout(() => {
-          drawFromSqueakDeck({
-            indexToDrawTo: 3,
-            playerID,
-            roomCode,
-            gameData,
-            io,
-          });
-        }, 3000 + parseInt(index) * 400);
-      }
-
-      // start interval that checks + handles if game is stuck
-      // (no player has a valid move available)
-      const miscRoomDataObj = miscRoomData[roomCode];
-
-      if (!miscRoomDataObj) return;
-
-      miscRoomDataObj.gameStuckInterval = setInterval(() => {
-        gameStuckHandler(io, roomCode, gameData, miscRoomData);
-      }, 15000);
-    });
-
-    // game logic
-    socket.on("playerReadyToReceiveInitGameData", (roomCode) => {
-      const miscRoomDataObj = miscRoomData[roomCode];
-
-      if (!miscRoomDataObj) return;
-      miscRoomDataObj.numberOfPlayersReady++;
-
-      const players = roomData[roomCode]?.players;
-
-      if (
-        !players ||
-        miscRoomDataObj.numberOfPlayersReady !== Object.keys(players).length
-      )
-        return;
-
-      const board = Array.from({ length: 4 }, () =>
-        Array.from({ length: 5 }, () => null)
-      );
-
-      const playerCards: IPlayerCardsMetadata = {};
-      // loop through players and create + get their cards
-      for (const playerID of Object.keys(players)) {
-        playerCards[playerID] = {
-          ...generateDeckAndSqueakCards(),
-          totalPoints: 0,
-          rankInRoom: -1,
-        };
-      }
-
-      gameData[roomCode] = {
-        board,
-        players: playerCards,
-        currentRound: 1,
-        playerIDsThatLeftMidgame: [],
-      };
-
-      io.in(roomCode).emit("initGameData", gameData[roomCode]);
-      miscRoomDataObj.numberOfPlayersReady = 0;
-    });
-
-    socket.on("playerFullyReady", (roomCode) => {
-      const miscRoomDataObj = miscRoomData[roomCode];
-
-      if (!miscRoomDataObj) return;
-      miscRoomDataObj.numberOfPlayersReady++;
-
-      const room = roomData[roomCode];
-
-      if (
-        room &&
-        miscRoomDataObj.numberOfPlayersReady ===
-          Object.keys(room.players).length
-      ) {
-        room.roomConfig.gameStarted = true;
-        io.in(roomCode).emit("roomConfigUpdated", room.roomConfig);
-        io.in(roomCode).emit("gameStarted");
-        miscRoomDataObj.numberOfPlayersReady = 0;
-      }
-    });
-
-    socket.on("directlyLeaveRoom", (roomCode) => {
-      socket.leave(roomCode);
-    });
+    startGameHandler(io, socket, roomData, gameData, miscRoomData);
 
     // game/room handlers
     drawFromDeckHandler(io, socket, gameData);
@@ -455,13 +214,16 @@ export default function SocketHandler(req, res) {
 
     leaveRoomHandler(io, socket, gameData, roomData, miscRoomData);
 
+    socket.on("directlyLeaveRoom", (roomCode) => {
+      socket.leave(roomCode);
+    });
+
     // friends handlers
-    initializeAuthorizedPlayerInFriendsObject(io, socket, friendsData);
+    initializePlayerInFriendsObject(io, socket, friendsData);
 
     modifyFriendDataHandler(io, socket, friendsData);
   };
 
-  // Define actions inside
   io.on("connection", onConnection);
 
   res.end();
