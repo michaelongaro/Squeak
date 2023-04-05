@@ -52,6 +52,8 @@ function useCardDropApproved({
 
   useEffect(() => {
     if (dataFromBackend !== null) {
+      setDataFromBackend(null);
+
       const { card, endID, squeakEndCoords, updatedGameData, playerID } =
         dataFromBackend;
 
@@ -138,8 +140,6 @@ function useCardDropApproved({
           }
         }
       }
-
-      setDataFromBackend(null);
     }
   }, [
     dataFromBackend,
