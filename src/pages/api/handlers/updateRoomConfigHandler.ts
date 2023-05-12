@@ -16,6 +16,8 @@ export function updateRoomConfigHandler(
     if (!room || !prisma) return;
     room.roomConfig = roomConfig;
 
+    io.in(roomConfig.code).emit("roomConfigUpdated", roomConfig);
+
     await prisma.room.update({
       where: {
         code: roomConfig.code,
@@ -31,7 +33,5 @@ export function updateRoomConfigHandler(
         gameStarted: room.roomConfig.gameStarted,
       },
     });
-
-    io.in(roomConfig.code).emit("roomConfigUpdated", roomConfig);
   });
 }
