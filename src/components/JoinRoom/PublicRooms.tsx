@@ -13,8 +13,17 @@ const filter = new Filter();
 function PublicRooms() {
   const userID = useUserIDContext();
 
-  const { playerMetadata, setConnectedToRoom, connectedToRoom, setRoomConfig } =
-    useRoomContext();
+  const {
+    playerMetadata,
+    setConnectedToRoom,
+    connectedToRoom,
+    setRoomConfig,
+    friendData,
+  } = useRoomContext();
+
+  const { data: roomInviteIDs } = trpc.users.getUsersFromIDList.useQuery(
+    friendData?.roomInviteIDs ?? []
+  );
 
   const { data: publicRooms, refetch } =
     trpc.rooms.getAllAvailableRooms.useQuery(undefined, {
@@ -31,8 +40,22 @@ function PublicRooms() {
       code: roomCode,
       playerMetadata: playerMetadata[userID],
     });
-    // trpc update
-  }, [roomCode, userID, playerMetadata]);
+
+    // if player has invite(s) to this room, remove them
+    if (roomInviteIDs) {
+      for (const friend of roomInviteIDs) {
+        if (friend.roomCode === roomCode) {
+          socket.emit("modifyFriendData", {
+            action: "acceptRoomInvite",
+            initiatorID: userID,
+            targetID: friend.id,
+            roomCode: roomCode,
+            currentRoomIsPublic: true,
+          });
+        }
+      }
+    }
+  }, [roomCode, userID, playerMetadata, roomInviteIDs]);
 
   useEffect(() => {
     if (roomCode.length > 0 && !connectedToRoom) {

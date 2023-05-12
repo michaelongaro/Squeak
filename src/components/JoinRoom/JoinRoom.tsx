@@ -55,6 +55,10 @@ function JoinRoom() {
     }
   );
 
+  const { data: roomInviteIDs } = trpc.users.getUsersFromIDList.useQuery(
+    friendData?.roomInviteIDs ?? []
+  );
+
   const { data: authenticatedUsers } = trpc.users.getUsersFromIDList.useQuery(
     Object.keys(playerMetadata)
   );
@@ -79,7 +83,22 @@ function JoinRoom() {
       roomCode: roomCode,
       currentRoomIsPublic: queriedRoom.isPublic,
     });
-  }, [roomCode, userID, playerMetadata, queriedRoom, status]);
+
+    // if player has invite(s) to this room, remove them
+    if (roomInviteIDs) {
+      for (const friend of roomInviteIDs) {
+        if (friend.roomCode === roomCode) {
+          socket.emit("modifyFriendData", {
+            action: "acceptRoomInvite",
+            initiatorID: userID,
+            targetID: friend.id,
+            roomCode: roomCode,
+            currentRoomIsPublic: queriedRoom.isPublic,
+          });
+        }
+      }
+    }
+  }, [roomCode, userID, playerMetadata, queriedRoom, status, roomInviteIDs]);
 
   useEffect(() => {
     if (queriedRoom && typeof queriedRoom !== "string") {

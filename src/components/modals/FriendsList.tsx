@@ -197,13 +197,22 @@ function FriendsList({ setShowFriendsListModal }: IFriendsList) {
                   icon={<AiOutlineCheck size={"1.5rem"} />}
                   extraPadding={false}
                   onClickFunction={() => {
-                    socket.emit("modifyFriendData", {
-                      action: "acceptRoomInvite",
-                      initiatorID: userID,
-                      targetID: friend.id,
-                      roomCode: friend.roomCode,
-                      currentRoomIsPublic: friend.currentRoomIsPublic,
-                    });
+                    // there are probably major redundancies here, but should work for now
+
+                    const roomCodeOfRoomBeingJoined = friend.roomCode;
+
+                    // if player has invite(s) to this room, remove them
+                    for (const friend of roomInviteIDs) {
+                      if (friend.roomCode === roomCodeOfRoomBeingJoined) {
+                        socket.emit("modifyFriendData", {
+                          action: "acceptRoomInvite",
+                          initiatorID: userID,
+                          targetID: friend.id,
+                          roomCode: friend.roomCode,
+                          currentRoomIsPublic: friend.currentRoomIsPublic,
+                        });
+                      }
+                    }
 
                     if (connectedToRoom) {
                       socket.emit("leaveRoom", {
