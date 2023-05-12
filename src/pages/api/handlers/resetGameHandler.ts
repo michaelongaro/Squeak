@@ -41,7 +41,7 @@ export function resetGameHandler(
       }
 
       const room = roomData[roomCode];
-      let game = gameData[roomCode];
+      const game = gameData[roomCode];
 
       if (!room || !game) return;
 
@@ -54,14 +54,14 @@ export function resetGameHandler(
           Object.values(room.players)[0]?.username || "";
       }
 
-      game = {} as IGameMetadata;
+      gameData[roomCode] = {} as IGameMetadata;
 
       room.roomConfig.gameStarted = false;
 
       const emitData: IMoveBackToLobby = {
         roomConfig: room.roomConfig,
         players: room.players,
-        gameData: game,
+        gameData: {} as IGameMetadata,
       };
 
       io.in(roomCode).emit("moveBackToLobby", emitData);
