@@ -48,16 +48,16 @@ function UserSettingsAndStatsModal({
   const updateUser = trpc.users.updateUser.useMutation({
     onMutate: () => {
       // relatively sure we are doing this wrong with the "keys" that it is going off of.
-      utils.users.getUserByID.cancel("userData");
-      const optimisticUpdate = utils.users.getUserByID.getData("userData");
+      utils.users.getUserByID.cancel(userID);
+      const optimisticUpdate = utils.users.getUserByID.getData(userID);
 
       if (optimisticUpdate) {
-        // does this implementation of "userData" as a query string work?
-        utils.users.getUserByID.setData("userData", optimisticUpdate);
+        // does this implementation of userID as a query string work?
+        utils.users.getUserByID.setData(userID, optimisticUpdate);
       }
     },
     onSettled: () => {
-      utils.users.getUserByID.invalidate();
+      utils.users.getUserByID.invalidate(userID);
     },
   });
 
@@ -146,6 +146,9 @@ function UserSettingsAndStatsModal({
         },
       });
     }
+
+    // Reset the ableToSave state after the user is updated
+    setAbleToSave(false);
   }
 
   return (
