@@ -103,6 +103,10 @@ function PublicRooms() {
                       borderColor: "hsl(120deg 100% 86%)",
                       borderBottomWidth:
                         index === publicRooms.length - 1 ? "0px" : "2px ",
+                      borderRadius:
+                        index === publicRooms.length - 1
+                          ? "0 0 0.375rem 0.375rem"
+                          : "none",
                     }}
                     className="relative grid w-auto grid-cols-3 place-items-center border-b-2 p-4 pr-8 lg:w-[600px]"
                     onMouseEnter={() => setHoveredIndex(index)}
