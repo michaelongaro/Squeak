@@ -20,9 +20,9 @@ export function gameStuckHandler(
   let validCardFound = false;
 
   const players = gameData[roomCode]?.players;
-  let rotateDecksCounter = miscRoomData[roomCode]?.rotateDecksCounter;
+  const miscRoomDataCopy = miscRoomData[roomCode];
 
-  if (!players || rotateDecksCounter === undefined) return;
+  if (!players || !miscRoomDataCopy) return;
 
   // for each player:
   Object.keys(players).map((playerID, idx) => {
@@ -100,12 +100,12 @@ export function gameStuckHandler(
   // hard limit on how many times to rotate decks before saying that
   // the game is fully stuck (necessary cards to progress are inside squeak pile
   // or inside other squeak stacks)
-  if (rotateDecksCounter === 8) {
+  if (miscRoomDataCopy.rotateDecksCounter === 8) {
     io.in(roomCode).emit("manuallyResetRound");
     return;
   }
 
-  rotateDecksCounter++;
+  miscRoomDataCopy.rotateDecksCounter++;
 
   // if no valid card found, rotate all player's decks and emit new game data
   Object.keys(players).map((playerID, idx) => {
@@ -116,8 +116,8 @@ export function gameStuckHandler(
     player.deck = rotateDeckByOneCard(player.deck);
     player.deckIdx = -1;
     player.topCardsInDeck = [null, null, null];
-
-    // not sure if this actually mutates the players/gameData object...
+    player.nextTopCardInDeck =
+      player.deck[2] ?? player.deck[1] ?? player.deck[0] ?? null;
   });
   io.in(roomCode).emit("decksWereRotated", gameData[roomCode]);
 }
@@ -159,7 +159,7 @@ function getReachableCardsFromDeck(player: IPlayerCards): ICard[] {
 }
 
 function rotateDeckByOneCard(deck: ICard[]): ICard[] {
-  if (deck.length === 0) return deck;
+  if (deck.length === 0 || deck.length === 1) return deck;
   deck.push(deck.shift()!); // deck isn't empty here, so this should be fine
   return deck;
 }
