@@ -56,9 +56,8 @@ function PickerTooltip({
 
   const [relativeOffset, setRelativeOffset] = useState<{
     left: string;
-    top: string | undefined;
-    bottom: string | undefined;
-  }>({ left: "0px", top: "0px", bottom: "0px" });
+    top: string;
+  }>({ left: "0px", top: "0px" });
 
   const tooltipRef = useRef<HTMLDivElement>(null);
 
@@ -82,32 +81,39 @@ function PickerTooltip({
   }, [playerMetadata, userID]);
 
   useEffect(() => {
-    let left = "0px";
-    let top = undefined;
-    let bottom = undefined;
+    function handleResize() {
+      const isBelowMobileViewport = window.innerWidth <= 768;
 
-    const isMobileViewportWidth = window.innerWidth <= 768;
+      let left = "0px";
+      let top = "0px";
 
-    // TODO: these shouldn't be hardcoded
-    if (type === "avatar") {
-      left = isMobileViewportWidth ? "-118px" : "-177px";
+      // TODO: these shouldn't be hardcoded
+      if (type === "avatar") {
+        left = isBelowMobileViewport ? "-118px" : "-135px";
 
-      if (openAbove) {
-        top = "-340px";
+        if (openAbove) {
+          top = isBelowMobileViewport ? "-315px" : "-340px";
+        } else {
+          top = "105px";
+        }
       } else {
-        bottom = isMobileViewportWidth ? "-310px" : "-340px";
-      }
-    } else {
-      left = isMobileViewportWidth ? "-151px" : "-177px";
+        left = isBelowMobileViewport ? "-151px" : "-177px";
 
-      if (openAbove) {
-        top = "-300px";
-      } else {
-        bottom = isMobileViewportWidth ? "-369px" : "-340px";
+        if (openAbove) {
+          top = isBelowMobileViewport ? "-375px" : "-310px";
+        } else {
+          top = "110px";
+        }
       }
+
+      setRelativeOffset({ left, top });
     }
 
-    setRelativeOffset({ left, top, bottom });
+    handleResize();
+
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
   }, [type, openAbove]);
 
   function isTooltipOptionAvailable(
@@ -136,15 +142,15 @@ function PickerTooltip({
       (type === "avatar" && userAvatarIndex === index) ||
       (type === "color" && userDeckIndex === index)
     )
-      return "4px solid green"; // prob need to adj these colors
+      return "4px solid hsl(120deg 100% 18%)";
 
-    if (!isTooltipOptionAvailable(type, index)) return "none";
+    if (!isTooltipOptionAvailable(type, index)) return "4px solid transparent";
 
     return hoveredTooltip &&
       hoveredTooltip[0] === type &&
       hoveredTooltip[1] === index
-      ? "4px solid lightgreen" // prob need to adj these colors
-      : "none";
+      ? "4px solid hsl(120deg 100% 40%)"
+      : "4px solid transparent";
   }
 
   function getMetadataOfPlayerByAttribute(
@@ -184,7 +190,6 @@ function PickerTooltip({
             style={{
               left: relativeOffset.left,
               top: relativeOffset.top,
-              bottom: relativeOffset.bottom,
               opacity: showTooltip ? 1 : 0,
               pointerEvents: showTooltip ? "auto" : "none",
             }}
