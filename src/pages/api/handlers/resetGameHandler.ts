@@ -33,8 +33,6 @@ export function resetGameHandler(
     const miscRoomDataObj = miscRoomData[roomCode];
 
     if (gameIsFinished) {
-      const miscRoomDataObj = miscRoomData[roomCode];
-
       if (miscRoomDataObj) {
         miscRoomDataObj.preventOtherPlayersFromSqueaking = false;
         clearInterval(miscRoomDataObj.gameStuckInterval);
@@ -49,9 +47,13 @@ export function resetGameHandler(
         // remove player from room
         delete room.players[playerID];
         room.roomConfig.playersInRoom--;
-        room.roomConfig.hostUserID = Object.keys(room.players)[0] || "";
-        room.roomConfig.hostUsername =
-          Object.values(room.players)[0]?.username || "";
+
+        // assigning new host if the host left
+        if (playerID === room.roomConfig.hostUserID) {
+          room.roomConfig.hostUserID = Object.keys(room.players)[0] || "";
+          room.roomConfig.hostUsername =
+            Object.values(room.players)[0]?.username || "";
+        }
       }
 
       gameData[roomCode] = {} as IGameMetadata;
