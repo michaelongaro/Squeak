@@ -58,7 +58,7 @@ function MainOptions() {
       className="baseFlex relative min-h-[100dvh]"
     >
       {status !== "loading" && (
-        <div className="baseVertFlex w-[18rem] rounded-md border-2 border-white bg-green-800 p-4 shadow-lg lg:w-[22.25rem] lg:p-8">
+        <div className="baseVertFlex w-[16.5rem] rounded-md border-2 border-white bg-green-800 py-4 shadow-lg md:p-4 lg:w-[22.25rem] lg:p-8">
           <Image
             src={logo}
             alt="Squeak logo"
@@ -130,11 +130,14 @@ function MainOptions() {
           color: "hsl(120, 100%, 86%)",
           borderColor: "hsl(120, 100%, 86%)",
           background: "hsl(120, 100%, 18%)",
-          width: hoveringOnAboutMe ? "18rem" : "2.65rem",
-          padding: "0.25rem 1rem",
           transition: "all 0.3s ease-in-out",
         }}
-        className="baseFlex fixed right-1 bottom-1 !justify-end overflow-hidden rounded-full border-2 lg:right-4 lg:bottom-4"
+        // leading-normal md:leading-6
+        className={`baseFlex fixed 
+          
+          ${hoveringOnAboutMe ? "shadow-md" : "shadow-none"}
+          ${hoveringOnAboutMe ? "w-[18rem]" : "w-8"}
+        right-2 bottom-2 !justify-end overflow-hidden rounded-full border-2 px-[0.75rem] py-[0.15rem] md:px-[0.7rem] md:py-0 lg:right-4 lg:bottom-4`}
         onMouseEnter={() => setHoveringOnAboutMe(true)}
         onMouseLeave={() => setHoveringOnAboutMe(false)}
       >
@@ -169,7 +172,7 @@ function MainOptions() {
             </motion.div>
           )}
         </AnimatePresence>
-        <div className="select-none text-2xl">i</div>
+        <div className="select-none text-base md:text-xl">i</div>
       </div>
 
       <AnimatePresence mode={"wait"}>

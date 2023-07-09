@@ -36,12 +36,10 @@ function MobileWarningModal({ setShowModal }: IMobileWarningModal) {
             className={"h-20 w-20"}
           />
 
-          <div>
-            Due to how mobile browsers respond to drag gestures, this game can
-            only be played on a desktop browser.
-          </div>
-
-          <div>I plan on creating native iOS and Android apps soon.</div>
+          <p>
+            Due to how mobile browsers respond to drag gestures, this game
+            should only be played on a desktop browser.
+          </p>
 
           <PrimaryButton
             innerText={"Proceed anyway"}

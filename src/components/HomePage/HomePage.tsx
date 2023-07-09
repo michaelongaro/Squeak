@@ -27,7 +27,7 @@ function HomePage() {
       ) {
         setAllowedToShowMobileWarningModal(true);
       }
-    }, 2000);
+    }, 2500);
 
     // prefetching/caching card assets to prevent lag for the very
     // first time a player plays a round
@@ -44,7 +44,8 @@ function HomePage() {
   useAttachUnloadEventListener();
 
   return (
-    <div className="relative pb-8 pt-8 lg:pt-0 lg:pb-0">
+    // pb-8 pt-8 lg:pt-0 lg:pb-0
+    <div className="relative ">
       <AnimatePresence mode={"wait"}>
         {pageToRender === "home" && <MainOptions />}
         {pageToRender === "createRoom" && <CreateRoom />}

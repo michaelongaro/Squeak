@@ -29,7 +29,7 @@ function LogIn({ gap }: ILogIn) {
         <SecondaryButton
           innerText={"Login"}
           extraPadding={false}
-          width={"8rem"}
+          width={"6rem"}
           height={"2.5rem"}
           onClickFunction={() => {
             setForSignup(false);

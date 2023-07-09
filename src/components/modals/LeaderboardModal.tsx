@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import useOnClickOutside from "../../hooks/useOnClickOutside";
 import { trpc } from "../../utils/trpc";
@@ -31,6 +31,26 @@ function LeaderboardModal({ setShowModal }: ILeaderboardModal) {
     useState<number>(0);
 
   const modalRef = useRef(null);
+
+  const [aboveMobileViewportWidth, setAboveMobileViewportWidth] =
+    useState<boolean>(false);
+
+  useEffect(() => {
+    function handleResize() {
+      if (window.innerWidth > 768) {
+        setAboveMobileViewportWidth(true);
+      } else {
+        setAboveMobileViewportWidth(false);
+      }
+    }
+
+    handleResize();
+
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   useOnClickOutside({
     ref: modalRef,
@@ -86,6 +106,7 @@ function LeaderboardModal({ setShowModal }: ILeaderboardModal) {
                 () => setCurrentlySelectedIndex(4),
                 () => setCurrentlySelectedIndex(5),
               ]}
+              orientation={window.innerWidth > 1024 ? "horizontal" : "vertical"}
               minHeight={"4rem"}
             />
 
@@ -117,11 +138,13 @@ function LeaderboardModal({ setShowModal }: ILeaderboardModal) {
                         {orderValues[index]}
                       </div>
                       <div className="baseFlex gap-4">
-                        <PlayerIcon
-                          borderColor={player.color}
-                          avatarPath={player.avatarPath}
-                          size="3rem"
-                        />
+                        {aboveMobileViewportWidth && (
+                          <PlayerIcon
+                            borderColor={player.color}
+                            avatarPath={player.avatarPath}
+                            size="3rem"
+                          />
+                        )}
                         <div className="text-sm lg:text-xl">
                           {player.username}
                         </div>

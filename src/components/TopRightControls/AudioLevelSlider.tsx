@@ -41,9 +41,10 @@ function AudioLevelSlider() {
       }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      className={`baseFlex h-full w-full !justify-start ${
-        hovered ? "gap-2" : "gap-0"
-      } rounded-md border-2 p-2`}
+      className={`baseFlex !justify-start 
+      ${hovered ? "w-full" : "w-[40px] md:w-full"}
+      ${hovered ? "h-full" : "h-[40px] md:h-full"}
+      ${hovered ? "gap-2" : "gap-0"} rounded-md border-2 p-2 transition-all`}
     >
       {hovered && <div>{values[0]}</div>}
 

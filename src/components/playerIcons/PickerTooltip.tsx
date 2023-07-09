@@ -86,20 +86,24 @@ function PickerTooltip({
     let top = undefined;
     let bottom = undefined;
 
+    const isMobileViewportWidth = window.innerWidth <= 768;
+
+    // TODO: these shouldn't be hardcoded
     if (type === "avatar") {
-      left = "-137px";
+      left = isMobileViewportWidth ? "-118px" : "-177px";
 
       if (openAbove) {
         top = "-340px";
       } else {
-        bottom = "-340px";
+        bottom = isMobileViewportWidth ? "-310px" : "-340px";
       }
     } else {
-      left = "-177px";
+      left = isMobileViewportWidth ? "-151px" : "-177px";
+
       if (openAbove) {
         top = "-300px";
       } else {
-        bottom = "-300px";
+        bottom = isMobileViewportWidth ? "-369px" : "-340px";
       }
     }
 
@@ -181,17 +185,18 @@ function PickerTooltip({
               left: relativeOffset.left,
               top: relativeOffset.top,
               bottom: relativeOffset.bottom,
-              height: type === "avatar" ? "20rem" : "18rem",
-              width: type === "avatar" ? "20rem" : "25rem",
               opacity: showTooltip ? 1 : 0,
               pointerEvents: showTooltip ? "auto" : "none",
-              gridTemplateColumns:
-                type === "avatar" ? "1fr 1fr 1fr" : "1fr 1fr 1fr 1fr",
-              gridTemplateRows: type === "avatar" ? "1fr 1fr 1fr" : "1fr 1fr",
             }}
             className={`${
               openAbove ? classes.toolTipAbove : classes.toolTipBelow
-            } grid place-items-center gap-4 rounded-md bg-white p-4 shadow-lg transition-all`}
+            } 
+              ${
+                type === "avatar"
+                  ? "h-[18rem] w-[18rem] grid-cols-3 grid-rows-3 md:h-[20rem] md:w-[20rem]"
+                  : "h-[22rem] w-[22rem] grid-cols-3 grid-rows-3 md:h-[18rem] md:w-[25rem] md:grid-cols-4 md:grid-rows-2"
+              }
+              grid place-items-center rounded-md bg-white p-4 shadow-lg transition-all`}
           >
             {type === "avatar"
               ? avatarPaths.map((avatarPath, index) => (

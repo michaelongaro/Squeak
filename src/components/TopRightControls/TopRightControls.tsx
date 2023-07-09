@@ -31,10 +31,10 @@ function TopRightControls({ forPlayScreen }: ITopRightControls) {
       }}
       className={`${
         forPlayScreen ? "baseFlex" : "baseVertFlex"
-      } fixed top-1 right-1 z-[999] !min-w-fit gap-2 sm:gap-4 lg:top-4 lg:right-4`}
+      } fixed top-1 right-1 z-[999] !min-w-fit gap-3 sm:gap-4 lg:top-4 lg:right-4`}
     >
       {!forPlayScreen && (
-        <div className="w-[44px]">
+        <div className="h-[40px] w-[40px] md:h-[44px] md:w-[44px]">
           <SecondaryButton
             icon={<IoSettingsSharp size={"1.5rem"} />}
             extraPadding={false}
@@ -61,7 +61,7 @@ function TopRightControls({ forPlayScreen }: ITopRightControls) {
       )}
 
       {!forPlayScreen && (
-        <div className="relative">
+        <div className="relative h-[40px] w-[40px] md:h-[44px] md:w-[44px]">
           <SecondaryButton
             icon={<FaUserFriends size={"1.5rem"} />}
             extraPadding={false}

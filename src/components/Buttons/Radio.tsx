@@ -4,6 +4,7 @@ interface IRadio {
   values: (string | number)[];
   currentValueIndex: number;
   onClickFunctions: (() => void)[];
+  orientation?: "horizontal" | "vertical";
   minHeight?: string;
 }
 
@@ -11,6 +12,7 @@ function Radio({
   values,
   currentValueIndex,
   onClickFunctions,
+  orientation = "horizontal",
   minHeight,
 }: IRadio) {
   const [hoveredOptionIndex, setHoveredOptionIndex] = useState<number>(-1);
@@ -33,6 +35,7 @@ function Radio({
             borderTopRightRadius: index === values.length - 1 ? "0.25rem" : "0",
             borderBottomRightRadius:
               index === values.length - 1 ? "0.25rem" : "0",
+            borderColor: "hsl(120deg 100% 86%)",
             backgroundColor:
               hoveredOptionIndex === index || currentValueIndex === index
                 ? "hsl(120deg 100% 86%)"
@@ -44,7 +47,9 @@ function Radio({
             padding: "0.5rem",
             height: minHeight ?? "100%",
           }}
-          className="relative h-full w-full transition-all"
+          className={`relative h-full w-full text-sm ${
+            orientation === "horizontal" ? "border-x" : "border-y"
+          } transition-all`}
           onMouseEnter={() => setHoveredOptionIndex(index)}
           onMouseLeave={() => setHoveredOptionIndex(-1)}
           onClick={() => {
