@@ -226,8 +226,8 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
             icon={<IoClose size={"1.5rem"} />}
             extraPadding={false}
             onClickFunction={() => setShowModal(false)}
-            width={"2.5rem"}
-            height={"2.5rem"}
+            width={"2.25rem"}
+            height={"2.25rem"}
             style={{
               position: "absolute",
               top: "0.5rem",

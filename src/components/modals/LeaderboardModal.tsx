@@ -73,7 +73,7 @@ function LeaderboardModal({ setShowModal }: ILeaderboardModal) {
         animate={{ scale: 1 }}
         exit={{ scale: 0.9 }}
         transition={{ duration: 0.15 }}
-        className="baseVertFlex h-[90vh] w-[93vw] !justify-start overflow-y-auto rounded-md border-2 border-white shadow-md lg:h-auto lg:w-auto"
+        className="baseVertFlex max-h-[90vh] w-[93vw] !justify-start overflow-y-auto rounded-md border-2 border-white shadow-md transition-all lg:w-auto"
       >
         {/* combine these classes with above? */}
         <div className="baseVertFlex relative w-full !justify-start gap-8 rounded-md bg-green-800 p-8">
@@ -121,11 +121,11 @@ function LeaderboardModal({ setShowModal }: ILeaderboardModal) {
                 style={{
                   borderColor: "hsl(120deg 100% 86%)",
                 }}
-                className="grid w-full grid-cols-3 grid-rows-1 place-items-center border-b-2"
+                className="grid w-full grid-cols-3 grid-rows-1 place-items-center border-b-2 font-semibold"
               >
-                <div>#</div>
-                <div>Player</div>
-                <div>Value</div>
+                <p>#</p>
+                <p>Player</p>
+                <p>Value</p>
               </div>
               {leaderboardStats ? (
                 Object.values(leaderboardStats)?.[currentlySelectedIndex]?.map(
@@ -134,9 +134,7 @@ function LeaderboardModal({ setShowModal }: ILeaderboardModal) {
                       key={index}
                       className="grid-rows-10 grid w-full grid-cols-3 place-items-center gap-2" // play with gap
                     >
-                      <div className="text-sm lg:text-xl">
-                        {orderValues[index]}
-                      </div>
+                      <p className="text-sm lg:text-xl">{orderValues[index]}</p>
                       <div className="baseFlex gap-4">
                         {aboveMobileViewportWidth && (
                           <PlayerIcon
@@ -145,11 +143,11 @@ function LeaderboardModal({ setShowModal }: ILeaderboardModal) {
                             size="3rem"
                           />
                         )}
-                        <div className="text-sm lg:text-xl">
+                        <p className="text-center text-sm lg:text-xl">
                           {player.username}
-                        </div>
+                        </p>
                       </div>
-                      <div className="text-sm lg:text-xl">{player.value}</div>
+                      <p className="text-sm lg:text-xl">{player.value}</p>
                     </div>
                   )
                 )
@@ -175,8 +173,8 @@ function LeaderboardModal({ setShowModal }: ILeaderboardModal) {
             icon={<IoClose size={"1.5rem"} />}
             extraPadding={false}
             onClickFunction={() => setShowModal(false)}
-            width={"2.5rem"}
-            height={"2.5rem"}
+            width={"2.25rem"}
+            height={"2.25rem"}
             style={{
               position: "absolute",
               top: "0.5rem",
