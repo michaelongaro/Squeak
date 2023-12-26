@@ -2,7 +2,7 @@ import { trpc } from "../utils/trpc";
 import { SessionProvider } from "next-auth/react";
 import { UserIDProvider } from "../context/UserIDContext";
 import { RoomProvider } from "../context/RoomContext";
-import { Montserrat } from "@next/font/google";
+import { Montserrat } from "next/font/google";
 
 import { type AppType } from "next/app";
 import { type Session } from "next-auth";
