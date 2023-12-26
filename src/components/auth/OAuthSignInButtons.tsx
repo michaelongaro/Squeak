@@ -26,28 +26,46 @@ function OAuthSignInButtons({ forSignup, setShowModal }: IOAuthSignInButtons) {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.15 }}
-      className="fixed top-0 left-0 z-[500] flex min-h-[100dvh] min-w-[100vw] items-center justify-center bg-black/50 transition-all"
+      className="fixed left-0 top-0 z-[1000] flex min-h-[100dvh] min-w-[100vw] items-center justify-center bg-black/50 transition-all"
     >
       <motion.div
         ref={signInRef}
         key={"loginModalInner"}
-        initial={{ scale: 0.9 }}
+        initial={{ scale: 0.95 }}
         animate={{ scale: 1 }}
-        exit={{ scale: 0.9 }}
+        exit={{ scale: 0.95 }}
         transition={{ duration: 0.15 }}
-        className="baseVertFlex relative gap-8 rounded-md border-2 border-white bg-green-800 p-12"
+        className="baseVertFlex relative gap-8 rounded-md border-2 border-white bg-green-800 px-16 py-8"
       >
+        <div
+          style={{
+            color: "hsl(120deg 100% 86%)",
+            filter: "drop-shadow(2px 3px 2px rgba(0, 0, 0, 0.2))",
+          }}
+          className="text-xl font-medium"
+        >
+          {forSignup ? "Sign up" : "Login"}
+        </div>
+
         <SecondaryButton
-          innerText={`${forSignup ? "Sign up" : "Login"} with`}
+          innerText={"Continue with"}
           icon={<FaGoogle size={"1.25rem"} />}
           extraPadding={true}
+          style={{
+            gap: "0.75rem",
+            marginRight: "0.25rem",
+          }}
           onClickFunction={() => signIn("google")}
         />
 
         <SecondaryButton
-          innerText={`${forSignup ? "Sign up" : "Login"} with`}
+          innerText={"Continue with"}
           icon={<FaDiscord size={"1.25rem"} />}
           extraPadding={true}
+          style={{
+            gap: "0.75rem",
+            marginRight: "0.25rem",
+          }}
           onClickFunction={() => signIn("discord")}
         />
 

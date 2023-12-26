@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
 import { socket } from "../../pages";
-import { ImEnter } from "react-icons/im";
 import { useUserIDContext } from "../../context/UserIDContext";
 import { useRoomContext } from "../../context/RoomContext";
 import { trpc } from "../../utils/trpc";
@@ -143,7 +142,6 @@ function PublicRooms() {
 
                     <div className="absolute right-4 ">
                       <SecondaryButton
-                        // maybe add "join" to the button text
                         extraPadding={false} // maybe try other way too
                         disabled={
                           playerMetadata[userID]?.username.length === 0 ||
@@ -153,7 +151,7 @@ function PublicRooms() {
                         }
                         width={"3.5rem"}
                         height={"2.5rem"}
-                        icon={<ImEnter size={"1.5rem"} />}
+                        innerText="Join"
                         onClickFunction={() => {
                           setRoomConfig(room);
                           setRoomCode(room.code);
@@ -169,18 +167,18 @@ function PublicRooms() {
               style={{
                 color: "hsl(120deg 100% 86%)",
               }}
-              className=" w-auto pt-4 pb-4 text-center text-lg lg:min-w-[658px]"
+              className=" w-auto pb-4 pt-4 text-center text-lg lg:min-w-[658px]"
             >
               No rooms found. Create one or refresh to find more.
             </div>
           )}
         </>
       ) : (
-        <div className="baseFlex w-auto lg:min-w-[658px]">
+        <div className="baseFlex w-auto py-16 lg:min-w-[600px]">
           <div
             style={{
-              width: "3.5rem",
-              height: "3.5rem",
+              width: "3rem",
+              height: "3rem",
               borderTop: `0.35rem solid hsla(120deg, 100%, 86%, 40%)`,
               borderRight: `0.35rem solid hsla(120deg, 100%, 86%, 40%)`,
               borderBottom: `0.35rem solid hsla(120deg, 100%, 86%, 40%)`,

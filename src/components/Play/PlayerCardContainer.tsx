@@ -201,7 +201,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
               <div className="relative h-full w-full">
                 {/* dummy cards to show "depth" of deck visually */}
                 {gameData.players[userID]!.squeakDeck.length > 2 && (
-                  <div className="absolute top-[2px] left-0 h-full w-full select-none">
+                  <div className="absolute left-0 top-[2px] h-full w-full select-none">
                     <Card
                       showCardBack={true}
                       draggable={false}
@@ -214,7 +214,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                 )}
 
                 {gameData.players[userID]!.squeakDeck.length > 1 && (
-                  <div className="absolute top-[1px] left-0 h-full w-full select-none">
+                  <div className="absolute left-0 top-[1px] h-full w-full select-none">
                     <Card
                       showCardBack={true}
                       draggable={false}
@@ -239,7 +239,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                           ? 502
                           : 499,
                     }}
-                    className="absolute top-0 left-0 h-full w-full select-none"
+                    className="absolute left-0 top-0 h-full w-full select-none"
                   >
                     <Card
                       value={card.value}
@@ -285,7 +285,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                   card !== null && (
                     <div
                       key={`${userID}handCard${card.suit}${card.value}`}
-                      className="absolute top-0 left-0 select-none"
+                      className="absolute left-0 top-0 select-none"
                       style={{
                         top: `${-1 * (idx * 2)}px`,
                       }}
@@ -337,7 +337,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                     : "none",
                 cursor: drawingFromDeck ? "auto" : "pointer",
               }}
-              className="h-full w-full select-none transition-shadow"
+              className="h-full w-full select-none rounded-[0.1rem] transition-shadow"
               onMouseEnter={() => {
                 setHoveringOverDeck(true);
               }}
@@ -364,7 +364,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                 <div className="relative h-full w-full select-none">
                   {/* dummy cards to show "depth" of deck visually */}
                   {showSecondDummyCardBeneathDeck && (
-                    <div className="absolute top-[2px] left-0 h-full w-full select-none">
+                    <div className="absolute left-0 top-[2px] h-full w-full select-none">
                       <Card
                         showCardBack={true}
                         draggable={false}
@@ -379,7 +379,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                   )}
 
                   {showFirstDummyCardBeneathDeck && (
-                    <div className="absolute top-[1px] left-0 h-full w-full select-none">
+                    <div className="absolute left-0 top-[1px] h-full w-full select-none">
                       <Card
                         showCardBack={true}
                         draggable={false}
@@ -399,7 +399,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                         ? "running"
                         : "paused",
                     }}
-                    className="topBackFacingCardInDeck absolute top-0 left-0 h-full w-full select-none"
+                    className="topBackFacingCardInDeck absolute left-0 top-0 h-full w-full select-none"
                   >
                     {filteredCardsInHandFromDeck?.map((card, cardIdx) => (
                       <div
@@ -414,7 +414,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                               ? 500
                               : 499,
                         }}
-                        className="absolute top-0 left-0 h-full w-full select-none"
+                        className="absolute left-0 top-0 h-full w-full select-none"
                       >
                         <Card
                           value={card.value}
@@ -465,7 +465,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                   color: "hsl(120deg 100% 86%)",
                   borderColor: "hsl(120deg 100% 86%)",
                 }}
-                className="baseVertFlex absolute left-[-22rem] bottom-4 gap-2 rounded-sm border-2 bg-green-800 p-2"
+                className="baseVertFlex absolute bottom-4 left-[-22rem] gap-2 rounded-sm border-2 bg-green-800 p-2"
               >
                 <div>No player has valid moves,</div>
                 <div>rotating each player&apos;s deck by one card.</div>

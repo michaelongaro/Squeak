@@ -141,7 +141,7 @@ function Card({
         });
       }
 
-      cardRef.current.style.transition = "all 300ms linear";
+      cardRef.current.style.transition = "all 300ms ease-in-out";
       imageRef.current.style.transition = "transform 150ms linear";
 
       // workaround to have cards played on board from squeak stacks stay above all
@@ -472,9 +472,9 @@ function Card({
                   cardOffsetPosition.y !== 0 ||
                   inMovingSqueakStack)
                   ? origin === "hand" || origin === "squeakHand"
-                    ? "regularCardDropShadow 0.3s linear"
+                    ? "regularCardDropShadow 0.3s ease-in-out"
                     : origin === "deck" || origin === "squeakDeck"
-                    ? "shallowCardDropShadow 0.3s linear"
+                    ? "shallowCardDropShadow 0.3s ease-in-out"
                     : "none"
                   : "none",
               filter:
@@ -499,14 +499,15 @@ function Card({
                     cardOffsetPosition.x &&
                     heldSqueakStackLocation?.location.y ===
                       cardOffsetPosition.y))
-                  ? "transform 300ms linear, filter 300ms linear"
+                  ? "transform 300ms ease-in-out, filter 300ms ease-in-out"
                   : ownerID === userID
-                  ? `filter 300ms linear`
+                  ? `filter 300ms ease-in-out`
                   : "none",
               zIndex: inMovingSqueakStack ? 1000 : 500, // makes sure child cards stay on top of parent in moving stack
             }}
             className={`baseFlex relative z-[500] h-full w-full select-none !items-start ${
-              draggable && "cursor-grab hover:active:cursor-grabbing"
+              draggable &&
+              "cursor-grab hover:active:scale-150 hover:active:cursor-grabbing"
             }`}
           >
             <Image
@@ -519,7 +520,7 @@ function Card({
                     ? `hue-rotate(${hueRotation}deg)`
                     : "none",
               }}
-              className="pointer-events-none h-[64px] w-[48px] select-none tall:h-[87px] tall:w-[67px]"
+              className="pointer-events-none h-[64px] w-[48px] select-none rounded-[0.25rem] tall:h-[87px] tall:w-[67px]"
               src={
                 showCardBack && !manuallyShowCardFront
                   ? cards["cardBack"]

@@ -80,9 +80,9 @@ function ShufflingCountdownModal() {
     >
       <motion.div
         key={"shufflingCountdownModalInner"}
-        initial={{ scale: 0.9 }}
+        initial={{ scale: 0.95 }}
         animate={{ scale: 1 }}
-        exit={{ scale: 0.9 }}
+        exit={{ scale: 0.95 }}
         transition={{ duration: 0.15, delay: 0.2 }}
         style={{
           backgroundColor: "hsl(120deg, 100%, 86%)",

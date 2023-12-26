@@ -64,16 +64,16 @@ function LeaderboardModal({ setShowModal }: ILeaderboardModal) {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.15 }}
-      className="baseFlex fixed top-0 left-0 z-[1000] min-h-[100dvh] min-w-[100vw] bg-black/50 transition-all lg:z-[500]"
+      className="baseFlex fixed left-0 top-0 z-[1000] min-h-[100dvh] min-w-[100vw] bg-black/50 transition-all lg:z-[500]"
     >
       <motion.div
         ref={modalRef}
         key={"leaderboardModalInner"}
-        initial={{ scale: 0.9 }}
+        initial={{ scale: 0.95 }}
         animate={{ scale: 1 }}
-        exit={{ scale: 0.9 }}
+        exit={{ scale: 0.95 }}
         transition={{ duration: 0.15 }}
-        className="baseVertFlex max-h-[90vh] w-[93vw] !justify-start overflow-y-auto rounded-md border-2 border-white shadow-md transition-all lg:w-auto"
+        className="baseVertFlex max-h-[90vh] w-[93vw] !justify-start overflow-y-auto rounded-md border-2 border-white shadow-md lg:w-auto"
       >
         {/* combine these classes with above? */}
         <div className="baseVertFlex relative w-full !justify-start gap-8 rounded-md bg-green-800 p-8">
@@ -87,7 +87,7 @@ function LeaderboardModal({ setShowModal }: ILeaderboardModal) {
             Leaderboard
           </div>
 
-          <div className="baseVertFlex w-full">
+          <div className="baseVertFlex w-full gap-4">
             <Radio
               values={[
                 "Total Squeaks",
@@ -115,7 +115,7 @@ function LeaderboardModal({ setShowModal }: ILeaderboardModal) {
                 borderColor: "hsl(120deg 100% 86%)",
                 color: "hsl(120deg 100% 86%)",
               }}
-              className="baseVertFlex min-h-auto mt-4 w-auto !justify-start gap-4 rounded-md border-2 p-4 lg:min-h-[500px] lg:min-w-[500px]"
+              className="baseVertFlex min-h-auto lg:min-h-auto mt-4 w-auto !justify-start gap-6 rounded-md border-2 p-4 lg:min-w-[500px]"
             >
               <div
                 style={{
@@ -132,20 +132,18 @@ function LeaderboardModal({ setShowModal }: ILeaderboardModal) {
                   (player, index) => (
                     <div
                       key={index}
-                      className="grid-rows-10 grid w-full grid-cols-3 place-items-center gap-2" // play with gap
+                      className="grid w-full grid-cols-3 grid-rows-1 place-items-center gap-2"
                     >
                       <p className="text-sm lg:text-xl">{orderValues[index]}</p>
-                      <div className="baseFlex gap-4">
+                      <div className="baseFlex w-full gap-4 md:!justify-start">
                         {aboveMobileViewportWidth && (
                           <PlayerIcon
                             borderColor={player.color}
                             avatarPath={player.avatarPath}
-                            size="3rem"
+                            size="2.5rem"
                           />
                         )}
-                        <p className="text-center text-sm lg:text-xl">
-                          {player.username}
-                        </p>
+                        <p className="text-sm lg:text-xl">{player.username}</p>
                       </div>
                       <p className="text-sm lg:text-xl">{player.value}</p>
                     </div>

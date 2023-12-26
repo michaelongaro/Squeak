@@ -18,9 +18,9 @@ function MobileWarningModal({ setShowModal }: IMobileWarningModal) {
     >
       <motion.div
         key={"mobileWarningModalInner"}
-        initial={{ scale: 0.9 }}
+        initial={{ scale: 0.95 }}
         animate={{ scale: 1 }}
-        exit={{ scale: 0.9 }}
+        exit={{ scale: 0.95 }}
         transition={{ duration: 0.15 }}
         className="baseVertFlex w-4/5 rounded-md border-2 border-white shadow-md lg:w-96"
       >

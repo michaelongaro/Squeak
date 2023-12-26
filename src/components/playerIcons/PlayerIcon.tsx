@@ -1,4 +1,4 @@
-import React from "react";
+import { type CSSProperties } from "react";
 import { socket } from "../../pages";
 import { motion } from "framer-motion";
 import { useUserIDContext } from "../../context/UserIDContext";
@@ -15,6 +15,7 @@ interface IPlayerIcon {
   showAddFriendButton?: boolean;
   showRemovePlayerFromRoomButton?: boolean;
   onlineStatus?: boolean;
+  style?: CSSProperties;
 }
 
 function PlayerIcon({
@@ -26,6 +27,7 @@ function PlayerIcon({
   playerID,
   showRemovePlayerFromRoomButton,
   onlineStatus,
+  style,
 }: IPlayerIcon) {
   const userID = useUserIDContext();
 
@@ -36,11 +38,12 @@ function PlayerIcon({
       {avatarPath && borderColor ? (
         <motion.div
           key={`playerIcon${playerID}`}
-          initial={{ opacity: 0, scale: 0 }}
+          initial={{ opacity: 0, scale: 0.75 }}
           animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0 }}
+          exit={{ opacity: 0, scale: 0.75 }}
           transition={{ duration: 0.15 }}
           style={{
+            ...style,
             color: "hsl(120deg 100% 86%)",
           }}
           className="baseVertFlex gap-2"
@@ -121,7 +124,7 @@ function PlayerIcon({
                     ? "hsl(120deg 100% 35%)"
                     : "hsl(0deg 100% 40%)",
                 }}
-                className="absolute right-[-0.25rem] bottom-0 h-4 w-4 rounded-[50%]"
+                className="absolute bottom-0 right-[-0.25rem] h-4 w-4 rounded-[50%]"
               ></div>
             )}
           </div>

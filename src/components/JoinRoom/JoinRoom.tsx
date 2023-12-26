@@ -13,6 +13,8 @@ import { MdCopyAll } from "react-icons/md";
 import { FiCheck } from "react-icons/fi";
 import { AnimatePresence, motion } from "framer-motion";
 import PublicRooms from "./PublicRooms";
+import { IoSettingsSharp } from "react-icons/io5";
+import { FaUsers } from "react-icons/fa";
 import Filter from "bad-words";
 import { useSession } from "next-auth/react";
 import { type Room } from "@prisma/client";
@@ -162,7 +164,7 @@ function JoinRoom() {
       className="baseVertFlex relative min-h-[100dvh]"
     >
       <div className="baseVertFlex relative gap-2 ">
-        <div className="absolute top-0 left-0">
+        <div className="absolute left-0 top-0">
           <SecondaryButton
             icon={<BiArrowBack size={"1.5rem"} />}
             extraPadding={false}
@@ -189,78 +191,80 @@ function JoinRoom() {
               style={{
                 color: "hsl(120deg 100% 86%)",
               }}
-              className="baseVertFlex mt-4 gap-4 rounded-md border-2 border-white bg-green-800 p-4"
+              className="baseVertFlex mt-4 gap-8 rounded-md border-2 border-white bg-green-800 p-4"
             >
-              <div className="baseFlex w-full !justify-between gap-2">
-                <label>Username</label>
-                <div className="relative">
+              <div className="baseVertFlex gap-4">
+                <div className="baseFlex w-full !justify-between gap-4">
+                  <label>Username</label>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      placeholder="username"
+                      className=" rounded-md py-1 pl-2 text-green-800"
+                      maxLength={16}
+                      onFocus={() => setFocusedInInput(true)}
+                      onBlur={() => setFocusedInInput(false)}
+                      onChange={(e) => {
+                        setUsernameIsProfane(filter.isProfane(e.target.value));
+
+                        setPlayerMetadata({
+                          ...playerMetadata,
+                          [userID]: {
+                            ...playerMetadata[userID],
+                            username: e.target.value,
+                          } as IRoomPlayer,
+                        });
+                      }}
+                      value={playerMetadata[userID]?.username}
+                    />
+                    <div
+                      style={{
+                        opacity:
+                          focusedInInput ||
+                          playerMetadata[userID]?.username?.length === 0
+                            ? 1
+                            : 0,
+                      }}
+                      className="absolute right-1 top-[-0.25rem] text-xl text-red-600 transition-all"
+                    >
+                      *
+                    </div>
+
+                    <AnimatePresence>
+                      {usernameIsProfane && (
+                        <motion.div
+                          key={"joinRoomProfanityWarning"}
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          transition={{ duration: 0.15 }}
+                          style={{
+                            right: "-255px",
+                            color: "hsl(120deg 100% 86%)",
+                          }}
+                          className="baseVertFlex absolute top-0 gap-2 rounded-md border-2 border-red-700 bg-green-700 pb-2 pl-1 pr-1 pt-2 shadow-md"
+                        >
+                          <div>Username not allowed,</div>
+                          <div className="text-center">
+                            please choose another one
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                </div>
+
+                <div className="baseFlex w-full !justify-between gap-4">
+                  <label>Room code</label>
                   <input
                     type="text"
-                    placeholder="username"
-                    className=" rounded-sm pl-2 text-green-800"
-                    maxLength={16}
-                    onFocus={() => setFocusedInInput(true)}
-                    onBlur={() => setFocusedInInput(false)}
-                    onChange={(e) => {
-                      setUsernameIsProfane(filter.isProfane(e.target.value));
-
-                      setPlayerMetadata({
-                        ...playerMetadata,
-                        [userID]: {
-                          ...playerMetadata[userID],
-                          username: e.target.value,
-                        } as IRoomPlayer,
-                      });
-                    }}
-                    value={playerMetadata[userID]?.username}
+                    placeholder="optional"
+                    className=" rounded-md py-1 pl-2 text-green-800"
+                    maxLength={6}
+                    onChange={(e) => setRoomCode(e.target.value)}
+                    value={roomCode}
                   />
-                  <div
-                    style={{
-                      opacity:
-                        focusedInInput ||
-                        playerMetadata[userID]?.username?.length === 0
-                          ? 1
-                          : 0,
-                    }}
-                    className="absolute top-[-0.25rem] right-1 text-xl text-red-600 transition-all"
-                  >
-                    *
-                  </div>
-
-                  <AnimatePresence>
-                    {usernameIsProfane && (
-                      <motion.div
-                        key={"joinRoomProfanityWarning"}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.15 }}
-                        style={{
-                          right: "-255px",
-                          color: "hsl(120deg 100% 86%)",
-                        }}
-                        className="baseVertFlex absolute top-0 gap-2 rounded-md border-2 border-red-700 bg-green-700 pt-2 pb-2 pr-1 pl-1 shadow-md"
-                      >
-                        <div>Username not allowed,</div>
-                        <div className="text-center">
-                          please choose another one
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
                 </div>
-              </div>
-
-              <div className="baseFlex w-full !justify-between gap-2">
-                <label>Room code</label>
-                <input
-                  type="text"
-                  placeholder="optional"
-                  className=" rounded-sm pl-2 text-green-800"
-                  maxLength={6}
-                  onChange={(e) => setRoomCode(e.target.value)}
-                  value={roomCode}
-                />
               </div>
 
               <div className="baseFlex gap-12">
@@ -291,8 +295,8 @@ function JoinRoom() {
                   roomCode.length === 0 ||
                   usernameIsProfane
                 }
-                width={"20rem"}
-                height={"4rem"}
+                width={"25%"}
+                height={"3rem"}
                 onClickFunction={() => setSubmittedRoomCode(roomCode)}
                 showLoadingSpinnerOnClick={true}
               />
@@ -308,7 +312,7 @@ function JoinRoom() {
                     style={{
                       color: "hsl(120deg 100% 86%)",
                     }}
-                    className="pointer-events-none absolute right-[-20px] rounded-md border-2 border-white bg-green-800 p-4 shadow-md transition-all"
+                    className="pointer-events-none absolute right-10 rounded-md border-2 border-white bg-green-800 px-4 py-2 shadow-md transition-all"
                   >
                     {roomError}
                   </motion.div>
@@ -325,9 +329,10 @@ function JoinRoom() {
             }}
             className="baseVertFlex gap-4"
           >
-            <fieldset className="mt-4 rounded-md border-2 border-white bg-green-800  p-4">
-              <legend className="pl-4 pr-4 text-left text-lg">
+            <fieldset className="mt-4 rounded-md  border-2 border-white bg-green-800  p-4">
+              <legend className="baseFlex gap-2 pl-4 pr-4 text-left text-lg">
                 Room settings
+                <IoSettingsSharp size={"1.25rem"} />
               </legend>
               <div className="grid grid-cols-2 grid-rows-4 items-center gap-x-24 gap-y-0 p-4">
                 <div>Points to win:</div>
@@ -364,6 +369,7 @@ function JoinRoom() {
               <legend className="baseFlex gap-2 pl-4 pr-4 text-left text-lg">
                 Players
                 <div className="tracking-widest">{`(${roomConfig.playersInRoom}/${roomConfig.maxPlayers})`}</div>
+                <FaUsers size={"1.25rem"} />
               </legend>
               <div className="baseVertFlex gap-6 p-4">
                 <div className="baseFlex gap-8">

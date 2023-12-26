@@ -349,16 +349,16 @@ function PickerTooltip({
           {/* preview */}
           {playerMetadata && (
             <motion.div
-              key={"pickerTooltip"}
-              initial={{ opacity: 0, scale: 0 }}
+              key={`${type}-pickerTooltip`}
+              initial={{ opacity: 0, scale: 0.75 }}
               animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0 }}
+              exit={{ opacity: 0, scale: 0.75 }}
               transition={{ duration: 0.15 }}
               style={{
                 color: "hsl(120deg 100% 86%)",
                 filter: `brightness(${hoveringOnTooltip ? 0.75 : 1})`,
               }}
-              className="baseVertFlex cursor-pointer gap-2 transition-all"
+              className="baseVertFlex h-[96px] cursor-pointer transition-[filter]"
               onMouseEnter={() => setHoveringOnTooltip(true)}
               onMouseLeave={() => setHoveringOnTooltip(false)}
               onClick={() => setShowTooltip(true)}
@@ -372,6 +372,9 @@ function PickerTooltip({
                     playerMetadata[userID]?.color || "hsl(352deg, 69%, 61%)"
                   }
                   size="3.25rem" // hopefully doesn't mess up positioning near player container on play
+                  style={{
+                    marginTop: type === "avatar" ? "0.35rem" : "0px",
+                  }}
                 />
               ) : (
                 <Card
@@ -384,7 +387,11 @@ function PickerTooltip({
                   hueRotation={playerMetadata[userID]?.deckHueRotation || 0}
                 />
               )}
-              {type === "avatar" ? <div>Avatar</div> : <div>Color</div>}
+              {type === "avatar" ? (
+                <div className="mt-[0.9rem]">Avatar</div>
+              ) : (
+                <div>Color</div>
+              )}
             </motion.div>
           )}
         </div>

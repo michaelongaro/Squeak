@@ -6,6 +6,8 @@ import { socket } from "../../pages";
 import { useUserIDContext } from "../../context/UserIDContext";
 import { useRoomContext } from "../../context/RoomContext";
 import { type IRoomPlayer, type IGameMetadata } from "../../pages/api/socket";
+import { IoSettingsSharp } from "react-icons/io5";
+import { FaUsers } from "react-icons/fa";
 import PickerTooltip from "../playerIcons/PickerTooltip";
 import PlayerIcon from "../playerIcons/PlayerIcon";
 import SecondaryButton from "../Buttons/SecondaryButton";
@@ -143,7 +145,7 @@ function CreateRoom() {
       className="baseVertFlex relative min-h-[100dvh]"
     >
       <div className="baseVertFlex relative gap-2 ">
-        <div className="absolute top-0 left-[-3.5rem]">
+        <div className="absolute left-[-3.5rem] top-0">
           <SecondaryButton
             icon={<BiArrowBack size={"1.5rem"} />}
             extraPadding={false}
@@ -182,7 +184,7 @@ function CreateRoom() {
                 <input
                   type="text"
                   placeholder="username"
-                  className=" rounded-sm pl-2 text-green-800"
+                  className=" rounded-md py-1 pl-2 text-green-800"
                   maxLength={16}
                   onFocus={() => setFocusedInInput(true)}
                   onBlur={() => setFocusedInInput(false)}
@@ -208,7 +210,7 @@ function CreateRoom() {
                         ? 1
                         : 0,
                   }}
-                  className="absolute top-[-0.25rem] right-1 text-xl text-red-600 transition-all"
+                  className="absolute right-1 top-[-0.25rem] text-xl text-red-600 transition-all"
                 >
                   *
                 </div>
@@ -225,7 +227,7 @@ function CreateRoom() {
                         right: "-255px",
                         color: "hsl(120deg 100% 86%)",
                       }}
-                      className="baseVertFlex absolute top-0 gap-2 rounded-md border-2 border-red-700 bg-green-700 pt-2 pb-2 pr-1 pl-1 shadow-md"
+                      className="baseVertFlex absolute top-0 gap-2 rounded-md border-2 border-red-700 bg-green-700 pb-2 pl-1 pr-1 pt-2 shadow-md"
                     >
                       <div>Username not allowed,</div>
                       <div className="text-center">
@@ -244,21 +246,22 @@ function CreateRoom() {
           </div>
         )}
 
-        <fieldset className="mt-4 rounded-md border-2 border-white bg-green-800 p-4">
+        <fieldset className="mt-4 min-w-[450px] rounded-md border-2 border-white bg-green-800 p-4">
           <legend
             style={{
               color: "hsl(120deg 100% 86%)",
             }}
-            className="pl-4 pr-4 text-left text-lg"
+            className="baseFlex gap-2 pl-4 pr-4 text-left text-lg"
           >
             Room settings
+            <IoSettingsSharp size={"1.25rem"} />
           </legend>
 
           <div
             style={{
               color: "hsl(120deg 100% 86%)",
             }}
-            className="grid grid-cols-2 grid-rows-4 items-center gap-2 p-4"
+            className="grid grid-cols-2 grid-rows-4 items-center gap-y-4 p-4"
           >
             <label>Points to win:</label>
             <div className=" baseFlex !justify-between gap-2 pl-4 pr-4">
@@ -318,7 +321,7 @@ function CreateRoom() {
             />
 
             <label>Room code:</label>
-            <div className="baseFlex gap-2">
+            <div className="baseFlex gap-4">
               <div
                 style={{
                   color: "hsl(120deg 100% 86%)",
@@ -356,6 +359,7 @@ function CreateRoom() {
               <legend className="baseFlex gap-2 pl-4 pr-4 text-left text-lg">
                 Players
                 <div className="tracking-widest">{`(${roomConfig.playersInRoom}/${roomConfig.maxPlayers})`}</div>
+                <FaUsers size={"1.25rem"} />
               </legend>
               <div className="baseVertFlex gap-6 p-4">
                 <div className="baseFlex gap-8">
@@ -413,6 +417,7 @@ function CreateRoom() {
           <PrimaryButton
             innerText={"Create"}
             innerTextWhenLoading={"Creating"}
+            width="50%"
             disabled={
               Object.values(playerMetadata)[0]?.username.length === 0 ||
               usernameIsProfane

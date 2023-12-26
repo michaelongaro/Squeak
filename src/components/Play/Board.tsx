@@ -120,9 +120,9 @@ function Board({ boardClass }: IBoard) {
                       `0px 0px 4px 3px rgba(29, 232, 7, 1)` && (
                       <motion.div
                         key={`board${rowIdx}${colIdx}AnimatedPlusOneIndicator`}
-                        initial={{ opacity: 0, scale: 0.9, translateY: 10 }}
+                        initial={{ opacity: 0, scale: 0.95, translateY: 10 }}
                         animate={{ opacity: 1, scale: 1, translateY: 0 }}
-                        exit={{ opacity: 0, scale: 0.9, translateY: -5 }}
+                        exit={{ opacity: 0, scale: 0.95, translateY: -5 }}
                         transition={{ duration: 0.5 }}
                         style={{
                           color: "hsl(120deg 100% 86%)",

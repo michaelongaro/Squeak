@@ -167,9 +167,9 @@ function Scoreboard() {
       <audio ref={confettiPopRef} src="/sounds/confettiPop.wav" />
       <motion.div
         key={"scoreboardModalInner"}
-        initial={{ scale: 0.9 }}
+        initial={{ scale: 0.95 }}
         animate={{ scale: 1 }}
-        exit={{ scale: 0.9 }}
+        exit={{ scale: 0.95 }}
         transition={{ duration: 0.15, delay: 0.35 }}
         style={{
           color: "hsl(120deg 100% 86%)",

@@ -73,9 +73,9 @@ function FriendsList({ setShowFriendsListModal }: IFriendsList) {
   return (
     <motion.div
       key={"friendsListModal"}
-      initial={{ opacity: 0, scale: 0.9 }}
+      initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.9 }}
+      exit={{ opacity: 0, scale: 0.95 }}
       transition={{ duration: 0.15 }}
       ref={modalRef}
       className="baseVertFlex absolute right-0 top-16 w-[370px] !items-start gap-2 rounded-md border-2 border-white bg-green-800 p-4"

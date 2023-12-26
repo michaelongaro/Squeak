@@ -95,6 +95,7 @@ function MainOptions() {
               icon={<AiOutlineInfoCircle size={"1.5rem"} />}
               iconOnLeft={true}
               extraPadding={true}
+              style={{ gap: "1.25rem", justifyContent: "flex-start" }}
               onClickFunction={() => setShowTutorialModal(true)}
             />
 
@@ -103,14 +104,16 @@ function MainOptions() {
               icon={<AiOutlinePlusCircle size={"1.5rem"} />}
               iconOnLeft={true}
               extraPadding={true}
+              style={{ gap: "1.3rem", justifyContent: "flex-start" }}
               onClickFunction={() => setPageToRender("createRoom")}
             />
 
             <SecondaryButton
               innerText={"Join room"}
-              icon={<ImEnter size={"1.5rem"} />}
+              icon={<ImEnter size={"1.35rem"} />}
               iconOnLeft={true}
               extraPadding={true}
+              style={{ gap: "1.5rem", justifyContent: "flex-start" }}
               onClickFunction={() => setPageToRender("joinRoom")}
             />
 
@@ -118,6 +121,7 @@ function MainOptions() {
               innerText={"Leaderboard"}
               icon={<IoStatsChart size={"1.5rem"} />}
               iconOnLeft={true}
+              style={{ gap: "1.25rem", justifyContent: "flex-start" }}
               extraPadding={true}
               onClickFunction={() => setShowLeaderboardModal(true)}
             />
@@ -137,7 +141,7 @@ function MainOptions() {
           
           ${hoveringOnAboutMe ? "shadow-md" : "shadow-none"}
           ${hoveringOnAboutMe ? "w-[18rem]" : "w-8"}
-        right-2 bottom-2 !justify-end overflow-hidden rounded-full border-2 px-[0.75rem] py-[0.15rem] md:px-[0.7rem] md:py-0 lg:right-4 lg:bottom-4`}
+        bottom-2 right-2 !justify-end overflow-hidden rounded-full border-2 px-[0.75rem] py-[0.15rem] md:px-[0.7rem] md:py-0 lg:bottom-4 lg:right-4`}
         onMouseEnter={() => setHoveringOnAboutMe(true)}
         onMouseLeave={() => setHoveringOnAboutMe(false)}
       >

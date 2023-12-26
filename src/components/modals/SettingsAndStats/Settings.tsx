@@ -49,7 +49,7 @@ function Settings({
           <input
             type="text"
             placeholder="username"
-            className=" rounded-sm pl-2 text-green-800"
+            className=" rounded-md py-1 pl-2 text-green-800"
             maxLength={16}
             onFocus={() => setFocusedInInput(true)}
             onBlur={() => setFocusedInInput(false)}
@@ -75,7 +75,7 @@ function Settings({
                   ? 1
                   : 0,
             }}
-            className="absolute top-[-0.25rem] right-1 text-xl text-red-600 transition-all"
+            className="absolute right-1 top-[-0.25rem] text-xl text-red-600 transition-all"
           >
             *
           </div>
@@ -92,7 +92,7 @@ function Settings({
                   right: "-255px",
                   color: "hsl(120deg 100% 86%)",
                 }}
-                className="baseVertFlex absolute top-0 gap-2 rounded-md border-2 border-red-700 bg-green-700 pt-2 pb-2 pr-1 pl-1 shadow-md"
+                className="baseVertFlex absolute top-0 gap-2 rounded-md border-2 border-red-700 bg-green-700 pb-2 pl-1 pr-1 pt-2 shadow-md"
               >
                 <div>Username not allowed,</div>
                 <div className="text-center">please choose another one</div>
