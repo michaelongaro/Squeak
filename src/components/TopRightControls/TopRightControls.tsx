@@ -3,7 +3,8 @@ import { useSession } from "next-auth/react";
 import { useRoomContext } from "../../context/RoomContext";
 import SecondaryButton from "../Buttons/SecondaryButton";
 import UserSettingsAndStatsModal from "../modals/SettingsAndStats/UserSettingsAndStatsModal";
-import { IoSettingsSharp, IoLogOutOutline } from "react-icons/io5";
+import { IoSettingsSharp } from "react-icons/io5";
+import { TbDoorExit } from "react-icons/tb";
 import { FaUserFriends } from "react-icons/fa";
 import { AnimatePresence, motion } from "framer-motion";
 import FriendsList from "../modals/FriendsList";
@@ -31,7 +32,7 @@ function TopRightControls({ forPlayScreen }: ITopRightControls) {
       }}
       className={`${
         forPlayScreen ? "baseFlex" : "baseVertFlex"
-      } fixed top-1 right-1 z-[999] !min-w-fit gap-3 sm:gap-4 lg:top-4 lg:right-4`}
+      } fixed right-1 top-1 z-[999] !min-w-fit gap-3 sm:gap-4 lg:right-4 lg:top-4`}
     >
       {!forPlayScreen && (
         <div className="h-[40px] w-[40px] md:h-[44px] md:w-[44px]">
@@ -54,7 +55,7 @@ function TopRightControls({ forPlayScreen }: ITopRightControls) {
 
       {forPlayScreen && (
         <SecondaryButton
-          icon={<IoLogOutOutline size={"1.5rem"} />}
+          icon={<TbDoorExit size={"1.5rem"} />}
           extraPadding={false}
           onClickFunction={() => leaveRoom(true)}
         />
