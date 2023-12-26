@@ -7,7 +7,7 @@
     "dev": "next dev",
     "postinstall": "prisma generate",
     "lint": "next lint",
-    "start": "next start -H 0.0.0.0 -p ${PORT:-8080}",
+    "start": "NEXT_SHARP_PATH=/tmp/node_modules/sharp next start -H 0.0.0.0 -p ${PORT:-8080}",
     "test": "vitest",
     "coverage": "vitest run --coverage"
   },
