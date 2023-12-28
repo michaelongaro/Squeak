@@ -135,7 +135,7 @@ function LeaderboardModal({ setShowModal }: ILeaderboardModal) {
                       className="grid w-full grid-cols-3 grid-rows-1 place-items-center gap-2"
                     >
                       <p className="text-sm lg:text-xl">{orderValues[index]}</p>
-                      <div className="baseFlex w-full gap-4 md:!justify-start">
+                      <div className="baseFlex w-full gap-4 text-center md:!justify-start">
                         {aboveMobileViewportWidth && (
                           <PlayerIcon
                             borderColor={player.color}
