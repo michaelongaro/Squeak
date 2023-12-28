@@ -30,7 +30,7 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.15 }}
-      className="baseFlex lg:z-[500] fixed left-0 top-0 z-[1000] min-h-[100dvh] min-w-[100vw] bg-black/50 transition-all"
+      className="baseFlex fixed left-0 top-0 z-[1000] min-h-[100dvh] min-w-[100vw] bg-black/50 transition-all lg:z-[500]"
     >
       <motion.div
         ref={modalRef}
@@ -42,7 +42,7 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
         className="baseVertFlex rounded-md border-2 border-white shadow-lg"
       >
         {/* combine these classes with above? */}
-        <div className="baseVertFlex relative max-h-[90vh] w-[93vw] !justify-start gap-8 overflow-y-scroll rounded-md rounded-t-md bg-green-800 p-8 lg:w-full">
+        <div className="baseVertFlex relative max-h-[90vh] w-[93vw] !justify-start gap-8 overflow-y-scroll rounded-md rounded-t-md bg-green-800 p-4 md:p-8 lg:w-full">
           <div
             style={{
               color: "hsl(120deg 100% 86%)",
@@ -69,7 +69,7 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
                 style={{
                   color: "hsl(120deg 100% 86%)",
                 }}
-                className="lg:w-[1000px] w-auto p-4 text-sm lg:text-base"
+                className="w-auto p-4 text-sm lg:w-[1000px] lg:text-base"
               >
                 <p>
                   Squeak is a multiplayer rendition of Solitaire, otherwise
@@ -115,7 +115,7 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
               style={{
                 color: "hsl(120deg 100% 86%)",
               }}
-              className="lg:w-[1000px] w-auto p-4 text-sm lg:text-base"
+              className="w-auto p-4 text-sm lg:w-[1000px] lg:text-base"
             >
               The goal of each round is to get rid of all the cards in your
               Squeak pile, which reveals your &quot;Squeak&quot; button. When
@@ -139,48 +139,59 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
               style={{
                 color: "hsl(120deg 100% 86%)",
               }}
-              className="baseVertFlex lg:w-[1000px] w-auto !justify-start gap-4 p-4 text-sm lg:text-base"
+              className="baseVertFlex w-auto !justify-start gap-4 p-4 text-sm lg:w-[1000px] lg:text-base"
             >
-              <div className="baseVertFlex sm:!flex-row w-full !items-start !justify-start gap-4">
-                <div className="baseFlex sm:h-[35px] sm:w-[38px] h-[35px] w-[35px] rounded-full border-2 border-white">
+              <div className="baseVertFlex w-full !items-start !justify-start gap-4 sm:!flex-row">
+                <div className="baseFlex h-[35px] w-[35px] rounded-full border-2 border-white sm:h-[35px] sm:w-[38px]">
                   1
                 </div>
-                <p className="baseVertFlex w-full gap-4">
-                  To earn points, you must place cards on piles on the board.
-                  Each pile must start with an ace, and every card placed
-                  afterwards on that pile must be of the same suit and be one
-                  value higher than the previous card (ex. Ace of Hearts, 2 of
-                  Hearts, 3 of Hearts). Each card placed is worth one point.
+                <div className="baseVertFlex w-full gap-4">
+                  <p>
+                    To earn points, you must place cards on piles on the board.
+                    Each pile must start with an ace, and every card placed
+                    afterwards on that pile must be of the same suit and be one
+                    value higher than the previous card (ex. Ace of Hearts, 2 of
+                    Hearts, 3 of Hearts). Each card placed is worth one point.
+                  </p>
                   <Image
                     src={boardPlacementExample}
                     alt={"Example of a card being placed on the board"}
                     className="h-auto w-auto rounded-md border-[1px] border-white shadow-lg"
                     placeholder="blur"
                   />
-                </p>
+                </div>
               </div>
-              <div className="baseVertFlex sm:!flex-row w-full !items-start !justify-start gap-4">
-                <div className="baseFlex sm:h-[35px] sm:w-[38px] h-[35px] w-[35px] rounded-full border-2 border-white">
+              <div className="baseVertFlex w-full !items-start !justify-start gap-4 sm:!flex-row">
+                <div className="baseFlex h-[35px] w-[35px] rounded-full border-2 border-white sm:h-[35px] sm:w-[38px]">
                   2
                 </div>
-                <p className="baseVertFlex w-full gap-4">
-                  You may place cards on your squeak stacks as well, however
-                  each card must be of opposite color and one value lower than
-                  the previous card, similar to Solitaire (ex. Jack of Spades,
-                  10 of Hearts, 9 of Clubs). Only the last card in your squeak
-                  stack is able to be played on the board, however you can move
-                  sections of one stack to another as long as the stacking rules
-                  are followed.
+                <div className="baseVertFlex w-full gap-4">
+                  <p>
+                    You may place cards on your squeak stacks as well, however
+                    each card must be of{" "}
+                    <span className="font-semibold underline underline-offset-2">
+                      opposite color
+                    </span>{" "}
+                    and{" "}
+                    <span className="font-semibold underline underline-offset-2">
+                      one value lower
+                    </span>{" "}
+                    than the previous card, similar to Solitaire (ex. Jack of
+                    Spades, 10 of Hearts, 9 of Clubs). Only the last card in
+                    your squeak stack is able to be played on the board, however
+                    you can move sections of one stack to another as long as the
+                    stacking rules are followed.
+                  </p>
                   <Image
                     src={squeakStackPlacementExample}
                     alt={"Example of a card being placed on the board"}
                     className="h-auto w-auto rounded-md border-[1px] border-white shadow-lg"
                     placeholder="blur"
                   />
-                </p>
+                </div>
               </div>
-              <div className="baseVertFlex sm:!flex-row w-full !items-start !justify-start gap-4">
-                <div className="baseFlex sm:h-[35px] sm:w-[38px] h-[35px] w-[35px] rounded-full border-2 border-white">
+              <div className="baseVertFlex w-full !items-start !justify-start gap-4 sm:!flex-row">
+                <div className="baseFlex h-[35px] w-[35px] rounded-full border-2 border-white sm:h-[35px] sm:w-[38px]">
                   3
                 </div>
                 <p className="w-full">
@@ -188,8 +199,8 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
                   any time as long as they follow the above rules.
                 </p>
               </div>
-              <div className="baseVertFlex sm:!flex-row w-full !items-start !justify-start gap-4">
-                <div className="baseFlex sm:h-[35px] sm:w-[38px] h-[35px] w-[35px] rounded-full border-2 border-white">
+              <div className="baseVertFlex w-full !items-start !justify-start gap-4 sm:!flex-row">
+                <div className="baseFlex h-[35px] w-[35px] rounded-full border-2 border-white sm:h-[35px] sm:w-[38px]">
                   4
                 </div>
                 <p className="w-3/4">
@@ -210,19 +221,26 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
             >
               Scoring
             </legend>
-            <p
+            <ul
               style={{
                 color: "hsl(120deg 100% 86%)",
               }}
-              className="lg:w-[1000px] w-auto p-4 text-sm lg:text-base"
+              className="baseVertFlex w-auto list-disc !items-start gap-4 p-4 pl-8 text-sm lg:w-[1000px] lg:text-base"
             >
-              Points are calculated after the end of each round. Each card a
-              player placed onto a board pile is worth one point. The player who
-              Squeaked gets an additional ten points, while every other player
-              loses a point for every card left in their Squeak pile. When a
-              player reaches the room&apos;s predetermined point threshold, that
-              player has won and the game is over.
-            </p>
+              <li>
+                Points are calculated after the end of each round. Each card a
+                player placed onto a board pile is worth one point.
+              </li>
+              <li>
+                The player who Squeaked gets an additional ten points, while
+                every other player loses a point for every card left in their
+                Squeak pile.
+              </li>
+              <li>
+                When a player reaches the room&apos;s predetermined point
+                threshold, that player has won and the game is over.
+              </li>
+            </ul>
           </fieldset>
 
           <SecondaryButton
