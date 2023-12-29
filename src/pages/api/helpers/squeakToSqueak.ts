@@ -77,6 +77,11 @@ export function squeakToSqueak({
   io.in(roomCode).emit("cardDropApproved", {
     playerID,
     card,
+    startingCardMetadata: {
+      originSqueakStackIdx: squeakStartLocation,
+      destinationSqueakStackIdx: squeakEndLocation,
+      lengthOfStack: squeakStackLength,
+    },
     squeakEndCoords: {
       offsetHeight: indexWithinSqueakStack * (20 - squeakStackLength),
     },

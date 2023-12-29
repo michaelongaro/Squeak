@@ -48,6 +48,8 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
     setOriginIndexForHeldSqueakCard,
     setHoldingASqueakCard,
     setHoveredSqueakStack,
+    currentPlayerSqueakStackBeingDragged,
+    setCurrentPlayerSqueakStackBeingDragged,
   } = useRoomContext();
 
   const [hoveringOverDeck, setHoveringOverDeck] = useState(false);
@@ -66,6 +68,69 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
   const cardDimensions = useResponsiveCardDimensions();
 
   const audioRef = useRef<HTMLAudioElement>(null);
+
+  function dynamicTopValue(
+    squeakStackIdx: number,
+    squeakStackLength: number,
+    cardIdx: number
+  ) {
+    // ah damn maybe need edge case to not even bother with dynamically changing if the combined total of the
+    // squeak stack being moved and the squeak stack being hovered over is greater than 12 since it's not possible?
+
+    let lengthOfSqueakStackBeingDragged = 0;
+    if (currentPlayerSqueakStackBeingDragged !== null) {
+      lengthOfSqueakStackBeingDragged =
+        currentPlayerSqueakStackBeingDragged.length;
+    }
+
+    // 0 1 2 3
+    // stack being dragged
+
+    // special handling for squeak stack being dragged
+    if (
+      holdingASqueakCard &&
+      squeakStackIdx === currentPlayerSqueakStackBeingDragged!.squeakStackIdx &&
+      cardIdx >= currentPlayerSqueakStackBeingDragged!.startingDepth
+    ) {
+      if (
+        hoveredSqueakStack !== null &&
+        originIndexForHeldSqueakCard !== hoveredSqueakStack
+      ) {
+        const hoveredSqueakStackLength =
+          gameData.players[userID]!.squeakHand[hoveredSqueakStack]!.length;
+
+        squeakStackLength =
+          hoveredSqueakStackLength + lengthOfSqueakStackBeingDragged;
+      }
+    }
+
+    // otherwise, part of regular squeak stacks
+    else {
+      if (hoveredSqueakStack !== null) {
+        if (holdingASqueakCard) {
+          // narrowing down to correct squeak stack
+          if (originIndexForHeldSqueakCard === squeakStackIdx) {
+            if (squeakStackIdx !== hoveredSqueakStack) {
+              squeakStackLength -= lengthOfSqueakStackBeingDragged;
+            }
+          } else if (hoveredSqueakStack === squeakStackIdx) {
+            squeakStackLength += lengthOfSqueakStackBeingDragged;
+          }
+        } else if (holdingADeckCard && squeakStackIdx === hoveredSqueakStack) {
+          squeakStackLength++;
+        }
+      } else {
+        // not hovering over any squeak stack but still grabbing a squeak stack
+        if (holdingASqueakCard) {
+          if (originIndexForHeldSqueakCard === squeakStackIdx) {
+            squeakStackLength -= lengthOfSqueakStackBeingDragged;
+          }
+        }
+      }
+    }
+
+    return `${(20 - squeakStackLength) * cardIdx}px`;
+  }
 
   useEffect(() => {
     if (soundPlayStates.currentPlayer && audioRef.current) {
@@ -93,7 +158,8 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
   }: IGetBoxShadowStyles): string {
     if (holdingADeckCard || holdingASqueakCard) {
       return `0px 0px 4px ${
-        hoveredSqueakStack && hoveredSqueakStack === squeakStackIdx
+        hoveredSqueakStack !== originIndexForHeldSqueakCard &&
+        hoveredSqueakStack === squeakStackIdx
           ? "5px"
           : "3px"
       } rgba(184,184,184,1)`;
@@ -122,76 +188,91 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
               : classes.gridContainer
           } select-none`}
         >
-          {gameData?.players[userID]?.squeakHand.map((cards, cardsIdx) => (
-            <div
-              key={`${userID}squeakStack${cardsIdx}`}
-              // @ts-expect-error asdf
-              className={`${cardClassMap[cardsIdx]} relative h-full w-full select-none`}
-            >
+          {gameData?.players[userID]?.squeakHand.map(
+            (cards, squeakStackIdx) => (
               <div
-                id={`${userID}squeakHand${cardsIdx}`}
-                style={{
-                  boxShadow: getBoxShadowStyles({
-                    id: `${userID}squeakHand${cardsIdx}`,
-                    squeakStackIdx: -1,
-                  }),
-                  opacity:
-                    hoveredSqueakStack === cardsIdx &&
-                    (holdingADeckCard || holdingASqueakCard)
-                      ? 0.35
-                      : 1,
-                  height:
-                    cards.length === 0 || cards.length === 1
-                      ? `${cardDimensions.height}px`
-                      : `${
-                          (cards.length - 1) * (20 - cardsIdx) +
-                          cardDimensions.height
-                        }px`,
-                }}
-                className="absolute w-full select-none rounded-sm transition-all"
+                key={`${userID}squeakStack${squeakStackIdx}`}
+                // @ts-expect-error asdf
+                className={`${cardClassMap[squeakStackIdx]} relative h-full w-full select-none`}
               >
-                {cards.map((card, cardIdx) => (
-                  <div
-                    key={`${userID}squeakCard${card.suit}${card.value}`}
-                    id={`${userID}squeakStack${cardsIdx}${cardIdx}`}
-                    style={{
-                      zIndex:
-                        originIndexForHeldSqueakCard === cardsIdx
-                          ? 501
-                          : "auto",
-                      top: `${(20 - cards.length) * cardIdx}px`,
-                    }}
-                    className={`absolute left-0 h-[64px] w-[48px] select-none tall:h-[87px] tall:w-[67px]`}
-                    onMouseDown={() => {
-                      setOriginIndexForHeldSqueakCard(cardsIdx);
-                      setHoldingASqueakCard(true);
-                      setHoveredSqueakStack(null);
-                    }}
-                    onMouseUp={() => {
-                      setHoldingASqueakCard(false);
-                      setOriginIndexForHeldSqueakCard(null);
-                    }}
-                  >
-                    <Card
-                      value={card.value}
-                      suit={card.suit}
-                      draggable={true}
-                      origin={"squeakHand"}
-                      squeakStackLocation={[cardsIdx, cardIdx]}
-                      // implement this functionality in a refactor later
-                      // offsetSqueakStackHeight={
-                      //   cardIdx === 0 ? 0 : (20 - cards.length) * cardIdx
-                      // }
-                      ownerID={userID}
-                      hueRotation={playerMetadata[userID]?.deckHueRotation || 0}
-                      startID={`${userID}squeakStack${cardsIdx}${cardIdx}`}
-                      rotation={0}
-                    />
-                  </div>
-                ))}
+                <div
+                  id={`${userID}squeakHand${squeakStackIdx}`}
+                  style={{
+                    boxShadow: getBoxShadowStyles({
+                      id: `${userID}squeakHand${squeakStackIdx}`,
+                      squeakStackIdx: -1,
+                    }),
+                    opacity:
+                      hoveredSqueakStack !== originIndexForHeldSqueakCard &&
+                      hoveredSqueakStack === squeakStackIdx &&
+                      (holdingADeckCard || holdingASqueakCard)
+                        ? 0.35
+                        : 1,
+                    height:
+                      cards.length === 0 || cards.length === 1
+                        ? `${cardDimensions.height}px`
+                        : `${
+                            (cards.length - 1) * (20 - cards.length) +
+                            cardDimensions.height
+                          }px`,
+                  }}
+                  className="absolute w-full select-none rounded-[0.2rem] transition-all"
+                >
+                  {cards.map((card, cardIdx) => (
+                    <div
+                      key={`${userID}squeakCard${card.suit}${card.value}`}
+                      id={`${userID}squeakStack${squeakStackIdx}${cardIdx}`}
+                      style={{
+                        zIndex:
+                          originIndexForHeldSqueakCard === squeakStackIdx
+                            ? 501
+                            : "auto",
+                        top: dynamicTopValue(
+                          squeakStackIdx,
+                          cards.length,
+                          cardIdx
+                        ),
+                        transition: "top 0.25s ease-in-out",
+                      }}
+                      className={`absolute left-0 h-[64px] w-[48px] select-none tall:h-[87px] tall:w-[67px]`}
+                      onMouseDown={() => {
+                        setOriginIndexForHeldSqueakCard(squeakStackIdx);
+                        setHoldingASqueakCard(true);
+                        setCurrentPlayerSqueakStackBeingDragged({
+                          squeakStackIdx,
+                          startingDepth: cardIdx,
+                          length: cards.length - cardIdx,
+                        });
+                        setHoveredSqueakStack(null);
+                      }}
+                      onMouseUp={() => {
+                        setHoldingASqueakCard(false);
+                        setCurrentPlayerSqueakStackBeingDragged(null);
+                        // ^^ kinda don't want to immediately do this, since if it is a valid move
+                        // then it will just move back whenever server response comes in resulting in jerky motion
+                        // maybe do it after a cardDropDenied or cardDropAccepted?
+                        setOriginIndexForHeldSqueakCard(null);
+                      }}
+                    >
+                      <Card
+                        value={card.value}
+                        suit={card.suit}
+                        draggable={true}
+                        origin={"squeakHand"}
+                        squeakStackLocation={[squeakStackIdx, cardIdx]}
+                        ownerID={userID}
+                        hueRotation={
+                          playerMetadata[userID]?.deckHueRotation || 0
+                        }
+                        startID={`${userID}squeakStack${squeakStackIdx}${cardIdx}`}
+                        rotation={0}
+                      />
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
-          ))}
+            )
+          )}
 
           <div
             id={`${userID}squeakDeck`}

@@ -54,6 +54,11 @@ export function deckToSqueak({
 
   io.in(roomCode).emit("cardDropApproved", {
     card,
+    startingCardMetadata: {
+      originSqueakStackIdx: undefined,
+      destinationSqueakStackIdx: squeakEndLocation,
+      lengthOfStack: squeakStackLength,
+    },
     squeakEndCoords: {
       offsetHeight: indexWithinSqueakStack * (20 - squeakStackLength),
     },

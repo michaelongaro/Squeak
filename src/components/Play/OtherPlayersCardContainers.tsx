@@ -47,6 +47,8 @@ function OtherPlayersCardContainers({
     soundPlayStates,
     cardBeingMovedProgramatically,
     roomConfig,
+    otherPlayerSqueakStacksBeingDragged,
+    setOtherPlayerSqueakStacksBeingDragged,
   } = useRoomContext();
 
   const otherPlayerIDs = Object.keys(gameData.players).filter(
@@ -131,6 +133,40 @@ function OtherPlayersCardContainers({
     }),
   ];
 
+  function dynamicTopValue(
+    squeakStackIdx: number,
+    squeakStackLength: number,
+    cardIdx: number,
+    playerID: string
+  ) {
+    const draggedData = otherPlayerSqueakStacksBeingDragged[playerID];
+
+    const draggedStack = draggedData?.draggedStack ?? null;
+    const squeakStackDepthAlterations =
+      draggedData?.squeakStackDepthAlterations ?? null;
+
+    let lengthOfSqueakStackBeingDragged = 0;
+    if (draggedStack !== null) {
+      lengthOfSqueakStackBeingDragged = draggedStack.length;
+    }
+
+    // special handling for squeak stack being dragged
+    if (
+      squeakStackIdx === draggedStack?.squeakStackIdx &&
+      cardIdx >= draggedStack?.startingDepth
+    ) {
+      squeakStackLength =
+        draggedStack.lengthOfTargetStack + lengthOfSqueakStackBeingDragged;
+    }
+
+    // otherwise, part of regular squeak stacks
+    else {
+      squeakStackLength += squeakStackDepthAlterations?.[squeakStackIdx] ?? 0;
+    }
+
+    return `${(20 - squeakStackLength) * cardIdx}px`;
+  }
+
   return (
     <>
       <audio ref={audioRef0} src="/sounds/otherPlayerCardMove.wav" />
@@ -151,56 +187,64 @@ function OtherPlayersCardContainers({
             }}
             className={`${internalOrderedGridClassNames[idx]} relative select-none`}
           >
-            {gameData.players[playerID]?.squeakHand.map((cards, cardsIdx) => (
-              <div
-                key={`${playerID}squeakStack${cardsIdx}`}
-                // @ts-expect-error asdf
-                className={`${cardClassMap[cardsIdx]} relative h-full w-full select-none`}
-              >
+            {gameData.players[playerID]?.squeakHand.map(
+              (cards, squeakStackIdx) => (
                 <div
-                  id={`${playerID}squeakHand${cardsIdx}`}
-                  style={{
-                    height:
-                      cards.length === 0 || cards.length === 1
-                        ? `${cardDimensions.height}px`
-                        : `${
-                            (cards.length - 1) * (20 - cardsIdx) +
-                            cardDimensions.height
-                          }px`,
-                  }}
-                  className="absolute h-full w-full select-none"
+                  key={`${playerID}squeakStack${squeakStackIdx}`}
+                  // @ts-expect-error asdf
+                  className={`${cardClassMap[squeakStackIdx]} relative h-full w-full select-none`}
                 >
-                  {cards.map((card, cardIdx) => (
-                    <div
-                      key={`${playerID}squeakCard${card.suit}${card.value}`}
-                      id={`${playerID}squeakStack${cardsIdx}${cardIdx}`}
-                      className={`absolute left-0 h-[64px] w-[48px] select-none tall:h-[87px] tall:w-[67px]`}
-                      style={{
-                        top: `${(20 - cards.length) * cardIdx}px`,
-                      }}
-                    >
-                      <Card
-                        value={card.value}
-                        suit={card.suit}
-                        draggable={false}
-                        origin={"squeakHand"}
-                        ownerID={playerID}
-                        hueRotation={
-                          playerMetadata[playerID]?.deckHueRotation || 0
-                        }
-                        startID={`${playerID}squeakStack${cardsIdx}${cardIdx}`}
-                        // implement this functionality in a refactor later
-                        // squeakStackLocation={[cardsIdx, cardIdx]}
-                        // offsetSqueakStackHeight={
-                        //   cardIdx === 0 ? 0 : (20 - cards.length) * cardIdx
-                        // }
-                        rotation={rotationOrder[idx] as number}
-                      />
-                    </div>
-                  ))}
+                  <div
+                    id={`${playerID}squeakHand${squeakStackIdx}`}
+                    style={{
+                      height:
+                        cards.length === 0 || cards.length === 1
+                          ? `${cardDimensions.height}px`
+                          : `${
+                              (cards.length - 1) * (20 - cards.length) +
+                              cardDimensions.height
+                            }px`,
+                    }}
+                    className="absolute h-full w-full select-none"
+                  >
+                    {cards.map((card, cardIdx) => (
+                      <div
+                        key={`${playerID}squeakCard${card.suit}${card.value}`}
+                        id={`${playerID}squeakStack${squeakStackIdx}${cardIdx}`}
+                        style={{
+                          top: dynamicTopValue(
+                            squeakStackIdx,
+                            cards.length,
+                            cardIdx,
+                            playerID
+                          ),
+                          transition: "top 0.25s ease-in-out",
+                        }}
+                        className={`absolute left-0 h-[64px] w-[48px] select-none tall:h-[87px] tall:w-[67px]`}
+                      >
+                        <Card
+                          value={card.value}
+                          suit={card.suit}
+                          draggable={false}
+                          origin={"squeakHand"}
+                          ownerID={playerID}
+                          hueRotation={
+                            playerMetadata[playerID]?.deckHueRotation || 0
+                          }
+                          startID={`${playerID}squeakStack${squeakStackIdx}${cardIdx}`}
+                          // implement this functionality in a refactor later
+                          // squeakStackLocation={[squeakStackIdx, cardIdx]}
+                          // offsetSqueakStackHeight={
+                          //   cardIdx === 0 ? 0 : (20 - cards.length) * cardIdx
+                          // }
+                          rotation={rotationOrder[idx] as number}
+                        />
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            ))}
+              )
+            )}
 
             <div
               id={`${playerID}squeakDeck`}
@@ -209,7 +253,7 @@ function OtherPlayersCardContainers({
               {gameData.players[playerID]!.squeakDeck.length > 0 && (
                 <div className="relative h-full w-full">
                   {showDummyDeckCardStates?.[playerID]?.[2] && (
-                    <div className="absolute top-[2px] left-0 h-full w-full select-none">
+                    <div className="absolute left-0 top-[2px] h-full w-full select-none">
                       <Card
                         showCardBack={true}
                         draggable={false}
@@ -224,7 +268,7 @@ function OtherPlayersCardContainers({
                   )}
 
                   {showDummyDeckCardStates?.[playerID]?.[3] && (
-                    <div className="absolute top-[1px] left-0 h-full w-full select-none">
+                    <div className="absolute left-0 top-[1px] h-full w-full select-none">
                       <Card
                         showCardBack={true}
                         draggable={false}
@@ -250,7 +294,7 @@ function OtherPlayersCardContainers({
                               ? 502
                               : 499,
                         }}
-                        className="absolute top-0 left-0 h-full w-full select-none"
+                        className="absolute left-0 top-0 h-full w-full select-none "
                       >
                         <Card
                           value={card.value}
@@ -296,7 +340,7 @@ function OtherPlayersCardContainers({
                     card !== null && (
                       <div
                         key={`${playerID}handCard${card.suit}${card.value}`}
-                        className="absolute top-0 left-0 select-none"
+                        className="absolute left-0 top-0 select-none"
                         style={{
                           top: `${-1 * (topCardsIdx * 2)}px`,
                         }}
@@ -326,7 +370,7 @@ function OtherPlayersCardContainers({
                 {gameData?.players[playerID]?.nextTopCardInDeck ? (
                   <div className="relative h-full w-full select-none">
                     {showDummyDeckCardStates?.[playerID]?.[0] && (
-                      <div className="absolute top-[2px] left-0 h-full w-full select-none">
+                      <div className="absolute left-0 top-[2px] h-full w-full select-none">
                         <Card
                           showCardBack={true}
                           draggable={false}
@@ -341,7 +385,7 @@ function OtherPlayersCardContainers({
                     )}
 
                     {showDummyDeckCardStates?.[playerID]?.[1] && (
-                      <div className="absolute top-[1px] left-0 h-full w-full select-none">
+                      <div className="absolute left-0 top-[1px] h-full w-full select-none">
                         <Card
                           showCardBack={true}
                           draggable={false}
@@ -360,7 +404,7 @@ function OtherPlayersCardContainers({
                           ? "running"
                           : "paused",
                       }}
-                      className="topBackFacingCardInDeck absolute top-0 left-0 h-full w-full select-none"
+                      className="topBackFacingCardInDeck absolute left-0 top-0 h-full w-full select-none"
                     >
                       {filteredCardsInHandFromDeck[idx]?.map(
                         (card, cardIdx) => (
@@ -375,7 +419,7 @@ function OtherPlayersCardContainers({
                                   ? 500
                                   : 499,
                             }}
-                            className="absolute top-0 left-0 h-full w-full select-none"
+                            className="absolute left-0 top-0 h-full w-full select-none"
                           >
                             <Card
                               value={card.value}

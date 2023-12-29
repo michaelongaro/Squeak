@@ -33,32 +33,36 @@ function useTrackHoverOverSqueakStacks() {
           e.clientX > squeakHand0.left &&
           e.clientX < squeakHand0.right &&
           e.clientY > squeakHand0.top &&
-          e.clientY < squeakHand0.bottom &&
-          originIndexForHeldSqueakCard !== 0
+          e.clientY < squeakHand0.bottom
+          // &&
+          // originIndexForHeldSqueakCard !== 0
         ) {
           setHoveredSqueakStack(0);
         } else if (
           e.clientX > squeakHand1.left &&
           e.clientX < squeakHand1.right &&
           e.clientY > squeakHand1.top &&
-          e.clientY < squeakHand1.bottom &&
-          originIndexForHeldSqueakCard !== 1
+          e.clientY < squeakHand1.bottom
+          //&&
+          // originIndexForHeldSqueakCard !== 1
         ) {
           setHoveredSqueakStack(1);
         } else if (
           e.clientX > squeakHand2.left &&
           e.clientX < squeakHand2.right &&
           e.clientY > squeakHand2.top &&
-          e.clientY < squeakHand2.bottom &&
-          originIndexForHeldSqueakCard !== 2
+          e.clientY < squeakHand2.bottom
+          //&&
+          // originIndexForHeldSqueakCard !== 2
         ) {
           setHoveredSqueakStack(2);
         } else if (
           e.clientX > squeakHand3.left &&
           e.clientX < squeakHand3.right &&
           e.clientY > squeakHand3.top &&
-          e.clientY < squeakHand3.bottom &&
-          originIndexForHeldSqueakCard !== 3
+          e.clientY < squeakHand3.bottom
+          //&&
+          // originIndexForHeldSqueakCard !== 3
         ) {
           setHoveredSqueakStack(3);
         } else {

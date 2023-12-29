@@ -56,6 +56,11 @@ export function deckToBoard({
     io.in(roomCode).emit("cardDropApproved", {
       playerID,
       card,
+      startingCardMetadata: {
+        originSqueakStackIdx: undefined,
+        destinationSqueakStackIdx: undefined,
+        lengthOfStack: 1,
+      },
       endID: `cell${row}${col}`,
       updatedGameData: gameData[roomCode],
     });
