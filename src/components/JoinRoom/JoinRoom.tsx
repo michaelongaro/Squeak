@@ -20,6 +20,8 @@ import { useSession } from "next-auth/react";
 import { type Room } from "@prisma/client";
 import useLeaveRoom from "../../hooks/useLeaveRoom";
 
+import classes from "./JoinRoom.module.css";
+
 const filter = new Filter();
 
 function JoinRoom() {
@@ -259,7 +261,9 @@ function JoinRoom() {
                   <input
                     type="text"
                     placeholder="optional"
-                    className=" rounded-md py-1 pl-2 text-green-800"
+                    className={`rounded-md py-1 pl-2 text-green-800 ${
+                      roomCode.length === 0 ? "italic" : ""
+                    }`}
                     maxLength={6}
                     onChange={(e) => setRoomCode(e.target.value)}
                     value={roomCode}
@@ -408,8 +412,18 @@ function JoinRoom() {
                 </div>
               </div>
             </fieldset>
-            {`waiting for ${roomConfig.hostUsername} to start the game`}
-            {/* starting game + spinner */}
+            <div className="baseFlex !items-baseline gap-1">
+              <p>
+                waiting for{" "}
+                <span className="font-semibold">{roomConfig.hostUsername}</span>{" "}
+                to start the game
+              </p>
+              <div className={classes.loadingDots}>
+                <div></div>
+                <div></div>
+                <div></div>
+              </div>
+            </div>
           </div>
         )}
       </div>

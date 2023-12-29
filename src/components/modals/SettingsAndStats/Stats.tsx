@@ -40,7 +40,7 @@ function Stats() {
 
       setTimeout(() => {
         setFilteredStats(filteredStats);
-      }, 500);
+      }, 1000);
     }
   }, [userStats, filteredStats]);
 

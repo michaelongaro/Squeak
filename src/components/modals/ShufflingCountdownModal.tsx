@@ -36,28 +36,28 @@ function ShufflingCountdownModal() {
 
     setTimeout(() => {
       setTimersInitiated(true);
-    }, 150);
+    }, 500);
 
     setTimeout(() => {
       setCountdownTimerValue(4);
-    }, 1000);
+    }, 1500);
 
     setTimeout(() => {
       setCountdownTimerValue(3);
-    }, 2000);
+    }, 2500);
 
     setTimeout(() => {
       setCountdownTimerValue(2);
-    }, 3000);
+    }, 3500);
 
     setTimeout(() => {
       setCountdownTimerValue(1);
-    }, 4000);
+    }, 4500);
 
     setTimeout(() => {
       setShowShufflingCountdown(false);
       setTimersInitiated(false);
-    }, 5000);
+    }, 5500);
   }, [
     gameData.currentRound,
     roomConfig.code,
@@ -76,7 +76,7 @@ function ShufflingCountdownModal() {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.35 }}
-      className="baseFlex absolute top-0 left-0 z-[999] h-full w-full bg-black bg-opacity-60 transition-all"
+      className="baseFlex absolute left-0 top-0 z-[999] h-full w-full bg-black bg-opacity-60 transition-all"
     >
       <motion.div
         key={"shufflingCountdownModalInner"}
@@ -94,7 +94,7 @@ function ShufflingCountdownModal() {
           <div className="text-xl">Shuffling decks</div>
 
           <div className="relative mt-16 h-[64px] w-[48px] tall:h-[87px] tall:w-[67px]">
-            <div className="absolute top-0 left-0 h-full w-full">
+            <div className="absolute left-0 top-0 h-full w-full">
               <Card
                 showCardBack={true}
                 draggable={false}
@@ -107,7 +107,7 @@ function ShufflingCountdownModal() {
               style={{
                 animationPlayState: timersInitiated ? "running" : "paused",
               }}
-              className={`topBackFacingCardInDeck absolute top-0 left-0 h-full w-full`}
+              className={`topBackFacingCardInDeck absolute left-0 top-0 h-full w-full`}
             >
               <Card
                 showCardBack={true}

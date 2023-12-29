@@ -125,7 +125,7 @@ function Scoreboard() {
       setTimeout(() => {
         setCountdownTimerValue(1);
       }, 2000);
-    }, 9000);
+    }, 10000);
   }, [currentVolume]);
 
   useEffect(() => {
@@ -162,7 +162,7 @@ function Scoreboard() {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
-      className="baseFlex absolute top-0 left-0 z-[999] h-full w-full bg-black bg-opacity-60 transition-all"
+      className="baseFlex absolute left-0 top-0 z-[999] h-full w-full bg-black bg-opacity-60 transition-all"
     >
       <audio ref={confettiPopRef} src="/sounds/confettiPop.wav" />
       <motion.div
@@ -239,7 +239,7 @@ function Scoreboard() {
                             playerColorVariants[player.playerID]
                               ?.pointsBackgroundColor ?? "white",
                         }}
-                        className="baseVertFlex absolute top-0 left-0 z-[3] w-full bg-black bg-opacity-30 p-2"
+                        className="baseVertFlex absolute left-0 top-0 z-[3] w-full bg-black bg-opacity-30 p-2"
                       >
                         <div className="align-center flex w-full justify-between pl-8 pr-8 text-lg ">
                           Cards played

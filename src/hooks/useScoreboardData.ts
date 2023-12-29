@@ -54,7 +54,7 @@ function useScoreboardData() {
           resettingRoundFromExcessiveDeckRotations: false,
           gameIsFinished: gameWinnerID !== null,
         });
-      }, 12500);
+      }, 13500);
     }
   }, [
     dataFromBackend,

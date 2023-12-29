@@ -1,8 +1,11 @@
 import React from "react";
 import { BiErrorAlt } from "react-icons/bi";
 import PrimaryButton from "../components/Buttons/PrimaryButton";
+import { useRouter } from "next/navigation";
 
 function Custom404() {
+  const router = useRouter();
+
   return (
     <div className="baseVertFlex min-h-[100dvh] w-[100vw]">
       <div
@@ -18,7 +21,7 @@ function Custom404() {
 
           <PrimaryButton
             innerText={"Go back to home page"}
-            onClickFunction={() => (window.location.href = "/")}
+            onClickFunction={() => router.push("/")}
           />
         </div>
       </div>

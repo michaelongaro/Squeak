@@ -34,6 +34,21 @@ interface ICardBeingMovedProgramatically {
   [playerID: string]: boolean;
 }
 
+interface DraggedStack {
+  squeakStackIdx: number;
+  startingDepth: number;
+  length: number;
+}
+
+interface OtherPlayersDraggedStack extends DraggedStack {
+  lengthOfTargetStack: number;
+}
+
+interface OtherPlayerSqueakStacksBeingDragged {
+  squeakStackDepthAlterations: number[]; // -2 means decreasing effective length of stack by 2 (allowing gaps between cards to expand)
+  draggedStack?: OtherPlayersDraggedStack;
+}
+
 interface IRoomContext {
   pageToRender: "home" | "createRoom" | "joinRoom" | "play";
   setPageToRender: React.Dispatch<
@@ -106,6 +121,19 @@ interface IRoomContext {
   squeakDeckBeingMovedProgramatically: ICardBeingMovedProgramatically;
   setSqueakDeckBeingMovedProgramatically: React.Dispatch<
     React.SetStateAction<ICardBeingMovedProgramatically>
+  >;
+
+  currentPlayerSqueakStackBeingDragged: DraggedStack | null;
+  setCurrentPlayerSqueakStackBeingDragged: React.Dispatch<
+    React.SetStateAction<DraggedStack | null>
+  >;
+  otherPlayerSqueakStacksBeingDragged: {
+    [playerID: string]: OtherPlayerSqueakStacksBeingDragged;
+  };
+  setOtherPlayerSqueakStacksBeingDragged: React.Dispatch<
+    React.SetStateAction<{
+      [playerID: string]: OtherPlayerSqueakStacksBeingDragged;
+    }>
   >;
 }
 
@@ -201,6 +229,21 @@ export function RoomProvider(props: { children: React.ReactNode }) {
   const [playerIDToStartNextRound, setPlayerIDToStartNextRound] = useState<
     string | null
   >(null);
+
+  const [
+    currentPlayerSqueakStackBeingDragged,
+    setCurrentPlayerSqueakStackBeingDragged,
+  ] = useState<DraggedStack | null>({
+    squeakStackIdx: -1,
+    startingDepth: -1,
+    length: -1,
+  });
+  const [
+    otherPlayerSqueakStacksBeingDragged,
+    setOtherPlayerSqueakStacksBeingDragged,
+  ] = useState<{
+    [playerID: string]: OtherPlayerSqueakStacksBeingDragged;
+  }>({});
 
   useEffect(() => {
     fetch("/api/socket");
@@ -312,6 +355,10 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     setPlayerIDToStartNextRound,
     squeakDeckBeingMovedProgramatically,
     setSqueakDeckBeingMovedProgramatically,
+    currentPlayerSqueakStackBeingDragged,
+    setCurrentPlayerSqueakStackBeingDragged,
+    otherPlayerSqueakStacksBeingDragged,
+    setOtherPlayerSqueakStacksBeingDragged,
   };
 
   return (
