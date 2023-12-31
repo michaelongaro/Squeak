@@ -65,7 +65,14 @@ function Buzzer({ playerID, roomCode, interactive }: IBuzzer) {
       key={`${playerID}Buzzer`}
       initial={{ opacity: 0, scale: 0 }}
       animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.25 }}
+      transition={{
+        opacity: { duration: 0.25, ease: "linear" },
+        scale: {
+          type: "spring",
+          duration: 0.25,
+          bounce: 0.75,
+        },
+      }}
       style={{
         boxShadow: hoveringOnButton
           ? "0px 0px 10px 3px rgba(184,184,184,1)"
@@ -100,7 +107,7 @@ function Buzzer({ playerID, roomCode, interactive }: IBuzzer) {
       <audio ref={squeakButtonAudioRef} src="/sounds/squeakButtonPress.mp3" />
 
       {/* grey baseplate for button */}
-      <div className="absolute top-0 left-0 z-[998]">
+      <div className="absolute left-0 top-0 z-[998]">
         <Image
           draggable={false}
           src={baseplate}
