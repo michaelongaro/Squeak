@@ -174,7 +174,7 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
                     </span>{" "}
                     and{" "}
                     <span className="font-semibold underline underline-offset-2">
-                      one value lower
+                      one rank lower
                     </span>{" "}
                     than the previous card, similar to Solitaire (ex. Jack of
                     Spades, 10 of Hearts, 9 of Clubs). Only the last card in

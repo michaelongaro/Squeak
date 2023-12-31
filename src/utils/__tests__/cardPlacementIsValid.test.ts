@@ -12,11 +12,11 @@ describe("cardPlacementIsValid", () => {
       expect(cardPlacementIsValid(emptyCell, "A", "C", true)).toBe(true);
     });
 
-    it("should allow a card of the same suit and one higher value to be placed on a non-empty cell", () => {
+    it("should allow a card of the same suit and one higher rank to be placed on a non-empty cell", () => {
       expect(cardPlacementIsValid(nonEmptyCell, "Q", "H", true)).toBe(true);
     });
 
-    it("should not allow a card of the same suit and a lower value to be placed on a non-empty cell", () => {
+    it("should not allow a card of the same suit and a lower rank to be placed on a non-empty cell", () => {
       expect(cardPlacementIsValid(nonEmptyCell, "10", "H", true)).toBe(false);
     });
 
@@ -30,7 +30,7 @@ describe("cardPlacementIsValid", () => {
   });
 
   describe("when placing a card onto a cell", () => {
-    it("should allow a card of opposite color and one lower value to be placed on a non-empty cell", () => {
+    it("should allow a card of opposite color and one lower rank to be placed on a non-empty cell", () => {
       expect(cardPlacementIsValid(nonEmptyCell, "10", "S", false)).toBe(true);
     });
 
@@ -38,7 +38,7 @@ describe("cardPlacementIsValid", () => {
       expect(cardPlacementIsValid(nonEmptyCell, "K", "D", false)).toBe(false);
     });
 
-    it("should not allow a card of the same value to be placed on a non-empty cell", () => {
+    it("should not allow a card of the same rank to be placed on a non-empty cell", () => {
       expect(cardPlacementIsValid(nonEmptyCell, "J", "S", false)).toBe(false);
     });
 
