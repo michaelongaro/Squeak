@@ -169,7 +169,10 @@ function Card({
           setTimeout(() => {
             setProposedCardBoxShadow(null);
           }, 250);
-        } else if (hoveredSqueakStack !== null) {
+        } else if (
+          hoveredSqueakStack !== null &&
+          originIndexForHeldSqueakCard !== hoveredSqueakStack
+        ) {
           setProposedCardBoxShadow({
             id: `${userID}squeakHand${hoveredSqueakStack}`,
             boxShadowValue: `0px 0px 4px 3px rgba(227, 12, 5, 1)`,
@@ -275,6 +278,7 @@ function Card({
       hoveredCell,
       ownerID,
       hoveredSqueakStack,
+      originIndexForHeldSqueakCard,
       setHeldSqueakStackLocation,
       setHoldingADeckCard,
       setHoldingASqueakCard,
@@ -519,6 +523,11 @@ function Card({
                   showCardBack && !manuallyShowCardFront
                     ? `hue-rotate(${hueRotation}deg)`
                     : "none",
+                // transformOrigin: imageRef.current?.style.transform.includes(
+                //   "rotateY(90deg)"
+                // )
+                //   ? "center"
+                //   : "top left",
               }}
               className="pointer-events-none h-[64px] w-[48px] select-none rounded-[0.25rem] tall:h-[87px] tall:w-[67px]"
               src={

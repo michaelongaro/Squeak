@@ -62,7 +62,7 @@ export function deckToSqueak({
     squeakEndCoords: {
       offsetHeight: indexWithinSqueakStack * (20 - squeakStackLength),
     },
-    endID: `${playerID}squeakHand${squeakEndLocation}`,
+    endID: `${playerID}squeakStack${squeakEndLocation}0`,
     updatedGameData: gameData[roomCode],
     playerID,
   });

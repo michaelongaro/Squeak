@@ -54,12 +54,6 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
 
   const [hoveringOverDeck, setHoveringOverDeck] = useState(false);
 
-  const [showFirstDummyCardBeneathDeck, setShowFirstDummyCardBeneathDeck] =
-    useState(false);
-
-  const [showSecondDummyCardBeneathDeck, setShowSecondDummyCardBeneathDeck] =
-    useState(false);
-
   const [drawingFromDeck, setDrawingFromDeck] = useState(false);
 
   useTrackHoverOverSqueakStacks();
@@ -143,15 +137,6 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
     }
   }, [soundPlayStates, currentVolume, setSoundPlayStates]);
 
-  useEffect(() => {
-    const player = gameData.players[userID];
-
-    if (!player) return;
-
-    setShowSecondDummyCardBeneathDeck(player.deck.length - player.deckIdx >= 2);
-    setShowFirstDummyCardBeneathDeck(player.deck.length - player.deckIdx >= 1);
-  }, [gameData.players, userID]);
-
   function getBoxShadowStyles({
     id,
     squeakStackIdx,
@@ -160,8 +145,8 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
       return `0px 0px 4px ${
         hoveredSqueakStack !== originIndexForHeldSqueakCard &&
         hoveredSqueakStack === squeakStackIdx
-          ? "5px"
-          : "3px"
+          ? "4px"
+          : "2px"
       } rgba(184,184,184,1)`;
     } else if (proposedCardBoxShadow?.id === id) {
       return proposedCardBoxShadow.boxShadowValue;
@@ -280,33 +265,6 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
           >
             {gameData.players[userID]!.squeakDeck.length > 0 && (
               <div className="relative h-full w-full">
-                {/* dummy cards to show "depth" of deck visually */}
-                {gameData.players[userID]!.squeakDeck.length > 2 && (
-                  <div className="absolute left-0 top-[2px] h-full w-full select-none">
-                    <Card
-                      showCardBack={true}
-                      draggable={false}
-                      ownerID={userID}
-                      hueRotation={playerMetadata[userID]?.deckHueRotation || 0}
-                      startID={`${userID}squeakDeck`}
-                      rotation={0}
-                    />
-                  </div>
-                )}
-
-                {gameData.players[userID]!.squeakDeck.length > 1 && (
-                  <div className="absolute left-0 top-[1px] h-full w-full select-none">
-                    <Card
-                      showCardBack={true}
-                      draggable={false}
-                      ownerID={userID}
-                      hueRotation={playerMetadata[userID]?.deckHueRotation || 0}
-                      startID={`${userID}squeakDeck`}
-                      rotation={0}
-                    />
-                  </div>
-                )}
-
                 {gameData.players[userID]?.squeakDeck.map((card, cardIdx) => (
                   <div
                     key={`${userID}squeakDeckCard${card.suit}${card.value}`}
@@ -319,6 +277,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                         !cardBeingMovedProgramatically[userID]
                           ? 502
                           : 499,
+                      transition: "top 0.25s ease-in-out",
                     }}
                     className="absolute left-0 top-0 h-full w-full select-none"
                   >
@@ -367,9 +326,6 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                     <div
                       key={`${userID}handCard${card.suit}${card.value}`}
                       className="absolute left-0 top-0 select-none"
-                      style={{
-                        top: `${-1 * (idx * 2)}px`,
-                      }}
                       onMouseEnter={() => {
                         setHoveringOverDeck(false);
                       }}
@@ -443,37 +399,6 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
             >
               {gameData?.players[userID]?.nextTopCardInDeck ? (
                 <div className="relative h-full w-full select-none">
-                  {/* dummy cards to show "depth" of deck visually */}
-                  {showSecondDummyCardBeneathDeck && (
-                    <div className="absolute left-0 top-[2px] h-full w-full select-none">
-                      <Card
-                        showCardBack={true}
-                        draggable={false}
-                        ownerID={userID}
-                        hueRotation={
-                          playerMetadata[userID]?.deckHueRotation || 0
-                        }
-                        startID={`${userID}deck`}
-                        rotation={0}
-                      />
-                    </div>
-                  )}
-
-                  {showFirstDummyCardBeneathDeck && (
-                    <div className="absolute left-0 top-[1px] h-full w-full select-none">
-                      <Card
-                        showCardBack={true}
-                        draggable={false}
-                        ownerID={userID}
-                        hueRotation={
-                          playerMetadata[userID]?.deckHueRotation || 0
-                        }
-                        startID={`${userID}deck`}
-                        rotation={0}
-                      />
-                    </div>
-                  )}
-
                   <div
                     style={{
                       animationPlayState: decksAreBeingRotated
@@ -482,7 +407,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                     }}
                     className="topBackFacingCardInDeck absolute left-0 top-0 h-full w-full select-none"
                   >
-                    {filteredCardsInHandFromDeck?.map((card, cardIdx) => (
+                    {filteredCardsInHandFromDeck?.map((card) => (
                       <div
                         key={`${userID}deckCard${card.suit}${card.value}`}
                         style={{
@@ -494,6 +419,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                             !holdingADeckCard
                               ? 500
                               : 499,
+                          transition: "top 0.25s ease-in-out",
                         }}
                         className="absolute left-0 top-0 h-full w-full select-none"
                       >

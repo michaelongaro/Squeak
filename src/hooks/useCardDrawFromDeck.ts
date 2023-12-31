@@ -61,20 +61,7 @@ function useCardDrawFromDeck({
         ?.getBoundingClientRect();
 
       if (endLocation) {
-        let endX = endLocation.x;
-        let endY = endLocation.y;
-
-        if (rotation === 0) {
-          endY -= 4;
-        } else if (rotation === 90) {
-          endX += 4;
-        } else if (rotation === 180) {
-          endY += 4;
-        } else if (rotation === 270) {
-          endX -= 4;
-        }
-
-        moveCard({ x: endX, y: endY }, true, false, () => {
+        moveCard({ x: endLocation.x, y: endLocation.y }, true, false, () => {
           setGameData(updatedGameData);
         });
       }

@@ -151,21 +151,15 @@ function useCardDropApproved({
         }
       }
 
-      // offsets to account for rotation of card + padding on cell
-      // honestly not too sure why rotation of 180 has a different offset
-      // entirely from rotation of 0, but this mostly does the trick.
+      // offsets to account for rotation being around the center of the card
+      // (I couldn't figure out how to natively solve this with transform-origin tricks)
       if (endID.includes("cell")) {
-        if (rotation === 0) {
-          endX += 2;
-          endY += 9;
-        } else if (rotation === 90) {
-          endX -= 8;
-          endY += 14;
-        } else if (rotation === 180) {
-          endX += 3;
+        if (rotation === 90) {
+          endX -= 11;
+          endY += 11;
         } else if (rotation === 270) {
-          endX -= 8;
-          endY += 14;
+          endX -= 11;
+          endY += 15;
         }
       }
 
@@ -222,6 +216,8 @@ function useCardDropApproved({
     soundPlayStates,
     setSoundPlayStates,
     setProposedCardBoxShadow,
+    otherPlayerSqueakStacksBeingDragged,
+    setOtherPlayerSqueakStacksBeingDragged,
     suit,
     ownerID,
     value,

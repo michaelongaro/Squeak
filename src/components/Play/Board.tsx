@@ -34,8 +34,8 @@ function Board({ boardClass }: IBoard) {
     if (holdingADeckCard || holdingASqueakCard) {
       return `0px 0px 4px ${
         hoveredCell?.[0] === rowIdx && hoveredCell?.[1] === colIdx
-          ? "5px"
-          : "3px"
+          ? "4px"
+          : "2px"
       } rgba(184,184,184,1)`;
     } else if (proposedCardBoxShadow?.id === id) {
       return proposedCardBoxShadow.boxShadowValue;
@@ -57,7 +57,7 @@ function Board({ boardClass }: IBoard) {
           {row.map((cell, colIdx) => (
             <div
               key={`board${rowIdx}${colIdx}`}
-              id={`cell${rowIdx}${colIdx}`}
+              id={`parentCell${rowIdx}${colIdx}`}
               style={{
                 boxShadow: getBoxShadowStyles({
                   id: `cell${rowIdx}${colIdx}`,
@@ -71,69 +71,49 @@ function Board({ boardClass }: IBoard) {
                     ? 0.35
                     : 1,
               }}
-              className="baseFlex relative z-0 h-[65px] min-h-fit w-[48px] min-w-fit select-none rounded-lg p-1 transition-all tall:h-[95px] tall:w-[70px]"
+              className="baseFlex relative z-0 h-[65px] min-h-fit w-[48px] min-w-fit select-none rounded-lg p-1 transition-all tall:h-[95px] tall:w-[75px]"
             >
-              <AnimatePresence>
-                {cell && (
-                  <motion.div
-                    key={`board${rowIdx}${colIdx}AnimatedCell`}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.55 }}
-                    className="relative h-full w-full select-none"
-                  >
-                    {cell.value !== "A" && cell.value !== "2" && (
-                      <div className="absolute top-[2px] left-0 h-full w-full select-none">
-                        <Card
-                          showCardBack={true}
-                          draggable={false}
-                          hueRotation={0}
-                          rotation={0}
-                        />
-                      </div>
-                    )}
-
-                    {cell.value !== "A" && (
-                      <div className="absolute top-[1px] left-0 h-full w-full select-none">
-                        <Card
-                          showCardBack={true}
-                          draggable={false}
-                          hueRotation={0}
-                          rotation={0}
-                        />
-                      </div>
-                    )}
-
-                    <Card
-                      value={cell.value}
-                      suit={cell.suit}
-                      showCardBack={false}
-                      draggable={false}
-                      hueRotation={0}
-                      rotation={0}
-                    />
-                  </motion.div>
-                )}
-
+              <div id={`cell${rowIdx}${colIdx}`} className="h-full w-full">
                 <AnimatePresence>
-                  {proposedCardBoxShadow?.id === `cell${rowIdx}${colIdx}` &&
-                    proposedCardBoxShadow?.boxShadowValue ===
-                      `0px 0px 4px 3px rgba(29, 232, 7, 1)` && (
-                      <motion.div
-                        key={`board${rowIdx}${colIdx}AnimatedPlusOneIndicator`}
-                        initial={{ opacity: 0, scale: 0.95, translateY: 10 }}
-                        animate={{ opacity: 1, scale: 1, translateY: 0 }}
-                        exit={{ opacity: 0, scale: 0.95, translateY: -5 }}
-                        transition={{ duration: 0.5 }}
-                        style={{
-                          color: "hsl(120deg 100% 86%)",
-                        }}
-                        className="absolute top-0 right-[-1.75rem] select-none text-xl tracking-wider"
-                      >
-                        +1
-                      </motion.div>
-                    )}
+                  {cell && (
+                    <motion.div
+                      key={`board${rowIdx}${colIdx}AnimatedCell`}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.55 }}
+                      className="relative h-full w-full select-none"
+                    >
+                      <Card
+                        value={cell.value}
+                        suit={cell.suit}
+                        showCardBack={false}
+                        draggable={false}
+                        hueRotation={0}
+                        rotation={0}
+                      />
+                    </motion.div>
+                  )}
+
+                  <AnimatePresence>
+                    {proposedCardBoxShadow?.id === `cell${rowIdx}${colIdx}` &&
+                      proposedCardBoxShadow?.boxShadowValue ===
+                        `0px 0px 4px 3px rgba(29, 232, 7, 1)` && (
+                        <motion.div
+                          key={`board${rowIdx}${colIdx}AnimatedPlusOneIndicator`}
+                          initial={{ opacity: 0, scale: 0.95, translateY: 10 }}
+                          animate={{ opacity: 1, scale: 1, translateY: 0 }}
+                          exit={{ opacity: 0, scale: 0.95, translateY: -5 }}
+                          transition={{ duration: 0.5 }}
+                          style={{
+                            color: "hsl(120deg 100% 86%)",
+                          }}
+                          className="absolute right-[-1.85rem] top-0 select-none text-xl tracking-wider"
+                        >
+                          +1
+                        </motion.div>
+                      )}
+                  </AnimatePresence>
                 </AnimatePresence>
-              </AnimatePresence>
+              </div>
             </div>
           ))}
         </Fragment>

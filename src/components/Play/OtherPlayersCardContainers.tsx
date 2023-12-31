@@ -48,7 +48,6 @@ function OtherPlayersCardContainers({
     cardBeingMovedProgramatically,
     roomConfig,
     otherPlayerSqueakStacksBeingDragged,
-    setOtherPlayerSqueakStacksBeingDragged,
   } = useRoomContext();
 
   const otherPlayerIDs = Object.keys(gameData.players).filter(
@@ -232,11 +231,6 @@ function OtherPlayersCardContainers({
                             playerMetadata[playerID]?.deckHueRotation || 0
                           }
                           startID={`${playerID}squeakStack${squeakStackIdx}${cardIdx}`}
-                          // implement this functionality in a refactor later
-                          // squeakStackLocation={[squeakStackIdx, cardIdx]}
-                          // offsetSqueakStackHeight={
-                          //   cardIdx === 0 ? 0 : (20 - cards.length) * cardIdx
-                          // }
                           rotation={rotationOrder[idx] as number}
                         />
                       </div>
@@ -252,36 +246,6 @@ function OtherPlayersCardContainers({
             >
               {gameData.players[playerID]!.squeakDeck.length > 0 && (
                 <div className="relative h-full w-full">
-                  {showDummyDeckCardStates?.[playerID]?.[2] && (
-                    <div className="absolute left-0 top-[2px] h-full w-full select-none">
-                      <Card
-                        showCardBack={true}
-                        draggable={false}
-                        ownerID={playerID}
-                        hueRotation={
-                          playerMetadata[playerID]?.deckHueRotation || 0
-                        }
-                        startID={`${playerID}squeakDeck`}
-                        rotation={rotationOrder[idx] as number}
-                      />
-                    </div>
-                  )}
-
-                  {showDummyDeckCardStates?.[playerID]?.[3] && (
-                    <div className="absolute left-0 top-[1px] h-full w-full select-none">
-                      <Card
-                        showCardBack={true}
-                        draggable={false}
-                        ownerID={playerID}
-                        hueRotation={
-                          playerMetadata[playerID]?.deckHueRotation || 0
-                        }
-                        startID={`${playerID}squeakDeck`}
-                        rotation={rotationOrder[idx] as number}
-                      />
-                    </div>
-                  )}
-
                   {gameData.players[playerID]?.squeakDeck.map(
                     (card, cardIdx) => (
                       <div
@@ -293,6 +257,7 @@ function OtherPlayersCardContainers({
                             !cardBeingMovedProgramatically[playerID]
                               ? 502
                               : 499,
+                          transition: "top 0.25s ease-in-out",
                         }}
                         className="absolute left-0 top-0 h-full w-full select-none "
                       >
@@ -336,14 +301,11 @@ function OtherPlayersCardContainers({
             >
               <>
                 {gameData.players[playerID]?.topCardsInDeck.map(
-                  (card, topCardsIdx) =>
+                  (card) =>
                     card !== null && (
                       <div
                         key={`${playerID}handCard${card.suit}${card.value}`}
                         className="absolute left-0 top-0 select-none"
-                        style={{
-                          top: `${-1 * (topCardsIdx * 2)}px`,
-                        }}
                       >
                         <Card
                           value={card.value}
@@ -369,35 +331,6 @@ function OtherPlayersCardContainers({
               <div id={`${playerID}deck`} className="h-full w-full">
                 {gameData?.players[playerID]?.nextTopCardInDeck ? (
                   <div className="relative h-full w-full select-none">
-                    {showDummyDeckCardStates?.[playerID]?.[0] && (
-                      <div className="absolute left-0 top-[2px] h-full w-full select-none">
-                        <Card
-                          showCardBack={true}
-                          draggable={false}
-                          ownerID={playerID}
-                          hueRotation={
-                            playerMetadata[playerID]?.deckHueRotation || 0
-                          }
-                          startID={`${playerID}deck`}
-                          rotation={rotationOrder[idx] as number}
-                        />
-                      </div>
-                    )}
-
-                    {showDummyDeckCardStates?.[playerID]?.[1] && (
-                      <div className="absolute left-0 top-[1px] h-full w-full select-none">
-                        <Card
-                          showCardBack={true}
-                          draggable={false}
-                          ownerID={playerID}
-                          hueRotation={
-                            playerMetadata[playerID]?.deckHueRotation || 0
-                          }
-                          startID={`${playerID}deck`}
-                          rotation={rotationOrder[idx] as number}
-                        />
-                      </div>
-                    )}
                     <div
                       style={{
                         animationPlayState: decksAreBeingRotated
@@ -406,37 +339,35 @@ function OtherPlayersCardContainers({
                       }}
                       className="topBackFacingCardInDeck absolute left-0 top-0 h-full w-full select-none"
                     >
-                      {filteredCardsInHandFromDeck[idx]?.map(
-                        (card, cardIdx) => (
-                          <div
-                            key={`${playerID}deckCard${card.suit}${card.value}`}
-                            style={{
-                              zIndex:
-                                gameData.players[playerID]?.nextTopCardInDeck
-                                  ?.suit === card.suit &&
-                                gameData.players[playerID]?.nextTopCardInDeck
-                                  ?.value === card.value
-                                  ? 500
-                                  : 499,
-                            }}
-                            className="absolute left-0 top-0 h-full w-full select-none"
-                          >
-                            <Card
-                              value={card.value}
-                              suit={card.suit}
-                              showCardBack={true} // separate state inside overrides this halfway through flip
-                              draggable={false}
-                              ownerID={playerID}
-                              hueRotation={
-                                playerMetadata[playerID]?.deckHueRotation || 0
-                              }
-                              origin={"deck"}
-                              startID={`${playerID}deck`}
-                              rotation={rotationOrder[idx] as number}
-                            />
-                          </div>
-                        )
-                      )}
+                      {filteredCardsInHandFromDeck[idx]?.map((card) => (
+                        <div
+                          key={`${playerID}deckCard${card.suit}${card.value}`}
+                          style={{
+                            zIndex:
+                              gameData.players[playerID]?.nextTopCardInDeck
+                                ?.suit === card.suit &&
+                              gameData.players[playerID]?.nextTopCardInDeck
+                                ?.value === card.value
+                                ? 500
+                                : 499,
+                          }}
+                          className="absolute left-0 top-0 h-full w-full select-none"
+                        >
+                          <Card
+                            value={card.value}
+                            suit={card.suit}
+                            showCardBack={true} // separate state inside overrides this halfway through flip
+                            draggable={false}
+                            ownerID={playerID}
+                            hueRotation={
+                              playerMetadata[playerID]?.deckHueRotation || 0
+                            }
+                            origin={"deck"}
+                            startID={`${playerID}deck`}
+                            rotation={rotationOrder[idx] as number}
+                          />
+                        </div>
+                      ))}
                     </div>
                   </div>
                 ) : (
