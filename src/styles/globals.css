@@ -54,7 +54,7 @@ body {
 }
 
 .topBackFacingCardInDeck {
-  animation: rotateDeck 1s linear infinite;
+  animation: rotateDeck 1s ease-in-out infinite;
   animation-play-state: paused;
 }
 

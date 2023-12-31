@@ -94,7 +94,7 @@ function PickerTooltip({
         if (openAbove) {
           top = isBelowMobileViewport ? "-315px" : "-340px";
         } else {
-          top = "105px";
+          top = "110px";
         }
       } else {
         left = isBelowMobileViewport ? "-151px" : "-177px";

@@ -349,7 +349,7 @@ function JoinRoom() {
                 {roomConfig?.isPublic ? "Public" : "Private"}
 
                 <div>Room code:</div>
-                <div className="baseFlex !justify-start gap-2">
+                <div className="baseFlex !justify-start gap-4">
                   {roomConfig?.code}
                   <SecondaryButton
                     icon={
