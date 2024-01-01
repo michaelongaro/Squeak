@@ -26,7 +26,7 @@ function OAuthSignInButtons({ forSignup, setShowModal }: IOAuthSignInButtons) {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.15 }}
-      className="fixed left-0 top-0 z-[1000] flex min-h-[100dvh] min-w-[100vw] items-center justify-center bg-black/50 transition-all"
+      className="fixed left-0 top-0 z-[1000] flex min-h-[100dvh] min-w-[100vw] items-center justify-center bg-black/50"
     >
       <motion.div
         ref={signInRef}

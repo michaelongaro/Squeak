@@ -30,7 +30,7 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.15 }}
-      className="baseFlex fixed left-0 top-0 z-[1000] min-h-[100dvh] min-w-[100vw] bg-black/50 transition-all lg:z-[500]"
+      className="baseFlex fixed left-0 top-0 z-[1000] min-h-[100dvh] min-w-[100vw] bg-black/50 lg:z-[500]"
     >
       <motion.div
         ref={modalRef}

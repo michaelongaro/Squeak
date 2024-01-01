@@ -8,7 +8,7 @@ function ResetRoundModal() {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.15 }}
-      className="baseFlex absolute top-0 left-0 z-[999] h-full w-full bg-black bg-opacity-60 transition-all"
+      className="baseFlex absolute left-0 top-0 z-[999] h-full w-full bg-black bg-opacity-60"
     >
       <motion.div
         key={"resetRoundModallInner"}
