@@ -210,7 +210,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                       style={{
                         zIndex:
                           originIndexForHeldSqueakCard === squeakStackIdx
-                            ? 501
+                            ? 150
                             : "auto",
                         top: dynamicTopValue(
                           squeakStackIdx,
@@ -261,7 +261,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
 
           <div
             id={`${userID}squeakDeck`}
-            className={`${classes.squeakDeck} baseFlex z-[500] h-full w-full select-none`}
+            className={`${classes.squeakDeck} baseFlex h-full w-full select-none`}
           >
             {gameData.players[userID]!.squeakDeck.length > 0 && (
               <div className="relative h-full w-full">
@@ -275,8 +275,8 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                         !holdingADeckCard &&
                         !holdingASqueakCard &&
                         !cardBeingMovedProgramatically[userID]
-                          ? 502
-                          : 499,
+                          ? 150
+                          : 90,
                       transition: "top 0.25s ease-in-out",
                     }}
                     className="absolute left-0 top-0 h-full w-full select-none"
@@ -311,11 +311,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
           <div
             id={`${userID}hand`}
             style={{
-              zIndex:
-                cardBeingMovedProgramatically[userID] === true ||
-                holdingADeckCard
-                  ? 501
-                  : 499,
+              zIndex: holdingADeckCard ? 150 : 100,
             }}
             className={`${classes.playerHand} relative h-[64px] w-[48px] select-none tall:h-[87px] tall:w-[67px]`}
           >
@@ -363,7 +359,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
           </div>
 
           <div
-            className={`${classes.playerDeck} z-[500] h-[64px] w-[48px] select-none tall:h-[87px] tall:w-[67px]`}
+            className={`${classes.playerDeck} h-[64px] w-[48px] select-none tall:h-[87px] tall:w-[67px]`}
           >
             <div
               id={`${userID}deck`}
@@ -405,22 +401,11 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                         ? "running"
                         : "paused",
                     }}
-                    className="topBackFacingCardInDeck absolute left-0 top-0 h-full w-full select-none"
+                    className="topBackFacingCardInDeck h-full w-full select-none"
                   >
                     {filteredCardsInHandFromDeck?.map((card) => (
                       <div
                         key={`${userID}deckCard${card.suit}${card.value}`}
-                        style={{
-                          zIndex:
-                            gameData.players[userID]?.nextTopCardInDeck
-                              ?.suit === card.suit &&
-                            gameData.players[userID]?.nextTopCardInDeck
-                              ?.value === card.value &&
-                            !holdingADeckCard
-                              ? 500
-                              : 499,
-                          transition: "top 0.25s ease-in-out",
-                        }}
                         className="absolute left-0 top-0 h-full w-full select-none"
                       >
                         <Card

@@ -13,8 +13,10 @@ import { useUserIDContext } from "./UserIDContext";
 import { trpc } from "../utils/trpc";
 
 interface IHeldSqueakStackLocation {
-  squeakStack: [number, number];
-  location: { x: number; y: number };
+  [playerID: string]: {
+    squeakStack: [number, number];
+    location: { x: number; y: number };
+  } | null;
 }
 
 interface IProposedCardBoxShadow {

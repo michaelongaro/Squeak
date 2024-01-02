@@ -226,6 +226,7 @@ function OtherPlayersCardContainers({
                           suit={card.suit}
                           draggable={false}
                           origin={"squeakHand"}
+                          squeakStackLocation={[squeakStackIdx, cardIdx]}
                           ownerID={playerID}
                           hueRotation={
                             playerMetadata[playerID]?.deckHueRotation || 0
@@ -242,7 +243,7 @@ function OtherPlayersCardContainers({
 
             <div
               id={`${playerID}squeakDeck`}
-              className={`${classes.squeakDeck} baseFlex z-[500] h-full w-full select-none`}
+              className={`${classes.squeakDeck} baseFlex h-full w-full select-none`}
             >
               {gameData.players[playerID]!.squeakDeck.length > 0 && (
                 <div className="relative h-full w-full">
@@ -255,8 +256,8 @@ function OtherPlayersCardContainers({
                             cardIdx === 0 &&
                             squeakDeckBeingMovedProgramatically[playerID] &&
                             !cardBeingMovedProgramatically[playerID]
-                              ? 502
-                              : 499,
+                              ? 150
+                              : 90,
                           transition: "top 0.25s ease-in-out",
                         }}
                         className="absolute left-0 top-0 h-full w-full select-none "
@@ -295,7 +296,7 @@ function OtherPlayersCardContainers({
               id={`${playerID}hand`}
               style={{
                 zIndex:
-                  cardBeingMovedProgramatically[playerID] === true ? 501 : 499,
+                  cardBeingMovedProgramatically[playerID] === true ? 150 : 100,
               }}
               className={`${classes.playerHand} relative h-[64px] w-[48px] select-none tall:h-[87px] tall:w-[67px]`}
             >
@@ -326,7 +327,7 @@ function OtherPlayersCardContainers({
             </div>
 
             <div
-              className={`${classes.playerDeck} z-[500] h-[64px] w-[48px] select-none tall:h-[87px] tall:w-[67px]`}
+              className={`${classes.playerDeck} h-[64px] w-[48px] select-none tall:h-[87px] tall:w-[67px]`}
             >
               <div id={`${playerID}deck`} className="h-full w-full">
                 {gameData?.players[playerID]?.nextTopCardInDeck ? (
@@ -342,15 +343,6 @@ function OtherPlayersCardContainers({
                       {filteredCardsInHandFromDeck[idx]?.map((card) => (
                         <div
                           key={`${playerID}deckCard${card.suit}${card.value}`}
-                          style={{
-                            zIndex:
-                              gameData.players[playerID]?.nextTopCardInDeck
-                                ?.suit === card.suit &&
-                              gameData.players[playerID]?.nextTopCardInDeck
-                                ?.value === card.value
-                                ? 500
-                                : 499,
-                          }}
                           className="absolute left-0 top-0 h-full w-full select-none"
                         >
                           <Card
@@ -402,7 +394,7 @@ function OtherPlayersCardContainers({
               }}
               src={disconnectIcon}
               alt={"player has disconnected icon"}
-              className="absolute z-[999] h-14 w-14"
+              className="absolute z-[150] h-14 w-14"
             />
           )}
         </div>

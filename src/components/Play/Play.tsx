@@ -87,7 +87,7 @@ function Play() {
     >
       <div
         id={"playContainer"}
-        className={`${classes.fullBoardGrid} relative z-[999]`}
+        className={`${classes.fullBoardGrid} relative z-[150]`}
       >
         {gameStarted && (
           <>

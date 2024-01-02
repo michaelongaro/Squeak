@@ -20,7 +20,7 @@ function ShufflingCountdownModal() {
   } = useRoomContext();
 
   const [timersInitiated, setTimersInitiated] = useState<boolean>(false);
-  const [countdownTimerValue, setCountdownTimerValue] = useState<number>(5); //3
+  const [countdownTimerValue, setCountdownTimerValue] = useState<number>(5);
 
   useEffect(() => {
     if (timersInitiated || !showShufflingCountdown || !gameData.currentRound)
@@ -76,7 +76,7 @@ function ShufflingCountdownModal() {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.35 }}
-      className="baseFlex absolute left-0 top-0 z-[999] h-full w-full bg-black bg-opacity-60"
+      className="baseFlex absolute left-0 top-0 z-[200] h-full w-full bg-black bg-opacity-60"
     >
       <motion.div
         key={"shufflingCountdownModalInner"}

@@ -75,8 +75,12 @@ function Card({
   const inMovingSqueakStack =
     (squeakStackLocation &&
       heldSqueakStackLocation &&
-      heldSqueakStackLocation.squeakStack[0] === squeakStackLocation[0] &&
-      heldSqueakStackLocation.squeakStack[1] < squeakStackLocation[1]) ??
+      ownerID &&
+      heldSqueakStackLocation[ownerID] &&
+      heldSqueakStackLocation[ownerID]!.squeakStack[0] ===
+        squeakStackLocation[0] &&
+      heldSqueakStackLocation[ownerID]!.squeakStack[1] <
+        squeakStackLocation[1]) ??
     false;
 
   const moveCard = useCallback(
@@ -95,9 +99,9 @@ function Card({
         if (!cardRef.current || !imageRef.current) return;
 
         cardRef.current.style.transition = "none";
-        cardRef.current.style.zIndex = "500";
+        cardRef.current.style.zIndex = "100";
         imageRef.current.style.transition = "none";
-        imageRef.current.style.zIndex = "500";
+        imageRef.current.style.zIndex = "100";
 
         if ((origin === "hand" || origin === "squeakHand") && ownerID) {
           setCardBeingMovedProgramatically({
@@ -122,8 +126,11 @@ function Card({
           });
         }
 
-        if (squeakStackLocation && ownerID === userID) {
-          setHeldSqueakStackLocation(null);
+        if (squeakStackLocation && ownerID) {
+          setHeldSqueakStackLocation({
+            ...heldSqueakStackLocation,
+            [ownerID]: null,
+          });
         }
       }
 
@@ -143,13 +150,6 @@ function Card({
 
       cardRef.current.style.transition = "all 300ms ease-in-out";
       imageRef.current.style.transition = "transform 150ms linear";
-
-      // workaround to have cards played on board from squeak stacks stay above all
-      // other cards
-      if (squeakStackLocation && !flip) {
-        cardRef.current.style.zIndex = "998";
-        imageRef.current.style.zIndex = "998";
-      }
 
       const currentImageTransform = imageRef.current.style.transform;
 
@@ -183,12 +183,15 @@ function Card({
           }, 250);
         }
 
-        setCardOffsetPosition({ x, y });
+        setCardOffsetPosition({ x: 0, y: 0 });
 
-        if (squeakStackLocation) {
+        if (squeakStackLocation && ownerID) {
           setHeldSqueakStackLocation({
-            squeakStack: squeakStackLocation,
-            location: { x, y },
+            ...heldSqueakStackLocation,
+            [ownerID]: {
+              squeakStack: squeakStackLocation,
+              location: { x: 0, y: 0 },
+            },
           });
         }
       } else if (startID) {
@@ -211,12 +214,13 @@ function Card({
           y: endYCoordinate,
         });
 
-        // data only valid if card is being moved from a squeak stack and the current user
-        // is the owner of the card being moved
-        if (squeakStackLocation && ownerID === userID) {
+        if (squeakStackLocation && ownerID) {
           setHeldSqueakStackLocation({
-            squeakStack: squeakStackLocation,
-            location: { x: endXCoordinate, y: endYCoordinate },
+            ...heldSqueakStackLocation,
+            [ownerID]: {
+              squeakStack: squeakStackLocation,
+              location: { x: endXCoordinate, y: endYCoordinate },
+            },
           });
         }
 
@@ -256,6 +260,7 @@ function Card({
         // play out better. I feel like this shouldn't be necessary
         // since every animation has same duration
         const delay = ownerID === userID ? 385 : 425;
+        // TODO: ^ figure out whether this is still needed
 
         if (elapsed < delay) {
           if (!done) {
@@ -285,6 +290,7 @@ function Card({
       setProposedCardBoxShadow,
       cardBeingMovedProgramatically,
       setCardBeingMovedProgramatically,
+      heldSqueakStackLocation,
       squeakDeckBeingMovedProgramatically,
       setSqueakDeckBeingMovedProgramatically,
     ]
@@ -443,12 +449,15 @@ function Card({
       y: data.y,
     });
 
-    if (squeakStackLocation) {
+    if (squeakStackLocation && ownerID) {
       setHeldSqueakStackLocation({
-        squeakStack: squeakStackLocation,
-        location: {
-          x: data.x,
-          y: data.y,
+        ...heldSqueakStackLocation,
+        [ownerID!]: {
+          squeakStack: squeakStackLocation,
+          location: {
+            x: data.x,
+            y: data.y,
+          },
         },
       });
     }
@@ -462,7 +471,7 @@ function Card({
           onDrag={(e, data) => dragHandler(e, data)}
           position={
             inMovingSqueakStack
-              ? heldSqueakStackLocation?.location
+              ? heldSqueakStackLocation?.[ownerID || ""]?.location
               : cardOffsetPosition
           }
           onStop={() => dropHandler()}
@@ -497,21 +506,26 @@ function Card({
               transition:
                 inMovingSqueakStack &&
                 (!holdingASqueakCard ||
-                  (heldSqueakStackLocation?.location.x === 0 &&
-                    heldSqueakStackLocation?.location.y === 0) ||
-                  (heldSqueakStackLocation?.location.x ===
+                  (heldSqueakStackLocation?.[ownerID || ""]?.location.x === 0 &&
+                    heldSqueakStackLocation?.[ownerID || ""]?.location.y ===
+                      0) ||
+                  (heldSqueakStackLocation?.[ownerID || ""]?.location.x ===
                     cardOffsetPosition.x &&
-                    heldSqueakStackLocation?.location.y ===
+                    heldSqueakStackLocation?.[ownerID || ""]?.location.y ===
                       cardOffsetPosition.y))
-                  ? "transform 300ms ease-in-out, filter 300ms ease-in-out"
+                  ? "transform 300ms ease-in-out, filter 150ms ease-in-out"
                   : ownerID === userID
-                  ? `filter 300ms ease-in-out`
+                  ? `filter 150ms ease-in-out`
                   : "none",
-              zIndex: inMovingSqueakStack ? 1000 : 500, // makes sure child cards stay on top of parent in moving stack
+              zIndex:
+                inMovingSqueakStack ||
+                cardOffsetPosition.x !== 0 ||
+                cardOffsetPosition.y !== 0
+                  ? 150
+                  : 100, // makes sure child cards stay on top whenever moving
             }}
-            className={`baseFlex relative z-[500] h-full w-full select-none !items-start ${
-              draggable &&
-              "cursor-grab hover:active:scale-150 hover:active:cursor-grabbing"
+            className={`baseFlex relative h-full w-full select-none !items-start ${
+              draggable && "cursor-grab hover:active:cursor-grabbing"
             }`}
           >
             <Image
@@ -523,11 +537,6 @@ function Card({
                   showCardBack && !manuallyShowCardFront
                     ? `hue-rotate(${hueRotation}deg)`
                     : "none",
-                // transformOrigin: imageRef.current?.style.transform.includes(
-                //   "rotateY(90deg)"
-                // )
-                //   ? "center"
-                //   : "top left",
               }}
               className="pointer-events-none h-[64px] w-[48px] select-none rounded-[0.25rem] tall:h-[87px] tall:w-[67px]"
               src={

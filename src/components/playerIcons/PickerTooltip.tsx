@@ -327,7 +327,7 @@ function PickerTooltip({
                         ]
                       }
                     />
-                    <div className="absolute bottom-[-0.75rem] right-[-0.75rem] z-[999] h-12 w-12 rounded-[50%]">
+                    <div className="absolute bottom-[-0.75rem] right-[-0.75rem] z-[150] h-12 w-12 rounded-[50%]">
                       {getMetadataOfPlayerByAttribute(color, "color") !==
                         playerMetadata[userID]?.avatarPath &&
                         getMetadataOfPlayerByAttribute(color, "color") !==

@@ -165,7 +165,7 @@ function JoinRoom() {
       transition={{ duration: 0.15 }}
       className="baseVertFlex relative min-h-[100dvh]"
     >
-      <div className="baseVertFlex relative gap-2 ">
+      <div className="baseVertFlex relative gap-4">
         <div className="absolute left-0 top-0">
           <SecondaryButton
             icon={<BiArrowBack size={"1.5rem"} />}

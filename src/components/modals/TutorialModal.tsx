@@ -1,21 +1,30 @@
-import { useRef } from "react";
-import useOnClickOutside from "../../hooks/useOnClickOutside";
+import { useState, useRef } from "react";
 import { motion } from "framer-motion";
+import Image from "next/image";
 import SecondaryButton from "../Buttons/SecondaryButton";
 import { IoClose } from "react-icons/io5";
 import { AiOutlineInfoCircle } from "react-icons/ai";
-import Image from "next/image";
+import { HiExternalLink } from "react-icons/hi";
+import useOnClickOutside from "../../hooks/useOnClickOutside";
 
 import labeledPlayerContainer from "../../../public/tutorial/labeledPlayerContainer.png";
 import boardPlacementExample from "../../../public/tutorial/boardPlacementExample.png";
 import squeakStackPlacementExample from "../../../public/tutorial/squeakStackPlacementExample.png";
-import { HiExternalLink } from "react-icons/hi";
 
 interface ITutorialModal {
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 function TutorialModal({ setShowModal }: ITutorialModal) {
+  const [labeledPlayerContainerLoaded, setLabeledPlayerContainerLoaded] =
+    useState(false);
+  const [boardPlacementExampleLoaded, setBoardPlacementExampleLoaded] =
+    useState(false);
+  const [
+    squeakStackPlacementExampleLoaded,
+    setSqueakStackPlacementExampleLoaded,
+  ] = useState(false);
+
   const modalRef = useRef(null);
 
   useOnClickOutside({
@@ -30,7 +39,7 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.15 }}
-      className="baseFlex fixed left-0 top-0 z-[1000] min-h-[100dvh] min-w-[100vw] bg-black/50 lg:z-[500]"
+      className="baseFlex fixed left-0 top-0 z-[200] min-h-[100dvh] min-w-[100vw] bg-black/50"
     >
       <motion.div
         ref={modalRef}
@@ -47,7 +56,7 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
             style={{
               color: "hsl(120deg 100% 86%)",
             }}
-            className="baseFlex gap-4 text-xl lg:text-2xl"
+            className="baseFlex gap-4 text-xl font-medium lg:text-2xl"
           >
             <AiOutlineInfoCircle size={"2rem"} />
             How to play
@@ -96,8 +105,13 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
               <Image
                 src={labeledPlayerContainer}
                 alt={"Example of a player's card placement with labels"}
-                className="h-auto w-auto rounded-md border-[1px] border-white shadow-lg"
+                className={`h-auto w-auto rounded-md shadow-lg ${
+                  labeledPlayerContainerLoaded
+                    ? "border-[1px] border-white"
+                    : ""
+                }`}
                 placeholder="blur"
+                onLoad={() => setLabeledPlayerContainerLoaded(true)}
               />
             </div>
           </fieldset>
@@ -156,8 +170,13 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
                   <Image
                     src={boardPlacementExample}
                     alt={"Example of a card being placed on the board"}
-                    className="h-auto w-auto rounded-md border-[1px] border-white shadow-lg"
+                    className={`h-auto w-auto rounded-md shadow-lg ${
+                      boardPlacementExampleLoaded
+                        ? "border-[1px] border-white"
+                        : ""
+                    }`}
                     placeholder="blur"
+                    onLoad={() => setBoardPlacementExampleLoaded(true)}
                   />
                 </div>
               </div>
@@ -185,8 +204,13 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
                   <Image
                     src={squeakStackPlacementExample}
                     alt={"Example of a card being placed on the board"}
-                    className="h-auto w-auto rounded-md border-[1px] border-white shadow-lg"
+                    className={`h-auto w-auto rounded-md shadow-lg ${
+                      squeakStackPlacementExampleLoaded
+                        ? "border-[1px] border-white"
+                        : ""
+                    }`}
                     placeholder="blur"
+                    onLoad={() => setSqueakStackPlacementExampleLoaded(true)}
                   />
                 </div>
               </div>

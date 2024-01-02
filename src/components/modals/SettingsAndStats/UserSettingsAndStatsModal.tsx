@@ -158,7 +158,7 @@ function UserSettingsAndStatsModal({
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.15 }}
-      className="baseFlex fixed left-0 top-0 z-[500] min-h-[100dvh] min-w-[100vw] bg-black/50"
+      className="baseFlex fixed left-0 top-0 z-[200] min-h-[100dvh] min-w-[100vw] bg-black/50"
     >
       <motion.div
         ref={modalRef}

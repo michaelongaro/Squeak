@@ -79,7 +79,7 @@ function Buzzer({ playerID, roomCode, interactive }: IBuzzer) {
           : "none",
         cursor: interactive ? "pointer" : "default",
       }}
-      className="relative z-[999] h-[40px] w-[75px] rounded-[50%] transition-all"
+      className="relative z-[150] h-[40px] w-[75px] rounded-[50%] transition-all"
       onMouseEnter={() => {
         if (interactive) setHoveringOnButton(true);
       }}
@@ -107,7 +107,7 @@ function Buzzer({ playerID, roomCode, interactive }: IBuzzer) {
       <audio ref={squeakButtonAudioRef} src="/sounds/squeakButtonPress.mp3" />
 
       {/* grey baseplate for button */}
-      <div className="absolute left-0 top-0 z-[998]">
+      <div className="absolute left-0 top-0 z-[140]">
         <Image
           draggable={false}
           src={baseplate}
@@ -117,7 +117,7 @@ function Buzzer({ playerID, roomCode, interactive }: IBuzzer) {
       </div>
 
       {/* actual button container */}
-      <div className="absolute left-[12px] top-[-5px] z-[998] h-[35px] w-[50px]">
+      <div className="absolute left-[12px] top-[-5px] z-[140] h-[35px] w-[50px]">
         <Image
           style={{
             top: mouseDownOnButton ? "8px" : "0px",
@@ -143,7 +143,7 @@ function Buzzer({ playerID, roomCode, interactive }: IBuzzer) {
             ? "all 1s linear"
             : "all 0.25s linear",
         }}
-        className="absolute z-[999] rounded-[50%]"
+        className="absolute z-[150] rounded-[50%]"
       ></div>
     </motion.div>
   );
