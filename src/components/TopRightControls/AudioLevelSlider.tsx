@@ -46,7 +46,7 @@ function AudioLevelSlider() {
       ${hovered ? "h-full" : "h-[40px] md:h-full"}
       ${hovered ? "gap-2" : "gap-0"} rounded-md border-2 p-2 transition-all`}
     >
-      {hovered && <div>{values[0]}</div>}
+      {hovered && <div className="w-4">{values[0]}</div>}
 
       <div
         style={{
