@@ -463,6 +463,70 @@ function Card({
     }
   }
 
+  function getAnimationStyles() {
+    let animation = "none";
+
+    if (
+      ownerID !== userID &&
+      (cardOffsetPosition.x !== 0 ||
+        cardOffsetPosition.y !== 0 ||
+        inMovingSqueakStack)
+    ) {
+      if (origin === "hand" || origin === "squeakHand") {
+        animation = "regularCardDropShadow 0.3s ease-in-out";
+      } else if (origin === "deck" || origin === "squeakDeck") {
+        animation = "shallowCardDropShadow 0.3s ease-in-out";
+      }
+    }
+
+    return animation;
+  }
+
+  function getFilterStyles() {
+    let filterStyles = "drop-shadow(0px 0px 4px rgba(0, 0, 0, 0))";
+
+    if (
+      ownerID === userID &&
+      (cardOffsetPosition.x !== 0 ||
+        cardOffsetPosition.y !== 0 ||
+        inMovingSqueakStack)
+    ) {
+      if (origin === "hand" || origin === "squeakHand") {
+        filterStyles = `drop-shadow(10px 10px 4px rgba(0, 0, 0, ${
+          inMovingSqueakStack ? 0.1 : 0.25
+        }))`;
+      } else if (origin === "deck" || origin === "squeakDeck") {
+        filterStyles = "drop-shadow(5px 5px 4px rgba(0, 0, 0, 0.15))";
+      }
+    }
+
+    return filterStyles;
+  }
+
+  function getTransitionStyles() {
+    let transitionStyles = "";
+
+    if (
+      inMovingSqueakStack &&
+      (!holdingASqueakCard ||
+        (heldSqueakStackLocation?.[ownerID || ""]?.location.x === 0 &&
+          heldSqueakStackLocation?.[ownerID || ""]?.location.y === 0) ||
+        (heldSqueakStackLocation?.[ownerID || ""]?.location.x ===
+          cardOffsetPosition.x &&
+          heldSqueakStackLocation?.[ownerID || ""]?.location.y ===
+            cardOffsetPosition.y))
+    ) {
+      transitionStyles =
+        "transform 300ms ease-in-out, filter 150ms ease-in-out";
+    } else if (ownerID === userID) {
+      transitionStyles = "filter 150ms ease-in-out";
+    } else {
+      transitionStyles = "none";
+    }
+
+    return transitionStyles;
+  }
+
   return (
     <>
       {(showCardBack || value || suit) && (
@@ -479,50 +543,19 @@ function Card({
           <div
             ref={cardRef}
             style={{
-              animation:
-                ownerID !== userID &&
-                (cardOffsetPosition.x !== 0 ||
-                  cardOffsetPosition.y !== 0 ||
-                  inMovingSqueakStack)
-                  ? origin === "hand" || origin === "squeakHand"
-                    ? "regularCardDropShadow 0.3s ease-in-out"
-                    : origin === "deck" || origin === "squeakDeck"
-                    ? "shallowCardDropShadow 0.3s ease-in-out"
-                    : "none"
-                  : "none",
-              filter:
-                ownerID === userID &&
-                (cardOffsetPosition.x !== 0 ||
-                  cardOffsetPosition.y !== 0 ||
-                  inMovingSqueakStack)
-                  ? origin === "hand" || origin === "squeakHand"
-                    ? `drop-shadow(10px 10px 4px rgba(0, 0, 0, ${
-                        inMovingSqueakStack ? 0.1 : 0.25
-                      }))`
-                    : origin === "deck" || origin === "squeakDeck"
-                    ? "drop-shadow(5px 5px 4px rgba(0, 0, 0, 0.15))"
-                    : "drop-shadow(0px 0px 4px rgba(0, 0, 0, 0))"
-                  : "drop-shadow(0px 0px 4px rgba(0, 0, 0, 0))",
-              transition:
-                inMovingSqueakStack &&
-                (!holdingASqueakCard ||
-                  (heldSqueakStackLocation?.[ownerID || ""]?.location.x === 0 &&
-                    heldSqueakStackLocation?.[ownerID || ""]?.location.y ===
-                      0) ||
-                  (heldSqueakStackLocation?.[ownerID || ""]?.location.x ===
-                    cardOffsetPosition.x &&
-                    heldSqueakStackLocation?.[ownerID || ""]?.location.y ===
-                      cardOffsetPosition.y))
-                  ? "transform 300ms ease-in-out, filter 150ms ease-in-out"
-                  : ownerID === userID
-                  ? `filter 150ms ease-in-out`
-                  : "none",
+              animation: getAnimationStyles(),
+              filter: getFilterStyles(),
+              transition: getTransitionStyles(),
               zIndex:
                 inMovingSqueakStack ||
                 cardOffsetPosition.x !== 0 ||
                 cardOffsetPosition.y !== 0
                   ? 150
+                  : origin === "deck"
+                  ? 50
                   : 100, // makes sure child cards stay on top whenever moving
+              // TODO: should probably have _all_ styles be directly tied to state, instead of manually
+              // setting the .style properties above in moveCard()
             }}
             className={`baseFlex relative h-full w-full select-none !items-start ${
               draggable && "cursor-grab hover:active:cursor-grabbing"
