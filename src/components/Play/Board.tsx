@@ -78,7 +78,7 @@ function Board({ boardClass }: IBoard) {
                   {cell && (
                     <motion.div
                       key={`board${rowIdx}${colIdx}AnimatedCell`}
-                      exit={{ opacity: 0 }}
+                      exit={{ opacity: 0, scale: 0.75 }}
                       transition={{ duration: 0.55 }}
                       className="relative h-full w-full select-none"
                     >
