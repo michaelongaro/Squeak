@@ -75,7 +75,7 @@ function Settings({
                   ? 1
                   : 0,
             }}
-            className="absolute right-1 top-[-0.25rem] text-xl text-red-600 transition-all"
+            className="absolute right-1 top-[-0.25rem] text-xl text-red-600 transition-opacity"
           >
             *
           </div>

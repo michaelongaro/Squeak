@@ -24,10 +24,13 @@ function PublicRooms() {
     friendData?.roomInviteIDs ?? []
   );
 
-  const { data: publicRooms, refetch } =
-    trpc.rooms.getAllAvailableRooms.useQuery(undefined, {
-      refetchInterval: 30000,
-    });
+  const {
+    data: publicRooms,
+    refetch,
+    isFetching,
+  } = trpc.rooms.getAllAvailableRooms.useQuery(undefined, {
+    refetchInterval: 30000,
+  });
 
   const [roomCode, setRoomCode] = useState<string>("");
   const [fetchingNewRooms, setFetchingNewRooms] = useState<boolean>(false);
@@ -71,7 +74,7 @@ function PublicRooms() {
         }}
         className="baseFlex gap-4 pl-4 pr-4 text-left text-lg"
       >
-        <div className="baseFlex gap-2">
+        <div className="baseFlex gap-2 whitespace-nowrap">
           <div className="text-xl">Public rooms</div>
           {publicRooms && <div>{`(${publicRooms.length})`}</div>}
         </div>
@@ -79,8 +82,11 @@ function PublicRooms() {
         <SecondaryButton
           icon={<HiOutlineRefresh size={"1.5rem"} />}
           extraPadding={false}
-          width={"3rem"}
-          rotateIcon={fetchingNewRooms}
+          innerText={"Refresh"}
+          style={{
+            padding: "0.25rem 1rem",
+          }}
+          rotateIcon={isFetching || fetchingNewRooms}
           onClickFunction={() => {
             setFetchingNewRooms(true);
             setTimeout(() => {

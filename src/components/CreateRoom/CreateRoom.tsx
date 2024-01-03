@@ -14,7 +14,7 @@ import SecondaryButton from "../Buttons/SecondaryButton";
 import Radio from "../Buttons/Radio";
 import { MdCopyAll } from "react-icons/md";
 import PrimaryButton from "../Buttons/PrimaryButton";
-import { BiArrowBack } from "react-icons/bi";
+import { IoHome } from "react-icons/io5";
 import { FiCheck } from "react-icons/fi";
 import { AnimatePresence, motion } from "framer-motion";
 import Filter from "bad-words";
@@ -147,7 +147,7 @@ function CreateRoom() {
       <div className="baseVertFlex relative gap-4">
         <div className="absolute left-[-3.5rem] top-0">
           <SecondaryButton
-            icon={<BiArrowBack size={"1.5rem"} />}
+            icon={<IoHome size={"1.5rem"} />}
             extraPadding={false}
             onClickFunction={() => {
               setConfigAndMetadataInitialized(false);
@@ -210,7 +210,7 @@ function CreateRoom() {
                         ? 1
                         : 0,
                   }}
-                  className="absolute right-1 top-[-0.25rem] text-xl text-red-600 transition-all"
+                  className="absolute right-1 top-[-0.25rem] text-xl text-red-600 transition-opacity"
                 >
                   *
                 </div>

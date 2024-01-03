@@ -7,7 +7,7 @@ import { type IRoomPlayer, type IGameMetadata } from "../../pages/api/socket";
 import PickerTooltip from "../playerIcons/PickerTooltip";
 import PlayerIcon from "../playerIcons/PlayerIcon";
 import SecondaryButton from "../Buttons/SecondaryButton";
-import { BiArrowBack } from "react-icons/bi";
+import { IoHome } from "react-icons/io5";
 import PrimaryButton from "../Buttons/PrimaryButton";
 import { MdCopyAll } from "react-icons/md";
 import { FiCheck } from "react-icons/fi";
@@ -168,7 +168,7 @@ function JoinRoom() {
       <div className="baseVertFlex relative gap-4">
         <div className="absolute left-0 top-0">
           <SecondaryButton
-            icon={<BiArrowBack size={"1.5rem"} />}
+            icon={<IoHome size={"1.5rem"} />}
             extraPadding={false}
             onClickFunction={() => leaveRoom(connectedToRoom ? false : true)}
           />
@@ -227,7 +227,7 @@ function JoinRoom() {
                             ? 1
                             : 0,
                       }}
-                      className="absolute right-1 top-[-0.25rem] text-xl text-red-600 transition-all"
+                      className="absolute right-1 top-[-0.25rem] text-xl text-red-600 transition-opacity"
                     >
                       *
                     </div>
@@ -316,7 +316,7 @@ function JoinRoom() {
                     style={{
                       color: "hsl(120deg 100% 86%)",
                     }}
-                    className="pointer-events-none absolute right-10 rounded-md border-2 border-white bg-green-800 px-4 py-2 shadow-md transition-all"
+                    className="pointer-events-none absolute right-10 rounded-md border-2 border-white bg-green-800 px-4 py-2 shadow-md"
                   >
                     {roomError}
                   </motion.div>
