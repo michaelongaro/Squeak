@@ -69,17 +69,18 @@ function Buzzer({ playerID, roomCode, interactive }: IBuzzer) {
         opacity: { duration: 0.25, ease: "linear" },
         scale: {
           type: "spring",
-          duration: 0.25,
-          bounce: 0.75,
+          bounce: 0.65,
         },
       }}
       style={{
-        boxShadow: hoveringOnButton
-          ? "0px 0px 10px 3px rgba(184,184,184,1)"
+        filter: hoveringOnButton
+          ? "drop-shadow(0px 0px 5px rgba(184,184,184,1))"
           : "none",
         cursor: interactive ? "pointer" : "default",
+        transition: "filter 150ms ease-in-out",
+        animation: hoveringOnButton ? "none" : "pulse 3s infinite",
       }}
-      className="relative z-[150] h-[40px] w-[75px] rounded-[50%] transition-all"
+      className="relative z-[150] h-[40px] w-[65px] rounded-[50%]"
       onMouseEnter={() => {
         if (interactive) setHoveringOnButton(true);
       }}
@@ -117,7 +118,7 @@ function Buzzer({ playerID, roomCode, interactive }: IBuzzer) {
       </div>
 
       {/* actual button container */}
-      <div className="absolute left-[12px] top-[-5px] z-[140] h-[35px] w-[50px]">
+      <div className="absolute left-[7px] top-[-5px] z-[140] h-[35px] w-[50px]">
         <Image
           style={{
             top: mouseDownOnButton ? "8px" : "0px",
