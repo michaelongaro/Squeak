@@ -369,9 +369,11 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                     ? "0px 0px 4px 3px rgba(184,184,184,1)"
                     : "none",
                 cursor: drawingFromDeck ? "auto" : "pointer",
+                pointerEvents: drawingFromDeck ? "none" : "auto",
               }}
               className="h-full w-full select-none rounded-[0.1rem] transition-shadow"
               onMouseEnter={() => {
+                if (drawingFromDeck) return;
                 setHoveringOverDeck(true);
               }}
               onMouseLeave={() => {
