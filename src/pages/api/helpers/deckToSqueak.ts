@@ -57,7 +57,7 @@ export function deckToSqueak({
     startingCardMetadata: {
       originSqueakStackIdx: undefined,
       destinationSqueakStackIdx: squeakEndLocation,
-      lengthOfStack: squeakStackLength,
+      lengthOfStack: 1,
     },
     squeakEndCoords: {
       offsetHeight: indexWithinSqueakStack * (20 - squeakStackLength),

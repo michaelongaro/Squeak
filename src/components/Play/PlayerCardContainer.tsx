@@ -50,10 +50,10 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
     setHoveredSqueakStack,
     currentPlayerSqueakStackBeingDragged,
     setCurrentPlayerSqueakStackBeingDragged,
+    artificialSqueakStackMetadata,
   } = useRoomContext();
 
   const [hoveringOverDeck, setHoveringOverDeck] = useState(false);
-
   const [drawingFromDeck, setDrawingFromDeck] = useState(false);
 
   useTrackHoverOverSqueakStacks();
@@ -63,22 +63,45 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
 
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  function dynamicTopValue(
+  function getDynamicTopValue(
     squeakStackIdx: number,
     squeakStackLength: number,
     cardIdx: number
   ) {
-    // ah damn maybe need edge case to not even bother with dynamically changing if the combined total of the
-    // squeak stack being moved and the squeak stack being hovered over is greater than 12 since it's not possible?
-
     let lengthOfSqueakStackBeingDragged = 0;
     if (currentPlayerSqueakStackBeingDragged !== null) {
       lengthOfSqueakStackBeingDragged =
         currentPlayerSqueakStackBeingDragged.length;
     }
 
-    // 0 1 2 3
-    // stack being dragged
+    const modifiedHoveredSqueakStack =
+      // artificialSqueakStackMetadata
+      //   ? artificialSqueakStackMetadata.hoveredSqueakStack
+      //   :
+      hoveredSqueakStack;
+    const modifiedHoldingDeckCard =
+      // artificialSqueakStackMetadata
+      //   ? artificialSqueakStackMetadata.holdingADeckCard
+      //   :
+      holdingADeckCard;
+
+    // INTERESTING... only the base card of the stack that is dropped actually moves...
+
+    // if (squeakStackIdx === 0 || squeakStackIdx === 1) {
+    //   console.log(
+    //     squeakStackIdx,
+    //     cardIdx,
+    //     "mod hover squeak: ",
+    //     artificialSqueakStackMetadata?.hoveredSqueakStack,
+    //     hoveredSqueakStack
+    //   );
+
+    //   // console.log(
+    //   //   "mod hold deck: ",
+    //   //   artificialSqueakStackMetadata?.holdingADeckCard,
+    //   //   holdingADeckCard
+    //   // );
+    // }
 
     // special handling for squeak stack being dragged
     if (
@@ -87,30 +110,34 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
       cardIdx >= currentPlayerSqueakStackBeingDragged!.startingDepth
     ) {
       if (
-        hoveredSqueakStack !== null &&
-        originIndexForHeldSqueakCard !== hoveredSqueakStack
+        modifiedHoveredSqueakStack !== null &&
+        originIndexForHeldSqueakCard !== modifiedHoveredSqueakStack
       ) {
-        const hoveredSqueakStackLength =
-          gameData.players[userID]!.squeakHand[hoveredSqueakStack]!.length;
+        const modifiedHoveredSqueakStackLength =
+          gameData.players[userID]!.squeakHand[modifiedHoveredSqueakStack]!
+            .length;
 
         squeakStackLength =
-          hoveredSqueakStackLength + lengthOfSqueakStackBeingDragged;
+          modifiedHoveredSqueakStackLength + lengthOfSqueakStackBeingDragged;
       }
     }
 
     // otherwise, part of regular squeak stacks
     else {
-      if (hoveredSqueakStack !== null) {
+      if (modifiedHoveredSqueakStack !== null) {
         if (holdingASqueakCard) {
           // narrowing down to correct squeak stack
           if (originIndexForHeldSqueakCard === squeakStackIdx) {
-            if (squeakStackIdx !== hoveredSqueakStack) {
+            if (squeakStackIdx !== modifiedHoveredSqueakStack) {
               squeakStackLength -= lengthOfSqueakStackBeingDragged;
             }
-          } else if (hoveredSqueakStack === squeakStackIdx) {
+          } else if (modifiedHoveredSqueakStack === squeakStackIdx) {
             squeakStackLength += lengthOfSqueakStackBeingDragged;
           }
-        } else if (holdingADeckCard && squeakStackIdx === hoveredSqueakStack) {
+        } else if (
+          modifiedHoldingDeckCard &&
+          squeakStackIdx === modifiedHoveredSqueakStack
+        ) {
           squeakStackLength++;
         }
       } else {
@@ -123,8 +150,23 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
       }
     }
 
-    return `${(20 - squeakStackLength) * cardIdx}px`;
+    return `${
+      (20 - (squeakStackLength > 12 ? 12 : squeakStackLength)) * cardIdx
+    }px`;
   }
+
+  // useEffect(() => {
+  //   if (artificialSqueakStackMetadata) return;
+
+  //   setHoldingASqueakCard(false);
+  //   setCurrentPlayerSqueakStackBeingDragged(null);
+  //   setOriginIndexForHeldSqueakCard(null);
+  // }, [
+  //   artificialSqueakStackMetadata,
+  //   setCurrentPlayerSqueakStackBeingDragged,
+  //   setHoldingASqueakCard,
+  //   setOriginIndexForHeldSqueakCard,
+  // ]);
 
   useEffect(() => {
     if (soundPlayStates.currentPlayer && audioRef.current) {
@@ -212,7 +254,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                           originIndexForHeldSqueakCard === squeakStackIdx
                             ? 150
                             : "auto",
-                        top: dynamicTopValue(
+                        top: getDynamicTopValue(
                           squeakStackIdx,
                           cards.length,
                           cardIdx
@@ -231,11 +273,10 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                         setHoveredSqueakStack(null);
                       }}
                       onMouseUp={() => {
+                        // if (artificialSqueakStackMetadata) return;
+
                         setHoldingASqueakCard(false);
                         setCurrentPlayerSqueakStackBeingDragged(null);
-                        // ^^ kinda don't want to immediately do this, since if it is a valid move
-                        // then it will just move back whenever server response comes in resulting in jerky motion
-                        // maybe do it after a cardDropDenied or cardDropAccepted?
                         setOriginIndexForHeldSqueakCard(null);
                       }}
                     >
@@ -334,7 +375,6 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                       }}
                       onMouseUp={() => {
                         setHoldingADeckCard(false);
-                        setHoveredSqueakStack(null);
                       }}
                     >
                       <Card

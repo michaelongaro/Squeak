@@ -80,7 +80,9 @@ export function squeakToSqueak({
     startingCardMetadata: {
       originSqueakStackIdx: squeakStartLocation,
       destinationSqueakStackIdx: squeakEndLocation,
-      lengthOfStack: squeakStackLength,
+      lengthOfStack: cardsToMove.length,
+      lengthOfTargetStack: squeakStackLength - cardsToMove.length,
+      startingDepth: indexWithinSqueakStack,
     },
     squeakEndCoords: {
       offsetHeight: indexWithinSqueakStack * (20 - squeakStackLength),

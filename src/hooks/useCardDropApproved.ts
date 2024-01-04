@@ -8,6 +8,8 @@ interface ICardDropAccepted extends Partial<ICardDropProposal> {
     originSqueakStackIdx?: number; // if undefined -> origin is hand
     destinationSqueakStackIdx?: number; // if undefined -> destination is board
     lengthOfStack: number; // will just be 1 for a single card
+    lengthOfTargetStack: number;
+    startingDepth: number;
   };
   squeakEndCoords?: {
     offsetHeight: number;
@@ -44,6 +46,7 @@ function useCardDropApproved({
     setSoundPlayStates,
     otherPlayerSqueakStacksBeingDragged,
     setOtherPlayerSqueakStacksBeingDragged,
+    setArtificialSqueakStackMetadata,
   } = useRoomContext();
 
   const [dataFromBackend, setDataFromBackend] =
@@ -94,6 +97,7 @@ function useCardDropApproved({
       ) {
         const depthAlterations = [0, 0, 0, 0];
         depthAlterations[startingCardMetadata.destinationSqueakStackIdx] = 1;
+
         setOtherPlayerSqueakStacksBeingDragged({
           ...otherPlayerSqueakStacksBeingDragged,
           [ownerID]: {
@@ -112,10 +116,17 @@ function useCardDropApproved({
           -startingCardMetadata.lengthOfStack;
         depthAlterations[startingCardMetadata.destinationSqueakStackIdx] =
           startingCardMetadata.lengthOfStack;
+
         setOtherPlayerSqueakStacksBeingDragged({
           ...otherPlayerSqueakStacksBeingDragged,
           [ownerID]: {
             squeakStackDepthAlterations: depthAlterations,
+            draggedStack: {
+              length: startingCardMetadata.lengthOfStack,
+              lengthOfTargetStack: startingCardMetadata.lengthOfTargetStack,
+              squeakStackIdx: startingCardMetadata.originSqueakStackIdx,
+              startingDepth: startingCardMetadata.startingDepth,
+            },
           },
         });
       }
@@ -126,8 +137,8 @@ function useCardDropApproved({
         !startingCardMetadata?.destinationSqueakStackIdx
       ) {
         const depthAlterations = [0, 0, 0, 0];
-        depthAlterations[startingCardMetadata.originSqueakStackIdx] =
-          -startingCardMetadata.lengthOfStack;
+        depthAlterations[startingCardMetadata.originSqueakStackIdx] = -1;
+
         setOtherPlayerSqueakStacksBeingDragged({
           ...otherPlayerSqueakStacksBeingDragged,
           [ownerID]: {
@@ -163,29 +174,27 @@ function useCardDropApproved({
         }
       }
 
-      moveCard(
-        { x: endX, y: endY },
-        false,
-        endID.includes("cell"),
-
-        () => {
-          setOtherPlayerSqueakStacksBeingDragged({
-            ...otherPlayerSqueakStacksBeingDragged,
-            [ownerID]: {
-              squeakStackDepthAlterations: [0, 0, 0, 0],
-              draggedStack: undefined,
-            },
-          });
-
-          if (playerID && updatedGameData) {
-            setGameData(updatedGameData);
-          }
-
-          if (playerID === userID) {
-            setProposedCardBoxShadow(null);
-          }
+      moveCard({ x: endX, y: endY }, false, endID.includes("cell"), () => {
+        if (ownerID === userID && endID.includes("squeak")) {
+          setArtificialSqueakStackMetadata(null);
         }
-      );
+
+        setOtherPlayerSqueakStacksBeingDragged({
+          ...otherPlayerSqueakStacksBeingDragged,
+          [ownerID]: {
+            squeakStackDepthAlterations: [0, 0, 0, 0],
+            draggedStack: undefined,
+          },
+        });
+
+        if (playerID && updatedGameData) {
+          setGameData(updatedGameData);
+        }
+
+        if (playerID === userID) {
+          setProposedCardBoxShadow(null);
+        }
+      });
 
       if (playerID === userID) {
         if (endID.includes("cell")) {
