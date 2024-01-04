@@ -49,7 +49,6 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
     setHoveredSqueakStack,
     currentPlayerSqueakStackBeingDragged,
     setCurrentPlayerSqueakStackBeingDragged,
-    artificialSqueakStackMetadata,
   } = useRoomContext();
 
   const [hoveringOverDeck, setHoveringOverDeck] = useState(false);
@@ -72,35 +71,6 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
         currentPlayerSqueakStackBeingDragged.length;
     }
 
-    const modifiedHoveredSqueakStack =
-      // artificialSqueakStackMetadata
-      //   ? artificialSqueakStackMetadata.hoveredSqueakStack
-      //   :
-      hoveredSqueakStack;
-    const modifiedHoldingDeckCard =
-      // artificialSqueakStackMetadata
-      //   ? artificialSqueakStackMetadata.holdingADeckCard
-      //   :
-      holdingADeckCard;
-
-    // INTERESTING... only the base card of the stack that is dropped actually moves...
-
-    // if (squeakStackIdx === 0 || squeakStackIdx === 1) {
-    //   console.log(
-    //     squeakStackIdx,
-    //     cardIdx,
-    //     "mod hover squeak: ",
-    //     artificialSqueakStackMetadata?.hoveredSqueakStack,
-    //     hoveredSqueakStack
-    //   );
-
-    //   // console.log(
-    //   //   "mod hold deck: ",
-    //   //   artificialSqueakStackMetadata?.holdingADeckCard,
-    //   //   holdingADeckCard
-    //   // );
-    // }
-
     // special handling for squeak stack being dragged
     if (
       holdingASqueakCard &&
@@ -108,12 +78,11 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
       cardIdx >= currentPlayerSqueakStackBeingDragged!.startingDepth
     ) {
       if (
-        modifiedHoveredSqueakStack !== null &&
-        originIndexForHeldSqueakCard !== modifiedHoveredSqueakStack
+        hoveredSqueakStack !== null &&
+        originIndexForHeldSqueakCard !== hoveredSqueakStack
       ) {
         const modifiedHoveredSqueakStackLength =
-          gameData.players[userID]!.squeakHand[modifiedHoveredSqueakStack]!
-            .length;
+          gameData.players[userID]!.squeakHand[hoveredSqueakStack]!.length;
 
         squeakStackLength =
           modifiedHoveredSqueakStackLength + lengthOfSqueakStackBeingDragged;
@@ -122,20 +91,17 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
 
     // otherwise, part of regular squeak stacks
     else {
-      if (modifiedHoveredSqueakStack !== null) {
+      if (hoveredSqueakStack !== null) {
         if (holdingASqueakCard) {
           // narrowing down to correct squeak stack
           if (originIndexForHeldSqueakCard === squeakStackIdx) {
-            if (squeakStackIdx !== modifiedHoveredSqueakStack) {
+            if (squeakStackIdx !== hoveredSqueakStack) {
               squeakStackLength -= lengthOfSqueakStackBeingDragged;
             }
-          } else if (modifiedHoveredSqueakStack === squeakStackIdx) {
+          } else if (hoveredSqueakStack === squeakStackIdx) {
             squeakStackLength += lengthOfSqueakStackBeingDragged;
           }
-        } else if (
-          modifiedHoldingDeckCard &&
-          squeakStackIdx === modifiedHoveredSqueakStack
-        ) {
+        } else if (holdingADeckCard && squeakStackIdx === hoveredSqueakStack) {
           squeakStackLength++;
         }
       } else {
@@ -152,19 +118,6 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
       (20 - (squeakStackLength > 12 ? 12 : squeakStackLength)) * cardIdx
     }px`;
   }
-
-  // useEffect(() => {
-  //   if (artificialSqueakStackMetadata) return;
-
-  //   setHoldingASqueakCard(false);
-  //   setCurrentPlayerSqueakStackBeingDragged(null);
-  //   setOriginIndexForHeldSqueakCard(null);
-  // }, [
-  //   artificialSqueakStackMetadata,
-  //   setCurrentPlayerSqueakStackBeingDragged,
-  //   setHoldingASqueakCard,
-  //   setOriginIndexForHeldSqueakCard,
-  // ]);
 
   useEffect(() => {
     if (soundPlayStates.currentPlayer && audioRef.current) {
@@ -327,8 +280,6 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                         setHoveredSqueakStack(null);
                       }}
                       onMouseUp={() => {
-                        // if (artificialSqueakStackMetadata) return;
-
                         setHoldingASqueakCard(false);
                         setCurrentPlayerSqueakStackBeingDragged(null);
                         setOriginIndexForHeldSqueakCard(null);

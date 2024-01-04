@@ -46,7 +46,6 @@ function useCardDropApproved({
     setSoundPlayStates,
     otherPlayerSqueakStacksBeingDragged,
     setOtherPlayerSqueakStacksBeingDragged,
-    setArtificialSqueakStackMetadata,
   } = useRoomContext();
 
   const [dataFromBackend, setDataFromBackend] =
@@ -175,10 +174,6 @@ function useCardDropApproved({
       }
 
       moveCard({ x: endX, y: endY }, false, endID.includes("cell"), () => {
-        if (ownerID === userID && endID.includes("squeak")) {
-          setArtificialSqueakStackMetadata(null);
-        }
-
         setOtherPlayerSqueakStacksBeingDragged({
           ...otherPlayerSqueakStacksBeingDragged,
           [ownerID]: {

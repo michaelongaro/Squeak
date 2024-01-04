@@ -51,11 +51,6 @@ interface OtherPlayerSqueakStacksBeingDragged {
   draggedStack?: OtherPlayersDraggedStack;
 }
 
-interface IArtificiallyKeepSqueakStackShrunk {
-  hoveredSqueakStack: number;
-  holdingADeckCard: boolean;
-}
-
 interface IRoomContext {
   pageToRender: "home" | "createRoom" | "joinRoom" | "play";
   setPageToRender: React.Dispatch<
@@ -141,10 +136,6 @@ interface IRoomContext {
     React.SetStateAction<{
       [playerID: string]: OtherPlayerSqueakStacksBeingDragged;
     }>
-  >;
-  artificialSqueakStackMetadata: IArtificiallyKeepSqueakStackShrunk | null;
-  setArtificialSqueakStackMetadata: React.Dispatch<
-    React.SetStateAction<IArtificiallyKeepSqueakStackShrunk | null>
   >;
 }
 
@@ -255,13 +246,6 @@ export function RoomProvider(props: { children: React.ReactNode }) {
   ] = useState<{
     [playerID: string]: OtherPlayerSqueakStacksBeingDragged;
   }>({});
-
-  // needed because if a player let go of a card/stack on a squeak stack, it would immediately try
-  // to expand the card/stacks to their previous (full) size, when we know that the cards
-  // should actually stay "shrunk" until the animation is complete. This gets set as soon as the player
-  // drops a valid card/stack on one of their squeak stacks.
-  const [artificialSqueakStackMetadata, setArtificialSqueakStackMetadata] =
-    useState<IArtificiallyKeepSqueakStackShrunk | null>(null);
 
   useEffect(() => {
     fetch("/api/socket");
@@ -377,8 +361,6 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     setCurrentPlayerSqueakStackBeingDragged,
     otherPlayerSqueakStacksBeingDragged,
     setOtherPlayerSqueakStacksBeingDragged,
-    artificialSqueakStackMetadata,
-    setArtificialSqueakStackMetadata,
   };
 
   return (

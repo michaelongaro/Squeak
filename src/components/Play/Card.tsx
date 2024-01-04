@@ -64,7 +64,6 @@ function Card({
     setSqueakDeckBeingMovedProgramatically,
     setHoldingADeckCard,
     setHoldingASqueakCard,
-    setArtificialSqueakStackMetadata,
   } = useRoomContext();
 
   const [cardOffsetPosition, setCardOffsetPosition] = useState({ x: 0, y: 0 });
@@ -84,15 +83,6 @@ function Card({
         squeakStackLocation[1]) ??
     false;
 
-  if (squeakStackLocation?.[0] === 1 || squeakStackLocation?.[0] === 3) {
-    console.log(
-      suit,
-      value,
-      inMovingSqueakStack,
-      heldSqueakStackLocation?.[ownerID || ""]?.location,
-      cardOffsetPosition
-    );
-  }
   const moveCard = useCallback(
     (
       { x, y }: { x: number; y: number },
@@ -266,13 +256,8 @@ function Card({
         }
         const elapsed = timestamp - start;
 
-        // longer delay for other players to allow for animation to
-        // play out better. I feel like this shouldn't be necessary
-        // since every animation has same duration
-        const delay = ownerID === userID ? 385 : 385;
-        // TODO: ^ figure out whether this is still needed
-
-        if (elapsed < 300) {
+        // trying to add slight buffer around the regular 300ms animation
+        if (elapsed < 325) {
           if (!done) {
             window.requestAnimationFrame(step);
           }
@@ -367,11 +352,6 @@ function Card({
         gameData.players?.[userID]?.squeakHand?.[idx]?.slice(-1)[0] || null;
 
       if (cardPlacementIsValid(bottomSqueakStackCard, value, suit, false)) {
-        setArtificialSqueakStackMetadata({
-          hoveredSqueakStack: hoveredSqueakStack,
-          holdingADeckCard: holdingADeckCard,
-        });
-
         socket.emit("proposedCardDrop", {
           card: {
             value,
@@ -437,11 +417,6 @@ function Card({
         gameData?.players?.[userID!]?.squeakHand?.[idx]?.slice(-1)[0] || null;
 
       if (cardPlacementIsValid(parentSqueakStackCard, value, suit, false)) {
-        setArtificialSqueakStackMetadata({
-          hoveredSqueakStack: hoveredSqueakStack,
-          holdingADeckCard: holdingADeckCard,
-        });
-
         socket.emit("proposedCardDrop", {
           card: {
             value,
