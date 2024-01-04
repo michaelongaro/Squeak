@@ -78,7 +78,8 @@ function Buzzer({ playerID, roomCode, interactive }: IBuzzer) {
           : "none",
         cursor: interactive ? "pointer" : "default",
         transition: "filter 150ms ease-in-out",
-        animation: hoveringOnButton ? "none" : "pulse 3s infinite",
+        animation:
+          hoveringOnButton || !interactive ? "none" : "pulse 3s infinite",
       }}
       className="relative z-[150] h-[40px] w-[65px] rounded-[50%]"
       onMouseEnter={() => {
