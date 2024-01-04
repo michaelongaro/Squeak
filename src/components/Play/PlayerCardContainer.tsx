@@ -1,10 +1,9 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, type MouseEvent } from "react";
 import { socket } from "../../pages";
 import { useUserIDContext } from "../../context/UserIDContext";
 import { useRoomContext } from "../../context/RoomContext";
 import Card from "./Card";
 import { FaRedoAlt } from "react-icons/fa";
-import useTrackHoverOverSqueakStacks from "../../hooks/useTrackHoverOverSqueakStacks";
 
 import classes from "./PlayerCardContainer.module.css";
 import { type IGetBoxShadowStyles } from "./Board";
@@ -56,7 +55,6 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
   const [hoveringOverDeck, setHoveringOverDeck] = useState(false);
   const [drawingFromDeck, setDrawingFromDeck] = useState(false);
 
-  useTrackHoverOverSqueakStacks();
   useRotatePlayerDecks();
 
   const cardDimensions = useResponsiveCardDimensions();
@@ -179,6 +177,59 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
     }
   }, [soundPlayStates, currentVolume, setSoundPlayStates]);
 
+  function mouseMoveHandler(
+    e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>
+  ) {
+    if (userID === null) return;
+
+    const squeakHand0 = document
+      .getElementById(`${userID}squeakHand0`)
+      ?.getBoundingClientRect();
+    const squeakHand1 = document
+      .getElementById(`${userID}squeakHand1`)
+      ?.getBoundingClientRect();
+    const squeakHand2 = document
+      .getElementById(`${userID}squeakHand2`)
+      ?.getBoundingClientRect();
+    const squeakHand3 = document
+      .getElementById(`${userID}squeakHand3`)
+      ?.getBoundingClientRect();
+
+    if (squeakHand0 && squeakHand1 && squeakHand2 && squeakHand3) {
+      if (
+        e.clientX > squeakHand0.left &&
+        e.clientX < squeakHand0.right &&
+        e.clientY > squeakHand0.top &&
+        e.clientY < squeakHand0.bottom
+      ) {
+        setHoveredSqueakStack(0);
+      } else if (
+        e.clientX > squeakHand1.left &&
+        e.clientX < squeakHand1.right &&
+        e.clientY > squeakHand1.top &&
+        e.clientY < squeakHand1.bottom
+      ) {
+        setHoveredSqueakStack(1);
+      } else if (
+        e.clientX > squeakHand2.left &&
+        e.clientX < squeakHand2.right &&
+        e.clientY > squeakHand2.top &&
+        e.clientY < squeakHand2.bottom
+      ) {
+        setHoveredSqueakStack(2);
+      } else if (
+        e.clientX > squeakHand3.left &&
+        e.clientX < squeakHand3.right &&
+        e.clientY > squeakHand3.top &&
+        e.clientY < squeakHand3.bottom
+      ) {
+        setHoveredSqueakStack(3);
+      } else {
+        setHoveredSqueakStack(null);
+      }
+    }
+  }
+
   function getBoxShadowStyles({
     id,
     squeakStackIdx,
@@ -205,7 +256,10 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
   });
 
   return (
-    <div className={`${cardContainerClass}`}>
+    <div
+      className={`${cardContainerClass}`}
+      onMouseMove={(e) => mouseMoveHandler(e)}
+    >
       <audio ref={audioRef} src="/sounds/firstSuccessfulMove.wav" />
       {userID && (
         <div
