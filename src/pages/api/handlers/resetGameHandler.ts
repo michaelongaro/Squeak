@@ -137,10 +137,8 @@ export function resetGameHandler(
         playerIDs[Math.floor(Math.random() * playerIDs.length)];
       if (
         randomPlayerID &&
-        room.players[randomPlayerID]?.botDifficulty === undefined
-        // TODO: There is still an edgecase where a player leaves midgame and the whole game isn't over
-        // where this could potentially chose that player to start the next round
-        // and get caught in an infinite loop
+        room.players[randomPlayerID]?.botDifficulty === undefined &&
+        !game.playerIDsThatLeftMidgame.includes(randomPlayerID)
       ) {
         foundValidPlayerID = true;
       }
