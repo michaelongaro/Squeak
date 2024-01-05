@@ -39,33 +39,76 @@ export function startGameHandler(
 
       if (!players) return;
 
-      const board = Array.from({ length: 4 }, () =>
-        Array.from({ length: 5 }, () => null)
-      );
+      if (firstRound) {
+        const board = Array.from({ length: 4 }, () =>
+          Array.from({ length: 5 }, () => null)
+        );
 
-      const playerCards: IPlayerCardsMetadata = {};
-      // loop through players and create + get their cards
-      for (const playerID of Object.keys(players)) {
-        playerCards[playerID] = {
-          ...generateDeckAndSqueakCards(),
-          totalPoints: 0,
-          rankInRoom: -1,
+        const playerCards: IPlayerCardsMetadata = {};
+        // loop through players and create + get their cards
+        for (const playerID of Object.keys(players)) {
+          playerCards[playerID] = {
+            ...generateDeckAndSqueakCards(),
+            totalPoints: 0,
+            rankInRoom: -1,
+          };
+        }
+
+        gameData[roomCode] = {
+          board,
+          players: playerCards,
+          currentRound: 1,
+          playerIDsThatLeftMidgame: [],
         };
       }
 
-      gameData[roomCode] = {
-        board,
-        players: playerCards,
-        currentRound: 1,
-        playerIDsThatLeftMidgame: [],
-      };
-
-      // loop through all players and flip their squeak deck cards locally
-      // (I tried to do this with traditional client/server communication, but
-      // relying on the timeouts to be in sync was too unreliable, so locally dealing cards
-      // on the server here, and each client locally does the same on their end)
       const currentRoomPlayers = roomData[roomCode]?.players;
       if (!currentRoomPlayers) return;
+
+      for (const index in Object.keys(currentRoomPlayers)) {
+        const playerID = Object.keys(currentRoomPlayers)[parseInt(index)];
+        if (playerID === undefined) return;
+
+        setTimeout(() => {
+          drawFromSqueakDeck({
+            indexToDrawTo: 0,
+            playerID,
+            roomCode,
+            gameData,
+            io,
+          });
+        }, 1500 + parseInt(index) * 400);
+
+        setTimeout(() => {
+          drawFromSqueakDeck({
+            indexToDrawTo: 1,
+            playerID,
+            roomCode,
+            gameData,
+            io,
+          });
+        }, 2000 + parseInt(index) * 400);
+
+        setTimeout(() => {
+          drawFromSqueakDeck({
+            indexToDrawTo: 2,
+            playerID,
+            roomCode,
+            gameData,
+            io,
+          });
+        }, 2500 + parseInt(index) * 400);
+
+        setTimeout(() => {
+          drawFromSqueakDeck({
+            indexToDrawTo: 3,
+            playerID,
+            roomCode,
+            gameData,
+            io,
+          });
+        }, 3000 + parseInt(index) * 400);
+      }
 
       // start interval that checks + handles if game is stuck
       // (no player has a valid move available)
@@ -82,29 +125,30 @@ export function startGameHandler(
           const playerID = Object.keys(currentRoomPlayers)[parseInt(index)];
           const player = currentRoomPlayers[playerID || ""];
 
-          console.log(player, playerID, player?.botDifficulty);
-
           if (!player || !playerID || player.botDifficulty === undefined)
             continue;
 
-          console.log("setting interval for", playerID);
+          let botInterval: NodeJS.Timeout | null = null;
+          setTimeout(() => {
+            if (!player.botDifficulty) return;
 
-          const botInterval = setInterval(
-            () =>
-              botMoveHandler(
-                io,
-                roomCode,
-                gameData,
-                roomData,
-                miscRoomData,
-                playerID
-              ),
-            botDifficultyDelay[player.botDifficulty]
-          );
+            botInterval = setInterval(
+              () =>
+                botMoveHandler(
+                  io,
+                  roomCode,
+                  gameData,
+                  roomData,
+                  miscRoomData,
+                  playerID
+                ),
+              botDifficultyDelay[player.botDifficulty]
+            );
+          }, parseInt(index) * 500); // stagger each bot's moves so they don't all happen at once if they have the same difficulty
 
-          if (!miscRoomDataObj.botIntervals) {
+          if (!miscRoomDataObj.botIntervals && botInterval) {
             miscRoomDataObj.botIntervals = [botInterval];
-          } else {
+          } else if (miscRoomDataObj.botIntervals && botInterval) {
             miscRoomDataObj.botIntervals.push(botInterval);
           }
         }
@@ -112,55 +156,6 @@ export function startGameHandler(
 
       if (firstRound && prisma) {
         io.in(roomCode).emit("navigateToPlayScreen", gameData[roomCode]);
-
-        for (const index in Object.keys(currentRoomPlayers)) {
-          const playerID = Object.keys(currentRoomPlayers)[parseInt(index)];
-          if (playerID === undefined) return;
-
-          // setTimeout(() => {
-          drawFromSqueakDeck({
-            indexToDrawTo: 0,
-            playerID,
-            roomCode,
-            gameData,
-            io,
-            preventEmit: true,
-          });
-          // }, 1500 + parseInt(index) * 400);
-
-          // setTimeout(() => {
-          drawFromSqueakDeck({
-            indexToDrawTo: 1,
-            playerID,
-            roomCode,
-            gameData,
-            io,
-            preventEmit: true,
-          });
-          // }, 2000 + parseInt(index) * 400);
-
-          // setTimeout(() => {
-          drawFromSqueakDeck({
-            indexToDrawTo: 2,
-            playerID,
-            roomCode,
-            gameData,
-            io,
-            preventEmit: true,
-          });
-          // }, 2500 + parseInt(index) * 400);
-
-          // setTimeout(() => {
-          drawFromSqueakDeck({
-            indexToDrawTo: 3,
-            playerID,
-            roomCode,
-            gameData,
-            io,
-            preventEmit: true,
-          });
-          // }, 3000 + parseInt(index) * 400);
-        }
 
         await prisma.room.update({
           where: {

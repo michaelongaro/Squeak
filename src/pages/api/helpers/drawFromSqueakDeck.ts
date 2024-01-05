@@ -7,7 +7,6 @@ interface IInitDrawFromSqueakDeck {
   playerID: string;
   gameData: IGameData;
   io: Server;
-  preventEmit?: boolean;
 }
 
 export function drawFromSqueakDeck({
@@ -16,7 +15,6 @@ export function drawFromSqueakDeck({
   playerID,
   gameData,
   io,
-  preventEmit,
 }: IInitDrawFromSqueakDeck) {
   const board = gameData[roomCode]?.board;
   const players = gameData[roomCode]?.players;
@@ -28,7 +26,6 @@ export function drawFromSqueakDeck({
   if (card) {
     player.squeakHand?.[indexToDrawTo]?.push(card);
 
-    if (preventEmit) return;
     io.in(roomCode).emit("cardDrawnFromSqueakDeck", {
       playerID,
       indexToDrawTo,

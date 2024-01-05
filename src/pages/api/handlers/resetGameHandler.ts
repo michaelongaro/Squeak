@@ -138,16 +138,18 @@ export function resetGameHandler(
       if (
         randomPlayerID &&
         room.players[randomPlayerID]?.botDifficulty === undefined
+        // TODO: There is still an edgecase where a player leaves midgame and the whole game isn't over
+        // where this could potentially chose that player to start the next round
+        // and get caught in an infinite loop
       ) {
         foundValidPlayerID = true;
       }
     }
 
-    // on a timeout of 5000ms or so, start the intervals here!
-
     io.in(roomCode).emit("startNewRound", {
+      roomCode: roomCode,
       gameData: game,
-      playerIDToStartNextRound: randomPlayerID, // deprecate this
+      playerIDToStartNextRound: randomPlayerID,
     });
   }
 

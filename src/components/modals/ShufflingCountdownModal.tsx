@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { socket } from "../../pages/";
 import { useUserIDContext } from "../../context/UserIDContext";
 import { useRoomContext } from "../../context/RoomContext";
 import Card from "../Play/Card";
@@ -12,8 +11,6 @@ function ShufflingCountdownModal() {
   const {
     gameData,
     roomConfig,
-    playerIDToStartNextRound,
-    setPlayerIDToStartNextRound,
     playerMetadata,
     setShowShufflingCountdown,
     showShufflingCountdown,
@@ -25,14 +22,6 @@ function ShufflingCountdownModal() {
   useEffect(() => {
     if (timersInitiated || !showShufflingCountdown || !gameData.currentRound)
       return;
-
-    if (gameData.currentRound !== 1 && playerIDToStartNextRound === userID) {
-      socket.emit("startGame", {
-        roomCode: roomConfig.code,
-        firstRound: false,
-      });
-      setPlayerIDToStartNextRound(null);
-    }
 
     setTimeout(() => {
       setTimersInitiated(true);
@@ -64,8 +53,6 @@ function ShufflingCountdownModal() {
     userID,
     timersInitiated,
     showShufflingCountdown,
-    playerIDToStartNextRound,
-    setPlayerIDToStartNextRound,
     setShowShufflingCountdown,
   ]);
 

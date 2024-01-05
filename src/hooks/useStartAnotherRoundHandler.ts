@@ -2,20 +2,21 @@ import { useState, useEffect } from "react";
 import { socket } from "../pages";
 import { useRoomContext } from "../context/RoomContext";
 import { type IGameMetadata } from "../pages/api/socket";
-import dealInitSqueakStackCards from "../utils/dealInitSqueakStackCards";
+import { useUserIDContext } from "../context/UserIDContext";
 
 function useStartAnotherRoundHandler() {
+  const userID = useUserIDContext();
+
   const {
     gameData,
     playerMetadata,
     setGameData,
-    setPlayerIDToStartNextRound,
     setShowScoreboard,
     setShowShufflingCountdown,
-    setInitSqueakStackCardBeingDealt,
   } = useRoomContext();
 
   const [dataFromBackend, setDataFromBackend] = useState<{
+    roomCode: string;
     gameData: IGameMetadata;
     playerIDToStartNextRound: string;
   } | null>(null);
@@ -33,7 +34,6 @@ function useStartAnotherRoundHandler() {
       setDataFromBackend(null);
 
       setGameData(dataFromBackend.gameData);
-      setPlayerIDToStartNextRound(dataFromBackend.playerIDToStartNextRound);
 
       setTimeout(() => {
         setShowScoreboard(false);
@@ -41,22 +41,23 @@ function useStartAnotherRoundHandler() {
 
       setTimeout(() => {
         setShowShufflingCountdown(true);
-        dealInitSqueakStackCards({
-          players: playerMetadata,
-          gameData,
-          setInitSqueakStackCardBeingDealt,
-        });
+
+        if (dataFromBackend.playerIDToStartNextRound === userID) {
+          socket.emit("startGame", {
+            roomCode: dataFromBackend.roomCode,
+            firstRound: false,
+          });
+        }
       }, 2200);
     }
   }, [
     dataFromBackend,
     setShowScoreboard,
     setShowShufflingCountdown,
-    setPlayerIDToStartNextRound,
     setGameData,
     playerMetadata,
     gameData,
-    setInitSqueakStackCardBeingDealt,
+    userID,
   ]);
 }
 

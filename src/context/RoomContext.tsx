@@ -121,10 +121,6 @@ interface IRoomContext {
   setScoreboardMetadata: React.Dispatch<
     React.SetStateAction<IScoreboardMetadata | null>
   >;
-  playerIDToStartNextRound: string | null;
-  setPlayerIDToStartNextRound: React.Dispatch<
-    React.SetStateAction<string | null>
-  >;
   squeakDeckBeingMovedProgramatically: ICardBeingMovedProgramatically;
   setSqueakDeckBeingMovedProgramatically: React.Dispatch<
     React.SetStateAction<ICardBeingMovedProgramatically>
@@ -141,10 +137,6 @@ interface IRoomContext {
     React.SetStateAction<{
       [playerID: string]: OtherPlayerSqueakStacksBeingDragged;
     }>
-  >;
-  initSqueakStackCardBeingDealt: IInitSqueakStackCardBeingDealt | null;
-  setInitSqueakStackCardBeingDealt: React.Dispatch<
-    React.SetStateAction<IInitSqueakStackCardBeingDealt | null>
   >;
 }
 
@@ -237,10 +229,6 @@ export function RoomProvider(props: { children: React.ReactNode }) {
   const [mirrorPlayerContainer, setMirrorPlayerContainer] =
     useState<boolean>(false);
 
-  const [playerIDToStartNextRound, setPlayerIDToStartNextRound] = useState<
-    string | null
-  >(null);
-
   const [
     currentPlayerSqueakStackBeingDragged,
     setCurrentPlayerSqueakStackBeingDragged,
@@ -256,9 +244,6 @@ export function RoomProvider(props: { children: React.ReactNode }) {
   ] = useState<{
     [playerID: string]: OtherPlayerSqueakStacksBeingDragged;
   }>({});
-
-  const [initSqueakStackCardBeingDealt, setInitSqueakStackCardBeingDealt] =
-    useState<IInitSqueakStackCardBeingDealt | null>(null);
 
   useEffect(() => {
     fetch("/api/socket");
@@ -366,16 +351,12 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     setMirrorPlayerContainer,
     showResetRoundModal,
     setShowResetRoundModal,
-    playerIDToStartNextRound,
-    setPlayerIDToStartNextRound,
     squeakDeckBeingMovedProgramatically,
     setSqueakDeckBeingMovedProgramatically,
     currentPlayerSqueakStackBeingDragged,
     setCurrentPlayerSqueakStackBeingDragged,
     otherPlayerSqueakStacksBeingDragged,
     setOtherPlayerSqueakStacksBeingDragged,
-    initSqueakStackCardBeingDealt,
-    setInitSqueakStackCardBeingDealt,
   };
 
   return (

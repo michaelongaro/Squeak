@@ -53,7 +53,7 @@ export function botMoveHandler(
     return;
   }
 
-  // 2nd priority: bot can open up a squeak stack to then draw a card from their squeak deck
+  // 2nd priority: bot can open up a squeak stack (by moving either to the board or to another squeak stack)
   for (let stackIdx = 0; stackIdx < squeakHand.length; stackIdx++) {
     const stack = squeakHand[stackIdx];
 
@@ -62,6 +62,43 @@ export function botMoveHandler(
       const card = stack[cardIdx];
 
       if (!card) continue;
+
+      // ideally we want to place the card on the board to get an extra point
+      // rather than just opening up the squeak stack spot
+
+      // only allowed to play the card on the board at this point if it is the only card in the stack
+      if (cardIdx === 0 && stack.length === 1) {
+        for (let row = 0; row < 4; row++) {
+          for (let col = 0; col < 5; col++) {
+            const cell = gameData[roomCode]?.board[row]?.[col];
+
+            if (cell === undefined) continue;
+            if (cardPlacementIsValid(cell, card.value, card.suit, true)) {
+              squeakToBoard({
+                gameData,
+                card,
+                playerID,
+                roomCode,
+                io,
+                squeakStartLocation: stackIdx,
+                boardEndLocation: { row, col },
+              });
+
+              // remove from blacklist if it was on there (existed as a value to a key)
+              for (const key of Object.keys(blacklistedSqueakCards)) {
+                if (
+                  blacklistedSqueakCards[key] === `${card.value}${card.suit}`
+                ) {
+                  delete blacklistedSqueakCards[key];
+                }
+              }
+              console.log("did 2nd");
+              return;
+            }
+          }
+        }
+      }
+
       // need to make sure it is valid on OTHER stacks, not the same stack
       for (
         let otherStackIdx = 0;
@@ -113,7 +150,7 @@ export function botMoveHandler(
       for (let col = 0; col < 5; col++) {
         const cell = gameData[roomCode]?.board[row]?.[col];
 
-        if (!cell) continue;
+        if (cell === undefined) continue;
         if (
           cardPlacementIsValid(cell, bottomCard.value, bottomCard.suit, true)
         ) {
@@ -160,7 +197,7 @@ export function botMoveHandler(
       for (let col = 0; col < 5; col++) {
         const cell = gameData[roomCode]?.board[row]?.[col];
 
-        if (!cell) continue;
+        if (cell === undefined) continue;
         if (
           cardPlacementIsValid(
             cell,
@@ -237,6 +274,7 @@ export function botMoveHandler(
         const bottomCard = otherStack[otherStack.length - 1];
 
         if (
+          blacklistedSqueakCards[`${card.value}${card.suit}`] === undefined &&
           bottomCard &&
           cardPlacementIsValid(bottomCard, card.value, card.suit, false)
         ) {

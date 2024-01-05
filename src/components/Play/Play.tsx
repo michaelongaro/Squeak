@@ -16,7 +16,6 @@ import useManuallyResetRound from "../../hooks/useManuallyResetRound";
 import useScoreboardData from "../../hooks/useScoreboardData";
 import OtherPlayerIcons from "./OtherPlayerIcons";
 import classes from "./Play.module.css";
-import dealInitSqueakStackCards from "../../utils/dealInitSqueakStackCards";
 
 function Play() {
   const userID = useUserIDContext();
@@ -29,10 +28,7 @@ function Play() {
     setShowShufflingCountdown,
     showShufflingCountdown,
     showResetRoundModal,
-    setInitSqueakStackCardBeingDealt,
   } = useRoomContext();
-
-  // const [gameStarted, setGameStarted] = useState<boolean>(false);
 
   const [initialEffectRan, setInitialEffectRan] = useState<boolean>(false);
 
@@ -47,11 +43,6 @@ function Play() {
 
     setInitialEffectRan(true);
     setShowShufflingCountdown(true);
-    dealInitSqueakStackCards({
-      players: playerMetadata,
-      gameData,
-      setInitSqueakStackCardBeingDealt,
-    });
 
     socket.emit("modifyFriendData", {
       action: "startGame",
@@ -65,7 +56,6 @@ function Play() {
     setShowShufflingCountdown,
     userID,
     playerMetadata,
-    setInitSqueakStackCardBeingDealt,
   ]);
 
   return (
@@ -81,8 +71,6 @@ function Play() {
         id={"playContainer"}
         className={`${classes.fullBoardGrid} relative z-[150]`}
       >
-        {/* {gameStarted && ( */}
-
         <Board boardClass={classes.board} />
 
         <OtherPlayersCardContainers
@@ -94,13 +82,9 @@ function Play() {
         />
 
         <PlayerCardContainer cardContainerClass={classes.currentPlayerCards} />
-
-        {/* // )} */}
       </div>
 
-      {/* {gameStarted &&  */}
       <OtherPlayerIcons />
-      {/* // } */}
 
       <AnimatePresence mode={"wait"}>
         {showShufflingCountdown && <ShufflingCountdownModal />}

@@ -253,12 +253,13 @@ function OtherPlayersCardContainers({
                         key={`${playerID}squeakDeckCard${card.suit}${card.value}`}
                         style={{
                           zIndex:
-                            cardIdx === 0 &&
+                            cardIdx ===
+                              gameData.players[playerID]!.squeakDeck.length -
+                                1 &&
                             squeakDeckBeingMovedProgramatically[playerID] &&
                             !cardBeingMovedProgramatically[playerID]
                               ? 150
                               : 90,
-                          transition: "top 0.25s ease-in-out",
                         }}
                         className="absolute left-0 top-0 h-full w-full select-none "
                       >

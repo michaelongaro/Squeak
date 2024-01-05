@@ -56,11 +56,17 @@ export function leaveRoomHandler(
       game.playerIDsThatLeftMidgame.push(playerID);
     }
 
-    // can probably simply these two if statements into an if/else, but check side effects
+    // TODO: can probably simply these two if statements into an if/else, but check side effects
 
     function justBotPlayersLeft() {
+      if (!game) return false;
+
       for (const playerID in room?.players) {
-        if (room.players[playerID]?.botDifficulty === undefined) return false;
+        if (
+          room.players[playerID]?.botDifficulty === undefined &&
+          !game.playerIDsThatLeftMidgame.includes(playerID)
+        )
+          return false;
       }
       return true;
     }
@@ -71,15 +77,24 @@ export function leaveRoomHandler(
       room.roomConfig.playersInRoom !== 0 &&
       !justBotPlayersLeft()
     ) {
-      // TODO: make the swap to next actual player in the room, not to a bot
+      // loop over all of the players in the room and find the first one that isn't a bot
+      for (const playerID in room.players) {
+        const playerHasLeftGame = game
+          ? game.playerIDsThatLeftMidgame.includes(playerID)
+          : false;
 
-      room.roomConfig.hostUserID = Object.keys(room.players)[0] || "";
-      room.roomConfig.hostUsername =
-        Object.values(room.players)[0]?.username || "";
-      const earliestJoinedPlayerIDInRoom = Object.keys(room.players)[0];
-      if (earliestJoinedPlayerIDInRoom) {
-        newHostID = earliestJoinedPlayerIDInRoom;
+        // don't we also have to do the check for playerIDsThatLeftMidgame here?
+        if (
+          room.players[playerID]?.botDifficulty === undefined &&
+          !playerHasLeftGame
+        ) {
+          newHostID = playerID;
+          break;
+        }
       }
+
+      room.roomConfig.hostUserID = newHostID;
+      room.roomConfig.hostUsername = room.players[newHostID]?.username || "";
     }
 
     // if there are no players left in the room, delete the room

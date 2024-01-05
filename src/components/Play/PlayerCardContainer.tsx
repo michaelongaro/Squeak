@@ -316,14 +316,14 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                     key={`${userID}squeakDeckCard${card.suit}${card.value}`}
                     style={{
                       zIndex:
-                        cardIdx === 0 &&
+                        cardIdx ===
+                          gameData.players[userID]!.squeakDeck.length - 1 &&
                         squeakDeckBeingMovedProgramatically[userID] &&
                         !holdingADeckCard &&
                         !holdingASqueakCard &&
                         !cardBeingMovedProgramatically[userID]
                           ? 150
                           : 90,
-                      transition: "top 0.25s ease-in-out",
                     }}
                     className="absolute left-0 top-0 h-full w-full select-none"
                   >

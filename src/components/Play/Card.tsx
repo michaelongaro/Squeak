@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useRef, useCallback } from "react";
 import React from "react";
 import Draggable, {
   type DraggableData,
@@ -64,8 +64,6 @@ function Card({
     setSqueakDeckBeingMovedProgramatically,
     setHoldingADeckCard,
     setHoldingASqueakCard,
-    initSqueakStackCardBeingDealt,
-    setGameData,
   } = useRoomContext();
 
   const [cardOffsetPosition, setCardOffsetPosition] = useState({ x: 0, y: 0 });
@@ -292,105 +290,6 @@ function Card({
       setSqueakDeckBeingMovedProgramatically,
     ]
   );
-
-  // useEffect(() => {
-  //   console.log(initSqueakStackCardBeingDealt?.location);
-  // }, [initSqueakStackCardBeingDealt?.location]);
-
-  // handles init squeak stack cards being dealt locally
-  // TODO: prob make this a hook like the other ones below
-  useEffect(() => {
-    if (
-      origin === "squeakDeck" &&
-      cardOffsetPosition.x === 0 &&
-      cardOffsetPosition.y === 0 &&
-      initSqueakStackCardBeingDealt?.location ===
-        `${ownerID}-${value}${suit}` &&
-      value &&
-      suit &&
-      ownerID
-    ) {
-      const endID = `${ownerID}squeakHand${initSqueakStackCardBeingDealt.indexToDealTo}`;
-
-      const endLocation = document
-        .getElementById(endID)
-        ?.getBoundingClientRect();
-
-      if (endLocation) {
-        const endX = endLocation.x;
-        const endY = endLocation.y;
-
-        const newGameData = { ...gameData };
-        // newGameData.players = { ...gameData.players };
-
-        // if (newGameData.players[ownerID]) {
-        //   newGameData.players[ownerID]! = { ...gameData.players[ownerID] };
-
-        //   if (newGameData.players[ownerID]?.squeakDeck) {
-        //     newGameData.players[ownerID]!.squeakDeck = [
-        //       ...gameData.players[ownerID]!.squeakDeck,
-        //     ];
-        //   }
-
-        //   if (newGameData.players[ownerID]?.squeakHand) {
-        //     newGameData.players[ownerID]!.squeakHand = [
-        //       ...gameData.players[ownerID]!.squeakHand,
-        //     ];
-        //   }
-        // }
-
-        // don't want to directly mutate state since it would reflect in the ui
-        // before the animation is finished
-
-        // // @ts-expect-error asdf
-        // newGameData.players[ownerID].squeakDeck = newGameData.players[
-        //   ownerID
-        // ]?.squeakDeck.slice(0, -1);
-
-        // // @ts-expect-error asdf
-        // newGameData.players[ownerID].squeakHand[
-        //   initSqueakStackCardBeingDealt.indexToDealTo
-        // ] = newGameData.players[ownerID]?.squeakHand[
-        //   initSqueakStackCardBeingDealt.indexToDealTo
-        // ]?.concat([{ value, suit }]);
-
-        // console.log(
-        //   "moving card",
-        //   ownerID,
-        //   initSqueakStackCardBeingDealt.indexToDealTo
-        // );
-
-        moveCard({ x: endX, y: endY }, true, false, () => {
-          // can still either above or in here do the direct mutation to the specific indicies
-
-          newGameData.players[ownerID]?.squeakDeck.pop();
-          // @ts-expect-error asdf
-          newGameData.players[ownerID].squeakHand[
-            initSqueakStackCardBeingDealt.indexToDealTo
-          ] = [{ value, suit }];
-
-          console.log(
-            "saving",
-            ownerID,
-            initSqueakStackCardBeingDealt.indexToDealTo
-          );
-          setGameData(newGameData);
-        });
-      }
-    }
-  }, [
-    origin,
-    cardOffsetPosition.x,
-    cardOffsetPosition.y,
-    suit,
-    value,
-    ownerID,
-    moveCard,
-    initSqueakStackCardBeingDealt?.indexToDealTo,
-    initSqueakStackCardBeingDealt?.location,
-    gameData,
-    setGameData,
-  ]);
 
   // hooks to handle socket emits from server
   useCardDrawFromDeck({
