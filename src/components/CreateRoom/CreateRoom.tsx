@@ -31,11 +31,13 @@ const botNames = [
   "Bot Galvin",
   "Bot Owen",
   "Bot Alex",
-  "Bot Amber",
+  "Bot Ritz",
   "Bot George",
   "Bot Michael",
   "Bot Andrew",
   "Bot Gilbert",
+  "Bot Wan",
+  "Bot Anthony",
 ];
 
 export interface IRoomConfig {
