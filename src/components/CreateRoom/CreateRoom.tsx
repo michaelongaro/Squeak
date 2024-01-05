@@ -5,8 +5,9 @@ import { trpc } from "../../utils/trpc";
 import { socket } from "../../pages";
 import { useUserIDContext } from "../../context/UserIDContext";
 import { useRoomContext } from "../../context/RoomContext";
-import { type IRoomPlayer, type IGameMetadata } from "../../pages/api/socket";
+import { type IGameMetadata, type IRoomPlayer } from "../../pages/api/socket";
 import { IoSettingsSharp } from "react-icons/io5";
+import { FaRobot } from "react-icons/fa6";
 import { FaUsers } from "react-icons/fa";
 import PickerTooltip from "../playerIcons/PickerTooltip";
 import PlayerIcon from "../playerIcons/PlayerIcon";
@@ -15,12 +16,27 @@ import Radio from "../Buttons/Radio";
 import { MdCopyAll } from "react-icons/md";
 import PrimaryButton from "../Buttons/PrimaryButton";
 import { IoHome } from "react-icons/io5";
+import { BiArrowBack } from "react-icons/bi";
 import { FiCheck } from "react-icons/fi";
 import { AnimatePresence, motion } from "framer-motion";
 import Filter from "bad-words";
 import useLeaveRoom from "../../hooks/useLeaveRoom";
-
 const filter = new Filter();
+
+const botNames = [
+  "Bot Eric",
+  "Bot John",
+  "Bot Tyrus",
+  "Bot Antonio",
+  "Bot Galvin",
+  "Bot Owen",
+  "Bot Alex",
+  "Bot Amber",
+  "Bot George",
+  "Bot Michael",
+  "Bot Andrew",
+  "Bot Gilbert",
+];
 
 export interface IRoomConfig {
   pointsToWin: number;
@@ -93,7 +109,10 @@ function CreateRoom() {
 
     socket.on("roomConfigUpdated", (roomConfig) => setRoomConfig(roomConfig));
 
-    socket.on("navigateToPlayScreen", () => setPageToRender("play"));
+    socket.on("navigateToPlayScreen", (initGameData: IGameMetadata) => {
+      setPageToRender("play");
+      setGameData(initGameData);
+    });
 
     return () => {
       socket.off("roomWasCreated", () => setConnectedToRoom(true));
@@ -103,7 +122,10 @@ function CreateRoom() {
       socket.off("roomConfigUpdated", (roomConfig) =>
         setRoomConfig(roomConfig)
       );
-      socket.off("navigateToPlayScreen", () => setPageToRender("play"));
+      socket.off("navigateToPlayScreen", (initGameData: IGameMetadata) => {
+        setPageToRender("play");
+        setGameData(initGameData);
+      });
     };
   }, []);
   // might need to add roomCtx to deps here
@@ -135,6 +157,27 @@ function CreateRoom() {
     }
   }
 
+  function getNewBotMetadata() {
+    let uniqueBotName = "";
+    do {
+      uniqueBotName = botNames[
+        Math.floor(Math.random() * botNames.length)
+      ] as string;
+    } while (
+      Object.values(playerMetadata).findIndex(
+        (player) => player?.username === uniqueBotName
+      ) !== -1
+    );
+
+    return {
+      username: uniqueBotName,
+      avatarPath: "/avatars/rabbit.svg",
+      color: "hsl(352deg, 69%, 61%)",
+      deckHueRotation: 232,
+      botDifficulty: "Medium",
+    } as IRoomPlayer;
+  }
+
   return (
     <motion.div
       key={"createRoom"}
@@ -147,7 +190,13 @@ function CreateRoom() {
       <div className="baseVertFlex relative gap-4">
         <div className="absolute left-[-3.5rem] top-0">
           <SecondaryButton
-            icon={<IoHome size={"1.5rem"} />}
+            icon={
+              connectedToRoom ? (
+                <BiArrowBack size={"1.5rem"} />
+              ) : (
+                <IoHome size={"1.5rem"} />
+              )
+            }
             extraPadding={false}
             onClickFunction={() => {
               setConfigAndMetadataInitialized(false);
@@ -362,7 +411,7 @@ function CreateRoom() {
                 <FaUsers size={"1.25rem"} />
               </legend>
               <div className="baseVertFlex gap-6 p-4">
-                <div className="baseFlex gap-8">
+                <div className="baseFlex !items-start gap-8">
                   {Object.keys(playerMetadata)?.map((playerID) => (
                     <PlayerIcon
                       key={playerID}
@@ -387,8 +436,36 @@ function CreateRoom() {
                           : false
                       }
                       showRemovePlayerFromRoomButton={userID !== playerID}
+                      playerMetadata={playerMetadata[playerID]}
+                      roomHostIsRendering={true}
                     />
                   ))}
+
+                  {/* Add bot button */}
+                  {Object.keys(playerMetadata).length <
+                    roomConfig.maxPlayers && (
+                    <SecondaryButton
+                      icon={<FaRobot size={"1.5rem"} />}
+                      extraPadding={false}
+                      innerText="Add bot"
+                      style={{
+                        width: "4rem",
+                        height: "4rem",
+                        fontSize: "0.75rem",
+                        textWrap: "nowrap",
+                        flexDirection: "column-reverse",
+                      }}
+                      onClickFunction={() => {
+                        const botID = cryptoRandomString({ length: 16 });
+
+                        socket.emit("joinRoom", {
+                          code: roomConfig.code,
+                          userID: botID,
+                          playerMetadata: getNewBotMetadata(),
+                        });
+                      }}
+                    />
+                  )}
                 </div>
 
                 <div className="h-[2px] w-full rounded-md bg-white"></div>

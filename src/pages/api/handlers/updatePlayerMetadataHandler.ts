@@ -19,6 +19,9 @@ export function updatePlayerMetadataHandler(
       user.deckHueRotation = newPlayerMetadata.deckHueRotation;
       user.username = newPlayerMetadata.username;
 
+      if (newPlayerMetadata.botDifficulty) {
+        user.botDifficulty = newPlayerMetadata.botDifficulty;
+      }
       io.in(roomCode).emit("playerMetadataUpdated", room.players);
     }
   );

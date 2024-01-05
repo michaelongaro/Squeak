@@ -87,6 +87,8 @@ export function generateAndEmitScoreboard({
   )
     return;
 
+  // TODO: need to clear out intervals here, maybe also in resetGameHandler but for sure here
+
   miscRoomDataObj.preventOtherPlayersFromSqueaking = true;
 
   const playerRoundDetails = {} as IPlayerRoundDetailsMetadata;

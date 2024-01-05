@@ -5,6 +5,7 @@ import { useUserIDContext } from "../../context/UserIDContext";
 import { useRoomContext } from "../../context/RoomContext";
 import SecondaryButton from "../Buttons/SecondaryButton";
 import DangerButton from "../Buttons/DangerButton";
+import { type IRoomPlayer } from "../../pages/api/socket";
 import { AiOutlinePlus, AiOutlineClose } from "react-icons/ai";
 interface IPlayerIcon {
   avatarPath?: string;
@@ -15,6 +16,8 @@ interface IPlayerIcon {
   showAddFriendButton?: boolean;
   showRemovePlayerFromRoomButton?: boolean;
   onlineStatus?: boolean;
+  playerMetadata?: IRoomPlayer;
+  roomHostIsRendering?: boolean;
   style?: CSSProperties;
 }
 
@@ -27,6 +30,8 @@ function PlayerIcon({
   playerID,
   showRemovePlayerFromRoomButton,
   onlineStatus,
+  playerMetadata,
+  roomHostIsRendering,
   style,
 }: IPlayerIcon) {
   const userID = useUserIDContext();
@@ -129,6 +134,42 @@ function PlayerIcon({
             )}
           </div>
           {username ? username : null}
+
+          {/* difficulty toggle button that rotates through easy medium and hard */}
+          {playerMetadata?.botDifficulty && (
+            <div
+              className={`baseVertFlex ${roomHostIsRendering ? "gap-1" : ""}`}
+            >
+              <p className="text-sm italic underline">Difficulty</p>
+              {roomHostIsRendering ? (
+                <SecondaryButton
+                  innerText={playerMetadata.botDifficulty}
+                  extraPadding={false}
+                  style={{
+                    padding: "0.25rem",
+                  }}
+                  onClickFunction={() => {
+                    if (!playerID) return;
+                    socket.emit("updatePlayerMetadata", {
+                      playerID,
+                      roomCode: roomConfig.code,
+                      newPlayerMetadata: {
+                        ...playerMetadata,
+                        botDifficulty:
+                          playerMetadata.botDifficulty === "Easy"
+                            ? "Medium"
+                            : playerMetadata.botDifficulty === "Medium"
+                            ? "Hard"
+                            : "Easy",
+                      },
+                    });
+                  }}
+                />
+              ) : (
+                <p>{playerMetadata.botDifficulty}</p>
+              )}
+            </div>
+          )}
         </motion.div>
       ) : (
         <div className="skeletonLoading h-12 w-12 rounded-[50%]"></div>

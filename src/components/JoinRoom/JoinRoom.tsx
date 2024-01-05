@@ -8,6 +8,7 @@ import PickerTooltip from "../playerIcons/PickerTooltip";
 import PlayerIcon from "../playerIcons/PlayerIcon";
 import SecondaryButton from "../Buttons/SecondaryButton";
 import { IoHome } from "react-icons/io5";
+import { BiArrowBack } from "react-icons/bi";
 import PrimaryButton from "../Buttons/PrimaryButton";
 import { MdCopyAll } from "react-icons/md";
 import { FiCheck } from "react-icons/fi";
@@ -137,9 +138,9 @@ function JoinRoom() {
 
     socket.on("roomConfigUpdated", (roomConfig) => setRoomConfig(roomConfig));
 
-    socket.on("navigateToPlayScreen", () => {
-      setGameData({} as IGameMetadata);
+    socket.on("navigateToPlayScreen", (initGameData: IGameMetadata) => {
       setPageToRender("play");
+      setGameData(initGameData);
     });
 
     return () => {
@@ -149,9 +150,9 @@ function JoinRoom() {
       socket.off("roomConfigUpdated", (roomConfig) =>
         setRoomConfig(roomConfig)
       );
-      socket.off("navigateToPlayScreen", () => {
-        setGameData({} as IGameMetadata);
+      socket.off("navigateToPlayScreen", (initGameData: IGameMetadata) => {
         setPageToRender("play");
+        setGameData(initGameData);
       });
     };
   }, []);
@@ -168,7 +169,13 @@ function JoinRoom() {
       <div className="baseVertFlex relative gap-4">
         <div className="absolute left-0 top-0">
           <SecondaryButton
-            icon={<IoHome size={"1.5rem"} />}
+            icon={
+              connectedToRoom ? (
+                <BiArrowBack size={"1.5rem"} />
+              ) : (
+                <IoHome size={"1.5rem"} />
+              )
+            }
             extraPadding={false}
             onClickFunction={() => leaveRoom(connectedToRoom ? false : true)}
           />
@@ -376,7 +383,7 @@ function JoinRoom() {
                 <FaUsers size={"1.25rem"} />
               </legend>
               <div className="baseVertFlex gap-6 p-4">
-                <div className="baseFlex gap-8">
+                <div className="baseFlex !items-start gap-8">
                   {Object.keys(playerMetadata)?.map((playerID) => (
                     <PlayerIcon
                       key={playerID}
@@ -400,6 +407,7 @@ function JoinRoom() {
                       }
                       username={playerMetadata[playerID]?.username}
                       size={"3rem"}
+                      playerMetadata={playerMetadata[playerID]}
                     />
                   ))}
                 </div>

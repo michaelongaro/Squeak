@@ -51,6 +51,11 @@ interface OtherPlayerSqueakStacksBeingDragged {
   draggedStack?: OtherPlayersDraggedStack;
 }
 
+export interface IInitSqueakStackCardBeingDealt {
+  location: string;
+  indexToDealTo: number;
+}
+
 interface IRoomContext {
   pageToRender: "home" | "createRoom" | "joinRoom" | "play";
   setPageToRender: React.Dispatch<
@@ -136,6 +141,10 @@ interface IRoomContext {
     React.SetStateAction<{
       [playerID: string]: OtherPlayerSqueakStacksBeingDragged;
     }>
+  >;
+  initSqueakStackCardBeingDealt: IInitSqueakStackCardBeingDealt | null;
+  setInitSqueakStackCardBeingDealt: React.Dispatch<
+    React.SetStateAction<IInitSqueakStackCardBeingDealt | null>
   >;
 }
 
@@ -240,12 +249,16 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     startingDepth: -1,
     length: -1,
   });
+
   const [
     otherPlayerSqueakStacksBeingDragged,
     setOtherPlayerSqueakStacksBeingDragged,
   ] = useState<{
     [playerID: string]: OtherPlayerSqueakStacksBeingDragged;
   }>({});
+
+  const [initSqueakStackCardBeingDealt, setInitSqueakStackCardBeingDealt] =
+    useState<IInitSqueakStackCardBeingDealt | null>(null);
 
   useEffect(() => {
     fetch("/api/socket");
@@ -361,6 +374,8 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     setCurrentPlayerSqueakStackBeingDragged,
     otherPlayerSqueakStacksBeingDragged,
     setOtherPlayerSqueakStacksBeingDragged,
+    initSqueakStackCardBeingDealt,
+    setInitSqueakStackCardBeingDealt,
   };
 
   return (

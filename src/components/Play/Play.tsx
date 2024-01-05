@@ -16,20 +16,25 @@ import useManuallyResetRound from "../../hooks/useManuallyResetRound";
 import useScoreboardData from "../../hooks/useScoreboardData";
 import OtherPlayerIcons from "./OtherPlayerIcons";
 import classes from "./Play.module.css";
+import dealInitSqueakStackCards from "../../utils/dealInitSqueakStackCards";
 
 function Play() {
   const userID = useUserIDContext();
   const {
     roomConfig,
     gameData,
+    playerMetadata,
     setGameData,
     showScoreboard,
     setShowShufflingCountdown,
     showShufflingCountdown,
     showResetRoundModal,
+    setInitSqueakStackCardBeingDealt,
   } = useRoomContext();
 
-  const [gameStarted, setGameStarted] = useState<boolean>(false);
+  // const [gameStarted, setGameStarted] = useState<boolean>(false);
+
+  const [initialEffectRan, setInitialEffectRan] = useState<boolean>(false);
 
   useStartAnotherRoundHandler();
   useReturnToRoomHandler();
@@ -38,42 +43,29 @@ function Play() {
   useScoreboardData();
 
   useEffect(() => {
-    // used to only run block of code once, the first time this component is rendered
-    if (gameData.board === undefined && gameData.players === undefined) {
-      setShowShufflingCountdown(true);
+    if (initialEffectRan) return;
 
-      socket.emit("playerReadyToReceiveInitGameData", roomConfig.code);
+    setInitialEffectRan(true);
+    setShowShufflingCountdown(true);
+    dealInitSqueakStackCards({
+      players: playerMetadata,
+      gameData,
+      setInitSqueakStackCardBeingDealt,
+    });
 
-      socket.on("initGameData", (initGameData) => {
-        setGameData(initGameData);
-        socket.emit("playerFullyReady", roomConfig.code);
-      });
-
-      socket.on("gameStarted", () => {
-        setGameStarted(true);
-      });
-
-      socket.emit("modifyFriendData", {
-        action: "startGame",
-        initiatorID: userID,
-      });
-    }
-
-    return () => {
-      socket.off("initGameData", (initGameData) => {
-        setGameData(initGameData);
-        socket.emit("playerFullyReady", roomConfig.code);
-      });
-      socket.off("gameStarted", () => {
-        setGameStarted(true);
-      });
-    };
+    socket.emit("modifyFriendData", {
+      action: "startGame",
+      initiatorID: userID,
+    });
   }, [
+    initialEffectRan,
     gameData,
     roomConfig.code,
     setGameData,
     setShowShufflingCountdown,
     userID,
+    playerMetadata,
+    setInitSqueakStackCardBeingDealt,
   ]);
 
   return (
@@ -89,26 +81,26 @@ function Play() {
         id={"playContainer"}
         className={`${classes.fullBoardGrid} relative z-[150]`}
       >
-        {gameStarted && (
-          <>
-            <Board boardClass={classes.board} />
+        {/* {gameStarted && ( */}
 
-            <OtherPlayersCardContainers
-              orderedClassNames={[
-                classes.topPlayerCards,
-                classes.leftPlayerCards,
-                classes.rightPlayerCards,
-              ]}
-            />
+        <Board boardClass={classes.board} />
 
-            <PlayerCardContainer
-              cardContainerClass={classes.currentPlayerCards}
-            />
-          </>
-        )}
+        <OtherPlayersCardContainers
+          orderedClassNames={[
+            classes.topPlayerCards,
+            classes.leftPlayerCards,
+            classes.rightPlayerCards,
+          ]}
+        />
+
+        <PlayerCardContainer cardContainerClass={classes.currentPlayerCards} />
+
+        {/* // )} */}
       </div>
 
-      {gameStarted && <OtherPlayerIcons />}
+      {/* {gameStarted &&  */}
+      <OtherPlayerIcons />
+      {/* // } */}
 
       <AnimatePresence mode={"wait"}>
         {showShufflingCountdown && <ShufflingCountdownModal />}

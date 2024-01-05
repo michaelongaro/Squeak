@@ -6,6 +6,9 @@ import {
 } from "../socket";
 import { avatarPaths } from "../../../utils/avatarPaths";
 import { hslToDeckHueRotations } from "../../../utils/hslToDeckHueRotations";
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
 
 interface IJoinRoomConfig {
   code: string;
@@ -18,43 +21,55 @@ export function joinRoomHandler(
   socket: Socket,
   roomData: IRoomData
 ) {
-  socket.on("joinRoom", ({ userID, playerMetadata, code }: IJoinRoomConfig) => {
-    const room = roomData[code];
-    const players = roomData[code]?.players;
+  socket.on(
+    "joinRoom",
+    async ({ userID, playerMetadata, code }: IJoinRoomConfig) => {
+      const room = roomData[code];
+      const players = roomData[code]?.players;
 
-    if (!room || !players) return;
+      if (!room || !players) return;
 
-    socket.join(code);
+      socket.join(code);
 
-    // checking to see if the playerMetadata is available,
-    // if not it will auto select random available settings
+      // checking to see if the playerMetadata is available,
+      // if not it will auto select random available settings
 
-    for (const player of Object.values(players)) {
-      if (player.avatarPath === playerMetadata.avatarPath) {
-        playerMetadata.avatarPath = getAvailableAttribute(
-          "avatarPath",
-          players
-        );
+      for (const player of Object.values(players)) {
+        if (player.avatarPath === playerMetadata.avatarPath) {
+          playerMetadata.avatarPath = getAvailableAttribute(
+            "avatarPath",
+            players
+          );
+        }
+
+        if (player.color === playerMetadata.color) {
+          playerMetadata.color = getAvailableAttribute("color", players);
+        }
+
+        playerMetadata.deckHueRotation =
+          hslToDeckHueRotations[
+            playerMetadata.color as keyof typeof hslToDeckHueRotations
+          ];
       }
 
-      if (player.color === playerMetadata.color) {
-        playerMetadata.color = getAvailableAttribute("color", players);
-      }
+      players[userID] = playerMetadata;
 
-      playerMetadata.deckHueRotation =
-        hslToDeckHueRotations[
-          playerMetadata.color as keyof typeof hslToDeckHueRotations
-        ];
+      io.in(code).emit("playerMetadataUpdated", players);
+
+      room.roomConfig.playersInRoom++;
+
+      io.in(code).emit("roomConfigUpdated", room.roomConfig);
+
+      await prisma.room.update({
+        where: {
+          code,
+        },
+        data: {
+          playersInRoom: room.roomConfig.playersInRoom,
+        },
+      });
     }
-
-    players[userID] = playerMetadata;
-
-    io.in(code).emit("playerMetadataUpdated", players);
-
-    room.roomConfig.playersInRoom++;
-
-    io.in(code).emit("roomConfigUpdated", room.roomConfig);
-  });
+  );
 }
 
 function getAvailableAttribute(

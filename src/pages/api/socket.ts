@@ -48,6 +48,7 @@ interface IMiscRoomMetadata {
   rotateDecksCounter: number;
   preventOtherPlayersFromSqueaking: boolean;
   gameStuckInterval?: NodeJS.Timeout;
+  botIntervals?: NodeJS.Timeout[];
 }
 
 export interface IGameData {
@@ -74,6 +75,7 @@ export interface IRoomPlayer {
   avatarPath: string;
   color: string;
   deckHueRotation: number;
+  botDifficulty?: "Easy" | "Medium" | "Hard";
 }
 
 export interface IModifyFriendData {

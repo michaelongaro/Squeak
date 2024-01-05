@@ -32,17 +32,27 @@ export function resetGameHandler(
   }: IResetGame) {
     const miscRoomDataObj = miscRoomData[roomCode];
 
-    if (gameIsFinished) {
-      if (miscRoomDataObj) {
-        miscRoomDataObj.preventOtherPlayersFromSqueaking = false;
-        clearInterval(miscRoomDataObj.gameStuckInterval);
+    // this was repeated twice below, but I don't see why that was necessary
+    // be wary though
+
+    if (miscRoomDataObj) {
+      miscRoomDataObj.preventOtherPlayersFromSqueaking = false;
+      clearInterval(miscRoomDataObj.gameStuckInterval);
+
+      // clear any bot intervals
+      for (const botInterval of miscRoomDataObj.botIntervals || []) {
+        clearInterval(botInterval);
       }
 
-      const room = roomData[roomCode];
-      const game = gameData[roomCode];
+      // TODO: technically shouldn't we removing the resulting intervalID from the array after clearing it?
+    }
 
-      if (!room || !game) return;
+    const room = roomData[roomCode];
+    const game = gameData[roomCode];
 
+    if (!room || !game) return;
+
+    if (gameIsFinished) {
       for (const playerID of game.playerIDsThatLeftMidgame) {
         // remove player from room
         delete room.players[playerID];
@@ -84,8 +94,6 @@ export function resetGameHandler(
       return;
     }
 
-    const game = gameData[roomCode];
-
     if (!game) return;
 
     // resetting the board
@@ -119,19 +127,27 @@ export function resetGameHandler(
       miscRoomDataObj.rotateDecksCounter = 0;
     }
 
-    if (miscRoomDataObj) {
-      miscRoomDataObj.preventOtherPlayersFromSqueaking = false;
-      clearInterval(miscRoomDataObj.gameStuckInterval);
+    // pick a random (human) player to start the next round
+    const playerIDs = Object.keys(game.players);
+    let randomPlayerID;
+
+    let foundValidPlayerID = false;
+    while (!foundValidPlayerID) {
+      const randomPlayerID =
+        playerIDs[Math.floor(Math.random() * playerIDs.length)];
+      if (
+        randomPlayerID &&
+        room.players[randomPlayerID]?.botDifficulty === undefined
+      ) {
+        foundValidPlayerID = true;
+      }
     }
 
-    // pick a random player to start the next round
-    const playerIDs = Object.keys(game.players);
-    const randomPlayerID =
-      playerIDs[Math.floor(Math.random() * playerIDs.length)];
+    // on a timeout of 5000ms or so, start the intervals here!
 
     io.in(roomCode).emit("startNewRound", {
       gameData: game,
-      playerIDToStartNextRound: randomPlayerID,
+      playerIDToStartNextRound: randomPlayerID, // deprecate this
     });
   }
 

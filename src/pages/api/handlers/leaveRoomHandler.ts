@@ -56,8 +56,23 @@ export function leaveRoomHandler(
       game.playerIDsThatLeftMidgame.push(playerID);
     }
 
-    // assign a new host if the host left
-    if (playerID === previousHostID && room.roomConfig.playersInRoom !== 0) {
+    // can probably simply these two if statements into an if/else, but check side effects
+
+    function justBotPlayersLeft() {
+      for (const playerID in room?.players) {
+        if (room.players[playerID]?.botDifficulty === undefined) return false;
+      }
+      return true;
+    }
+
+    // assign a new host if the host left (and there are not just bots left in the room)
+    if (
+      playerID === previousHostID &&
+      room.roomConfig.playersInRoom !== 0 &&
+      !justBotPlayersLeft()
+    ) {
+      // TODO: make the swap to next actual player in the room, not to a bot
+
       room.roomConfig.hostUserID = Object.keys(room.players)[0] || "";
       room.roomConfig.hostUsername =
         Object.values(room.players)[0]?.username || "";
@@ -68,12 +83,18 @@ export function leaveRoomHandler(
     }
 
     // if there are no players left in the room, delete the room
-    if (room.roomConfig.playersInRoom === 0) {
+    if (room.roomConfig.playersInRoom === 0 || justBotPlayersLeft()) {
       delete roomData[roomCode];
       delete gameData[roomCode];
 
       if (miscRoomDataObj) {
         clearInterval(miscRoomDataObj.gameStuckInterval);
+
+        // clear any bot intervals
+        for (const botInterval of miscRoomDataObj.botIntervals || []) {
+          clearInterval(botInterval);
+        }
+
         delete miscRoomData[roomCode];
       }
     }

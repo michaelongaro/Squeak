@@ -28,6 +28,8 @@ export function playerReadyToReceiveInitGameDataHandler(
     )
       return;
 
+    // get rid of counter, just do this on "startGame" handler, and send the gameData[roomCode] back to the client
+
     const board = Array.from({ length: 4 }, () =>
       Array.from({ length: 5 }, () => null)
     );
