@@ -148,7 +148,7 @@ function Card({
         });
       }
 
-      cardRef.current.style.transition = "all 300ms ease-in-out";
+      cardRef.current.style.transition = "all 300ms ease-in-out, filter 150ms";
       imageRef.current.style.transition = "transform 150ms linear";
 
       const currentImageTransform = imageRef.current.style.transform;
@@ -468,9 +468,9 @@ function Card({
         inMovingSqueakStack)
     ) {
       if (origin === "hand" || origin === "squeakHand") {
-        animation = "regularCardDropShadow 0.3s ease-in-out";
+        animation = "regularCardDropShadow 0.15ms ease-in-out";
       } else if (origin === "deck" || origin === "squeakDeck") {
-        animation = "shallowCardDropShadow 0.3s ease-in-out";
+        animation = "shallowCardDropShadow 0.15ms ease-in-out";
       }
     }
 
@@ -487,7 +487,7 @@ function Card({
         inMovingSqueakStack)
     ) {
       if (origin === "hand" || origin === "squeakHand") {
-        filterStyles = `drop-shadow(10px 10px 4px rgba(0, 0, 0, ${
+        filterStyles = `drop-shadow(8px 8px 4px rgba(0, 0, 0, ${
           inMovingSqueakStack ? 0.1 : 0.25
         }))`;
       } else if (origin === "deck" || origin === "squeakDeck") {
