@@ -44,7 +44,7 @@ function useCardDropApproved({
     setProposedCardBoxShadow,
     soundPlayStates,
     setSoundPlayStates,
-    otherPlayerSqueakStacksBeingDragged,
+    squeakStackDragAlterations,
     setOtherPlayerSqueakStacksBeingDragged,
   } = useRoomContext();
 
@@ -98,7 +98,7 @@ function useCardDropApproved({
         depthAlterations[startingCardMetadata.destinationSqueakStackIdx] = 1;
 
         setOtherPlayerSqueakStacksBeingDragged({
-          ...otherPlayerSqueakStacksBeingDragged,
+          ...squeakStackDragAlterations,
           [ownerID]: {
             squeakStackDepthAlterations: depthAlterations,
           },
@@ -117,7 +117,7 @@ function useCardDropApproved({
           startingCardMetadata.lengthOfStack;
 
         setOtherPlayerSqueakStacksBeingDragged({
-          ...otherPlayerSqueakStacksBeingDragged,
+          ...squeakStackDragAlterations,
           [ownerID]: {
             squeakStackDepthAlterations: depthAlterations,
             draggedStack: {
@@ -139,7 +139,7 @@ function useCardDropApproved({
         depthAlterations[startingCardMetadata.originSqueakStackIdx] = -1;
 
         setOtherPlayerSqueakStacksBeingDragged({
-          ...otherPlayerSqueakStacksBeingDragged,
+          ...squeakStackDragAlterations,
           [ownerID]: {
             squeakStackDepthAlterations: depthAlterations,
           },
@@ -175,7 +175,7 @@ function useCardDropApproved({
 
       moveCard({ x: endX, y: endY }, false, endID.includes("cell"), () => {
         setOtherPlayerSqueakStacksBeingDragged({
-          ...otherPlayerSqueakStacksBeingDragged,
+          ...squeakStackDragAlterations,
           [ownerID]: {
             squeakStackDepthAlterations: [0, 0, 0, 0],
             draggedStack: undefined,
@@ -220,7 +220,7 @@ function useCardDropApproved({
     soundPlayStates,
     setSoundPlayStates,
     setProposedCardBoxShadow,
-    otherPlayerSqueakStacksBeingDragged,
+    squeakStackDragAlterations,
     setOtherPlayerSqueakStacksBeingDragged,
     suit,
     ownerID,

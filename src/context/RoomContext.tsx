@@ -42,10 +42,9 @@ interface DraggedStack {
   length: number;
   lengthOfTargetStack: number;
 }
-
-interface OtherPlayerSqueakStacksBeingDragged {
+interface SqueakStackDragAlterations {
   squeakStackDepthAlterations: number[]; // -2 means decreasing effective length of stack by 2 (allowing gaps between cards to expand)
-  draggedStack?: OtherPlayersDraggedStack;
+  draggedStack?: DraggedStack;
 }
 
 export interface IInitSqueakStackCardBeingDealt {
@@ -124,17 +123,12 @@ interface IRoomContext {
   setSqueakDeckBeingMovedProgramatically: React.Dispatch<
     React.SetStateAction<ICardBeingMovedProgramatically>
   >;
-
-  currentPlayerSqueakStackBeingDragged: DraggedStack | null;
-  setCurrentPlayerSqueakStackBeingDragged: React.Dispatch<
-    React.SetStateAction<DraggedStack | null>
-  >;
-  otherPlayerSqueakStacksBeingDragged: {
-    [playerID: string]: OtherPlayerSqueakStacksBeingDragged;
+  squeakStackDragAlterations: {
+    [playerID: string]: SqueakStackDragAlterations;
   };
   setOtherPlayerSqueakStacksBeingDragged: React.Dispatch<
     React.SetStateAction<{
-      [playerID: string]: OtherPlayerSqueakStacksBeingDragged;
+      [playerID: string]: SqueakStackDragAlterations;
     }>
   >;
 }
@@ -228,21 +222,10 @@ export function RoomProvider(props: { children: React.ReactNode }) {
   const [mirrorPlayerContainer, setMirrorPlayerContainer] =
     useState<boolean>(false);
 
-  const [
-    currentPlayerSqueakStackBeingDragged,
-    setCurrentPlayerSqueakStackBeingDragged,
-  ] = useState<DraggedStack | null>({
-    squeakStackIdx: -1,
-    startingDepth: -1,
-    length: -1,
-  });
-
-  const [
-    otherPlayerSqueakStacksBeingDragged,
-    setOtherPlayerSqueakStacksBeingDragged,
-  ] = useState<{
-    [playerID: string]: OtherPlayerSqueakStacksBeingDragged;
-  }>({});
+  const [squeakStackDragAlterations, setOtherPlayerSqueakStacksBeingDragged] =
+    useState<{
+      [playerID: string]: SqueakStackDragAlterations;
+    }>({});
 
   useEffect(() => {
     fetch("/api/socket");
@@ -352,9 +335,7 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     setShowResetRoundModal,
     squeakDeckBeingMovedProgramatically,
     setSqueakDeckBeingMovedProgramatically,
-    currentPlayerSqueakStackBeingDragged,
-    setCurrentPlayerSqueakStackBeingDragged,
-    otherPlayerSqueakStacksBeingDragged,
+    squeakStackDragAlterations,
     setOtherPlayerSqueakStacksBeingDragged,
   };
 

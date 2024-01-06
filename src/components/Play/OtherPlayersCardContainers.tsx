@@ -47,7 +47,7 @@ function OtherPlayersCardContainers({
     soundPlayStates,
     cardBeingMovedProgramatically,
     roomConfig,
-    otherPlayerSqueakStacksBeingDragged,
+    squeakStackDragAlterations,
   } = useRoomContext();
 
   const otherPlayerIDs = Object.keys(gameData.players).filter(
@@ -142,13 +142,13 @@ function OtherPlayersCardContainers({
     }),
   ];
 
-  function dynamicTopValue(
+  function getDynamicTopValue(
     squeakStackIdx: number,
     squeakStackLength: number,
     cardIdx: number,
     playerID: string
   ) {
-    const draggedData = otherPlayerSqueakStacksBeingDragged[playerID];
+    const draggedData = squeakStackDragAlterations[playerID];
 
     const draggedStack = draggedData?.draggedStack ?? null;
     const squeakStackDepthAlterations =
@@ -221,7 +221,7 @@ function OtherPlayersCardContainers({
                         key={`${playerID}squeakCard${card.suit}${card.value}`}
                         id={`${playerID}squeakStack${squeakStackIdx}${cardIdx}`}
                         style={{
-                          top: dynamicTopValue(
+                          top: getDynamicTopValue(
                             squeakStackIdx,
                             cards.length,
                             cardIdx,

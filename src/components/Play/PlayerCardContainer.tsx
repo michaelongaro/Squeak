@@ -47,8 +47,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
     setOriginIndexForHeldSqueakCard,
     setHoldingASqueakCard,
     setHoveredSqueakStack,
-    currentPlayerSqueakStackBeingDragged,
-    setCurrentPlayerSqueakStackBeingDragged,
+    squeakStackDragAlterations,
   } = useRoomContext();
 
   const [hoveringOverDeck, setHoveringOverDeck] = useState(false);
@@ -75,58 +74,32 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
     squeakStackLength: number,
     cardIdx: number
   ) {
+    const draggedData = squeakStackDragAlterations[userID];
+
+    const draggedStack = draggedData?.draggedStack ?? null;
+    const squeakStackDepthAlterations =
+      draggedData?.squeakStackDepthAlterations ?? null;
+
     let lengthOfSqueakStackBeingDragged = 0;
-    if (currentPlayerSqueakStackBeingDragged !== null) {
-      lengthOfSqueakStackBeingDragged =
-        currentPlayerSqueakStackBeingDragged.length;
+    if (draggedStack !== null) {
+      lengthOfSqueakStackBeingDragged = draggedStack.length;
     }
 
     // special handling for squeak stack being dragged
     if (
-      holdingASqueakCard &&
-      squeakStackIdx === currentPlayerSqueakStackBeingDragged!.squeakStackIdx &&
-      cardIdx >= currentPlayerSqueakStackBeingDragged!.startingDepth
+      squeakStackIdx === draggedStack?.squeakStackIdx &&
+      cardIdx >= draggedStack?.startingDepth
     ) {
-      if (
-        hoveredSqueakStack !== null &&
-        originIndexForHeldSqueakCard !== hoveredSqueakStack
-      ) {
-        const modifiedHoveredSqueakStackLength =
-          gameData.players[userID]!.squeakHand[hoveredSqueakStack]!.length;
-
-        squeakStackLength =
-          modifiedHoveredSqueakStackLength + lengthOfSqueakStackBeingDragged;
-      }
+      squeakStackLength =
+        draggedStack.lengthOfTargetStack + lengthOfSqueakStackBeingDragged;
     }
 
     // otherwise, part of regular squeak stacks
     else {
-      if (hoveredSqueakStack !== null) {
-        if (holdingASqueakCard) {
-          // narrowing down to correct squeak stack
-          if (originIndexForHeldSqueakCard === squeakStackIdx) {
-            if (squeakStackIdx !== hoveredSqueakStack) {
-              squeakStackLength -= lengthOfSqueakStackBeingDragged;
-            }
-          } else if (hoveredSqueakStack === squeakStackIdx) {
-            squeakStackLength += lengthOfSqueakStackBeingDragged;
-          }
-        } else if (holdingADeckCard && squeakStackIdx === hoveredSqueakStack) {
-          squeakStackLength++;
-        }
-      } else {
-        // not hovering over any squeak stack but still grabbing a squeak stack
-        if (holdingASqueakCard) {
-          if (originIndexForHeldSqueakCard === squeakStackIdx) {
-            squeakStackLength -= lengthOfSqueakStackBeingDragged;
-          }
-        }
-      }
+      squeakStackLength += squeakStackDepthAlterations?.[squeakStackIdx] ?? 0;
     }
 
-    return `${
-      (20 - (squeakStackLength > 12 ? 12 : squeakStackLength)) * cardIdx
-    }px`;
+    return `${(20 - squeakStackLength) * cardIdx}px`;
   }
 
   useEffect(() => {
@@ -283,16 +256,10 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                       onMouseDown={() => {
                         setOriginIndexForHeldSqueakCard(squeakStackIdx);
                         setHoldingASqueakCard(true);
-                        setCurrentPlayerSqueakStackBeingDragged({
-                          squeakStackIdx,
-                          startingDepth: cardIdx,
-                          length: cards.length - cardIdx,
-                        });
                         setHoveredSqueakStack(null);
                       }}
                       onMouseUp={() => {
                         setHoldingASqueakCard(false);
-                        setCurrentPlayerSqueakStackBeingDragged(null);
                         setOriginIndexForHeldSqueakCard(null);
                       }}
                     >
