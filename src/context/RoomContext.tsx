@@ -40,9 +40,6 @@ interface DraggedStack {
   squeakStackIdx: number;
   startingDepth: number;
   length: number;
-}
-
-interface OtherPlayersDraggedStack extends DraggedStack {
   lengthOfTargetStack: number;
 }
 
@@ -93,8 +90,10 @@ interface IRoomContext {
   setProposedCardBoxShadow: React.Dispatch<
     React.SetStateAction<IProposedCardBoxShadow | null>
   >;
-  decksAreBeingRotated: boolean;
-  setDecksAreBeingRotated: React.Dispatch<React.SetStateAction<boolean>>;
+  showDecksAreBeingRotatedModal: boolean;
+  setShowDecksAreBeingRotatedModal: React.Dispatch<
+    React.SetStateAction<boolean>
+  >;
   playerIDWhoSqueaked: string | null;
   setPlayerIDWhoSqueaked: React.Dispatch<React.SetStateAction<string | null>>;
   showScoreboard: boolean;
@@ -188,7 +187,7 @@ export function RoomProvider(props: { children: React.ReactNode }) {
   const [proposedCardBoxShadow, setProposedCardBoxShadow] =
     useState<IProposedCardBoxShadow | null>(null);
 
-  const [decksAreBeingRotated, setDecksAreBeingRotated] =
+  const [showDecksAreBeingRotatedModal, setShowDecksAreBeingRotatedModal] =
     useState<boolean>(false);
 
   const [playerIDWhoSqueaked, setPlayerIDWhoSqueaked] = useState<string | null>(
@@ -327,8 +326,8 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     setHeldSqueakStackLocation,
     proposedCardBoxShadow,
     setProposedCardBoxShadow,
-    decksAreBeingRotated,
-    setDecksAreBeingRotated,
+    showDecksAreBeingRotatedModal,
+    setShowDecksAreBeingRotatedModal,
     playerIDWhoSqueaked,
     setPlayerIDWhoSqueaked,
     showScoreboard,

@@ -41,7 +41,7 @@ function OtherPlayersCardContainers({
     currentVolume,
     playerMetadata,
     gameData,
-    decksAreBeingRotated,
+    showDecksAreBeingRotatedModal,
     squeakDeckBeingMovedProgramatically,
     setSoundPlayStates,
     soundPlayStates,
@@ -57,6 +57,16 @@ function OtherPlayersCardContainers({
   const [showDummyDeckCardStates, setShowDummyDeckCardStates] = useState<{
     [playerID: string]: [boolean, boolean, boolean, boolean];
   }>();
+  const [decksAreBeingRotated, setDecksAreBeingRotated] = useState(false);
+
+  useEffect(() => {
+    if (showDecksAreBeingRotatedModal) {
+      setDecksAreBeingRotated(true);
+      setTimeout(() => {
+        setDecksAreBeingRotated(false);
+      }, 1000);
+    }
+  }, [showDecksAreBeingRotatedModal]);
 
   useEffect(() => {
     let tempDummyDeckCardStates = { ...showDummyDeckCardStates };

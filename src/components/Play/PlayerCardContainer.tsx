@@ -37,7 +37,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
     hoveredSqueakStack,
     holdingADeckCard,
     proposedCardBoxShadow,
-    decksAreBeingRotated,
+    showDecksAreBeingRotatedModal,
     soundPlayStates,
     setSoundPlayStates,
     originIndexForHeldSqueakCard,
@@ -53,12 +53,22 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
 
   const [hoveringOverDeck, setHoveringOverDeck] = useState(false);
   const [drawingFromDeck, setDrawingFromDeck] = useState(false);
+  const [decksAreBeingRotated, setDecksAreBeingRotated] = useState(false);
 
   useRotatePlayerDecks();
 
   const cardDimensions = useResponsiveCardDimensions();
 
   const audioRef = useRef<HTMLAudioElement>(null);
+
+  useEffect(() => {
+    if (showDecksAreBeingRotatedModal) {
+      setDecksAreBeingRotated(true);
+      setTimeout(() => {
+        setDecksAreBeingRotated(false);
+      }, 1000);
+    }
+  }, [showDecksAreBeingRotatedModal]);
 
   function getDynamicTopValue(
     squeakStackIdx: number,
@@ -210,6 +220,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
 
   return (
     <div
+      id={"playerContainer"}
       className={`${cardContainerClass}`}
       onMouseMove={(e) => mouseMoveHandler(e)}
     >
@@ -491,26 +502,6 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
               )}
             </div>
           </div>
-
-          <AnimatePresence mode={"wait"}>
-            {decksAreBeingRotated && (
-              <motion.div
-                key={"decksAreBeingRotatedTooltip"}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.25 }}
-                style={{
-                  color: "hsl(120deg 100% 86%)",
-                  borderColor: "hsl(120deg 100% 86%)",
-                }}
-                className="baseVertFlex absolute bottom-4 left-[-22rem] gap-2 rounded-sm border-2 bg-green-800 p-2"
-              >
-                <div>No player has valid moves,</div>
-                <div>rotating each player&apos;s deck by one card.</div>
-              </motion.div>
-            )}
-          </AnimatePresence>
 
           <div
             style={{

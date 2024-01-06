@@ -16,6 +16,7 @@ import useManuallyResetRound from "../../hooks/useManuallyResetRound";
 import useScoreboardData from "../../hooks/useScoreboardData";
 import OtherPlayerIcons from "./OtherPlayerIcons";
 import classes from "./Play.module.css";
+import DecksAreBeingRotatedModal from "../modals/DecksAreBeingRotatedModal";
 
 function Play() {
   const userID = useUserIDContext();
@@ -28,6 +29,7 @@ function Play() {
     setShowShufflingCountdown,
     showShufflingCountdown,
     showResetRoundModal,
+    showDecksAreBeingRotatedModal,
   } = useRoomContext();
 
   const [initialEffectRan, setInitialEffectRan] = useState<boolean>(false);
@@ -85,6 +87,10 @@ function Play() {
       </div>
 
       <OtherPlayerIcons />
+
+      <AnimatePresence mode={"wait"}>
+        {showDecksAreBeingRotatedModal && <DecksAreBeingRotatedModal />}
+      </AnimatePresence>
 
       <AnimatePresence mode={"wait"}>
         {showShufflingCountdown && <ShufflingCountdownModal />}

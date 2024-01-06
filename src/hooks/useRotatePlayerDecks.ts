@@ -4,7 +4,7 @@ import { useRoomContext } from "../context/RoomContext";
 import { type IGameMetadata } from "./../pages/api/socket";
 
 function useRotatePlayerDecks() {
-  const { setGameData, setDecksAreBeingRotated } = useRoomContext();
+  const { setGameData, setShowDecksAreBeingRotatedModal } = useRoomContext();
 
   const [dataFromBackend, setDataFromBackend] = useState<IGameMetadata | null>(
     null
@@ -22,14 +22,15 @@ function useRotatePlayerDecks() {
     if (dataFromBackend !== null) {
       setDataFromBackend(null);
 
-      setGameData(dataFromBackend);
-      setDecksAreBeingRotated(true);
+      setShowDecksAreBeingRotatedModal(true);
 
+      // staggered to allow the user to read the tooltip for a second
       setTimeout(() => {
-        setDecksAreBeingRotated(false);
-      }, 1000);
+        setGameData(dataFromBackend);
+        setShowDecksAreBeingRotatedModal(false);
+      }, 2000);
     }
-  }, [dataFromBackend, setGameData, setDecksAreBeingRotated]);
+  }, [dataFromBackend, setGameData, setShowDecksAreBeingRotatedModal]);
 }
 
 export default useRotatePlayerDecks;
