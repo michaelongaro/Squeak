@@ -187,7 +187,7 @@ function CreateRoom() {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.15 }}
-      className="baseVertFlex relative min-h-[100dvh]"
+      className="baseVertFlex relative min-h-[100dvh] py-8"
     >
       <div className="baseVertFlex relative gap-4">
         <div className="absolute left-[-3.5rem] top-0">
@@ -297,7 +297,7 @@ function CreateRoom() {
           </div>
         )}
 
-        <fieldset className="mt-4 min-w-[450px] rounded-md border-2 border-white bg-green-800 p-4">
+        <fieldset className="mt-4 min-w-[350px] rounded-md border-2 border-white bg-green-800 p-4 sm:min-w-[450px]">
           <legend
             style={{
               color: "hsl(120deg 100% 86%)",
@@ -312,7 +312,7 @@ function CreateRoom() {
             style={{
               color: "hsl(120deg 100% 86%)",
             }}
-            className="grid grid-cols-2 grid-rows-4 items-center gap-y-4 p-4"
+            className="grid grid-cols-2 grid-rows-4 items-center gap-y-4 p-2"
           >
             <label>Points to win:</label>
             <div className=" baseFlex !justify-between gap-2 pl-4 pr-4">
@@ -412,8 +412,8 @@ function CreateRoom() {
                 <div className="tracking-widest">{`(${roomConfig.playersInRoom}/${roomConfig.maxPlayers})`}</div>
                 <FaUsers size={"1.25rem"} />
               </legend>
-              <div className="baseVertFlex gap-6 p-4">
-                <div className="baseFlex !items-start gap-8">
+              <div className="baseVertFlex gap-6 p-2">
+                <div className="baseVertFlex !justify-start gap-8 sm:!flex-row sm:!items-start">
                   {Object.keys(playerMetadata)?.map((playerID) => (
                     <PlayerIcon
                       key={playerID}
@@ -454,7 +454,7 @@ function CreateRoom() {
                         width: "4rem",
                         height: "4rem",
                         fontSize: "0.75rem",
-                        textWrap: "nowrap",
+                        whiteSpace: "nowrap",
                         flexDirection: "column-reverse",
                       }}
                       onClickFunction={() => {
@@ -483,6 +483,7 @@ function CreateRoom() {
               innerText={"Start game"}
               innerTextWhenLoading={"Starting game"}
               disabled={roomConfig.playersInRoom < 2}
+              width={"12rem"}
               onClickFunction={() => {
                 socket.emit("startGame", {
                   roomCode: roomConfig.code,
@@ -496,7 +497,7 @@ function CreateRoom() {
           <PrimaryButton
             innerText={"Create"}
             innerTextWhenLoading={"Creating"}
-            width="50%"
+            width={"12rem"}
             disabled={
               Object.values(playerMetadata)[0]?.username.length === 0 ||
               usernameIsProfane

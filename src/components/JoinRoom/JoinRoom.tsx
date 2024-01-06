@@ -306,7 +306,7 @@ function JoinRoom() {
                   roomCode.length === 0 ||
                   usernameIsProfane
                 }
-                width={"25%"}
+                width={"12rem"}
                 height={"3rem"}
                 onClickFunction={() => setSubmittedRoomCode(roomCode)}
                 showLoadingSpinnerOnClick={true}
@@ -340,12 +340,12 @@ function JoinRoom() {
             }}
             className="baseVertFlex gap-4"
           >
-            <fieldset className="mt-4 rounded-md  border-2 border-white bg-green-800  p-4">
+            <fieldset className="mt-4 rounded-md  border-2 border-white bg-green-800 p-4">
               <legend className="baseFlex gap-2 pl-4 pr-4 text-left text-lg">
                 Room settings
                 <IoSettingsSharp size={"1.25rem"} />
               </legend>
-              <div className="grid grid-cols-2 grid-rows-4 items-center gap-x-24 gap-y-0 p-4">
+              <div className="grid grid-cols-2 grid-rows-4 items-center gap-x-24 gap-y-0 p-2">
                 <div>Points to win:</div>
                 {roomConfig?.pointsToWin}
 
@@ -382,8 +382,8 @@ function JoinRoom() {
                 <div className="tracking-widest">{`(${roomConfig.playersInRoom}/${roomConfig.maxPlayers})`}</div>
                 <FaUsers size={"1.25rem"} />
               </legend>
-              <div className="baseVertFlex gap-6 p-4">
-                <div className="baseFlex !items-start gap-8">
+              <div className="baseVertFlex gap-6 p-2">
+                <div className="baseVertFlex !justify-start gap-8 sm:!flex-row sm:!items-start">
                   {Object.keys(playerMetadata)?.map((playerID) => (
                     <PlayerIcon
                       key={playerID}

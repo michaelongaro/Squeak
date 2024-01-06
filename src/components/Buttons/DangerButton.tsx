@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import SecondaryButton from "./SecondaryButton";
+import { IoClose } from "react-icons/io5";
 
 interface IDangerButton {
   innerText?: string;
@@ -46,6 +47,7 @@ function DangerButton({
         filter: `brightness(${brightness})`,
         width: width ?? "100%",
         height: height ?? "100%",
+        zIndex: 999, // temp fix for tooltip being hidden behind other elements declared after it
         ...style,
       }}
       className="relative grid cursor-pointer place-content-center gap-2 rounded-md border-2 p-2 transition-all"
@@ -96,9 +98,29 @@ function DangerButton({
               color: "hsl(0, 84%, 50%)",
               top: forFriendsList ? "50px" : "32px",
               left: forFriendsList ? "-141px" : "-60px",
+              width: "max-content",
             }}
-            className="baseVertFlex absolute cursor-default gap-2 rounded-md border-2 p-2 shadow-md"
+            className="baseVertFlex absolute cursor-default gap-2 rounded-md border-2 p-2 pt-8 shadow-md"
           >
+            <SecondaryButton
+              icon={<IoClose size={"1rem"} />}
+              extraPadding={false}
+              onClickFunction={() => {
+                setShowTooltip(false);
+                setHoveringOnButton(false);
+                if (forFriendsList && setShowingDeleteFriendConfirmationModal) {
+                  setShowingDeleteFriendConfirmationModal(false);
+                }
+              }}
+              width={"1.5rem"}
+              height={"1.5rem"}
+              style={{
+                position: "absolute",
+                top: "0.25rem",
+                right: "0.25rem",
+              }}
+            />
+
             {innerTooltipText}
             <div className="baseFlex gap-2">
               <DangerButton
@@ -106,7 +128,7 @@ function DangerButton({
                 height={"2.5rem"}
                 onClickFunction={onClickFunction}
               />
-              <SecondaryButton
+              {/* <SecondaryButton
                 innerText="Deny"
                 extraPadding={false}
                 onClickFunction={() => {
@@ -119,7 +141,7 @@ function DangerButton({
                     setShowingDeleteFriendConfirmationModal(false);
                   }
                 }}
-              />
+              /> */}
             </div>
           </motion.div>
         )}
