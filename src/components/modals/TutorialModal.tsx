@@ -257,8 +257,8 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
               </li>
               <li>
                 The player who Squeaked gets an additional ten points, while
-                every other player loses a point for every card left in their
-                Squeak pile.
+                other players lose a point for every card left in their Squeak
+                pile.
               </li>
               <li>
                 When a player reaches the room&apos;s predetermined point
