@@ -15,8 +15,8 @@ const prisma = new PrismaClient();
 
 const botDifficultyDelay = {
   Easy: 7000,
-  Medium: 4500,
-  Hard: 2000,
+  Medium: 5000,
+  Hard: 3000,
 };
 
 export function startGameHandler(

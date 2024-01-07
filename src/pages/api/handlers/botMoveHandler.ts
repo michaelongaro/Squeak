@@ -7,6 +7,13 @@ import { squeakToBoard } from "../helpers/squeakToBoard";
 import { deckToBoard } from "../helpers/deckToBoard";
 import { deckToSqueak } from "../helpers/deckToSqueak";
 import { drawFromDeck } from "./drawFromDeckHandler";
+import { type ICard } from "../../../utils/generateDeckAndSqueakCards";
+
+const minTimestampDelays = {
+  Easy: 1000,
+  Medium: 750,
+  Hard: 500,
+};
 
 export function botMoveHandler(
   io: Server,
@@ -17,17 +24,19 @@ export function botMoveHandler(
   playerID: string
 ) {
   const players = gameData[roomCode]?.players;
-  const miscRoomDataCopy = miscRoomData[roomCode];
+  const miscRoomDataObj = miscRoomData[roomCode];
   const bot = players?.[playerID];
+  const botDifficulty = roomData[roomCode]?.players?.[playerID]?.botDifficulty;
   const squeakDeck = bot?.squeakDeck;
   const squeakHand = bot?.squeakHand;
 
   if (
     !bot ||
-    !miscRoomDataCopy ||
+    !miscRoomDataObj ||
     !squeakDeck ||
     !squeakHand ||
-    miscRoomDataCopy.preventOtherPlayersFromSqueaking
+    miscRoomDataObj.preventOtherPlayersFromSqueaking ||
+    !botDifficulty
   )
     return;
 
@@ -74,26 +83,43 @@ export function botMoveHandler(
 
             if (cell === undefined) continue;
             if (cardPlacementIsValid(cell, card.value, card.suit, true)) {
-              squeakToBoard({
-                gameData,
-                card,
-                playerID,
-                roomCode,
-                io,
-                squeakStartLocation: stackIdx,
-                boardEndLocation: { row, col },
-              });
+              const needToWaitForTimestampLockout =
+                Date.now() -
+                  (miscRoomDataObj.boardTimestamps[row]?.[col] || 0) <
+                minTimestampDelays[botDifficulty];
 
-              // remove from blacklist if it was on there (existed as a value to a key)
-              for (const key of Object.keys(blacklistedSqueakCards)) {
-                if (
-                  blacklistedSqueakCards[key] === `${card.value}${card.suit}`
-                ) {
-                  delete blacklistedSqueakCards[key];
-                }
-              }
-              console.log("did 2nd");
-              return;
+              setTimeout(
+                () => {
+                  const cardWasPlayedSuccessfully = squeakToBoard({
+                    gameData,
+                    miscRoomData,
+                    card,
+                    playerID,
+                    roomCode,
+                    io,
+                    squeakStartLocation: stackIdx,
+                    boardEndLocation: { row, col },
+                  });
+
+                  if (cardWasPlayedSuccessfully) {
+                    // remove from blacklist if it was on there (existed as a value to a key)
+                    for (const key of Object.keys(blacklistedSqueakCards)) {
+                      if (
+                        blacklistedSqueakCards[key] ===
+                        `${card.value}${card.suit}`
+                      ) {
+                        delete blacklistedSqueakCards[key];
+                      }
+                    }
+                    console.log("did 2nd");
+                  }
+                },
+                needToWaitForTimestampLockout
+                  ? minTimestampDelays[botDifficulty]
+                  : 0
+              );
+
+              return; // hopefully this return placement still works as expected
             }
           }
         }
@@ -154,26 +180,40 @@ export function botMoveHandler(
         if (
           cardPlacementIsValid(cell, bottomCard.value, bottomCard.suit, true)
         ) {
-          squeakToBoard({
-            gameData,
-            card: bottomCard,
-            playerID,
-            roomCode,
-            io,
-            squeakStartLocation: stackIdx,
-            boardEndLocation: { row, col },
-          });
+          const needToWaitForTimestampLockout =
+            Date.now() - (miscRoomDataObj.boardTimestamps[row]?.[col] || 0) <
+            minTimestampDelays[botDifficulty];
 
-          // remove from blacklist if it was on there (existed as a value to a key)
-          for (const key of Object.keys(blacklistedSqueakCards)) {
-            if (
-              blacklistedSqueakCards[key] ===
-              `${bottomCard.value}${bottomCard.suit}`
-            ) {
-              delete blacklistedSqueakCards[key];
-            }
-          }
-          console.log("did 3rd");
+          setTimeout(
+            () => {
+              const cardWasPlayedSuccessfully = squeakToBoard({
+                gameData,
+                miscRoomData,
+                card: bottomCard,
+                playerID,
+                roomCode,
+                io,
+                squeakStartLocation: stackIdx,
+                boardEndLocation: { row, col },
+              });
+
+              if (cardWasPlayedSuccessfully) {
+                // remove from blacklist if it was on there (existed as a value to a key)
+                for (const key of Object.keys(blacklistedSqueakCards)) {
+                  if (
+                    blacklistedSqueakCards[key] ===
+                    `${bottomCard.value}${bottomCard.suit}`
+                  ) {
+                    delete blacklistedSqueakCards[key];
+                  }
+                }
+                console.log("did 3rd");
+              }
+            },
+            needToWaitForTimestampLockout
+              ? minTimestampDelays[botDifficulty]
+              : 0
+          );
           return;
         }
       }
@@ -181,7 +221,7 @@ export function botMoveHandler(
   }
 
   // 4th priority: bot can play a card from the top card in their hand onto the board
-  let topCardInHand = null;
+  let topCardInHand: ICard | null | undefined = null;
 
   // cards are rendered on the client with the last card in the array at the top of stack
   for (let i = 2; i >= 0; i--) {
@@ -206,15 +246,28 @@ export function botMoveHandler(
             true
           )
         ) {
-          deckToBoard({
-            gameData,
-            card: topCardInHand,
-            playerID,
-            roomCode,
-            io,
-            boardEndLocation: { row, col },
-          });
-          console.log("did 4th");
+          const needToWaitForTimestampLockout =
+            Date.now() - (miscRoomDataObj.boardTimestamps[row]?.[col] || 0) <
+            minTimestampDelays[botDifficulty];
+
+          setTimeout(
+            () => {
+              deckToBoard({
+                gameData,
+                miscRoomData,
+                card: topCardInHand as ICard,
+                playerID,
+                roomCode,
+                io,
+                boardEndLocation: { row, col },
+              });
+              console.log("did 4th");
+            },
+            needToWaitForTimestampLockout
+              ? minTimestampDelays[botDifficulty]
+              : 0
+          );
+
           return;
         }
       }

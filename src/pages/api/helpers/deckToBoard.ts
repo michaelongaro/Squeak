@@ -2,10 +2,11 @@ import cardPlacementIsValid from "../../../utils/cardPlacementIsValid";
 
 import { type Server } from "socket.io";
 import { type ICard } from "../../../utils/generateDeckAndSqueakCards";
-import { type IGameData } from "../socket";
+import { type IMiscRoomData, type IGameData } from "../socket";
 
 interface IDeckToBoard {
   gameData: IGameData;
+  miscRoomData?: IMiscRoomData;
   card: ICard;
   playerID: string;
   roomCode: string;
@@ -15,6 +16,7 @@ interface IDeckToBoard {
 
 export function deckToBoard({
   gameData,
+  miscRoomData,
   card,
   boardEndLocation,
   playerID,
@@ -24,6 +26,7 @@ export function deckToBoard({
   const board = gameData[roomCode]?.board;
   const players = gameData[roomCode]?.players;
   const player = gameData[roomCode]?.players?.[playerID];
+  const miscRoomDataObj = miscRoomData?.[roomCode];
 
   if (!board || !player || !players) return;
 
@@ -39,6 +42,10 @@ export function deckToBoard({
       boardEndLocation !== undefined
     )
   ) {
+    if (miscRoomDataObj) {
+      miscRoomDataObj.boardTimestamps[row]![col] = Date.now();
+    }
+
     player.topCardsInDeck.pop();
     player.topCardsInDeck.unshift(null);
 
@@ -64,7 +71,9 @@ export function deckToBoard({
       endID: `cell${row}${col}`,
       updatedGameData: gameData[roomCode],
     });
+    return true;
   } else {
     io.in(roomCode).emit("cardDropDenied", { playerID });
+    return false;
   }
 }

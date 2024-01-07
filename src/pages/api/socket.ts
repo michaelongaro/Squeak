@@ -44,6 +44,7 @@ export interface IMiscRoomData {
 }
 
 interface IMiscRoomMetadata {
+  boardTimestamps: number[][];
   numberOfPlayersReady: number;
   rotateDecksCounter: number;
   preventOtherPlayersFromSqueaking: boolean;

@@ -2,11 +2,12 @@ import cardPlacementIsValid from "../../../utils/cardPlacementIsValid";
 
 import { type Server } from "socket.io";
 import { type ICard } from "../../../utils/generateDeckAndSqueakCards";
-import { type IGameData } from "../socket";
+import { type IMiscRoomData, type IGameData } from "../socket";
 import { drawFromSqueakDeck } from "./drawFromSqueakDeck";
 
 interface ISqueakToBoard {
   gameData: IGameData;
+  miscRoomData?: IMiscRoomData;
   card: ICard;
   playerID: string;
   roomCode: string;
@@ -17,6 +18,7 @@ interface ISqueakToBoard {
 
 export function squeakToBoard({
   gameData,
+  miscRoomData,
   card,
   playerID,
   roomCode,
@@ -28,6 +30,7 @@ export function squeakToBoard({
   const players = gameData[roomCode]?.players;
   const player = gameData[roomCode]?.players?.[playerID];
   const startSqueakStackLocation = player?.squeakHand[squeakStartLocation];
+  const miscRoomDataObj = miscRoomData?.[roomCode];
 
   if (!board || !players || !startSqueakStackLocation) return;
 
@@ -43,6 +46,10 @@ export function squeakToBoard({
       boardEndLocation !== undefined
     )
   ) {
+    if (miscRoomDataObj) {
+      miscRoomDataObj.boardTimestamps[row]![col] = Date.now();
+    }
+
     startSqueakStackLocation?.pop();
 
     // automatically draw a card if the squeak stack is empty
@@ -72,7 +79,9 @@ export function squeakToBoard({
       endID: `cell${row}${col}`,
       updatedGameData: gameData[roomCode],
     });
+    return true;
   } else {
     io.in(roomCode).emit("cardDropDenied", { playerID });
+    return false;
   }
 }

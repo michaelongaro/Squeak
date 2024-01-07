@@ -27,7 +27,12 @@ export function createRoomHandler(
         },
       };
 
+      const boardTimestamps = Array.from({ length: 4 }, () =>
+        Array.from({ length: 5 }, () => 0)
+      );
+
       miscRoomData[roomConfig.code] = {
+        boardTimestamps,
         numberOfPlayersReady: 0,
         rotateDecksCounter: 0,
         preventOtherPlayersFromSqueaking: false,
