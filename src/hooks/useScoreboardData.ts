@@ -4,6 +4,11 @@ import { useUserIDContext } from "../context/UserIDContext";
 import { useRoomContext } from "../context/RoomContext";
 import { type IScoreboardMetadata } from "../pages/api/handlers/roundOverHandler";
 
+interface IScoreboardMetadataWithPlayerIDToStartNextRound
+  extends IScoreboardMetadata {
+  playerIDToStartNextRound: string;
+}
+
 function useScoreboardData() {
   const userID = useUserIDContext();
 
@@ -16,7 +21,7 @@ function useScoreboardData() {
   } = useRoomContext();
 
   const [dataFromBackend, setDataFromBackend] =
-    useState<IScoreboardMetadata | null>(null);
+    useState<IScoreboardMetadataWithPlayerIDToStartNextRound | null>(null);
 
   useEffect(() => {
     socket.on("scoreboardMetadata", (data) => setDataFromBackend(data));
@@ -30,8 +35,12 @@ function useScoreboardData() {
     if (dataFromBackend !== null) {
       setDataFromBackend(null);
 
-      const { gameWinnerID, roundWinnerID, playerRoundDetails } =
-        dataFromBackend;
+      const {
+        gameWinnerID,
+        roundWinnerID,
+        playerRoundDetails,
+        playerIDToStartNextRound,
+      } = dataFromBackend;
 
       setPlayerIDWhoSqueaked(roundWinnerID);
 
@@ -47,7 +56,8 @@ function useScoreboardData() {
 
       setTimeout(() => {
         setPlayerIDWhoSqueaked(null);
-        if (roundWinnerID !== userID) return;
+
+        if (userID !== playerIDToStartNextRound) return;
 
         socket.emit("resetGame", {
           roomCode: roomConfig.code,

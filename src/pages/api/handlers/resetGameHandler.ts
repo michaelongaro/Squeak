@@ -32,19 +32,8 @@ export function resetGameHandler(
   }: IResetGame) {
     const miscRoomDataObj = miscRoomData[roomCode];
 
-    // this was repeated twice below, but I don't see why that was necessary
-    // be wary though
-
     if (miscRoomDataObj) {
       miscRoomDataObj.preventOtherPlayersFromSqueaking = false;
-      clearInterval(miscRoomDataObj.gameStuckInterval);
-
-      // clear any bot intervals
-      for (const botInterval of miscRoomDataObj.botIntervals || []) {
-        clearInterval(botInterval);
-      }
-
-      // TODO: technically shouldn't we removing the resulting intervalID from the array after clearing it?
     }
 
     const room = roomData[roomCode];
@@ -58,11 +47,24 @@ export function resetGameHandler(
         delete room.players[playerID];
         room.roomConfig.playersInRoom--;
 
-        // assigning new host if the host left
-        if (playerID === room.roomConfig.hostUserID) {
-          room.roomConfig.hostUserID = Object.keys(room.players)[0] || "";
+        const playerIDsPresentlyInRoom = Object.keys(room.players).filter(
+          (playerID) =>
+            !game?.playerIDsThatLeftMidgame.includes(playerID) &&
+            !room.players[playerID]?.botDifficulty
+        );
+
+        // assign a new host (if available) if the host left
+        if (
+          playerID === room.roomConfig.hostUserID &&
+          playerIDsPresentlyInRoom.length > 0
+          // TODO: sanity check: is this even necessary to check since wouldn't all the players
+          // leaving have gone through the leaveRoomHandler and deleted the whole room/game?
+        ) {
+          const newHostID = playerIDsPresentlyInRoom[0] as string; // we know this will exist and be a string
+
+          room.roomConfig.hostUserID = newHostID;
           room.roomConfig.hostUsername =
-            Object.values(room.players)[0]?.username || "";
+            room.players[newHostID]?.username || "";
         }
       }
 
@@ -127,27 +129,19 @@ export function resetGameHandler(
       miscRoomDataObj.rotateDecksCounter = 0;
     }
 
-    // pick a random (human) player to start the next round
-    const playerIDs = Object.keys(game.players);
-    let randomPlayerID;
+    // pick the first present human player to start the next round
+    const playerIDsPresentlyInRoom = Object.keys(room.players).filter(
+      (playerID) =>
+        !game?.playerIDsThatLeftMidgame.includes(playerID) &&
+        !room.players[playerID]?.botDifficulty
+    );
 
-    let foundValidPlayerID = false;
-    while (!foundValidPlayerID) {
-      const randomPlayerID =
-        playerIDs[Math.floor(Math.random() * playerIDs.length)];
-      if (
-        randomPlayerID &&
-        room.players[randomPlayerID]?.botDifficulty === undefined &&
-        !game.playerIDsThatLeftMidgame.includes(randomPlayerID)
-      ) {
-        foundValidPlayerID = true;
-      }
-    }
+    if (playerIDsPresentlyInRoom.length === 0) return;
 
     io.in(roomCode).emit("startNewRound", {
       roomCode: roomCode,
       gameData: game,
-      playerIDToStartNextRound: randomPlayerID,
+      playerIDToStartNextRound: playerIDsPresentlyInRoom[0],
     });
   }
 

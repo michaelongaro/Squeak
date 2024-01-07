@@ -56,49 +56,22 @@ export function leaveRoomHandler(
       game.playerIDsThatLeftMidgame.push(playerID);
     }
 
-    // TODO: can probably simply these two if statements into an if/else, but check side effects
+    const playerIDsPresentlyInRoom = Object.keys(room.players).filter(
+      (playerID) =>
+        !game?.playerIDsThatLeftMidgame.includes(playerID) &&
+        !room.players[playerID]?.botDifficulty
+    );
 
-    function justBotPlayersLeft() {
-      if (!game) return false;
-
-      for (const playerID in room?.players) {
-        if (
-          room.players[playerID]?.botDifficulty === undefined &&
-          !game.playerIDsThatLeftMidgame.includes(playerID)
-        )
-          return false;
-      }
-      return true;
-    }
-
-    // assign a new host if the host left (and there are not just bots left in the room)
-    if (
-      playerID === previousHostID &&
-      room.roomConfig.playersInRoom !== 0 &&
-      !justBotPlayersLeft()
-    ) {
-      // loop over all of the players in the room and find the first one that isn't a bot
-      for (const playerID in room.players) {
-        const playerHasLeftGame = game
-          ? game.playerIDsThatLeftMidgame.includes(playerID)
-          : false;
-
-        // don't we also have to do the check for playerIDsThatLeftMidgame here?
-        if (
-          room.players[playerID]?.botDifficulty === undefined &&
-          !playerHasLeftGame
-        ) {
-          newHostID = playerID;
-          break;
-        }
-      }
+    // assign a new host (if available) if the host left
+    if (playerID === previousHostID && playerIDsPresentlyInRoom.length > 0) {
+      newHostID = playerIDsPresentlyInRoom[0] as string; // we know this will exist and be a string
 
       room.roomConfig.hostUserID = newHostID;
       room.roomConfig.hostUsername = room.players[newHostID]?.username || "";
     }
 
     // if there are no players left in the room, delete the room
-    if (room.roomConfig.playersInRoom === 0 || justBotPlayersLeft()) {
+    if (playerIDsPresentlyInRoom.length === 0) {
       delete roomData[roomCode];
       delete gameData[roomCode];
 
@@ -127,7 +100,7 @@ export function leaveRoomHandler(
 
     // prisma operations are async, so this needs to be called after the emit
     // to reduce on delay on the client side
-    if (room.roomConfig.playersInRoom === 0) {
+    if (playerIDsPresentlyInRoom.length === 0) {
       await prisma.room.delete({
         where: {
           code: roomCode,
@@ -135,7 +108,6 @@ export function leaveRoomHandler(
       });
     } else {
       // if there are still players in the room, update the room in the database
-
       await prisma.room.update({
         where: {
           code: roomCode,

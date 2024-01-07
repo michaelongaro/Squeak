@@ -74,12 +74,17 @@ export function generateAndEmitScoreboard({
   roundWinnerID,
   roomCode,
 }: IRoundOverBackendVersion) {
+  const room = roomData[roomCode];
+  const game = gameData[roomCode];
+
   const playerCards = gameData[roomCode]?.players;
   const pointsToWin = roomData[roomCode]?.roomConfig.pointsToWin;
   // don't like this var name
   const miscRoomDataObj = miscRoomData[roomCode];
 
   if (
+    !room ||
+    !game ||
     !playerCards ||
     !pointsToWin ||
     !miscRoomDataObj ||
@@ -87,12 +92,17 @@ export function generateAndEmitScoreboard({
   )
     return;
 
-  // TODO: need to clear out intervals here, maybe also in resetGameHandler but for sure here
-
   miscRoomDataObj.preventOtherPlayersFromSqueaking = true;
 
-  const playerRoundDetails = {} as IPlayerRoundDetailsMetadata;
+  // clearing out intervals
+  clearInterval(miscRoomDataObj.gameStuckInterval);
 
+  for (const botInterval of miscRoomDataObj.botIntervals || []) {
+    clearInterval(botInterval);
+  }
+  miscRoomDataObj.botIntervals = [];
+
+  const playerRoundDetails = {} as IPlayerRoundDetailsMetadata;
   const playerScoresForThisRound: [string, number][] = [];
   const playerRanksForThisRound = {} as IPlayerRankings;
 
@@ -250,10 +260,18 @@ export function generateAndEmitScoreboard({
     });
   }
 
+  // pick the first present human player to start the next round
+  const playerIDsPresentlyInRoom = Object.keys(room.players).filter(
+    (playerID) =>
+      !game?.playerIDsThatLeftMidgame.includes(playerID) &&
+      !room.players[playerID]?.botDifficulty
+  );
+
   io.in(roomCode).emit("scoreboardMetadata", {
     roundWinnerID,
     gameWinnerID,
     playerRoundDetails,
+    playerIDToStartNextRound: playerIDsPresentlyInRoom[0],
   });
 
   return {
