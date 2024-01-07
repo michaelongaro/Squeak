@@ -14,9 +14,9 @@ import generateDeckAndSqueakCards from "../../../utils/generateDeckAndSqueakCard
 const prisma = new PrismaClient();
 
 const botDifficultyDelay = {
-  Easy: 5000,
-  Medium: 3000,
-  Hard: 1000,
+  Easy: 7000,
+  Medium: 4500,
+  Hard: 2000,
 };
 
 export function startGameHandler(
@@ -144,7 +144,7 @@ export function startGameHandler(
                 ),
               botDifficultyDelay[player.botDifficulty]
             );
-          }, parseInt(index) * 500); // stagger each bot's moves so they don't all happen at once if they have the same difficulty
+          }, parseInt(index) * 750); // stagger each bot's moves so they don't all happen at once if they have the same difficulty
 
           if (!miscRoomDataObj.botIntervals && botInterval) {
             miscRoomDataObj.botIntervals = [botInterval];
