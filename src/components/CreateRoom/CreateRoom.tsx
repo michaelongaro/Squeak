@@ -36,7 +36,6 @@ const botNames = [
   "Bot Michael",
   "Bot Andrew",
   "Bot Gilbert",
-  "Bot Wan",
   "Bot Anthony",
 ];
 
