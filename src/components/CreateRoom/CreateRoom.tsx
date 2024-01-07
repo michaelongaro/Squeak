@@ -406,7 +406,7 @@ function CreateRoom() {
             }}
             className="baseVertFlex gap-4"
           >
-            <fieldset className="rounded-md border-2 border-white bg-green-800 p-4">
+            <fieldset className="min-w-[14rem] rounded-md border-2 border-white bg-green-800 p-4">
               <legend className="baseFlex gap-2 pl-4 pr-4 text-left text-lg">
                 Players
                 <div className="tracking-widest">{`(${roomConfig.playersInRoom}/${roomConfig.maxPlayers})`}</div>
@@ -483,7 +483,7 @@ function CreateRoom() {
               innerText={"Start game"}
               innerTextWhenLoading={"Starting game"}
               disabled={roomConfig.playersInRoom < 2}
-              width={"12rem"}
+              width={"14rem"}
               onClickFunction={() => {
                 socket.emit("startGame", {
                   roomCode: roomConfig.code,
@@ -497,7 +497,7 @@ function CreateRoom() {
           <PrimaryButton
             innerText={"Create"}
             innerTextWhenLoading={"Creating"}
-            width={"12rem"}
+            width={"14rem"}
             disabled={
               Object.values(playerMetadata)[0]?.username.length === 0 ||
               usernameIsProfane
