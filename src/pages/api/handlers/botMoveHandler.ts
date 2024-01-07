@@ -40,7 +40,7 @@ export function botMoveHandler(
   } = {};
 
   // 1st priority: bot has an exposed squeak button
-  if (players[playerID]?.squeakHand[0]?.length === 0) {
+  if (players[playerID]?.squeakDeck.length === 0) {
     generateAndEmitScoreboard({
       io,
       gameData,
