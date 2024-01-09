@@ -6,7 +6,7 @@ import { type IMiscRoomData, type IGameData } from "../socket";
 
 interface IDeckToBoard {
   gameData: IGameData;
-  miscRoomData?: IMiscRoomData;
+  miscRoomData: IMiscRoomData;
   card: ICard;
   playerID: string;
   roomCode: string;
@@ -26,9 +26,15 @@ export function deckToBoard({
   const board = gameData[roomCode]?.board;
   const players = gameData[roomCode]?.players;
   const player = gameData[roomCode]?.players?.[playerID];
-  const miscRoomDataObj = miscRoomData?.[roomCode];
+  const miscRoomDataObj = miscRoomData[roomCode];
 
-  if (!board || !player || !players) return;
+  if (
+    !board ||
+    !player ||
+    !players ||
+    miscRoomDataObj?.preventOtherPlayersFromSqueaking
+  )
+    return;
 
   const { row, col } = boardEndLocation;
   const cell = board[row]?.[col]; // idk why only need to ?. on col but w/e?

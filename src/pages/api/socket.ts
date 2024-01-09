@@ -209,7 +209,7 @@ export default function SocketHandler(req, res) {
     // game/room handlers
     drawFromDeckHandler(io, socket, gameData);
 
-    proposedCardDropHandler(io, socket, gameData);
+    proposedCardDropHandler(io, socket, gameData, miscRoomData);
 
     roundOverHandler(io, socket, gameData, roomData, miscRoomData);
 

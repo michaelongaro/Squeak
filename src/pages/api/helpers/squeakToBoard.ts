@@ -7,7 +7,7 @@ import { drawFromSqueakDeck } from "./drawFromSqueakDeck";
 
 interface ISqueakToBoard {
   gameData: IGameData;
-  miscRoomData?: IMiscRoomData;
+  miscRoomData: IMiscRoomData;
   card: ICard;
   playerID: string;
   roomCode: string;
@@ -30,9 +30,15 @@ export function squeakToBoard({
   const players = gameData[roomCode]?.players;
   const player = gameData[roomCode]?.players?.[playerID];
   const startSqueakStackLocation = player?.squeakHand[squeakStartLocation];
-  const miscRoomDataObj = miscRoomData?.[roomCode];
+  const miscRoomDataObj = miscRoomData[roomCode];
 
-  if (!board || !players || !startSqueakStackLocation) return;
+  if (
+    !board ||
+    !players ||
+    !startSqueakStackLocation ||
+    miscRoomDataObj?.preventOtherPlayersFromSqueaking
+  )
+    return;
 
   const { row, col } = boardEndLocation;
   const cell = board[row]?.[col]; // idk why only need to ?. on col but w/e?

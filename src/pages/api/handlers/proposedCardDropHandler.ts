@@ -3,12 +3,17 @@ import { deckToBoard } from "../helpers/deckToBoard";
 import { deckToSqueak } from "../helpers/deckToSqueak";
 import { squeakToBoard } from "../helpers/squeakToBoard";
 import { squeakToSqueak } from "../helpers/squeakToSqueak";
-import { type IGameData, type ICardDropProposal } from "../socket";
+import {
+  type IGameData,
+  type ICardDropProposal,
+  type IMiscRoomData,
+} from "../socket";
 
 export function proposedCardDropHandler(
   io: Server,
   socket: Socket,
-  gameData: IGameData
+  gameData: IGameData,
+  miscRoomData: IMiscRoomData
 ) {
   function proposedCardDrop({
     card,
@@ -20,7 +25,15 @@ export function proposedCardDropHandler(
     roomCode,
   }: ICardDropProposal) {
     if (deckStart && boardEndLocation) {
-      deckToBoard({ gameData, card, boardEndLocation, playerID, roomCode, io });
+      deckToBoard({
+        gameData,
+        miscRoomData,
+        card,
+        boardEndLocation,
+        playerID,
+        roomCode,
+        io,
+      });
     } else if (deckStart && squeakEndLocation != null) {
       deckToSqueak({
         gameData,
@@ -33,6 +46,7 @@ export function proposedCardDropHandler(
     } else if (squeakStartLocation != null && boardEndLocation) {
       squeakToBoard({
         gameData,
+        miscRoomData,
         card,
         squeakStartLocation,
         boardEndLocation,
