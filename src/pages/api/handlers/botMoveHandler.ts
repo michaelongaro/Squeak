@@ -29,6 +29,8 @@ export function botMoveHandler(
   const botDifficulty = roomData[roomCode]?.players?.[playerID]?.botDifficulty;
   const squeakDeck = bot?.squeakDeck;
   const squeakHand = bot?.squeakHand;
+  const blacklistedSqueakCards =
+    miscRoomDataObj?.blacklistedSqueakCards?.[playerID];
 
   if (
     !bot ||
@@ -36,17 +38,10 @@ export function botMoveHandler(
     !squeakDeck ||
     !squeakHand ||
     miscRoomDataObj.preventOtherPlayersFromSqueaking ||
-    !botDifficulty
+    !botDifficulty ||
+    !blacklistedSqueakCards
   )
     return;
-
-  // used to keep track of squeak cards that have been moved to other squeak cards so that
-  // we don't move them back to the same squeak card infinitely. When a squeak card is moved
-  // onto the board the key-value pair will be deleted from this object.
-  // ^^ could have another reversed obj for easier lookup, but only do if ergonomics are worth it
-  const blacklistedSqueakCards: {
-    [stringifiedCard: string]: string;
-  } = {};
 
   // 1st priority: bot has an exposed squeak button
   if (players[playerID]?.squeakDeck.length === 0) {
@@ -58,7 +53,7 @@ export function botMoveHandler(
       roundWinnerID: playerID,
       roomCode,
     });
-    console.log("did 1st");
+    // console.log("did 1st");
     return;
   }
 
@@ -111,7 +106,7 @@ export function botMoveHandler(
                         delete blacklistedSqueakCards[key];
                       }
                     }
-                    console.log("did 2nd");
+                    // console.log("did 2nd");
                   }
                 },
                 needToWaitForTimestampLockout
@@ -156,7 +151,7 @@ export function botMoveHandler(
           blacklistedSqueakCards[
             `${card.value}${card.suit}`
           ] = `${bottomCard.value}${bottomCard.suit}`;
-          console.log("did 2nd");
+          // console.log("did 2nd");
 
           return;
         }
@@ -207,7 +202,7 @@ export function botMoveHandler(
                     delete blacklistedSqueakCards[key];
                   }
                 }
-                console.log("did 3rd");
+                // console.log("did 3rd");
               }
             },
             needToWaitForTimestampLockout
@@ -261,7 +256,7 @@ export function botMoveHandler(
                 io,
                 boardEndLocation: { row, col },
               });
-              console.log("did 4th");
+              // console.log("did 4th");
             },
             needToWaitForTimestampLockout
               ? minTimestampDelays[botDifficulty]
@@ -300,7 +295,7 @@ export function botMoveHandler(
           squeakEndLocation: stackIdx,
         });
 
-        console.log("did 5th");
+        // console.log("did 5th");
         return;
       }
     }
@@ -345,7 +340,7 @@ export function botMoveHandler(
           blacklistedSqueakCards[
             `${card.value}${card.suit}`
           ] = `${bottomCard.value}${bottomCard.suit}`;
-          console.log("did 6th");
+          // console.log("did 6th");
           return;
         }
       }
@@ -359,7 +354,7 @@ export function botMoveHandler(
     playerID,
     roomCode,
   });
-  console.log("did 7th");
+  // console.log("did 7th");
 
   return;
 }
