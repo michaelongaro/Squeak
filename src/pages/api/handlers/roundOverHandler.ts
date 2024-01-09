@@ -79,6 +79,7 @@ export function generateAndEmitScoreboard({
 
   const playerCards = gameData[roomCode]?.players;
   const pointsToWin = roomData[roomCode]?.roomConfig.pointsToWin;
+  const players = roomData[roomCode]?.players;
   // don't like this var name
   const miscRoomDataObj = miscRoomData[roomCode];
 
@@ -87,6 +88,7 @@ export function generateAndEmitScoreboard({
     !game ||
     !playerCards ||
     !pointsToWin ||
+    !players ||
     !miscRoomDataObj ||
     miscRoomDataObj?.preventOtherPlayersFromSqueaking
   )
@@ -94,13 +96,20 @@ export function generateAndEmitScoreboard({
 
   miscRoomDataObj.preventOtherPlayersFromSqueaking = true;
 
-  // clearing out intervals
+  // clearing out intervals + housekeeping
   clearInterval(miscRoomDataObj.gameStuckInterval);
 
-  for (const botInterval of miscRoomDataObj.botIntervals || []) {
+  for (const botInterval of miscRoomDataObj.botIntervals) {
     clearInterval(botInterval);
   }
+
   miscRoomDataObj.botIntervals = [];
+
+  for (const playerID of Object.keys(players)) {
+    if (players[playerID]?.botDifficulty) {
+      miscRoomDataObj.blacklistedSqueakCards[playerID] = {};
+    }
+  }
 
   const playerRoundDetails = {} as IPlayerRoundDetailsMetadata;
   const playerScoresForThisRound: [string, number][] = [];

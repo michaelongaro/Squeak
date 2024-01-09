@@ -36,6 +36,8 @@ export function createRoomHandler(
         numberOfPlayersReady: 0,
         rotateDecksCounter: 0,
         preventOtherPlayersFromSqueaking: false,
+        botIntervals: [],
+        blacklistedSqueakCards: {},
       };
 
       io.in(roomConfig.code).emit("roomWasCreated");

@@ -79,7 +79,7 @@ export function leaveRoomHandler(
         clearInterval(miscRoomDataObj.gameStuckInterval);
 
         // clear any bot intervals
-        for (const botInterval of miscRoomDataObj.botIntervals || []) {
+        for (const botInterval of miscRoomDataObj.botIntervals) {
           clearInterval(botInterval);
         }
 

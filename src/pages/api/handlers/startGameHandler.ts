@@ -124,13 +124,18 @@ export function startGameHandler(
         for (const index in Object.keys(currentRoomPlayers)) {
           const playerID = Object.keys(currentRoomPlayers)[parseInt(index)];
           const player = currentRoomPlayers[playerID || ""];
+          const botDifficulty = player?.botDifficulty;
 
-          if (!player || !playerID || player.botDifficulty === undefined)
-            continue;
+          if (!player || !playerID || botDifficulty === undefined) continue;
 
           let botInterval: NodeJS.Timeout | null = null;
           setTimeout(() => {
-            if (!player.botDifficulty) return;
+            // TODO: could probably move this directly to happen when bot joins a room in joinHandler.ts
+            if (
+              miscRoomDataObj.blacklistedSqueakCards[playerID] === undefined
+            ) {
+              miscRoomDataObj.blacklistedSqueakCards[playerID] = {};
+            }
 
             botInterval = setInterval(
               () =>
@@ -142,15 +147,11 @@ export function startGameHandler(
                   miscRoomData,
                   playerID
                 ),
-              botDifficultyDelay[player.botDifficulty]
+              botDifficultyDelay[botDifficulty]
             );
-          }, parseInt(index) * 750); // stagger each bot's moves so they don't all happen at once if they have the same difficulty
 
-          if (!miscRoomDataObj.botIntervals && botInterval) {
-            miscRoomDataObj.botIntervals = [botInterval];
-          } else if (miscRoomDataObj.botIntervals && botInterval) {
-            miscRoomDataObj.botIntervals.push(botInterval);
-          }
+            if (botInterval) miscRoomDataObj.botIntervals.push(botInterval);
+          }, parseInt(index) * 750); // stagger each bot's moves so they don't all happen at once if they have the same difficulty
         }
       }, 7500); // roughly the time it takes for the cards to be dealt to the players on client side
 

@@ -48,8 +48,22 @@ interface IMiscRoomMetadata {
   numberOfPlayersReady: number;
   rotateDecksCounter: number;
   preventOtherPlayersFromSqueaking: boolean;
-  gameStuckInterval?: NodeJS.Timeout;
-  botIntervals?: NodeJS.Timeout[];
+  gameStuckInterval?: NodeJS.Timeout; // TODO: most likely don't need this to be optional
+  botIntervals: NodeJS.Timeout[];
+
+  // used to keep track of squeak cards that have been moved to other squeak cards so that
+  // we don't move them back to the same squeak card infinitely. When a squeak card is moved
+  // onto the board the key-value pair will be deleted from this object.
+  // key: stringified card that was moved
+  // value: stringified card that it was moved to
+  // ^^ could have another reversed obj for easier lookup, but only do if ergonomics are worth it
+  blacklistedSqueakCards: {
+    [playerID: string]: IBlacklistedSqueakCards;
+  };
+}
+
+interface IBlacklistedSqueakCards {
+  [stringifiedCard: string]: string;
 }
 
 export interface IGameData {
