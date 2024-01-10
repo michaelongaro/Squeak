@@ -5,7 +5,7 @@ function DecksAreBeingRotatedModal() {
   const [absolutePositionOfInnerTooltip, setAbsolutePositionOfInnerTooltip] =
     useState<{
       left: string;
-      bottom: string;
+      top: string;
     } | null>(null);
 
   useEffect(() => {
@@ -17,8 +17,8 @@ function DecksAreBeingRotatedModal() {
 
     // TODO: convert this to appropriate offsets for mobile view when doing that refactor
     setAbsolutePositionOfInnerTooltip({
-      left: `${playerContainerRect.left - 352}px`,
-      bottom: `${playerContainerRect.top + 16}px`,
+      left: `${playerContainerRect.left - 150}px`,
+      top: `${playerContainerRect.top + 119}px`,
     });
   }, []);
 
@@ -42,7 +42,7 @@ function DecksAreBeingRotatedModal() {
             backgroundColor: "hsl(120deg, 100%, 86%)",
             color: "hsl(120deg, 100%, 18%)",
             left: absolutePositionOfInnerTooltip.left,
-            bottom: absolutePositionOfInnerTooltip.bottom,
+            top: absolutePositionOfInnerTooltip.top,
           }}
           className="baseVertFlex absolute gap-2 rounded-sm border-2 bg-green-800 p-2"
         >
