@@ -47,7 +47,7 @@ function DangerButton({
         filter: `brightness(${brightness})`,
         width: width ?? "100%",
         height: height ?? "100%",
-        zIndex: 999, // temp fix for tooltip being hidden behind other elements declared after it
+        zIndex: showTooltip ? 999 : "auto", // temp fix for tooltip being hidden behind other elements declared after it
         ...style,
       }}
       className="relative grid cursor-pointer place-content-center gap-2 rounded-md border-2 p-2 transition-all"
