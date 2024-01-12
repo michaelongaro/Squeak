@@ -147,13 +147,17 @@ export function startGameHandler(
                   miscRoomData,
                   playerID
                 ),
-              botDifficultyDelay[botDifficulty]
+              botDifficultyDelay[botDifficulty] +
+                (Math.floor(Math.random() * 500) - 250)
             );
 
             if (botInterval) miscRoomDataObj.botIntervals.push(botInterval);
-          }, parseInt(index) * 750); // stagger each bot's moves so they don't all happen at once if they have the same difficulty
+          }, parseInt(index) * botDifficultyDelay[botDifficulty]);
+          // TODO: I am entirely not convinced that this will guarantee that the bots won't overlap...
+          // stagger each bot's moves so they don't all happen at once if they have the same difficulty,
+          // also helps with not rapid-fire placing cards on the board which is a little unfair.
         }
-      }, 7500); // roughly the time it takes for the cards to be dealt to the players on client side
+      }, 7000); // roughly the time it takes for the cards to be dealt to the players on client side
 
       if (firstRound && prisma) {
         io.in(roomCode).emit("navigateToPlayScreen", gameData[roomCode]);
