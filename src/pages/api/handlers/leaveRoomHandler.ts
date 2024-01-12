@@ -98,6 +98,8 @@ export function leaveRoomHandler(
 
     io.in(roomCode).emit("playerHasLeftRoom", emitData);
 
+    socket.leave(roomCode);
+
     // prisma operations are async, so this needs to be called after the emit
     // to reduce on delay on the client side
     if (playerIDsPresentlyInRoom.length === 0) {
