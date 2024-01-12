@@ -40,10 +40,12 @@ function useCardDropApproved({
   moveCard,
 }: IUseCardDropApproved) {
   const {
+    audioContext,
+    masterVolumeGainNode,
+    successfulMoveBuffer,
+    otherPlayerCardMoveBuffer,
     setGameData,
     setProposedCardBoxShadow,
-    soundPlayStates,
-    setSoundPlayStates,
     squeakStackDragAlterations,
     setOtherPlayerSqueakStacksBeingDragged,
   } = useRoomContext();
@@ -86,6 +88,15 @@ function useCardDropApproved({
         .getElementById(endID)
         ?.getBoundingClientRect();
       if (!endLocation) return;
+
+      if (audioContext && masterVolumeGainNode && endID.includes("cell")) {
+        const source = audioContext.createBufferSource();
+        source.buffer =
+          userID === ownerID ? successfulMoveBuffer : otherPlayerCardMoveBuffer;
+
+        source.connect(masterVolumeGainNode);
+        source.start();
+      }
 
       // fyi: hand -> cell = no need to setOtherPlayerSqueakStacksBeingDragged();
 
@@ -192,24 +203,9 @@ function useCardDropApproved({
       });
 
       if (playerID === userID) {
-        if (endID.includes("cell")) {
-          setSoundPlayStates({
-            ...soundPlayStates,
-            currentPlayer: true,
-          });
-        }
-
         setProposedCardBoxShadow({
           id: endID,
           boxShadowValue: `0px 0px 4px 3px rgba(29, 232, 7, 1)`,
-        });
-      } else if (playerID && endID.includes("cell")) {
-        setSoundPlayStates({
-          ...soundPlayStates,
-          otherPlayers: {
-            ...soundPlayStates.otherPlayers,
-            [playerID]: true,
-          },
         });
       }
     }
@@ -217,8 +213,10 @@ function useCardDropApproved({
     dataFromBackend,
     moveCard,
     setGameData,
-    soundPlayStates,
-    setSoundPlayStates,
+    audioContext,
+    masterVolumeGainNode,
+    successfulMoveBuffer,
+    otherPlayerCardMoveBuffer,
     setProposedCardBoxShadow,
     squeakStackDragAlterations,
     setOtherPlayerSqueakStacksBeingDragged,

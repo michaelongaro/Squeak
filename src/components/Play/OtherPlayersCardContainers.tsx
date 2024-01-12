@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useUserIDContext } from "../../context/UserIDContext";
 import { useRoomContext } from "../../context/RoomContext";
 import useResponsiveCardDimensions from "../../hooks/useResponsiveCardDimensions";
@@ -38,13 +38,10 @@ function OtherPlayersCardContainers({
   const userID = useUserIDContext();
 
   const {
-    currentVolume,
     playerMetadata,
     gameData,
     showDecksAreBeingRotatedModal,
     squeakDeckBeingMovedProgramatically,
-    setSoundPlayStates,
-    soundPlayStates,
     cardBeingMovedProgramatically,
     roomConfig,
     squeakStackDragAlterations,
@@ -93,34 +90,6 @@ function OtherPlayersCardContainers({
       setShowDummyDeckCardStates(tempDummyDeckCardStates);
     }
   }, [gameData.players, otherPlayerIDs, showDummyDeckCardStates]);
-
-  const audioRef0 = useRef<HTMLAudioElement>(null);
-  const audioRef1 = useRef<HTMLAudioElement>(null);
-  const audioRef2 = useRef<HTMLAudioElement>(null);
-
-  useEffect(() => {
-    if (Object.values(soundPlayStates.otherPlayers).includes(true)) {
-      const audioRefs = [audioRef0, audioRef1, audioRef2];
-
-      for (const index in otherPlayerIDs) {
-        if (soundPlayStates.otherPlayers[otherPlayerIDs[index]!]) {
-          audioRefs[index]!.current!.volume = currentVolume * 0.01;
-          // restarting audio from beginning if it's already playing
-          audioRefs[index]!.current!.pause();
-          audioRefs[index]!.current!.currentTime = 0;
-          audioRefs[index]!.current!.play();
-
-          setSoundPlayStates({
-            ...soundPlayStates,
-            otherPlayers: {
-              ...soundPlayStates.otherPlayers,
-              [otherPlayerIDs[index]!]: false,
-            },
-          });
-        }
-      }
-    }
-  }, [soundPlayStates, currentVolume, otherPlayerIDs, setSoundPlayStates]);
 
   const cardDimensions = useResponsiveCardDimensions();
   useRotatePlayerDecks();
@@ -178,15 +147,8 @@ function OtherPlayersCardContainers({
 
   return (
     <>
-      <audio ref={audioRef0} src="/sounds/otherPlayerCardMove.wav" />
-      <audio ref={audioRef1} src="/sounds/otherPlayerCardMove.wav" />
-      <audio ref={audioRef2} src="/sounds/otherPlayerCardMove.wav" />
-
       {otherPlayerIDs.map((playerID, idx) => (
-        <div
-          key={playerID}
-          className={`${orderedClassNames[idx]} relative select-none`}
-        >
+        <div key={playerID} className={`${orderedClassNames[idx]} select-none`}>
           <div
             id={`${playerID}container`}
             style={{

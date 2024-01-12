@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, type MouseEvent } from "react";
+import { useState, useEffect, type MouseEvent } from "react";
 import { socket } from "../../pages";
 import { useUserIDContext } from "../../context/UserIDContext";
 import { useRoomContext } from "../../context/RoomContext";
@@ -10,7 +10,7 @@ import { type IGetBoxShadowStyles } from "./Board";
 import useRotatePlayerDecks from "../../hooks/useRotatePlayerDecks";
 import PlayerIcon from "../playerIcons/PlayerIcon";
 import useResponsiveCardDimensions from "../../hooks/useResponsiveCardDimensions";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 import Buzzer from "./Buzzer";
 import useFilterCardsInHandFromDeck from "../../hooks/useFilterCardsInHandFromDeck";
 interface IPlayerCardContainer {
@@ -31,15 +31,12 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
     mirrorPlayerContainer,
     roomConfig,
     playerMetadata,
-    currentVolume,
     gameData,
     holdingASqueakCard,
     hoveredSqueakStack,
     holdingADeckCard,
     proposedCardBoxShadow,
     showDecksAreBeingRotatedModal,
-    soundPlayStates,
-    setSoundPlayStates,
     originIndexForHeldSqueakCard,
     setHoldingADeckCard,
     cardBeingMovedProgramatically,
@@ -57,8 +54,6 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
   useRotatePlayerDecks();
 
   const cardDimensions = useResponsiveCardDimensions();
-
-  const audioRef = useRef<HTMLAudioElement>(null);
 
   useEffect(() => {
     if (showDecksAreBeingRotatedModal) {
@@ -101,17 +96,6 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
 
     return `${(20 - squeakStackLength) * cardIdx}px`;
   }
-
-  useEffect(() => {
-    if (soundPlayStates.currentPlayer && audioRef.current) {
-      audioRef.current.volume = currentVolume * 0.01;
-      // restarting audio from beginning if it's already playing
-      audioRef.current.pause();
-      audioRef.current.currentTime = 0;
-      audioRef.current.play();
-      setSoundPlayStates({ ...soundPlayStates, currentPlayer: false });
-    }
-  }, [soundPlayStates, currentVolume, setSoundPlayStates]);
 
   function mouseMoveHandler(
     e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>
@@ -197,7 +181,6 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
       className={`${cardContainerClass}`}
       onMouseMove={(e) => mouseMoveHandler(e)}
     >
-      <audio ref={audioRef} src="/sounds/firstSuccessfulMove.wav" />
       {userID && (
         <div
           className={`${

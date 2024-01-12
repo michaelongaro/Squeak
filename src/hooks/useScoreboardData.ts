@@ -13,6 +13,9 @@ function useScoreboardData() {
   const userID = useUserIDContext();
 
   const {
+    audioContext,
+    masterVolumeGainNode,
+    squeakButtonPressBuffer,
     roomConfig,
     setGameData,
     setScoreboardMetadata,
@@ -41,6 +44,18 @@ function useScoreboardData() {
         playerRoundDetails,
         playerIDToStartNextRound,
       } = dataFromBackend;
+
+      if (
+        (userID !== roundWinnerID || userID !== gameWinnerID) &&
+        audioContext &&
+        masterVolumeGainNode
+      ) {
+        const squeakButtonPressSoundSource = audioContext.createBufferSource();
+        squeakButtonPressSoundSource.buffer = squeakButtonPressBuffer;
+
+        squeakButtonPressSoundSource.connect(masterVolumeGainNode);
+        squeakButtonPressSoundSource.start();
+      }
 
       setPlayerIDWhoSqueaked(roundWinnerID);
 
@@ -74,6 +89,9 @@ function useScoreboardData() {
     setPlayerIDWhoSqueaked,
     setScoreboardMetadata,
     setShowScoreboard,
+    audioContext,
+    masterVolumeGainNode,
+    squeakButtonPressBuffer,
   ]);
 }
 

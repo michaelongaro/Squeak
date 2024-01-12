@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import AnimatedCardContainer from "./AnimatedCardContainer";
 import AnimatedNumber from "react-awesome-animated-number";
 import confetti from "canvas-confetti";
@@ -29,8 +29,14 @@ interface IPlayerColorVariants {
 }
 
 function Scoreboard() {
-  const { playerMetadata, currentVolume, scoreboardMetadata } =
-    useRoomContext();
+  const {
+    audioContext,
+    masterVolumeGainNode,
+    confettiPopBuffer,
+    playerMetadata,
+    currentVolume,
+    scoreboardMetadata,
+  } = useRoomContext();
 
   const [showNewRankings, setShowNewRankings] = useState<boolean>(false);
   const [showWinningPlayerMessage, setShowWinningPlayerMessage] =
@@ -48,8 +54,6 @@ function Scoreboard() {
 
   const [playerColorVariants, setPlayerColorVariants] =
     useState<IPlayerColorVariants>({});
-
-  const confettiPopRef = useRef<HTMLAudioElement>(null);
 
   useEffect(() => {
     setTimeout(() => {
@@ -75,11 +79,12 @@ function Scoreboard() {
     setTimeout(() => {
       setShowConfetti(true);
 
-      if (confettiPopRef.current) {
-        confettiPopRef.current.volume = currentVolume * 0.01;
-        confettiPopRef.current.pause();
-        confettiPopRef.current.currentTime = 0.35;
-        confettiPopRef.current.play();
+      if (audioContext && masterVolumeGainNode) {
+        const confettiPopBufferSource = audioContext.createBufferSource();
+        confettiPopBufferSource.buffer = confettiPopBuffer;
+
+        confettiPopBufferSource.connect(masterVolumeGainNode);
+        confettiPopBufferSource.start(0, 0.35);
       }
 
       confetti(
@@ -126,7 +131,7 @@ function Scoreboard() {
         setCountdownTimerValue(1);
       }, 2000);
     }, 10000);
-  }, [currentVolume]);
+  }, [currentVolume, audioContext, masterVolumeGainNode, confettiPopBuffer]);
 
   useEffect(() => {
     if (Object.keys(playerColorVariants).length !== 0) return;
@@ -164,7 +169,6 @@ function Scoreboard() {
       transition={{ duration: 0.5 }}
       className="baseFlex absolute left-0 top-0 z-[200] h-full w-full bg-black bg-opacity-60"
     >
-      <audio ref={confettiPopRef} src="/sounds/confettiPop.wav" />
       <motion.div
         key={"scoreboardModalInner"}
         initial={{ scale: 0.95 }}

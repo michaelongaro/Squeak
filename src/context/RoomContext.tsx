@@ -23,15 +23,6 @@ interface IProposedCardBoxShadow {
   id: string;
   boxShadowValue: string;
 }
-
-export interface ISoundStates {
-  currentPlayer: boolean;
-  otherPlayers: {
-    [playerID: string]: boolean;
-  };
-  squeakSound: boolean;
-}
-
 interface ICardBeingMovedProgramatically {
   [playerID: string]: boolean;
 }
@@ -53,6 +44,8 @@ export interface IInitSqueakStackCardBeingDealt {
 }
 
 interface IRoomContext {
+  audioContext: AudioContext | null;
+  masterVolumeGainNode: GainNode | null;
   pageToRender: "home" | "createRoom" | "joinRoom" | "play";
   setPageToRender: React.Dispatch<
     React.SetStateAction<"home" | "createRoom" | "joinRoom" | "play">
@@ -101,8 +94,6 @@ interface IRoomContext {
   setShowShufflingCountdown: React.Dispatch<React.SetStateAction<boolean>>;
   connectedToRoom: boolean;
   setConnectedToRoom: React.Dispatch<React.SetStateAction<boolean>>;
-  soundPlayStates: ISoundStates;
-  setSoundPlayStates: React.Dispatch<React.SetStateAction<ISoundStates>>;
 
   currentVolume: number | null;
   setCurrentVolume: React.Dispatch<React.SetStateAction<number | null>>;
@@ -138,6 +129,12 @@ interface IRoomContext {
       [playerID: string]: SqueakStackDragAlterations;
     }>
   >;
+
+  // audio file buffers
+  successfulMoveBuffer: AudioBuffer | null;
+  otherPlayerCardMoveBuffer: AudioBuffer | null;
+  squeakButtonPressBuffer: AudioBuffer | null;
+  confettiPopBuffer: AudioBuffer | null;
 }
 
 const RoomContext = createContext<IRoomContext | null>(null);
@@ -148,6 +145,19 @@ export function RoomProvider(props: { children: React.ReactNode }) {
 
   // probably want to remove the default "refetch on page focus" behavior
   const { data: user } = trpc.users.getUserByID.useQuery(userID);
+
+  const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
+  const [masterVolumeGainNode, setMasterVolumeGainNode] =
+    useState<GainNode | null>(null);
+
+  const [successfulMoveBuffer, setSuccessfulMoveBuffer] =
+    useState<AudioBuffer | null>(null);
+  const [otherPlayerCardMoveBuffer, setOtherPlayerCardMoveBuffer] =
+    useState<AudioBuffer | null>(null);
+  const [squeakButtonPressBuffer, setSqueakButtonPressBuffer] =
+    useState<AudioBuffer | null>(null);
+  const [confettiPopBuffer, setConfettiPopBuffer] =
+    useState<AudioBuffer | null>(null);
 
   const [currentVolume, setCurrentVolume] = useState<number | null>(null);
   const [prefersSimpleCardAssets, setPrefersSimpleCardAssets] = useState<
@@ -203,12 +213,6 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     null
   );
 
-  const [soundPlayStates, setSoundPlayStates] = useState<ISoundStates>({
-    currentPlayer: false,
-    otherPlayers: {},
-    squeakSound: false,
-  });
-
   const [connectedToRoom, setConnectedToRoom] = useState<boolean>(false);
 
   const [showScoreboard, setShowScoreboard] = useState<boolean>(false);
@@ -242,6 +246,41 @@ export function RoomProvider(props: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
+    if (audioContext === null) return;
+
+    const fetchAudioFile = async (path: string) => {
+      const response = await fetch(path);
+      const arrayBuffer = await response.arrayBuffer();
+      return await audioContext.decodeAudioData(arrayBuffer);
+    };
+
+    fetchAudioFile("/sounds/successfulMove.mp3").then((buffer) =>
+      setSuccessfulMoveBuffer(buffer)
+    );
+    fetchAudioFile("/sounds/otherPlayerCardMove.mp3").then((buffer) =>
+      setOtherPlayerCardMoveBuffer(buffer)
+    );
+    fetchAudioFile("/sounds/squeakButtonPress.mp3").then((buffer) =>
+      setSqueakButtonPressBuffer(buffer)
+    );
+    fetchAudioFile("/sounds/confettiPop.mp3").then((buffer) =>
+      setConfettiPopBuffer(buffer)
+    );
+  }, [audioContext]);
+
+  useEffect(() => {
+    if (audioContext && masterVolumeGainNode) return;
+    const newAudioContext = new AudioContext();
+
+    const newMasterVolumeGainNode = newAudioContext.createGain();
+
+    newMasterVolumeGainNode.connect(newAudioContext.destination);
+
+    setAudioContext(newAudioContext);
+    setMasterVolumeGainNode(newMasterVolumeGainNode);
+  }, [audioContext, masterVolumeGainNode]);
+
+  useEffect(() => {
     if (userID && friendData === undefined) {
       socket.emit("initializePlayerInFriendsObj", userID);
     }
@@ -257,10 +296,14 @@ export function RoomProvider(props: { children: React.ReactNode }) {
   }, [prefersSimpleCardAssets]);
 
   useEffect(() => {
-    if (currentVolume === null) return;
+    if (currentVolume === null || !masterVolumeGainNode) return;
 
+    console.log("hitting check");
     localStorage.setItem("squeakVolume", currentVolume.toString());
-  }, [currentVolume]);
+
+    const fixedVolume = currentVolume * 0.01;
+    masterVolumeGainNode.gain.value = Number(fixedVolume.toFixed(2));
+  }, [currentVolume, masterVolumeGainNode]);
 
   useEffect(() => {
     if (status === "authenticated") {
@@ -298,6 +341,12 @@ export function RoomProvider(props: { children: React.ReactNode }) {
   }, [userID, user, playerMetadata, session, status]);
 
   const context: IRoomContext = {
+    audioContext,
+    masterVolumeGainNode,
+    successfulMoveBuffer,
+    otherPlayerCardMoveBuffer,
+    squeakButtonPressBuffer,
+    confettiPopBuffer,
     pageToRender,
     setPageToRender,
     showSettingsModal,
@@ -336,8 +385,6 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     setScoreboardMetadata,
     connectedToRoom,
     setConnectedToRoom,
-    soundPlayStates,
-    setSoundPlayStates,
     currentVolume,
     setCurrentVolume,
     prefersSimpleCardAssets,

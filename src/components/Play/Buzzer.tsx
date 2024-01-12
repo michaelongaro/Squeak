@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { socket } from "../../pages";
 import { motion } from "framer-motion";
 import Image from "next/image";
@@ -15,16 +15,20 @@ interface IBuzzer {
 function Buzzer({ playerID, roomCode, interactive }: IBuzzer) {
   const userID = useUserIDContext();
 
-  const { currentVolume, playerMetadata, playerIDWhoSqueaked } =
-    useRoomContext();
+  const {
+    audioContext,
+    masterVolumeGainNode,
+    squeakButtonPressBuffer,
+    currentVolume,
+    playerMetadata,
+    playerIDWhoSqueaked,
+  } = useRoomContext();
 
   const [hoveringOnButton, setHoveringOnButton] = useState<boolean>(false);
   const [mouseDownOnButton, setMouseDownOnButton] = useState<boolean>(false);
 
   const [playExpandingPulseWaveAnimation, setPlayExpandingPulseWaveAnimation] =
     useState<boolean>(false);
-
-  const squeakButtonAudioRef = useRef<HTMLAudioElement>(null);
 
   useEffect(() => {
     if (playerIDWhoSqueaked !== playerID) return;
@@ -35,11 +39,6 @@ function Buzzer({ playerID, roomCode, interactive }: IBuzzer) {
       setTimeout(() => {
         setMouseDownOnButton(false);
       }, 150);
-    }
-
-    if (squeakButtonAudioRef.current) {
-      squeakButtonAudioRef.current.volume = currentVolume * 0.01;
-      squeakButtonAudioRef.current.play();
     }
 
     // temporarily hiding overflow on <Page /> so that the expanding pulse wave
@@ -103,11 +102,18 @@ function Buzzer({ playerID, roomCode, interactive }: IBuzzer) {
             roundWinnerID: playerID,
             roomCode,
           });
+
+          if (audioContext && masterVolumeGainNode) {
+            const squeakButtonPressSoundSource =
+              audioContext.createBufferSource();
+            squeakButtonPressSoundSource.buffer = squeakButtonPressBuffer;
+
+            squeakButtonPressSoundSource.connect(masterVolumeGainNode);
+            squeakButtonPressSoundSource.start();
+          }
         }
       }}
     >
-      <audio ref={squeakButtonAudioRef} src="/sounds/squeakButtonPress.mp3" />
-
       {/* grey baseplate for button */}
       <div className="absolute left-0 top-0 z-[140]">
         <Image
