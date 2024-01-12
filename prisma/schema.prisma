@@ -72,13 +72,14 @@ model User {
   sessions      Session[]
 
   // user metadata
-  username             String  @default("Rabbit")
-  avatarPath           String  @default("/avatars/rabbit.svg")
-  color                String  @default("hsl(352deg, 69%, 61%)")
-  deckHueRotation      Int     @default(0)
-  squeakPileOnLeft     Boolean @default(true)
-  desktopNotifications Boolean @default(false)
-  stats                Stats?
+  username                String  @default("Rabbit")
+  avatarPath              String  @default("/avatars/rabbit.svg")
+  color                   String  @default("hsl(352deg, 69%, 61%)")
+  deckHueRotation         Int     @default(0)
+  prefersSimpleCardAssets Boolean @default(false)
+  squeakPileOnLeft        Boolean @default(true)
+  desktopNotifications    Boolean @default(false)
+  stats                   Stats?
 
   // just storing IDs for simplicity, client handles querying for relevant User data that
   // can be found from these IDs.

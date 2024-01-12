@@ -58,6 +58,7 @@ export const usersRouter = router({
         avatarPath: z.string(),
         color: z.string(),
         deckHueRotation: z.number(),
+        prefersSimpleCardAssets: z.boolean(),
         squeakPileOnLeft: z.boolean(),
         desktopNotifications: z.boolean(),
       })
@@ -73,6 +74,7 @@ export const usersRouter = router({
             avatarPath: input.avatarPath,
             color: input.color,
             deckHueRotation: input.deckHueRotation,
+            prefersSimpleCardAssets: input.prefersSimpleCardAssets,
             squeakPileOnLeft: input.squeakPileOnLeft,
             desktopNotifications: input.desktopNotifications,
           },

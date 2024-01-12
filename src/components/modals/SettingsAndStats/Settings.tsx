@@ -109,6 +109,11 @@ function Settings({
           setLocalPlayerMetadata={setLocalPlayerMetadata}
         />
         <PickerTooltip
+          type={"cardFront"}
+          localPlayerMetadata={localPlayerMetadata}
+          setLocalPlayerSettings={setLocalPlayerSettings}
+        />
+        <PickerTooltip
           type={"color"}
           localPlayerMetadata={localPlayerMetadata}
           setLocalPlayerMetadata={setLocalPlayerMetadata}

@@ -29,6 +29,7 @@ interface ICardComponent {
   hueRotation: number;
   width?: string;
   height?: string;
+  manuallyShowSpecificCardFront?: "normal" | "simple";
 }
 
 function Card({
@@ -44,6 +45,7 @@ function Card({
   hueRotation,
   width,
   height,
+  manuallyShowSpecificCardFront,
 }: ICardComponent) {
   const userID = useUserIDContext();
 
@@ -62,6 +64,7 @@ function Card({
     setCardBeingMovedProgramatically,
     squeakDeckBeingMovedProgramatically,
     setSqueakDeckBeingMovedProgramatically,
+    prefersSimpleCardAssets,
     setHoldingADeckCard,
     setHoldingASqueakCard,
   } = useRoomContext();
@@ -522,6 +525,20 @@ function Card({
     return transitionStyles;
   }
 
+  function getCardAssetPath() {
+    if (manuallyShowSpecificCardFront) {
+      // @ts-expect-error asdf
+      return cards[
+        `${suit}${value}${
+          manuallyShowSpecificCardFront === "simple" ? "Simple" : ""
+        }`
+      ];
+    }
+
+    // @ts-expect-error asdf
+    return cards[`${suit}${value}${prefersSimpleCardAssets ? "Simple" : ""}`];
+  }
+
   return (
     <>
       {(showCardBack || value || suit) && (
@@ -570,8 +587,7 @@ function Card({
               src={
                 showCardBack && !manuallyShowCardFront
                   ? cards["cardBack"]
-                  : // @ts-expect-error asdf
-                    cards[`${suit}${value}`]
+                  : getCardAssetPath()
               }
               alt={
                 showCardBack && !manuallyShowCardFront

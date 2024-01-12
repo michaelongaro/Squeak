@@ -280,6 +280,7 @@ function JoinRoom() {
 
               <div className="baseFlex gap-12">
                 <PickerTooltip type={"avatar"} />
+                <PickerTooltip type={"cardFront"} />
                 <PickerTooltip type={"color"} />
               </div>
             </div>
@@ -416,6 +417,7 @@ function JoinRoom() {
 
                 <div className="baseFlex gap-12">
                   <PickerTooltip type={"avatar"} openAbove={true} />
+                  <PickerTooltip type={"cardFront"} openAbove={true} />
                   <PickerTooltip type={"color"} openAbove={true} />
                 </div>
               </div>
