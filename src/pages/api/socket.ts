@@ -16,8 +16,6 @@ import { startGameHandler } from "./handlers/startGameHandler";
 import { createRoomHandler } from "./handlers/createRoomHandler";
 import { joinRoomHandler } from "./handlers/joinRoomHandler";
 import { updatePlayerMetadataHandler } from "./handlers/updatePlayerMetadataHandler";
-import { playerReadyToReceiveInitGameDataHandler } from "./handlers/playerReadyToReceiveInitGameDataHandler";
-import { playerFullyReadyHandler } from "./handlers/playerFullyReadyHandler";
 
 // TODO: is there a better way to type these?
 export interface IFriendsData {
@@ -45,7 +43,6 @@ export interface IMiscRoomData {
 
 interface IMiscRoomMetadata {
   boardTimestamps: number[][];
-  numberOfPlayersReady: number;
   rotateDecksCounter: number;
   preventOtherPlayersFromSqueaking: boolean;
   gameStuckInterval?: NodeJS.Timeout; // TODO: most likely don't need this to be optional
@@ -208,16 +205,6 @@ export default function SocketHandler(req, res) {
 
     updatePlayerMetadataHandler(io, socket, roomData);
 
-    playerReadyToReceiveInitGameDataHandler(
-      io,
-      socket,
-      roomData,
-      gameData,
-      miscRoomData
-    );
-
-    playerFullyReadyHandler(io, socket, roomData, miscRoomData);
-
     startGameHandler(io, socket, roomData, gameData, miscRoomData);
 
     // game/room handlers
@@ -234,6 +221,22 @@ export default function SocketHandler(req, res) {
     socket.on("directlyLeaveRoom", (roomCode) => {
       socket.leave(roomCode);
     });
+
+    // TODO: automatic server side disconnecting of socket from room is theoretically possible
+    // assuming that the socket.id is stable, if it is then we could add a property onto the
+    // miscRoomData object that has key of roomCode and value of socket.id and playerID.
+    // but to be honest this approach seems flaky at best...
+
+    // socket.on("disconnecting", (reason) => {
+    //   console.log(reason);
+    //   console.dir(socket.rooms);
+    //   for (const room of socket.rooms) {
+    //     if (room !== socket.id) {
+    //       // socket.to(room).emit("user has left", socket.id);
+    //       console.log("disconnecting", socket.id, "from", room);
+    //     }
+    //   }
+    // });
 
     // friends handlers
     initializePlayerInFriendsObject(io, socket, friendsData);

@@ -33,7 +33,6 @@ export function createRoomHandler(
 
       miscRoomData[roomConfig.code] = {
         boardTimestamps,
-        numberOfPlayersReady: 0,
         rotateDecksCounter: 0,
         preventOtherPlayersFromSqueaking: false,
         botIntervals: [],
