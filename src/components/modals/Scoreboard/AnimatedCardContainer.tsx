@@ -14,7 +14,7 @@ function AnimatedCardContainer({ cards, playerID }: IAnimatedCardContainer) {
         perspective: "450px",
         transformStyle: "preserve-3d",
       }}
-      className="absolute top-0 left-0 z-[2] h-full w-full "
+      className="absolute left-0 top-0 z-[2] h-full w-full "
     >
       {cards.map((card, index) => (
         <AnimatedCard
@@ -22,6 +22,7 @@ function AnimatedCardContainer({ cards, playerID }: IAnimatedCardContainer) {
           card={card}
           playerID={playerID}
           index={index}
+          totalCardsPlayed={cards.length}
         />
       ))}
     </div>

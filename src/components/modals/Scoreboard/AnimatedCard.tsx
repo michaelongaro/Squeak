@@ -8,9 +8,18 @@ interface IAnimatedCard {
   card: ICard;
   index: number;
   playerID: string;
+  totalCardsPlayed: number;
 }
 
-function AnimatedCard({ card, index, playerID }: IAnimatedCard) {
+// TODO: take out animejs dependency altogether and just use css animations
+// and or framer motion right?
+
+function AnimatedCard({
+  card,
+  index,
+  playerID,
+  totalCardsPlayed,
+}: IAnimatedCard) {
   const { playerMetadata } = useRoomContext();
   const [animationStarted, setAnimationStarted] = useState(false); // not sure if necessary
 
@@ -29,47 +38,30 @@ function AnimatedCard({ card, index, playerID }: IAnimatedCard) {
 
     if (!animatedCardContainer || !animatedCard) return;
 
-    // maybe want all cards to be equally spaced out horizontally? just Math.floor(containerWidth / idx)
-    const initX = Math.floor(
-      Math.random() * (animatedCardContainer.width - 50) + 50
-    );
+    const middleOfContainer = Math.floor(animatedCardContainer.width / 2) - 25;
 
-    const initY = Math.floor(Math.random() * -375) - 100;
+    const finalY = Math.floor(animatedCardContainer.height * 0.6) - index;
 
-    const { initXRotation, initYRotation, initZRotation } = {
-      initXRotation: Math.floor(Math.random() * 35) + 50,
-      initYRotation: Math.floor(Math.random() * 50),
-      initZRotation: Math.floor(Math.random() * 50),
-    };
-
-    const finalX =
-      Math.floor(Math.random() * (animatedCardContainer.width - 50)) + 50;
-    const finalY = Math.floor(
-      Math.random() * animatedCardContainer.height * 0.1 +
-        animatedCardContainer.height +
-        50
-    );
-
-    const finalXRotation = Math.floor(Math.random() * 90);
-    const finalYRotation = Math.floor(Math.random() * 50);
-    const finalZRotation = Math.floor(Math.random() * 90);
+    // Calculate delay and duration based on totalCardsPlayed
+    const totalAnimationTime = 4000; // Total time (ms) for all cards to be played
+    const delay = (totalAnimationTime / totalCardsPlayed) * index;
+    const duration = totalAnimationTime / totalCardsPlayed;
 
     anime({
       targets: `#scoreboardAnimatedCard${index}${playerID}`,
 
-      top: [`${initY}px`, `${finalY}px`],
-      left: [`${initX}px`, `${finalX}px`],
-      rotateX: [`${initXRotation}deg`, `${finalXRotation}deg`],
-      rotateY: [`${initYRotation}deg`, `${finalYRotation}deg`],
-      rotateZ: [`${initZRotation}deg`, `${finalZRotation}deg`],
+      top: [`0px`, `${finalY}px`],
+      left: [`${middleOfContainer}px`, `${middleOfContainer}px`],
+      rotateX: ["25deg", `25deg`],
+      rotateZ: ["50deg", "50deg"],
 
-      delay: index * 100,
-      duration: 5000,
+      delay,
+      duration,
       loop: false,
       direction: "normal",
-      easing: "easeOutQuad", // easeInOut?,
+      easing: "easeOutQuad",
     });
-  }, [playerID, index, animationStarted]);
+  }, [playerID, index, animationStarted, totalCardsPlayed]);
 
   return (
     <div
