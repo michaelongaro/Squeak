@@ -103,8 +103,14 @@ interface IRoomContext {
   setConnectedToRoom: React.Dispatch<React.SetStateAction<boolean>>;
   soundPlayStates: ISoundStates;
   setSoundPlayStates: React.Dispatch<React.SetStateAction<ISoundStates>>;
-  currentVolume: number;
-  setCurrentVolume: React.Dispatch<React.SetStateAction<number>>;
+
+  currentVolume: number | null;
+  setCurrentVolume: React.Dispatch<React.SetStateAction<number | null>>;
+  prefersSimpleCardAssets: boolean | null;
+  setPrefersSimpleCardAssets: React.Dispatch<
+    React.SetStateAction<boolean | null>
+  >;
+
   cardBeingMovedProgramatically: ICardBeingMovedProgramatically;
   setCardBeingMovedProgramatically: React.Dispatch<
     React.SetStateAction<ICardBeingMovedProgramatically>
@@ -113,6 +119,7 @@ interface IRoomContext {
   setNewInviteNotification: React.Dispatch<React.SetStateAction<boolean>>;
   mirrorPlayerContainer: boolean;
   setMirrorPlayerContainer: React.Dispatch<React.SetStateAction<boolean>>;
+
   showResetRoundModal: boolean;
   setShowResetRoundModal: React.Dispatch<React.SetStateAction<boolean>>;
   scoreboardMetadata: IScoreboardMetadata | null;
@@ -142,6 +149,11 @@ export function RoomProvider(props: { children: React.ReactNode }) {
   // probably want to remove the default "refetch on page focus" behavior
   const { data: user } = trpc.users.getUserByID.useQuery(userID);
 
+  const [currentVolume, setCurrentVolume] = useState<number | null>(null);
+  const [prefersSimpleCardAssets, setPrefersSimpleCardAssets] = useState<
+    boolean | null
+  >(null);
+
   const [pageToRender, setPageToRender] = useState<
     "home" | "createRoom" | "joinRoom" | "play"
   >("home");
@@ -160,6 +172,9 @@ export function RoomProvider(props: { children: React.ReactNode }) {
   const [playerMetadata, setPlayerMetadata] = useState<IRoomPlayersMetadata>(
     {} as IRoomPlayersMetadata
   );
+
+  const [mirrorPlayerContainer, setMirrorPlayerContainer] =
+    useState<boolean>(false);
 
   // safe, because we are only ever accessing/mutating gameData when it is defined
   const [gameData, setGameData] = useState<IGameMetadata>({} as IGameMetadata);
@@ -187,8 +202,6 @@ export function RoomProvider(props: { children: React.ReactNode }) {
   const [playerIDWhoSqueaked, setPlayerIDWhoSqueaked] = useState<string | null>(
     null
   );
-
-  const [currentVolume, setCurrentVolume] = useState<number>(0);
 
   const [soundPlayStates, setSoundPlayStates] = useState<ISoundStates>({
     currentPlayer: false,
@@ -219,9 +232,6 @@ export function RoomProvider(props: { children: React.ReactNode }) {
   const [newInviteNotification, setNewInviteNotification] =
     useState<boolean>(false);
 
-  const [mirrorPlayerContainer, setMirrorPlayerContainer] =
-    useState<boolean>(false);
-
   const [squeakStackDragAlterations, setOtherPlayerSqueakStacksBeingDragged] =
     useState<{
       [playerID: string]: SqueakStackDragAlterations;
@@ -231,22 +241,26 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     fetch("/api/socket");
   }, []);
 
-  // might want to move into a hook eventually
-  useEffect(() => {
-    setTimeout(() => {
-      const storedVolume = localStorage.getItem("volume");
-
-      if (storedVolume) {
-        setCurrentVolume(parseFloat(storedVolume));
-      }
-    }, 1500);
-  }, []);
-
   useEffect(() => {
     if (userID && friendData === undefined) {
       socket.emit("initializePlayerInFriendsObj", userID);
     }
   }, [userID, friendData]);
+
+  useEffect(() => {
+    if (prefersSimpleCardAssets === null) return;
+
+    localStorage.setItem(
+      "squeakPrefersSimpleCardAssets",
+      prefersSimpleCardAssets.toString()
+    );
+  }, [prefersSimpleCardAssets]);
+
+  useEffect(() => {
+    if (currentVolume === null) return;
+
+    localStorage.setItem("squeakVolume", currentVolume.toString());
+  }, [currentVolume]);
 
   useEffect(() => {
     if (status === "authenticated") {
@@ -279,6 +293,7 @@ export function RoomProvider(props: { children: React.ReactNode }) {
       } as IRoomPlayer,
     }));
 
+    setPrefersSimpleCardAssets(user ? user.prefersSimpleCardAssets : false);
     setMirrorPlayerContainer(user ? !user.squeakPileOnLeft : false);
   }, [userID, user, playerMetadata, session, status]);
 
@@ -325,6 +340,8 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     setSoundPlayStates,
     currentVolume,
     setCurrentVolume,
+    prefersSimpleCardAssets,
+    setPrefersSimpleCardAssets,
     cardBeingMovedProgramatically,
     setCardBeingMovedProgramatically,
     newInviteNotification,

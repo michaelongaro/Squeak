@@ -10,7 +10,7 @@ import MobileWarningModal from "../modals/MobileWarningModal";
 import { isMobile } from "react-device-detect";
 import { cards } from "../../utils/cardAssetPaths";
 import { useRoomContext } from "../../context/RoomContext";
-import useInitializeUserVolume from "../../hooks/useInitializeUserVolume";
+import useInitializeLocalStorageValues from "../../hooks/useInitializeLocalStorageValues";
 import useAttachUnloadEventListener from "../../hooks/useAttachUnloadEventListener";
 
 function HomePage() {
@@ -39,7 +39,7 @@ function HomePage() {
     }, 10000);
   }, []);
 
-  useInitializeUserVolume();
+  useInitializeLocalStorageValues();
   usePlayerLeftRoom();
   useAttachUnloadEventListener();
 

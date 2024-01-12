@@ -8,29 +8,25 @@ import {
 } from "react-icons/bs";
 
 function AudioLevelSlider() {
-  const { setCurrentVolume } = useRoomContext();
+  const { currentVolume, setCurrentVolume } = useRoomContext();
 
-  const [values, setValues] = useState([0]);
+  const [values, setValues] = useState([0.01]);
+  // not the biggest fan of this workaround, but can't set range below zero..
+  // and we want to have this value start at the context value (localStorage value)
   const [hovered, setHovered] = useState(false);
 
-  const [initialSetOfVolumeComplete, setInitialSetOfVolumeComplete] =
-    useState(false);
-
   useEffect(() => {
-    const volume = localStorage.getItem("volume");
-    if (volume) {
-      setValues([parseInt(volume)]);
+    if (values[0] === undefined) return;
+
+    if (values[0] === 0.01 && currentVolume !== null) {
+      setValues([currentVolume]);
+      return;
     }
 
-    setInitialSetOfVolumeComplete(true);
-  }, []);
-
-  useEffect(() => {
-    if (values[0] === undefined || !initialSetOfVolumeComplete) return;
-
-    setCurrentVolume(values[0]);
-    localStorage.setItem("volume", values[0].toString());
-  }, [values, setCurrentVolume, initialSetOfVolumeComplete]);
+    if (values[0] !== 0.01 && currentVolume !== values[0]) {
+      setCurrentVolume(values[0]);
+    }
+  }, [values, currentVolume, setCurrentVolume]);
 
   return (
     <div
