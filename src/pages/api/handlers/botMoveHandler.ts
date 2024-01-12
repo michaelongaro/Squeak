@@ -53,7 +53,6 @@ export function botMoveHandler(
       roundWinnerID: playerID,
       roomCode,
     });
-    // console.log("did 1st");
     return;
   }
 
@@ -72,50 +71,60 @@ export function botMoveHandler(
 
       // only allowed to play the card on the board at this point if it is the only card in the stack
       if (cardIdx === 0 && stack.length === 1) {
-        for (let row = 0; row < 4; row++) {
-          for (let col = 0; col < 5; col++) {
-            const cell = gameData[roomCode]?.board[row]?.[col];
+        // check all board cells randomly, place if valid
+        let foundValidCell = false;
+        const flatBoard = generateFlatBoard();
 
-            if (cell === undefined) continue;
-            if (cardPlacementIsValid(cell, card.value, card.suit, true)) {
-              const needToWaitForTimestampLockout =
-                Date.now() -
-                  (miscRoomDataObj.boardTimestamps[row]?.[col] || 0) <
-                minTimestampDelays[botDifficulty];
+        while (!foundValidCell || flatBoard.length === 0) {
+          const cellCoordinates = getRandomUniqueBoardCell(flatBoard);
 
-              setTimeout(
-                () => {
-                  const cardWasPlayedSuccessfully = squeakToBoard({
-                    gameData,
-                    miscRoomData,
-                    card,
-                    playerID,
-                    roomCode,
-                    io,
-                    squeakStartLocation: stackIdx,
-                    boardEndLocation: { row, col },
-                  });
+          if (!cellCoordinates) break;
 
-                  if (cardWasPlayedSuccessfully) {
-                    // remove from blacklist if it was on there (existed as a value to a key)
-                    for (const key of Object.keys(blacklistedSqueakCards)) {
-                      if (
-                        blacklistedSqueakCards[key] ===
-                        `${card.value}${card.suit}`
-                      ) {
-                        delete blacklistedSqueakCards[key];
-                      }
+          const { row, col } = cellCoordinates;
+
+          const cell = gameData[roomCode]?.board[row]?.[col];
+
+          if (cell === undefined) continue;
+          if (cardPlacementIsValid(cell, card.value, card.suit, true)) {
+            const needToWaitForTimestampLockout =
+              Date.now() - (miscRoomDataObj.boardTimestamps[row]?.[col] || 0) <
+              minTimestampDelays[botDifficulty];
+
+            setTimeout(
+              () => {
+                const cardWasPlayedSuccessfully = squeakToBoard({
+                  gameData,
+                  miscRoomData,
+                  card,
+                  playerID,
+                  roomCode,
+                  io,
+                  squeakStartLocation: stackIdx,
+                  boardEndLocation: { row: row, col: col },
+                });
+
+                if (cardWasPlayedSuccessfully) {
+                  // remove from blacklist if it was on there (existed as a value to a key)
+                  for (const key of Object.keys(blacklistedSqueakCards)) {
+                    if (
+                      blacklistedSqueakCards[key] ===
+                      `${card.value}${card.suit}`
+                    ) {
+                      delete blacklistedSqueakCards[key];
                     }
-                    // console.log("did 2nd");
                   }
-                },
-                needToWaitForTimestampLockout
-                  ? minTimestampDelays[botDifficulty]
-                  : 0
-              );
+                }
+              },
+              needToWaitForTimestampLockout
+                ? minTimestampDelays[botDifficulty]
+                : 0
+            );
 
-              return; // hopefully this return placement still works as expected
-            }
+            foundValidCell = true;
+            return; // hopefully this return placement still works as expected
+          } else {
+            // remove the indicies from the array so we don't check them again
+            flatBoard.splice(flatBoard.indexOf(cellCoordinates), 1);
           }
         }
       }
@@ -151,7 +160,6 @@ export function botMoveHandler(
           blacklistedSqueakCards[
             `${card.value}${card.suit}`
           ] = `${bottomCard.value}${bottomCard.suit}`;
-          // console.log("did 2nd");
 
           return;
         }
@@ -167,50 +175,58 @@ export function botMoveHandler(
     const bottomCard = stack[stack.length - 1];
     if (!bottomCard) continue;
 
-    for (let row = 0; row < 4; row++) {
-      for (let col = 0; col < 5; col++) {
-        const cell = gameData[roomCode]?.board[row]?.[col];
+    // check all board cells randomly, place if valid
+    let foundValidCell = false;
+    const flatBoard = generateFlatBoard();
 
-        if (cell === undefined) continue;
-        if (
-          cardPlacementIsValid(cell, bottomCard.value, bottomCard.suit, true)
-        ) {
-          const needToWaitForTimestampLockout =
-            Date.now() - (miscRoomDataObj.boardTimestamps[row]?.[col] || 0) <
-            minTimestampDelays[botDifficulty];
+    while (!foundValidCell || flatBoard.length === 0) {
+      const cellCoordinates = getRandomUniqueBoardCell(flatBoard);
 
-          setTimeout(
-            () => {
-              const cardWasPlayedSuccessfully = squeakToBoard({
-                gameData,
-                miscRoomData,
-                card: bottomCard,
-                playerID,
-                roomCode,
-                io,
-                squeakStartLocation: stackIdx,
-                boardEndLocation: { row, col },
-              });
+      if (!cellCoordinates) break;
 
-              if (cardWasPlayedSuccessfully) {
-                // remove from blacklist if it was on there (existed as a value to a key)
-                for (const key of Object.keys(blacklistedSqueakCards)) {
-                  if (
-                    blacklistedSqueakCards[key] ===
-                    `${bottomCard.value}${bottomCard.suit}`
-                  ) {
-                    delete blacklistedSqueakCards[key];
-                  }
+      const { row, col } = cellCoordinates;
+
+      const cell = gameData[roomCode]?.board[row]?.[col];
+
+      if (cell === undefined) continue;
+      if (cardPlacementIsValid(cell, bottomCard.value, bottomCard.suit, true)) {
+        const needToWaitForTimestampLockout =
+          Date.now() - (miscRoomDataObj.boardTimestamps[row]?.[col] || 0) <
+          minTimestampDelays[botDifficulty];
+
+        setTimeout(
+          () => {
+            const cardWasPlayedSuccessfully = squeakToBoard({
+              gameData,
+              miscRoomData,
+              card: bottomCard,
+              playerID,
+              roomCode,
+              io,
+              squeakStartLocation: stackIdx,
+              boardEndLocation: { row, col },
+            });
+
+            if (cardWasPlayedSuccessfully) {
+              // remove from blacklist if it was on there (existed as a value to a key)
+              for (const key of Object.keys(blacklistedSqueakCards)) {
+                if (
+                  blacklistedSqueakCards[key] ===
+                  `${bottomCard.value}${bottomCard.suit}`
+                ) {
+                  delete blacklistedSqueakCards[key];
                 }
-                // console.log("did 3rd");
               }
-            },
-            needToWaitForTimestampLockout
-              ? minTimestampDelays[botDifficulty]
-              : 0
-          );
-          return;
-        }
+            }
+          },
+          needToWaitForTimestampLockout ? minTimestampDelays[botDifficulty] : 0
+        );
+        foundValidCell = true;
+
+        return;
+      } else {
+        // remove the indicies from the array so we don't check them again
+        flatBoard.splice(flatBoard.indexOf(cellCoordinates), 1);
       }
     }
   }
@@ -228,43 +244,51 @@ export function botMoveHandler(
   }
 
   if (topCardInHand) {
-    for (let row = 0; row < 4; row++) {
-      for (let col = 0; col < 5; col++) {
-        const cell = gameData[roomCode]?.board[row]?.[col];
+    // check all board cells randomly, place if valid
+    let foundValidCell = false;
+    const flatBoard = generateFlatBoard();
 
-        if (cell === undefined) continue;
-        if (
-          cardPlacementIsValid(
-            cell,
-            topCardInHand.value,
-            topCardInHand.suit,
-            true
-          )
-        ) {
-          const needToWaitForTimestampLockout =
-            Date.now() - (miscRoomDataObj.boardTimestamps[row]?.[col] || 0) <
-            minTimestampDelays[botDifficulty];
+    while (!foundValidCell || flatBoard.length === 0) {
+      const cellCoordinates = getRandomUniqueBoardCell(flatBoard);
 
-          setTimeout(
-            () => {
-              deckToBoard({
-                gameData,
-                miscRoomData,
-                card: topCardInHand as ICard,
-                playerID,
-                roomCode,
-                io,
-                boardEndLocation: { row, col },
-              });
-              // console.log("did 4th");
-            },
-            needToWaitForTimestampLockout
-              ? minTimestampDelays[botDifficulty]
-              : 0
-          );
+      if (!cellCoordinates) break;
 
-          return;
-        }
+      const { row, col } = cellCoordinates;
+
+      const cell = gameData[roomCode]?.board[row]?.[col];
+
+      if (cell === undefined) continue;
+      if (
+        cardPlacementIsValid(
+          cell,
+          topCardInHand.value,
+          topCardInHand.suit,
+          true
+        )
+      ) {
+        const needToWaitForTimestampLockout =
+          Date.now() - (miscRoomDataObj.boardTimestamps[row]?.[col] || 0) <
+          minTimestampDelays[botDifficulty];
+
+        setTimeout(
+          () => {
+            deckToBoard({
+              gameData,
+              miscRoomData,
+              card: topCardInHand as ICard,
+              playerID,
+              roomCode,
+              io,
+              boardEndLocation: { row, col },
+            });
+          },
+          needToWaitForTimestampLockout ? minTimestampDelays[botDifficulty] : 0
+        );
+        foundValidCell = true;
+        return;
+      } else {
+        // remove the indicies from the array so we don't check them again
+        flatBoard.splice(flatBoard.indexOf(cellCoordinates), 1);
       }
     }
   }
@@ -295,7 +319,6 @@ export function botMoveHandler(
           squeakEndLocation: stackIdx,
         });
 
-        // console.log("did 5th");
         return;
       }
     }
@@ -340,7 +363,6 @@ export function botMoveHandler(
           blacklistedSqueakCards[
             `${card.value}${card.suit}`
           ] = `${bottomCard.value}${bottomCard.suit}`;
-          // console.log("did 6th");
           return;
         }
       }
@@ -354,7 +376,37 @@ export function botMoveHandler(
     playerID,
     roomCode,
   });
-  // console.log("did 7th");
 
   return;
+}
+
+function getRandomUniqueBoardCell(
+  flatBoard: Array<{ row: number; col: number }>
+) {
+  if (flatBoard.length === 0) {
+    return null;
+  }
+
+  const randomIndex = Math.floor(Math.random() * flatBoard.length);
+  const randomCell = flatBoard[randomIndex];
+
+  if (randomCell === undefined) {
+    return null;
+  }
+
+  return {
+    row: randomCell.row,
+    col: randomCell.col,
+  };
+}
+
+function generateFlatBoard() {
+  const flatBoard = [];
+  for (let i = 0; i < 4; i++) {
+    for (let j = 0; j < 5; j++) {
+      flatBoard.push({ row: i, col: j });
+    }
+  }
+
+  return flatBoard;
 }
