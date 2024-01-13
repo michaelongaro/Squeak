@@ -388,6 +388,7 @@ function CreateRoom() {
                     <MdCopyAll size={"1.5rem"} />
                   )
                 }
+                innerText={showCheckmark ? "Copied" : "Copy"}
                 extraPadding={false}
                 onClickFunction={() => {
                   navigator.clipboard.writeText(roomConfig.code);

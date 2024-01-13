@@ -138,7 +138,9 @@ function PlayerIcon({
           {/* difficulty toggle button that rotates through easy medium and hard */}
           {playerMetadata?.botDifficulty && (
             <div
-              className={`baseVertFlex ${roomHostIsRendering ? "gap-1" : ""}`}
+              className={`baseVertFlex relative ${
+                roomHostIsRendering ? "mb-8 gap-1" : ""
+              }`}
             >
               <p className="text-sm italic underline">Difficulty</p>
               {roomHostIsRendering ? (
@@ -146,7 +148,13 @@ function PlayerIcon({
                   innerText={playerMetadata.botDifficulty}
                   extraPadding={false}
                   style={{
-                    padding: "0.25rem",
+                    padding: "0.75rem 0.25rem",
+                    position: "absolute",
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(-50%, -50%)",
+                    minWidth: "fit-content",
+                    marginTop: "2rem",
                   }}
                   onClickFunction={() => {
                     if (!playerID) return;

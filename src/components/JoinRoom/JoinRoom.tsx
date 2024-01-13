@@ -341,12 +341,12 @@ function JoinRoom() {
             }}
             className="baseVertFlex gap-4"
           >
-            <fieldset className="mt-4 rounded-md  border-2 border-white bg-green-800 p-4">
+            <fieldset className="baseVertFlex mt-4 gap-4 rounded-md  border-2 border-white bg-green-800 p-4">
               <legend className="baseFlex gap-2 pl-4 pr-4 text-left text-lg">
                 Room settings
                 <IoSettingsSharp size={"1.25rem"} />
               </legend>
-              <div className="grid grid-cols-2 grid-rows-4 items-center gap-x-24 gap-y-0 p-2">
+              <div className="grid grid-cols-2 grid-rows-4 items-center gap-x-24 gap-y-2 p-2">
                 <div>Points to win:</div>
                 {roomConfig?.pointsToWin}
 
@@ -359,23 +359,31 @@ function JoinRoom() {
                 <div>Room code:</div>
                 <div className="baseFlex !justify-start gap-4">
                   {roomConfig?.code}
-                  <SecondaryButton
-                    icon={
-                      showCheckmark ? (
-                        <FiCheck size={"1.5rem"} />
-                      ) : (
-                        <MdCopyAll size={"1.5rem"} />
-                      )
-                    }
-                    extraPadding={false}
-                    onClickFunction={() => {
-                      navigator.clipboard.writeText(roomConfig.code);
-                      setShowCheckmark(true);
-                      setTimeout(() => setShowCheckmark(false), 1000);
-                    }}
-                  />
                 </div>
               </div>
+              <SecondaryButton
+                icon={
+                  showCheckmark ? (
+                    <FiCheck size={"1.5rem"} />
+                  ) : (
+                    <MdCopyAll size={"1.5rem"} />
+                  )
+                }
+                innerText={
+                  showCheckmark ? "Room code copied" : "Copy room code"
+                }
+                style={{
+                  width: "14rem",
+                  placeItems: "center",
+                  justifyItems: "center",
+                }}
+                extraPadding={false}
+                onClickFunction={() => {
+                  navigator.clipboard.writeText(roomConfig.code);
+                  setShowCheckmark(true);
+                  setTimeout(() => setShowCheckmark(false), 1000);
+                }}
+              />
             </fieldset>
             <fieldset className="rounded-md border-2 border-white bg-green-800 p-4">
               <legend className="baseFlex gap-2 pl-4 pr-4 text-left text-lg">
