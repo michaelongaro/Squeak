@@ -98,7 +98,10 @@ export function leaveRoomHandler(
 
     io.in(roomCode).emit("playerHasLeftRoom", emitData);
 
-    socket.leave(roomCode);
+    // we are using the same handler for leaving a room regularly and
+    // kicking another player, so we need to make this distinction so we
+    // don't leave the room when trying to kick another player
+    if (!playerWasKicked) socket.leave(roomCode);
 
     // prisma operations are async, so this needs to be called after the emit
     // to reduce on delay on the client side
