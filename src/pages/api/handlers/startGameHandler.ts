@@ -152,7 +152,7 @@ export function startGameHandler(
             );
 
             if (botInterval) miscRoomDataObj.botIntervals.push(botInterval);
-          }, parseInt(index) * botDifficultyDelay[botDifficulty]);
+          }, botDifficultyDelay[botDifficulty] + parseInt(index) * botDifficultyDelay[botDifficulty] * 0.5);
           // TODO: I am entirely not convinced that this will guarantee that the bots won't overlap...
           // stagger each bot's moves so they don't all happen at once if they have the same difficulty,
           // also helps with not rapid-fire placing cards on the board which is a little unfair.
