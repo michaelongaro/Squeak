@@ -48,6 +48,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
   } = useRoomContext();
 
   const [hoveringOverDeck, setHoveringOverDeck] = useState(false);
+  const [mouseDownOnDeck, setMouseDownOnDeck] = useState(false);
   const [drawingFromDeck, setDrawingFromDeck] = useState(false);
   const [decksAreBeingRotated, setDecksAreBeingRotated] = useState(false);
 
@@ -371,19 +372,32 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
               id={`${userID}deck`}
               style={{
                 boxShadow:
-                  hoveringOverDeck && !holdingADeckCard && !drawingFromDeck
+                  hoveringOverDeck &&
+                  !holdingADeckCard &&
+                  !drawingFromDeck &&
+                  !mouseDownOnDeck
                     ? "0px 0px 4px 3px rgba(184,184,184,1)"
                     : "none",
                 cursor: drawingFromDeck ? "auto" : "pointer",
                 pointerEvents: drawingFromDeck ? "none" : "auto",
+                filter: mouseDownOnDeck ? "brightness(0.8)" : "none",
+                transition:
+                  "box-shadow 150ms cubic-bezier(0.4, 0, 0.2, 1), filter 150ms ease-in-out",
               }}
-              className="h-full w-full select-none rounded-[0.1rem] transition-shadow"
+              className="h-full w-full select-none rounded-[0.1rem]"
               onMouseEnter={() => {
                 if (drawingFromDeck) return;
                 setHoveringOverDeck(true);
               }}
               onMouseLeave={() => {
                 setHoveringOverDeck(false);
+                setMouseDownOnDeck(false);
+              }}
+              onMouseDown={() => {
+                setMouseDownOnDeck(true);
+              }}
+              onMouseUp={() => {
+                setMouseDownOnDeck(false);
               }}
               onClick={() => {
                 if (drawingFromDeck) return;
