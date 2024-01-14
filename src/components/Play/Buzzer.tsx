@@ -116,9 +116,9 @@ function Buzzer({ playerID, roomCode, interactive }: IBuzzer) {
     >
       {/* grey baseplate for button */}
       <div className="absolute left-0 top-0 z-[140]">
-        <Image
+        <img
           draggable={false}
-          src={baseplate}
+          src={"/buzzer/baseplate.png"}
           alt="baseplate for buzzer"
           className="h-[40px] w-[75px]"
         />
@@ -126,13 +126,13 @@ function Buzzer({ playerID, roomCode, interactive }: IBuzzer) {
 
       {/* actual button container */}
       <div className="absolute left-[7px] top-[-5px] z-[140] h-[35px] w-[50px]">
-        <Image
+        <img
           style={{
             top: mouseDownOnButton ? "8px" : "0px",
             transform: mouseDownOnButton ? "rotateX(60deg)" : "rotateX(0deg)",
           }}
           draggable={false}
-          src={squeakBuzzer}
+          src={"/buzzer/buzzerButton.png"}
           alt="buzzer"
           className="absolute h-[35px] w-[50px] transition-all"
         />

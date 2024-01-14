@@ -8,7 +8,7 @@ import TopRightControls from "../TopRightControls/TopRightControls";
 import usePlayerLeftRoom from "../../hooks/usePlayerLeftRoom";
 import MobileWarningModal from "../modals/MobileWarningModal";
 import { isMobile } from "react-device-detect";
-import { cards } from "../../utils/cardAssetPaths";
+import { cardAssetBaseNames } from "../../utils/cardAssetPaths";
 import { useRoomContext } from "../../context/RoomContext";
 import useInitializeLocalStorageValues from "../../hooks/useInitializeLocalStorageValues";
 import useAttachUnloadEventListener from "../../hooks/useAttachUnloadEventListener";
@@ -29,14 +29,26 @@ function HomePage() {
       }
     }, 2500);
 
-    // prefetching/caching card assets to prevent lag for the very
-    // first time a player plays a round
+    // prefetching/caching card assets to prevent any flickering of the assets
+    // the very first time a player plays a round
     setTimeout(() => {
-      for (const imagePath of Object.values(cards)) {
+      for (const basePath of cardAssetBaseNames) {
         const image = new Image();
-        image.src = imagePath.src;
+        image.src = `/cards/${basePath}.svg`;
+
+        const simpleImage = new Image();
+        simpleImage.src = `/cards/${basePath}Simple.png`;
       }
-    }, 10000);
+
+      const cardBack = new Image();
+      cardBack.src = "/cards/cardBack.png";
+
+      const basePlate = new Image();
+      basePlate.src = "/buzzer/baseplate.png";
+
+      const buzzerButton = new Image();
+      buzzerButton.src = "/buzzer/buzzerButton.png";
+    }, 5000);
   }, []);
 
   useInitializeLocalStorageValues();

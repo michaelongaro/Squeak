@@ -5,7 +5,6 @@ import Draggable, {
   type DraggableEvent,
 } from "react-draggable";
 import { socket } from "../../pages/";
-import Image from "next/image";
 import { useUserIDContext } from "../../context/UserIDContext";
 import { useRoomContext } from "../../context/RoomContext";
 import cardPlacementIsValid from "../../utils/cardPlacementIsValid";
@@ -14,7 +13,6 @@ import useCardDrawFromSqueakDeck from "../../hooks/useCardDrawFromSqueakDeck";
 import useCardDropApproved from "../../hooks/useCardDropApproved";
 import useCardDropDenied from "../../hooks/useCardDropDenied";
 import { adjustCoordinatesByRotation } from "../../utils/adjustCoordinatesByRotation";
-import { cards } from "../../utils/cardAssetPaths";
 
 interface ICardComponent {
   value?: string;
@@ -527,16 +525,14 @@ function Card({
 
   function getCardAssetPath() {
     if (manuallyShowSpecificCardFront) {
-      // @ts-expect-error asdf
-      return cards[
-        `${suit}${value}${
-          manuallyShowSpecificCardFront === "simple" ? "Simple" : ""
-        }`
-      ];
+      return `/cards/${value}${suit}${
+        manuallyShowSpecificCardFront === "simple" ? "Simple.png" : ".svg"
+      }`;
     }
 
-    // @ts-expect-error asdf
-    return cards[`${suit}${value}${prefersSimpleCardAssets ? "Simple" : ""}`];
+    return `/cards/${value}${suit}${
+      prefersSimpleCardAssets ? "Simple.png" : ".svg"
+    }`;
   }
 
   return (
@@ -573,7 +569,7 @@ function Card({
               draggable && "cursor-grab hover:active:cursor-grabbing"
             }`}
           >
-            <Image
+            <img
               ref={imageRef}
               style={{
                 width: width,
@@ -586,7 +582,7 @@ function Card({
               className="pointer-events-none h-[64px] w-[48px] select-none rounded-[0.25rem] tall:h-[87px] tall:w-[67px]"
               src={
                 showCardBack && !manuallyShowCardFront
-                  ? cards["cardBack"]
+                  ? "/cards/cardBack.png"
                   : getCardAssetPath()
               }
               alt={
@@ -594,7 +590,6 @@ function Card({
                   ? "Back of card"
                   : `${value}${suit} card`
               }
-              priority={true}
               draggable="false"
             />
           </div>
