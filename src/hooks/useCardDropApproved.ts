@@ -174,13 +174,14 @@ function useCardDropApproved({
 
       // offsets to account for rotation being around the center of the card
       // (I couldn't figure out how to natively solve this with transform-origin tricks)
+      // TODO: will have to change this dynamically if using smaller card sizes on smaller viewports
       if (endID.includes("cell")) {
         if (rotation === 90) {
-          endX -= 11;
-          endY += 11;
+          endX -= 10;
+          endY += 10;
         } else if (rotation === 270) {
-          endX -= 11;
-          endY += 15;
+          endX -= 10;
+          endY += 10;
         }
       }
 
