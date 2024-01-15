@@ -298,7 +298,6 @@ export function RoomProvider(props: { children: React.ReactNode }) {
   useEffect(() => {
     if (currentVolume === null || !masterVolumeGainNode) return;
 
-    console.log("hitting check");
     localStorage.setItem("squeakVolume", currentVolume.toString());
 
     const fixedVolume = currentVolume * 0.01;
