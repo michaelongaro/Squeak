@@ -7,7 +7,6 @@ const rowNames = [
   "Average cards left in Squeak pile",
   "Average rank per round",
   "Highest score per round",
-  "Lowest score per round",
   "Total games played",
 ];
 
@@ -16,7 +15,6 @@ interface IFilteredStats {
   avgPlace: number;
   avgLeftInSqueak: number;
   highestScore: number;
-  lowestScore: number;
   totalGamesPlayed: number;
 }
 
@@ -34,7 +32,6 @@ function Stats() {
         avgPlace: userStats.averageFinishingPlace,
         avgLeftInSqueak: userStats.averageLeftInSqueak,
         highestScore: userStats.highestScore,
-        lowestScore: userStats.lowestScore,
         totalGamesPlayed: userStats.totalGamesPlayed,
       };
 

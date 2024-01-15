@@ -66,17 +66,6 @@ export async function updatePlayerStatsAfterRound({
         100
     ) / 100;
 
-  // lowestScore, hacky -> I would ideally want to set lowestScore and highestScore
-  // to by default be null in the DB
-  if (playerStats.totalRoundsPlayed === 0) {
-    playerStats.lowestScore = playerScoreForThisRound;
-  } else {
-    playerStats.lowestScore =
-      playerScoreForThisRound < playerStats.lowestScore
-        ? playerScoreForThisRound
-        : playerStats.lowestScore;
-  }
-
   // highestScore
   playerStats.highestScore =
     playerScoreForThisRound > playerStats.highestScore
@@ -102,7 +91,6 @@ export async function updatePlayerStatsAfterRound({
       averageFinishingPlace: playerStats.averageFinishingPlace,
       allLeftInSqueakValues: playerStats.allLeftInSqueakValues,
       averageLeftInSqueak: playerStats.averageLeftInSqueak,
-      lowestScore: playerStats.lowestScore,
       highestScore: playerStats.highestScore,
       totalGamesPlayed: playerStats.totalGamesPlayed,
       totalRoundsPlayed: playerStats.totalRoundsPlayed,

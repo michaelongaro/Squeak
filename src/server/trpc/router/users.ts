@@ -100,7 +100,6 @@ export const usersRouter = router({
         "Average rank per round": [],
         "Average left in Squeak": [],
         "Highest score per round": [],
-        "Lowest score per round": [],
         "Total games played": [],
       };
 
@@ -127,10 +126,6 @@ export const usersRouter = router({
         leaderboardStats["Highest score per round"]?.push({
           ...baseUserMetadata,
           value: user?.stats?.highestScore || 0,
-        });
-        leaderboardStats["Lowest score per round"]?.push({
-          ...baseUserMetadata,
-          value: user?.stats?.lowestScore || 0,
         });
         leaderboardStats["Total games played"]?.push({
           ...baseUserMetadata,
@@ -167,10 +162,6 @@ export const usersRouter = router({
         } else if (category === "Highest score per round") {
           currentCategory = currentCategory
             .sort((a, b) => b.value - a.value)
-            .slice(0, 10);
-        } else if (category === "Lowest score per round") {
-          currentCategory = currentCategory
-            .sort((a, b) => a.value - b.value)
             .slice(0, 10);
         } else if (category === "Total games played") {
           currentCategory = currentCategory

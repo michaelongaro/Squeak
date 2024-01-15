@@ -26,7 +26,6 @@ model Stats {
   allFinishedPlacesValues Int[]  @default([])
   averageLeftInSqueak     Float  @default(0)
   allLeftInSqueakValues   Int[]  @default([])
-  lowestScore             Int    @default(0)
   highestScore            Int    @default(0)
   totalGamesPlayed        Int    @default(0)
   totalRoundsPlayed       Int    @default(0)

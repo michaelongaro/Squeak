@@ -94,7 +94,6 @@ function LeaderboardModal({ setShowModal }: ILeaderboardModal) {
                 "Average cards left in Squeak pile",
                 "Average rank per round",
                 "Highest score per round",
-                "Lowest score per round",
                 "Total games played",
               ]}
               currentValueIndex={currentlySelectedIndex}
