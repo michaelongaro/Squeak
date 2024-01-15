@@ -226,10 +226,18 @@ function Card({
         }
 
         // cards are symmetrical across y-axis so need to rotate when card is already
-        // in correct orientation relative to how it will look on the board
+        // in correct orientation relative to how it will look on the board.
+        // Rotating minimum amount to get back to 0deg total rotation, also currently
+        // keeping 180 in there for card front assets that are not symmetrical.
         if (rotate) {
+          let rotationAngle = 0;
+
+          if (rotation === 90) rotationAngle = -90;
+          else if (rotation === 180) rotationAngle = -180;
+          else if (rotation === 270) rotationAngle = 90;
+
           imageRef.current.style.transform =
-            currentImageTransform + ` rotateZ(${rotation * -1}deg)`;
+            currentImageTransform + ` rotateZ(${rotationAngle}deg)`;
         }
       }
 
@@ -486,9 +494,9 @@ function Card({
         cardOffsetPosition.y !== 0 ||
         inMovingSqueakStack)
     ) {
-        filterStyles = `drop-shadow(8px 8px 4px rgba(0, 0, 0, ${
-          inMovingSqueakStack ? 0.1 : 0.25
-        }))`;
+      filterStyles = `drop-shadow(8px 8px 4px rgba(0, 0, 0, ${
+        inMovingSqueakStack ? 0.1 : 0.25
+      }))`;
     }
 
     return filterStyles;
