@@ -469,9 +469,7 @@ function Card({
         inMovingSqueakStack)
     ) {
       if (origin === "hand" || origin === "squeakHand") {
-        animation = "regularCardDropShadow 0.15ms ease-in-out";
-      } else if (origin === "deck" || origin === "squeakDeck") {
-        animation = "shallowCardDropShadow 0.15ms ease-in-out";
+        animation = "regularCardDropShadow 100ms ease-in-out";
       }
     }
 
@@ -483,17 +481,14 @@ function Card({
 
     if (
       ownerID === userID &&
+      (origin !== "deck" || "squeakDeck") &&
       (cardOffsetPosition.x !== 0 ||
         cardOffsetPosition.y !== 0 ||
         inMovingSqueakStack)
     ) {
-      if (origin === "hand" || origin === "squeakHand") {
         filterStyles = `drop-shadow(8px 8px 4px rgba(0, 0, 0, ${
           inMovingSqueakStack ? 0.1 : 0.25
         }))`;
-      } else if (origin === "deck" || origin === "squeakDeck") {
-        filterStyles = "drop-shadow(5px 5px 4px rgba(0, 0, 0, 0.15))";
-      }
     }
 
     return filterStyles;
@@ -513,7 +508,7 @@ function Card({
             cardOffsetPosition.y))
     ) {
       transitionStyles =
-        "transform 300ms ease-in-out, filter 150ms ease-in-out";
+        "transform 300ms ease-in-out, filter 100ms ease-in-out";
     } else if (ownerID === userID) {
       transitionStyles = "filter 150ms ease-in-out";
     } else {
