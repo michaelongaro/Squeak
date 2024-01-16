@@ -8,8 +8,9 @@ import TopRightControls from "../TopRightControls/TopRightControls";
 import usePlayerLeftRoom from "../../hooks/usePlayerLeftRoom";
 import MobileWarningModal from "../modals/MobileWarningModal";
 import { isMobile } from "react-device-detect";
-import { cardAssetBaseNames } from "../../utils/cardAssetPaths";
+import { cardAssets } from "../../utils/cardAssetPaths";
 import { useRoomContext } from "../../context/RoomContext";
+import Image, { type StaticImageData } from "next/image";
 import useInitializeLocalStorageValues from "../../hooks/useInitializeLocalStorageValues";
 import useAttachUnloadEventListener from "../../hooks/useAttachUnloadEventListener";
 
@@ -18,6 +19,12 @@ function HomePage() {
 
   const [allowedToShowMobileWarningModal, setAllowedToShowMobileWarningModal] =
     useState<boolean>(false);
+
+  const [cardImagesToPreload, setCardImagesToPreload] = useState<
+    StaticImageData[]
+  >([]);
+  const [squeakButtonImagesToPreload, setSqueakButtonImagesToPreload] =
+    useState<StaticImageData[]>([]);
 
   useEffect(() => {
     setTimeout(() => {
@@ -32,22 +39,22 @@ function HomePage() {
     // prefetching/caching card assets to prevent any flickering of the assets
     // the very first time a player plays a round
     setTimeout(() => {
-      for (const basePath of cardAssetBaseNames) {
-        const image = new Image();
-        image.src = `/cards/${basePath}.svg`;
+      const cardImagesToPreload = [] as StaticImageData[];
+      const squeakButtonImagesToPreload = [] as StaticImageData[];
 
-        const simpleImage = new Image();
-        simpleImage.src = `/cards/${basePath}Simple.png`;
+      for (const image of Object.values(cardAssets)) {
+        if (
+          image.src.includes("baseplate") ||
+          image.src.includes("buzzerButton")
+        ) {
+          squeakButtonImagesToPreload.push(image);
+        } else {
+          cardImagesToPreload.push(image);
+        }
       }
 
-      const cardBack = new Image();
-      cardBack.src = "/cards/cardBack.png";
-
-      const basePlate = new Image();
-      basePlate.src = "/buzzer/baseplate.png";
-
-      const buzzerButton = new Image();
-      buzzerButton.src = "/buzzer/buzzerButton.png";
+      setCardImagesToPreload(cardImagesToPreload);
+      setSqueakButtonImagesToPreload(squeakButtonImagesToPreload);
     }, 5000);
   }, []);
 
@@ -74,6 +81,40 @@ function HomePage() {
       </AnimatePresence>
 
       <TopRightControls forPlayScreen={pageToRender === "play"} />
+
+      {/* need to actually mount the <Image />s so that next can cache
+          them properly */}
+      <div className="absolute left-0 top-0 opacity-0">
+        {cardImagesToPreload.map((image) => (
+          <Image
+            key={image.src}
+            src={image.src}
+            alt={image.src}
+            width={67}
+            height={87}
+            style={{
+              position: "absolute",
+              top: "-10000",
+              left: "-10000",
+            }}
+          />
+        ))}
+
+        {squeakButtonImagesToPreload.map((image) => (
+          <Image
+            key={image.src}
+            src={image.src}
+            alt={image.src}
+            width={image.src.includes("baseplate") ? 75 : 50}
+            height={image.src.includes("baseplate") ? 40 : 35}
+            style={{
+              position: "absolute",
+              top: "-10000",
+              left: "-10000",
+            }}
+          />
+        ))}
+      </div>
     </div>
   );
 }
