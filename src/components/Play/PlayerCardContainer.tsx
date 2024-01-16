@@ -58,10 +58,12 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
 
   useEffect(() => {
     if (showDecksAreBeingRotatedModal) {
-      setDecksAreBeingRotated(true);
       setTimeout(() => {
-        setDecksAreBeingRotated(false);
-      }, 1000);
+        setDecksAreBeingRotated(true);
+        setTimeout(() => {
+          setDecksAreBeingRotated(false);
+        }, 1000);
+      }, 500);
     }
   }, [showDecksAreBeingRotatedModal]);
 
