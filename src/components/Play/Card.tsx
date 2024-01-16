@@ -487,11 +487,12 @@ function Card({
   }
 
   function getFilterStyles() {
-    let filterStyles = "drop-shadow(0px 0px 4px rgba(0, 0, 0, 0))";
+    let filterStyles = "none";
 
     if (
       ownerID === userID &&
-      (origin !== "deck" || "squeakDeck") &&
+      origin !== "deck" &&
+      origin !== "squeakDeck" &&
       (cardOffsetPosition.x !== 0 ||
         cardOffsetPosition.y !== 0 ||
         inMovingSqueakStack)
