@@ -97,8 +97,10 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
                   places 13 cards in their &quot;Squeak pile&quot;, with an
                   additional four cards face up beside it. These four cards will
                   be referred to as the player&apos;s &quot;Squeak stacks&quot;.
-                  The player&apos;s remaining deck stays below their Squeak pile
-                  as shown below.
+                  Cards are drawn three at a time, however only the top card
+                  from these three is immediately available for play. The
+                  player&apos;s remaining deck stays below their Squeak pile as
+                  shown below.
                 </p>
               </div>
 
@@ -131,11 +133,11 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
               }}
               className="w-auto p-4 text-sm lg:w-[1000px] lg:text-base"
             >
-              The goal of each round is to get rid of all the cards in your
-              Squeak pile, which reveals your &quot;Squeak&quot; button. When
-              pressed, it ends the round and adds ten extra points to your
-              total. You may delay pressing the Squeak button if you think you
-              can still get more points.
+              The goal of each round is to accrue as many points as possible and
+              empty your Squeak pile, which reveals your &quot;Squeak&quot;
+              button. When pressed, it ends the round and adds ten extra points
+              to your total. You may delay pressing the Squeak button if you
+              think you can still get more points.
             </p>
           </fieldset>
 
