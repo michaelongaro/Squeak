@@ -1,18 +1,25 @@
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useRoomContext } from "../context/RoomContext";
+
+interface IBoundingRect {
+  left: number;
+  right: number;
+  top: number;
+  bottom: number;
+  cellCoords: [number, number];
+}
 
 function useTrackHoverOverBoardCells() {
   const { holdingADeckCard, holdingASqueakCard, hoveredCell, setHoveredCell } =
     useRoomContext();
 
+  const [boardCellBoundingRects, setBoardCellBoundingRects] = useState<
+    IBoundingRect[]
+  >([]);
+
   useEffect(() => {
-    // mousemove listener to check which squeak stack is being hovered over
-    // excludes the squeak stack that the card is currently in
-
-    function mouseHandler(e: MouseEvent) {
-      if (!holdingADeckCard && !holdingASqueakCard) return;
-
-      let newHoveredCell: [number, number] | null = null;
+    function resizeHandler() {
+      const newBoardCellBoundingRects: IBoundingRect[] = [];
 
       for (let i = 0; i < 4; i++) {
         for (let j = 0; j < 5; j++) {
@@ -20,16 +27,52 @@ function useTrackHoverOverBoardCells() {
             .getElementById(`parentCell${i}${j}`)
             ?.getBoundingClientRect();
 
-          if (cell) {
-            if (
-              e.clientX > cell.left &&
-              e.clientX < cell.right &&
-              e.clientY > cell.top &&
-              e.clientY < cell.bottom
-            ) {
-              newHoveredCell = [i, j];
-            }
-          }
+          if (cell)
+            newBoardCellBoundingRects.push({
+              left: cell.left,
+              right: cell.right,
+              top: cell.top,
+              bottom: cell.bottom,
+              cellCoords: [i, j],
+            });
+        }
+      }
+
+      setBoardCellBoundingRects(newBoardCellBoundingRects);
+    }
+
+    resizeHandler();
+
+    window.addEventListener("resize", resizeHandler);
+
+    return () => {
+      window.removeEventListener("resize", resizeHandler);
+    };
+  }, []);
+
+  useEffect(() => {
+    // mousemove listener to check which squeak stack is being hovered over
+    // excludes the squeak stack that the card is currently in
+    function mouseHandler(e: MouseEvent) {
+      if (!holdingADeckCard && !holdingASqueakCard) {
+        if (hoveredCell !== null) setHoveredCell(null);
+        return;
+      }
+
+      let newHoveredCell: [number, number] | null = null;
+
+      for (let i = 0; i < boardCellBoundingRects.length; i++) {
+        const rect = boardCellBoundingRects[i];
+
+        if (
+          rect &&
+          e.clientX >= rect.left &&
+          e.clientX <= rect.right &&
+          e.clientY >= rect.top &&
+          e.clientY <= rect.bottom
+        ) {
+          newHoveredCell = rect.cellCoords;
+          break;
         }
       }
 
@@ -48,7 +91,13 @@ function useTrackHoverOverBoardCells() {
     return () => {
       window.removeEventListener("mousemove", mouseHandler);
     };
-  }, [hoveredCell, setHoveredCell, holdingADeckCard, holdingASqueakCard]);
+  }, [
+    boardCellBoundingRects,
+    hoveredCell,
+    setHoveredCell,
+    holdingADeckCard,
+    holdingASqueakCard,
+  ]);
 }
 
 export default useTrackHoverOverBoardCells;
