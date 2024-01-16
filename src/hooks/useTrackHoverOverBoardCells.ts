@@ -2,13 +2,16 @@ import { useEffect } from "react";
 import { useRoomContext } from "../context/RoomContext";
 
 function useTrackHoverOverBoardCells() {
-  const { hoveredCell, setHoveredCell } = useRoomContext();
+  const { holdingADeckCard, holdingASqueakCard, hoveredCell, setHoveredCell } =
+    useRoomContext();
 
   useEffect(() => {
     // mousemove listener to check which squeak stack is being hovered over
     // excludes the squeak stack that the card is currently in
 
     function mouseHandler(e: MouseEvent) {
+      if (!holdingADeckCard && !holdingASqueakCard) return;
+
       let newHoveredCell: [number, number] | null = null;
 
       for (let i = 0; i < 4; i++) {
@@ -45,7 +48,7 @@ function useTrackHoverOverBoardCells() {
     return () => {
       window.removeEventListener("mousemove", mouseHandler);
     };
-  }, [hoveredCell, setHoveredCell]);
+  }, [hoveredCell, setHoveredCell, holdingADeckCard, holdingASqueakCard]);
 }
 
 export default useTrackHoverOverBoardCells;
