@@ -46,6 +46,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
     showDecksAreBeingRotatedModal,
     originIndexForHeldSqueakCard,
     setHoldingADeckCard,
+    showShufflingCountdown,
     cardBeingMovedProgramatically,
     squeakDeckBeingMovedProgramatically,
     setOriginIndexForHeldSqueakCard,
@@ -112,6 +113,8 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
 
   useEffect(() => {
     function resizeHandler() {
+      if (showShufflingCountdown) return;
+
       const newSqueakHandBoundingRects: IBoundingRect[] = [];
 
       for (let i = 0; i < 4; i++) {
@@ -139,7 +142,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
     return () => {
       window.removeEventListener("resize", resizeHandler);
     };
-  }, [userID]);
+  }, [userID, showShufflingCountdown]);
 
   function mouseMoveHandler(
     e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>
@@ -148,6 +151,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
 
     for (let i = 0; i < 4; i++) {
       const boundingRect = squeakStackBoundingRects[i];
+
       if (!boundingRect) continue;
 
       const { left, right, top, bottom } = boundingRect;
