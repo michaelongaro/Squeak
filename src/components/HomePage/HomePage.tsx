@@ -8,7 +8,7 @@ import TopRightControls from "../TopRightControls/TopRightControls";
 import usePlayerLeftRoom from "../../hooks/usePlayerLeftRoom";
 import MobileWarningModal from "../modals/MobileWarningModal";
 import { isMobile } from "react-device-detect";
-import { cardAssetPaths } from "../../utils/cardAssetPaths";
+import { cardAssets } from "../../utils/cardAssetPaths";
 import { useRoomContext } from "../../context/RoomContext";
 // import Image from "next/image";
 import useInitializeLocalStorageValues from "../../hooks/useInitializeLocalStorageValues";
@@ -52,10 +52,10 @@ function HomePage() {
       // const cardImagesToPreload = [] as string[];
       // const squeakButtonImagesToPreload = [] as string[];
 
-      for (const imagePath of cardAssetPaths) {
+      for (const imagePath of Object.values(cardAssets)) {
         // precache the image
         const img = new Image();
-        img.src = imagePath;
+        img.src = imagePath.src;
 
         // if (
         //   imagePath.includes("baseplate") ||

@@ -14,7 +14,7 @@ import useCardDropApproved from "../../hooks/useCardDropApproved";
 import useCardDropDenied from "../../hooks/useCardDropDenied";
 import { adjustCoordinatesByRotation } from "../../utils/adjustCoordinatesByRotation";
 import Image, { type StaticImageData } from "next/image";
-import { cardAssetPaths } from "../../utils/cardAssetPaths";
+import { cardAssets } from "../../utils/cardAssetPaths";
 
 interface ICardComponent {
   value?: string;
@@ -529,16 +529,30 @@ function Card({
     return transitionStyles;
   }
 
-  function getCardAssetPath() {
+  // function getCardAssetPath() {
+  //   if (manuallyShowSpecificCardFront) {
+  //     return `/cards/${value}${suit}${
+  //       manuallyShowSpecificCardFront === "simple" ? "Simple.png" : ".svg"
+  //     }`;
+  //   }
+
+  //   return `/cards/${value}${suit}${
+  //     prefersSimpleCardAssets ? "Simple.png" : ".svg"
+  //   }`;
+  // }
+
+  function getCardAssetPath(): StaticImageData {
     if (manuallyShowSpecificCardFront) {
-      return `/cards/${value}${suit}${
-        manuallyShowSpecificCardFront === "simple" ? "Simple.png" : ".svg"
-      }`;
+      return cardAssets[
+        `${suit}${value}${
+          manuallyShowSpecificCardFront === "simple" ? "Simple" : ""
+        }`
+      ] as StaticImageData;
     }
 
-    return `/cards/${value}${suit}${
-      prefersSimpleCardAssets ? "Simple.png" : ".svg"
-    }`;
+    return cardAssets[
+      `${suit}${value}${prefersSimpleCardAssets ? "Simple" : ""}`
+    ] as StaticImageData;
   }
 
   return (
@@ -588,8 +602,8 @@ function Card({
               className="pointer-events-none h-[64px] w-[48px] select-none rounded-[0.25rem] tall:h-[87px] tall:w-[67px]"
               src={
                 showCardBack && !manuallyShowCardFront
-                  ? "/cards/cardBack.png" //(cardAssets["cardBack"] as StaticImageData)
-                  : getCardAssetPath()
+                  ? (cardAssets["cardBack"] as StaticImageData).src //"/cards/cardBack.png" //(cardAssets["cardBack"] as StaticImageData)
+                  : getCardAssetPath().src
               }
               alt={
                 showCardBack && !manuallyShowCardFront
