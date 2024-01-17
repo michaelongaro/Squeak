@@ -341,8 +341,8 @@ function PickerTooltip({
           showCardBack={true}
           draggable={false}
           rotation={0}
-          width={"4rem"}
-          height={"5.5rem"}
+          width={64}
+          height={87}
           hueRotation={
             hslToDeckHueRotations[
               color as keyof typeof hslToDeckHueRotations // seems hacky
@@ -396,8 +396,8 @@ function PickerTooltip({
             showCardBack={false}
             draggable={false}
             rotation={0}
-            width={"4rem"}
-            height={"5.5rem"}
+            width={64}
+            height={87}
             hueRotation={0}
             manuallyShowSpecificCardFront={"normal"}
           />
@@ -432,8 +432,8 @@ function PickerTooltip({
             showCardBack={false}
             draggable={false}
             rotation={0}
-            width={"4rem"}
-            height={"5.5rem"}
+            width={64}
+            height={87}
             hueRotation={0}
             manuallyShowSpecificCardFront={"simple"}
           />
@@ -467,8 +467,8 @@ function PickerTooltip({
             rotation={0}
             showCardBack={true}
             ownerID={userID}
-            width={"3rem"} // roughly correct for ratio of a card
-            height={"4rem"}
+            width={48} // roughly correct for ratio of a card
+            height={64}
             hueRotation={playerMetadata[userID]?.deckHueRotation || 0}
           />
           <p>Back</p>
@@ -485,8 +485,8 @@ function PickerTooltip({
           ownerID={userID}
           suit={"C"}
           value={"8"}
-          width={"3rem"} // roughly correct for ratio of a card
-          height={"4rem"}
+          width={48} // roughly correct for ratio of a card
+          height={64}
           hueRotation={playerMetadata[userID]?.deckHueRotation || 0}
           manuallyShowSpecificCardFront={
             prefersSimpleCardAssets ? "simple" : "normal"

@@ -14,7 +14,7 @@ import useCardDropApproved from "../../hooks/useCardDropApproved";
 import useCardDropDenied from "../../hooks/useCardDropDenied";
 import { adjustCoordinatesByRotation } from "../../utils/adjustCoordinatesByRotation";
 import Image, { type StaticImageData } from "next/image";
-import { cardAssets } from "../../utils/cardAssetPaths";
+import { cardAssetPaths } from "../../utils/cardAssetPaths";
 
 interface ICardComponent {
   value?: string;
@@ -27,8 +27,8 @@ interface ICardComponent {
   squeakStackLocation?: [number, number];
   rotation: number;
   hueRotation: number;
-  width?: string;
-  height?: string;
+  width?: number;
+  height?: number;
   manuallyShowSpecificCardFront?: "normal" | "simple";
 }
 
@@ -529,18 +529,16 @@ function Card({
     return transitionStyles;
   }
 
-  function getCardAssetPath(): StaticImageData {
+  function getCardAssetPath() {
     if (manuallyShowSpecificCardFront) {
-      return cardAssets[
-        `${suit}${value}${
-          manuallyShowSpecificCardFront === "simple" ? "Simple" : ""
-        }`
-      ] as StaticImageData;
+      return `/cards/${value}${suit}${
+        manuallyShowSpecificCardFront === "simple" ? "Simple.png" : ".svg"
+      }`;
     }
 
-    return cardAssets[
-      `${suit}${value}${prefersSimpleCardAssets ? "Simple" : ""}`
-    ] as StaticImageData;
+    return `/cards/${value}${suit}${
+      prefersSimpleCardAssets ? "Simple.png" : ".svg"
+    }`;
   }
 
   return (
@@ -577,7 +575,7 @@ function Card({
               draggable && "cursor-grab hover:active:cursor-grabbing"
             }`}
           >
-            <Image
+            <img
               ref={imageRef}
               style={{
                 width: width,
@@ -590,7 +588,7 @@ function Card({
               className="pointer-events-none h-[64px] w-[48px] select-none rounded-[0.25rem] tall:h-[87px] tall:w-[67px]"
               src={
                 showCardBack && !manuallyShowCardFront
-                  ? (cardAssets["cardBack"] as StaticImageData)
+                  ? "/cards/cardBack.png" //(cardAssets["cardBack"] as StaticImageData)
                   : getCardAssetPath()
               }
               alt={
@@ -598,6 +596,8 @@ function Card({
                   ? "Back of card"
                   : `${value}${suit} card`
               }
+              // width={width || 67}
+              // height={height || 87}
               draggable="false"
             />
           </div>

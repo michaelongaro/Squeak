@@ -17,6 +17,8 @@ const config = {
     dangerouslyAllowSVG: true,
     contentDispositionType: "attachment",
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+    // deviceSizes: [320, 420, 768, 1024, 1200],
+    // imageSizes: [67, 67, 67, 67, 67, 67, 67],
   },
 };
 export default config;
