@@ -107,7 +107,7 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
               <Image
                 src={labeledPlayerContainer}
                 alt={"Example of a player's card placement with labels"}
-                className={`h-auto w-auto rounded-md shadow-lg ${
+                className={`rounded-md shadow-lg ${
                   labeledPlayerContainerLoaded
                     ? "border-[1px] border-white"
                     : ""
@@ -172,7 +172,7 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
                   <Image
                     src={boardPlacementExample}
                     alt={"Example of a card being placed on the board"}
-                    className={`h-auto w-auto rounded-md shadow-lg ${
+                    className={`rounded-md shadow-lg ${
                       boardPlacementExampleLoaded
                         ? "border-[1px] border-white"
                         : ""
@@ -206,7 +206,7 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
                   <Image
                     src={squeakStackPlacementExample}
                     alt={"Example of a card being placed on the board"}
-                    className={`h-auto w-auto rounded-md shadow-lg ${
+                    className={`rounded-md shadow-lg ${
                       squeakStackPlacementExampleLoaded
                         ? "border-[1px] border-white"
                         : ""
