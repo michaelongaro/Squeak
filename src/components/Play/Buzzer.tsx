@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { socket } from "../../pages";
 import { motion } from "framer-motion";
-import Image from "next/image";
 import { useUserIDContext } from "../../context/UserIDContext";
 import { useRoomContext } from "../../context/RoomContext";
 import baseplate from "../../../public/buzzer/baseplate.png";
@@ -116,9 +115,9 @@ function Buzzer({ playerID, roomCode, interactive }: IBuzzer) {
     >
       {/* grey baseplate for button */}
       <div className="absolute left-0 top-0 z-[140]">
-        <Image
+        <img
           draggable={false}
-          src={baseplate}
+          src={baseplate.src}
           alt="baseplate for buzzer"
           className="h-[40px] w-[75px]"
         />
@@ -126,13 +125,13 @@ function Buzzer({ playerID, roomCode, interactive }: IBuzzer) {
 
       {/* actual button container */}
       <div className="absolute left-[7px] top-[-5px] z-[140] h-[35px] w-[50px]">
-        <Image
+        <img
           style={{
             top: mouseDownOnButton ? "8px" : "0px",
             transform: mouseDownOnButton ? "rotateX(60deg)" : "rotateX(0deg)",
           }}
           draggable={false}
-          src={squeakBuzzer}
+          src={squeakBuzzer.src}
           alt="buzzer"
           className="absolute h-[35px] w-[50px] transition-all"
         />
@@ -145,7 +144,7 @@ function Buzzer({ playerID, roomCode, interactive }: IBuzzer) {
           transform: "translate(-50%, -50%)",
           height: playExpandingPulseWaveAnimation ? "500px" : "0",
           width: playExpandingPulseWaveAnimation ? "500px" : "0",
-          backgroundColor: playerMetadata[playerIDWhoSqueaked!]?.color,
+          backgroundColor: playerMetadata[playerIDWhoSqueaked || ""]?.color,
           opacity: playExpandingPulseWaveAnimation ? "0.5" : "0",
           transition: playExpandingPulseWaveAnimation
             ? "all 1s linear"
