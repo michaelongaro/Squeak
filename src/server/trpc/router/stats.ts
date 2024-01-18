@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { router, publicProcedure, protectedProcedure } from "../trpc";
+import { router, publicProcedure } from "../trpc";
 
 export const statsRouter = router({
   initializeUser: publicProcedure // maybe go protected if it still will return null on "" input
