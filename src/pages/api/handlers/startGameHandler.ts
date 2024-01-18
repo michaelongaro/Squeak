@@ -14,9 +14,9 @@ import generateDeckAndSqueakCards from "../../../utils/generateDeckAndSqueakCard
 const prisma = new PrismaClient();
 
 const botDifficultyDelay = {
-  Easy: 7000,
-  Medium: 5000,
-  Hard: 3000,
+  Easy: 8000,
+  Medium: 6000,
+  Hard: 4000,
 };
 
 export function startGameHandler(
@@ -148,14 +148,14 @@ export function startGameHandler(
                   playerID
                 ),
               botDifficultyDelay[botDifficulty] +
-                (Math.floor(Math.random() * 500) - 250)
+                (Math.floor(Math.random() * 1000) - 500) // random offset by +- 500ms
             );
 
             if (botInterval) miscRoomDataObj.botIntervals.push(botInterval);
           }, botDifficultyDelay[botDifficulty] + (parseInt(index) - 1) * botDifficultyDelay[botDifficulty] * 0.5);
           // TODO: I am entirely not convinced that this will guarantee that the bots won't overlap...
-          // stagger each bot's moves so they don't all happen at once if they have the same difficulty,
-          // also helps with not rapid-fire placing cards on the board which is a little unfair.
+          // It is meant to stagger each bot's moves so they don't all happen at once (especially if they have the
+          // same difficulty), also helps with not rapid-fire placing cards on the board which is a little unfair.
         }
       }, 7000); // roughly the time it takes for the cards to be dealt to the players on client side
 
