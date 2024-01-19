@@ -58,6 +58,9 @@ function Card({
     hoveredSqueakStack,
     originIndexForHeldSqueakCard,
     heldSqueakStackLocation,
+    audioContext,
+    masterVolumeGainNode,
+    notAllowedMoveBuffer,
     setProposedCardBoxShadow,
     setHeldSqueakStackLocation,
     cardBeingMovedProgramatically,
@@ -328,9 +331,28 @@ function Card({
   });
 
   useCardDropDenied({
+    value,
+    suit,
     ownerID,
     moveCard,
   });
+
+  function moveCardBackToOriginWithSound(originSqueakStackIndex?: number) {
+    moveCard({ x: 0, y: 0 }, false, false);
+
+    if (!audioContext || !masterVolumeGainNode) return;
+
+    // dropping squeak stack card back on original stack is allowed, therefore
+    // don't play the not allowed sound
+    if (hoveredSqueakStack !== originSqueakStackIndex) {
+      const source = audioContext.createBufferSource();
+      source.buffer = notAllowedMoveBuffer;
+      source.detune.value = -650;
+
+      source.connect(masterVolumeGainNode);
+      source.start();
+    }
+  }
 
   function dropHandler() {
     // deck start + board end
@@ -351,7 +373,7 @@ function Card({
           roomCode: roomConfig.code,
         });
       } else {
-        moveCard({ x: 0, y: 0 }, false, false);
+        moveCardBackToOriginWithSound();
       }
     }
 
@@ -374,7 +396,7 @@ function Card({
           roomCode: roomConfig.code,
         });
       } else {
-        moveCard({ x: 0, y: 0 }, false, false);
+        moveCardBackToOriginWithSound();
       }
     }
 
@@ -410,7 +432,7 @@ function Card({
           roomCode: roomConfig.code,
         });
       } else {
-        moveCard({ x: 0, y: 0 }, false, false);
+        moveCardBackToOriginWithSound();
       }
     }
 
@@ -439,7 +461,7 @@ function Card({
           roomCode: roomConfig.code,
         });
       } else {
-        moveCard({ x: 0, y: 0 }, false, false);
+        moveCardBackToOriginWithSound(squeakStackLocation?.[0]);
       }
     }
 

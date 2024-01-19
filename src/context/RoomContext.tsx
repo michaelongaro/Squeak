@@ -132,6 +132,7 @@ interface IRoomContext {
 
   // audio file buffers
   successfulMoveBuffer: AudioBuffer | null;
+  notAllowedMoveBuffer: AudioBuffer | null;
   otherPlayerCardMoveBuffer: AudioBuffer | null;
   squeakButtonPressBuffer: AudioBuffer | null;
   confettiPopBuffer: AudioBuffer | null;
@@ -151,6 +152,8 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     useState<GainNode | null>(null);
 
   const [successfulMoveBuffer, setSuccessfulMoveBuffer] =
+    useState<AudioBuffer | null>(null);
+  const [notAllowedMoveBuffer, setNotAllowedMoveBuffer] =
     useState<AudioBuffer | null>(null);
   const [otherPlayerCardMoveBuffer, setOtherPlayerCardMoveBuffer] =
     useState<AudioBuffer | null>(null);
@@ -257,6 +260,9 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     fetchAudioFile("/sounds/successfulMove.mp3").then((buffer) =>
       setSuccessfulMoveBuffer(buffer)
     );
+    fetchAudioFile("/sounds/notAllowed.mp3").then((buffer) =>
+      setNotAllowedMoveBuffer(buffer)
+    );
     fetchAudioFile("/sounds/otherPlayerCardMove.mp3").then((buffer) =>
       setOtherPlayerCardMoveBuffer(buffer)
     );
@@ -343,6 +349,7 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     audioContext,
     masterVolumeGainNode,
     successfulMoveBuffer,
+    notAllowedMoveBuffer,
     otherPlayerCardMoveBuffer,
     squeakButtonPressBuffer,
     confettiPopBuffer,
