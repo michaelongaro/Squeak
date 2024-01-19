@@ -50,7 +50,7 @@ export function botMoveHandler(
       gameData,
       roomData,
       miscRoomData,
-      roundWinnerID: playerID,
+      playerWhoSqueakedID: playerID,
       roomCode,
     });
     return;

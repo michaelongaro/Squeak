@@ -35,7 +35,7 @@ interface IRoundOverBackendVersion {
   gameData: IGameData;
   roomData: IRoomData;
   miscRoomData: IMiscRoomData;
-  roundWinnerID: string;
+  playerWhoSqueakedID: string;
   roomCode: string;
 }
 
@@ -49,10 +49,10 @@ export function roundOverHandler(
   socket.on(
     "roundOver",
     ({
-      roundWinnerID,
+      playerWhoSqueakedID,
       roomCode,
     }: {
-      roundWinnerID: string;
+      playerWhoSqueakedID: string;
       roomCode: string;
     }) =>
       generateAndEmitScoreboard({
@@ -60,7 +60,7 @@ export function roundOverHandler(
         gameData,
         roomData,
         miscRoomData,
-        roundWinnerID,
+        playerWhoSqueakedID,
         roomCode,
       })
   );
@@ -71,7 +71,7 @@ export function generateAndEmitScoreboard({
   gameData,
   roomData,
   miscRoomData,
-  roundWinnerID,
+  playerWhoSqueakedID,
   roomCode,
 }: IRoundOverBackendVersion) {
   const room = roomData[roomCode];
@@ -132,12 +132,18 @@ export function generateAndEmitScoreboard({
     );
 
     const squeakModifier =
-      roundWinnerID === playerID ? 10 : squeakDeckCards.length * -1;
+      playerWhoSqueakedID === playerID ? 10 : squeakDeckCards.length * -1;
 
-    playerScoresForThisRound.push([
-      playerID,
-      cardsPlayed.length + squeakModifier,
-    ]);
+    const roundScore = cardsPlayed.length + squeakModifier;
+
+    if (
+      playerScoresForThisRound.length === 0 ||
+      roundScore > playerScoresForThisRound[0]![1]
+    ) {
+      playerScoresForThisRound.unshift([playerID, roundScore]);
+    } else {
+      playerScoresForThisRound.push([playerID, roundScore]);
+    }
   }
 
   // calculate and store playerRoundDetails for each player
@@ -157,7 +163,7 @@ export function generateAndEmitScoreboard({
     );
 
     const squeakModifier =
-      roundWinnerID === playerID ? 10 : squeakDeckCards.length * -1;
+      playerWhoSqueakedID === playerID ? 10 : squeakDeckCards.length * -1;
     const oldScore = player.totalPoints;
     const newScore = oldScore + cardsPlayed.length + squeakModifier;
     const oldRanking = player.rankInRoom;
@@ -241,9 +247,10 @@ export function generateAndEmitScoreboard({
 
     if (!player) return;
 
-    if (!playerWithHighestEndScore) {
-      playerWithHighestEndScore = [playerID, player.totalPoints];
-    } else if (player.totalPoints > playerWithHighestEndScore[1]) {
+    if (
+      !playerWithHighestEndScore ||
+      player.totalPoints > playerWithHighestEndScore[1]
+    ) {
       playerWithHighestEndScore = [playerID, player.totalPoints];
     }
   }
@@ -254,6 +261,8 @@ export function generateAndEmitScoreboard({
   ) {
     gameWinnerID = playerWithHighestEndScore[0];
   }
+
+  const roundWinnerID = playerScoresForThisRound[0]![0]!;
 
   // updating stats for each user in the room
   for (const playerID of Object.keys(playerRoundDetails)) {

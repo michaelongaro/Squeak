@@ -98,7 +98,7 @@ function Buzzer({ playerID, roomCode, interactive }: IBuzzer) {
       onClick={() => {
         if (interactive && !playExpandingPulseWaveAnimation) {
           socket.emit("roundOver", {
-            roundWinnerID: playerID,
+            playerWhoSqueakedID: playerID,
             roomCode,
           });
 
