@@ -1,8 +1,6 @@
-import { useState, useEffect, Fragment } from "react";
 import { useRoomContext } from "../../context/RoomContext";
 import Card from "./Card";
 import { AnimatePresence, motion } from "framer-motion";
-import useTrackHoverOverBoardCells from "../../hooks/useTrackHoverOverBoardCells";
 import { type ICard } from "../../utils/generateDeckAndSqueakCards";
 
 interface IBoardCell {
@@ -21,57 +19,23 @@ export interface IGetBoxShadowStyles {
 function BoardCell({ card, rowIdx, colIdx }: IBoardCell) {
   const { proposedCardBoxShadow } = useRoomContext();
 
-  const [lastCardWasAQueen, setLastCardWasAQueen] = useState(false);
-  const [animatingOutDeck, setAnimatingOutDeck] = useState(false);
-
-  useEffect(() => {
-    if (card?.value === "Q") {
-      setLastCardWasAQueen(true);
-    }
-  }, [card]);
-
-  useEffect(() => {
-    if (lastCardWasAQueen && card === null) {
-      setAnimatingOutDeck(true);
-      setTimeout(() => {
-        setAnimatingOutDeck(false);
-        setLastCardWasAQueen(false);
-      }, 550);
-    }
-  }, [lastCardWasAQueen, card]);
-
-  useTrackHoverOverBoardCells();
-
   return (
-    <>
-      {!animatingOutDeck && (
+    <AnimatePresence>
+      {card && (
         <motion.div
           key={`board${rowIdx}${colIdx}AnimatedCell`}
           exit={{ opacity: 0, scale: 0.75 }}
           transition={{ duration: 0.55 }}
           className="relative h-full w-full select-none"
         >
-          {card === null && lastCardWasAQueen && (
-            <div className="absolute left-0 top-0 h-full w-full select-none">
-              <Card
-                showCardBack={true}
-                draggable={false}
-                hueRotation={0}
-                rotation={0}
-              />
-            </div>
-          )}
-
-          {card && (
-            <Card
-              value={card.value}
-              suit={card.suit}
-              showCardBack={false}
-              draggable={false}
-              hueRotation={0}
-              rotation={0}
-            />
-          )}
+          <Card
+            value={card.value}
+            suit={card.suit}
+            showCardBack={false}
+            draggable={false}
+            hueRotation={0}
+            rotation={0}
+          />
         </motion.div>
       )}
 
@@ -94,7 +58,7 @@ function BoardCell({ card, rowIdx, colIdx }: IBoardCell) {
             </motion.div>
           )}
       </AnimatePresence>
-    </>
+    </AnimatePresence>
   );
 }
 
