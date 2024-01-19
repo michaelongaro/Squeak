@@ -17,13 +17,6 @@ interface IPlayerCardContainer {
   cardContainerClass: string | undefined;
 }
 
-interface IBoundingRect {
-  left: number;
-  right: number;
-  top: number;
-  bottom: number;
-}
-
 const cardClassMap = {
   0: classes.squeakHand0,
   1: classes.squeakHand1,
@@ -46,7 +39,6 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
     showDecksAreBeingRotatedModal,
     originIndexForHeldSqueakCard,
     setHoldingADeckCard,
-    showShufflingCountdown,
     cardBeingMovedProgramatically,
     squeakDeckBeingMovedProgramatically,
     setOriginIndexForHeldSqueakCard,
@@ -59,9 +51,6 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
   const [mouseDownOnDeck, setMouseDownOnDeck] = useState(false);
   const [drawingFromDeck, setDrawingFromDeck] = useState(false);
   const [decksAreBeingRotated, setDecksAreBeingRotated] = useState(false);
-  const [squeakStackBoundingRects, setSqueakStackBoundingRects] = useState<
-    IBoundingRect[]
-  >([]);
 
   useRotatePlayerDecks();
 
@@ -111,63 +100,56 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
     return `${(20 - squeakStackLength) * cardIdx}px`;
   }
 
-  useEffect(() => {
-    function resizeHandler() {
-      if (showShufflingCountdown) return;
-
-      const newSqueakHandBoundingRects: IBoundingRect[] = [];
-
-      for (let i = 0; i < 4; i++) {
-        const squeakHand = document.getElementById(`${userID}squeakHand${i}`);
-
-        if (!squeakHand) continue;
-
-        const boundingRect = squeakHand.getBoundingClientRect();
-
-        newSqueakHandBoundingRects.push({
-          left: boundingRect.left,
-          right: boundingRect.right,
-          top: boundingRect.top,
-          bottom: boundingRect.bottom,
-        });
-      }
-
-      setSqueakStackBoundingRects(newSqueakHandBoundingRects);
-    }
-
-    resizeHandler();
-
-    window.addEventListener("resize", resizeHandler);
-
-    return () => {
-      window.removeEventListener("resize", resizeHandler);
-    };
-  }, [userID, showShufflingCountdown]);
-
   function mouseMoveHandler(
     e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>
   ) {
-    let newHoveredSqueakStack = null;
+    if (userID === null) return;
 
-    for (let i = 0; i < 4; i++) {
-      const boundingRect = squeakStackBoundingRects[i];
+    const squeakHand0 = document
+      .getElementById(`${userID}squeakHand0`)
+      ?.getBoundingClientRect();
+    const squeakHand1 = document
+      .getElementById(`${userID}squeakHand1`)
+      ?.getBoundingClientRect();
+    const squeakHand2 = document
+      .getElementById(`${userID}squeakHand2`)
+      ?.getBoundingClientRect();
+    const squeakHand3 = document
+      .getElementById(`${userID}squeakHand3`)
+      ?.getBoundingClientRect();
 
-      if (!boundingRect) continue;
-
-      const { left, right, top, bottom } = boundingRect;
-
+    if (squeakHand0 && squeakHand1 && squeakHand2 && squeakHand3) {
       if (
-        e.clientX >= left &&
-        e.clientX <= right &&
-        e.clientY >= top &&
-        e.clientY <= bottom
+        e.clientX > squeakHand0.left &&
+        e.clientX < squeakHand0.right &&
+        e.clientY > squeakHand0.top &&
+        e.clientY < squeakHand0.bottom
       ) {
-        newHoveredSqueakStack = i;
+        setHoveredSqueakStack(0);
+      } else if (
+        e.clientX > squeakHand1.left &&
+        e.clientX < squeakHand1.right &&
+        e.clientY > squeakHand1.top &&
+        e.clientY < squeakHand1.bottom
+      ) {
+        setHoveredSqueakStack(1);
+      } else if (
+        e.clientX > squeakHand2.left &&
+        e.clientX < squeakHand2.right &&
+        e.clientY > squeakHand2.top &&
+        e.clientY < squeakHand2.bottom
+      ) {
+        setHoveredSqueakStack(2);
+      } else if (
+        e.clientX > squeakHand3.left &&
+        e.clientX < squeakHand3.right &&
+        e.clientY > squeakHand3.top &&
+        e.clientY < squeakHand3.bottom
+      ) {
+        setHoveredSqueakStack(3);
+      } else {
+        setHoveredSqueakStack(null);
       }
-    }
-
-    if (newHoveredSqueakStack !== hoveredSqueakStack) {
-      setHoveredSqueakStack(newHoveredSqueakStack);
     }
   }
 
