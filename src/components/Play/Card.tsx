@@ -13,7 +13,7 @@ import useCardDrawFromSqueakDeck from "../../hooks/useCardDrawFromSqueakDeck";
 import useCardDropApproved from "../../hooks/useCardDropApproved";
 import useCardDropDenied from "../../hooks/useCardDropDenied";
 import { adjustCoordinatesByRotation } from "../../utils/adjustCoordinatesByRotation";
-import Image, { type StaticImageData } from "next/image";
+import { type StaticImageData } from "next/image";
 import { cardAssets } from "../../utils/cardAssetPaths";
 
 interface ICardComponent {
@@ -73,7 +73,7 @@ function Card({
   } = useRoomContext();
 
   const [cardOffsetPosition, setCardOffsetPosition] = useState({ x: 0, y: 0 });
-  const [manuallyShowCardFront, setManuallyShowCardFront] = useState(false);
+  const [forceShowCardFront, setForceShowCardFront] = useState(false);
 
   const cardRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
@@ -260,7 +260,7 @@ function Card({
             "rotateY(0deg)"
           );
 
-          setManuallyShowCardFront(true);
+          setForceShowCardFront(true);
         }, 150);
       }
 
@@ -551,18 +551,6 @@ function Card({
     return transitionStyles;
   }
 
-  // function getCardAssetPath() {
-  //   if (manuallyShowSpecificCardFront) {
-  //     return `/cards/${value}${suit}${
-  //       manuallyShowSpecificCardFront === "simple" ? "Simple.png" : ".svg"
-  //     }`;
-  //   }
-
-  //   return `/cards/${value}${suit}${
-  //     prefersSimpleCardAssets ? "Simple.png" : ".svg"
-  //   }`;
-  // }
-
   function getCardAssetPath(): StaticImageData {
     if (manuallyShowSpecificCardFront) {
       return cardAssets[
@@ -617,23 +605,21 @@ function Card({
                 width: width,
                 height: height,
                 filter:
-                  showCardBack && !manuallyShowCardFront
+                  showCardBack && !forceShowCardFront
                     ? `hue-rotate(${hueRotation}deg)`
                     : "none",
               }}
               className="pointer-events-none h-[64px] w-[48px] select-none rounded-[0.25rem] tall:h-[87px] tall:w-[67px]"
               src={
-                showCardBack && !manuallyShowCardFront
-                  ? (cardAssets["cardBack"] as StaticImageData).src //"/cards/cardBack.png" //(cardAssets["cardBack"] as StaticImageData)
+                showCardBack && !forceShowCardFront
+                  ? (cardAssets["cardBack"] as StaticImageData).src
                   : getCardAssetPath().src
               }
               alt={
-                showCardBack && !manuallyShowCardFront
+                showCardBack && !forceShowCardFront
                   ? "Back of card"
                   : `${value}${suit} card`
               }
-              // width={width || 67}
-              // height={height || 87}
               draggable="false"
             />
           </div>
