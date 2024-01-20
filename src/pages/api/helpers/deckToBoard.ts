@@ -64,7 +64,7 @@ export function deckToBoard({
     });
 
     // not sure how to properly mutate the board without this
-    gameData[roomCode]!.board[row]![col] = card.value === "K" ? null : card;
+    gameData[roomCode]!.board[row]![col] = card;
 
     io.in(roomCode).emit("cardDropApproved", {
       playerID,
@@ -77,6 +77,15 @@ export function deckToBoard({
       endID: `cell${row}${col}`,
       updatedGameData: gameData[roomCode],
     });
+
+    if (card.value === "K") {
+      setTimeout(() => {
+        gameData[roomCode]!.board[row]![col] = null;
+
+        io.in(roomCode).emit("syncClientWithServer", gameData[roomCode]);
+      }, 700);
+    }
+
     return true;
   } else {
     io.in(roomCode).emit("cardDropDenied", { playerID });

@@ -17,6 +17,7 @@ import useScoreboardData from "../../hooks/useScoreboardData";
 import OtherPlayerIcons from "./OtherPlayerIcons";
 import classes from "./Play.module.css";
 import DecksAreBeingRotatedModal from "../modals/DecksAreBeingRotatedModal";
+import useSyncClientWithServer from "../../hooks/useSyncClientWithServer";
 
 function Play() {
   const userID = useUserIDContext();
@@ -39,6 +40,7 @@ function Play() {
   useResetDeckFromCardDraw();
   useManuallyResetRound();
   useScoreboardData();
+  useSyncClientWithServer();
 
   useEffect(() => {
     if (initialEffectRan) return;
