@@ -318,7 +318,7 @@ function CreateRoom() {
             <div className=" baseFlex !justify-between gap-2 pl-4 pr-4">
               <SecondaryButton
                 innerText={"-25"}
-                disabled={roomConfig.pointsToWin <= 50}
+                disabled={roomConfig.pointsToWin <= 25}
                 extraPadding={false}
                 width={"3rem"}
                 height={"3rem"}
