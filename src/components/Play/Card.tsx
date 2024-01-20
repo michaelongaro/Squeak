@@ -32,6 +32,13 @@ interface ICardComponent {
   manuallyShowSpecificCardFront?: "normal" | "simple";
 }
 
+export interface IMoveCard {
+  newPosition: { x: number; y: number };
+  flip: boolean;
+  rotate: boolean;
+  callbackFunction?: () => void;
+}
+
 function Card({
   value,
   suit,
@@ -90,12 +97,7 @@ function Card({
     false;
 
   const moveCard = useCallback(
-    (
-      { x, y }: { x: number; y: number },
-      flip: boolean,
-      rotate: boolean,
-      callbackFunction?: () => void
-    ) => {
+    ({ newPosition, flip, rotate, callbackFunction }: IMoveCard) => {
       if (!cardRef.current || !imageRef.current) return;
 
       let start: number | undefined;
@@ -165,7 +167,7 @@ function Card({
         setHoldingASqueakCard(false);
       }
 
-      if (x === 0 && y === 0) {
+      if (newPosition.x === 0 && newPosition.y === 0) {
         if (hoveredCell) {
           setProposedCardBoxShadow({
             id: `cell${hoveredCell[0]}${hoveredCell[1]}`,
@@ -210,8 +212,8 @@ function Card({
 
         const { x: endXCoordinate, y: endYCoordinate } =
           adjustCoordinatesByRotation(
-            Math.floor(x - currentX),
-            Math.floor(y - currentY),
+            Math.floor(newPosition.x - currentX),
+            Math.floor(newPosition.y - currentY),
             rotation
           );
 
@@ -255,12 +257,12 @@ function Card({
         setTimeout(() => {
           if (!imageRef.current) return;
 
+          setForceShowCardFront(true);
+
           imageRef.current.style.transform = currentImageTransform.replace(
             "rotateY(90deg)",
             "rotateY(0deg)"
           );
-
-          setForceShowCardFront(true);
         }, 150);
       }
 
@@ -338,7 +340,11 @@ function Card({
   });
 
   function moveCardBackToOriginWithSound(originSqueakStackIndex?: number) {
-    moveCard({ x: 0, y: 0 }, false, false);
+    moveCard({
+      newPosition: { x: 0, y: 0 },
+      flip: false,
+      rotate: false,
+    });
 
     if (!audioContext || !masterVolumeGainNode) return;
 
@@ -467,7 +473,11 @@ function Card({
 
     // dropping card over anywhere else on the screen
     else {
-      moveCard({ x: 0, y: 0 }, false, false);
+      moveCard({
+        newPosition: { x: 0, y: 0 },
+        flip: false,
+        rotate: false,
+      });
     }
   }
 

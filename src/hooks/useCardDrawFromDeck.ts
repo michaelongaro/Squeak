@@ -2,18 +2,19 @@ import { useState, useEffect } from "react";
 import { socket } from "../pages";
 import { useRoomContext } from "../context/RoomContext";
 import { type IDrawFromDeck } from "../pages/api/socket";
+import { type IMoveCard } from "../components/Play/Card";
 
 interface IUseCardDrawFromDeck {
   value?: string;
   suit?: string;
   ownerID?: string;
   rotation: number;
-  moveCard: (
-    { x, y }: { x: number; y: number },
-    flip: boolean,
-    rotate: boolean,
-    callbackFunction?: () => void
-  ) => void;
+  moveCard: ({
+    newPosition,
+    flip,
+    rotate,
+    callbackFunction,
+  }: IMoveCard) => void;
 }
 
 function useCardDrawFromDeck({
@@ -61,8 +62,13 @@ function useCardDrawFromDeck({
         ?.getBoundingClientRect();
 
       if (endLocation) {
-        moveCard({ x: endLocation.x, y: endLocation.y }, true, false, () => {
-          setGameData(updatedGameData);
+        moveCard({
+          newPosition: { x: endLocation.x, y: endLocation.y },
+          flip: true,
+          rotate: false,
+          callbackFunction: () => {
+            setGameData(updatedGameData);
+          },
         });
       }
     }

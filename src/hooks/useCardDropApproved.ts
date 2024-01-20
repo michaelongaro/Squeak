@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { socket } from "../pages";
 import { useRoomContext } from "../context/RoomContext";
 import { type ICardDropProposal } from "../pages/api/socket";
+import { type IMoveCard } from "../components/Play/Card";
 
 interface ICardDropAccepted extends Partial<ICardDropProposal> {
   startingCardMetadata: {
@@ -23,12 +24,12 @@ interface IUseCardDropApproved {
   ownerID?: string;
   userID: string | null;
   rotation: number;
-  moveCard: (
-    { x, y }: { x: number; y: number },
-    flip: boolean,
-    rotate: boolean,
-    callbackFunction?: () => void
-  ) => void;
+  moveCard: ({
+    newPosition,
+    flip,
+    rotate,
+    callbackFunction,
+  }: IMoveCard) => void;
 }
 
 function useCardDropApproved({
@@ -185,22 +186,27 @@ function useCardDropApproved({
         }
       }
 
-      moveCard({ x: endX, y: endY }, false, endID.includes("cell"), () => {
-        setOtherPlayerSqueakStacksBeingDragged({
-          ...squeakStackDragAlterations,
-          [ownerID]: {
-            squeakStackDepthAlterations: [0, 0, 0, 0],
-            draggedStack: undefined,
-          },
-        });
+      moveCard({
+        newPosition: { x: endX, y: endY },
+        flip: false,
+        rotate: endID.includes("cell"),
+        callbackFunction: () => {
+          setOtherPlayerSqueakStacksBeingDragged({
+            ...squeakStackDragAlterations,
+            [ownerID]: {
+              squeakStackDepthAlterations: [0, 0, 0, 0],
+              draggedStack: undefined,
+            },
+          });
 
-        if (playerID && updatedGameData) {
-          setGameData(updatedGameData);
-        }
+          if (playerID && updatedGameData) {
+            setGameData(updatedGameData);
+          }
 
-        if (playerID === userID) {
-          setProposedCardBoxShadow(null);
-        }
+          if (playerID === userID) {
+            setProposedCardBoxShadow(null);
+          }
+        },
       });
 
       if (playerID === userID) {

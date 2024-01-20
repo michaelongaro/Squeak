@@ -2,17 +2,18 @@ import { useState, useEffect } from "react";
 import { socket } from "../pages";
 import { useRoomContext } from "../context/RoomContext";
 import { type IDrawFromSqueakDeck } from "../pages/api/socket";
+import { type IMoveCard } from "../components/Play/Card";
 
 interface IUseCardDrawFromSqueakDeck {
   value?: string;
   suit?: string;
   ownerID?: string;
-  moveCard: (
-    { x, y }: { x: number; y: number },
-    flip: boolean,
-    rotate: boolean,
-    callbackFunction?: () => void
-  ) => void;
+  moveCard: ({
+    newPosition,
+    flip,
+    rotate,
+    callbackFunction,
+  }: IMoveCard) => void;
 }
 
 function useCardDrawFromSqueakDeck({
@@ -62,8 +63,13 @@ function useCardDrawFromSqueakDeck({
         const endX = endLocation.x;
         const endY = endLocation.y;
 
-        moveCard({ x: endX, y: endY }, true, false, () => {
-          setGameData(updatedGameData);
+        moveCard({
+          newPosition: { x: endX, y: endY },
+          flip: true,
+          rotate: false,
+          callbackFunction: () => {
+            setGameData(updatedGameData);
+          },
         });
       }
     }

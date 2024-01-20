@@ -2,16 +2,18 @@ import { useState, useEffect } from "react";
 import { socket } from "../pages";
 import { type ICardDropProposal } from "../pages/api/socket";
 import { useRoomContext } from "../context/RoomContext";
+import { type IMoveCard } from "../components/Play/Card";
 
 interface IUseCardDropDenied {
   value?: string;
   suit?: string;
   ownerID?: string;
-  moveCard: (
-    { x, y }: { x: number; y: number },
-    flip: boolean,
-    rotate: false
-  ) => void;
+  moveCard: ({
+    newPosition,
+    flip,
+    rotate,
+    callbackFunction,
+  }: IMoveCard) => void;
 }
 
 function useCardDropDenied({
@@ -52,7 +54,11 @@ function useCardDropDenied({
         source.start();
       }
 
-      moveCard({ x: 0, y: 0 }, false, false);
+      moveCard({
+        newPosition: { x: 0, y: 0 },
+        flip: false,
+        rotate: false,
+      });
     }
   }, [
     dataFromBackend,
