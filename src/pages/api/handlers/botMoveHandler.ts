@@ -124,7 +124,11 @@ export function botMoveHandler(
             return; // hopefully this return placement still works as expected
           } else {
             // remove the indicies from the array so we don't check them again
-            flatBoard.splice(flatBoard.indexOf(cellCoordinates), 1);
+            const indexToRemove = flatBoard.findIndex(
+              (cell) => cell?.row === row && cell?.col === col
+            );
+
+            flatBoard.splice(indexToRemove, 1);
           }
         }
       }
@@ -226,7 +230,11 @@ export function botMoveHandler(
         return;
       } else {
         // remove the indicies from the array so we don't check them again
-        flatBoard.splice(flatBoard.indexOf(cellCoordinates), 1);
+        const indexToRemove = flatBoard.findIndex(
+          (cell) => cell?.row === row && cell?.col === col
+        );
+
+        flatBoard.splice(indexToRemove, 1);
       }
     }
   }
@@ -288,7 +296,11 @@ export function botMoveHandler(
         return;
       } else {
         // remove the indicies from the array so we don't check them again
-        flatBoard.splice(flatBoard.indexOf(cellCoordinates), 1);
+        const indexToRemove = flatBoard.findIndex(
+          (cell) => cell?.row === row && cell?.col === col
+        );
+
+        flatBoard.splice(indexToRemove, 1);
       }
     }
   }
