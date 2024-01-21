@@ -88,7 +88,7 @@ export function deckToBoard({
 
     return true;
   } else {
-    io.in(roomCode).emit("cardDropDenied", { playerID });
+    io.in(roomCode).emit("cardDropDenied", { playerID, card });
     return false;
   }
 }
