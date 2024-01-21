@@ -95,6 +95,11 @@ function useCardDropApproved({
         source.buffer =
           userID === ownerID ? successfulMoveBuffer : otherPlayerCardMoveBuffer;
 
+        if (userID !== ownerID) {
+          // randomize pitch just for variety's sake
+          source.detune.value = Math.random() * 400 - 200;
+        }
+
         source.connect(masterVolumeGainNode);
         source.start();
       }
