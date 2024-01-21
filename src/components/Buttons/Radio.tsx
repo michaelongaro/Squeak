@@ -6,6 +6,7 @@ interface IRadio {
   values: (string | number)[];
   currentValueIndex: number;
   onClickFunctions: (() => void)[];
+  disabledIndicies?: number[];
   orientation?: "horizontal" | "vertical";
   minHeight?: string;
 }
@@ -14,12 +15,11 @@ function Radio({
   values,
   currentValueIndex,
   onClickFunctions,
+  disabledIndicies,
   orientation = "horizontal",
   minHeight,
 }: IRadio) {
   const [hoveredOptionIndex, setHoveredOptionIndex] = useState<number>(-1);
-
-  // do same for vertical
 
   return (
     <div
@@ -35,6 +35,7 @@ function Radio({
       {values.map((value, index) => (
         <button
           key={value}
+          disabled={disabledIndicies?.includes(index)}
           style={{
             borderColor: "hsl(120deg 100% 86%)",
             borderLeft:

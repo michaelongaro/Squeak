@@ -351,6 +351,10 @@ function CreateRoom() {
 
             <Radio
               values={[2, 3, 4]}
+              disabledIndicies={[0, 1, 2].slice(
+                0,
+                Object.keys(playerMetadata).length - 2
+              )}
               currentValueIndex={[2, 3, 4].indexOf(roomConfig.maxPlayers)}
               onClickFunctions={[
                 () => updateRoomConfig("maxPlayers", 2),
