@@ -684,7 +684,7 @@ function MainDrawer({ status, setShowDrawer }: IMainDrawer) {
       case "back":
         return "400px";
       default:
-        return "438px";
+        return status === "unauthenticated" ? "384px" : "438px";
     }
   }
 
@@ -712,6 +712,8 @@ function MainDrawer({ status, setShowDrawer }: IMainDrawer) {
               <Button
                 key={label}
                 variant={"drawer"}
+                disabled={status === "unauthenticated"}
+                isDisabled={status === "unauthenticated"}
                 style={{
                   borderTopWidth: label === "Settings" ? "0px" : "1px",
                 }}
