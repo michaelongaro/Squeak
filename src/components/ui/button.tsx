@@ -106,15 +106,30 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           className={`${className} baseFlex relative z-[500] w-full px-2 py-4 transition-colors ${
             buttonIsActive ? "bg-black/25" : "bg-zinc-200"
           }`}
-          onPointerDown={() => setButtonIsActive(true)}
-          onPointerUp={() => setButtonIsActive(false)}
-          onPointerLeave={() => setButtonIsActive(false)}
+          onPointerDown={() => {
+            if (isDisabled) return;
+            setButtonIsActive(true);
+          }}
+          onPointerUp={() => {
+            if (isDisabled) return;
+            setButtonIsActive(false);
+          }}
+          onPointerLeave={() => {
+            if (isDisabled) return;
+            setButtonIsActive(false);
+          }}
         >
           <Comp
             className={cn(buttonVariants({ variant, size, className }))}
             ref={ref}
             {...props}
           />
+
+          {isDisabled && (
+            <p className="absolute right-16 w-32 text-sm text-darkGreen/70">
+              Only available for logged in users*
+            </p>
+          )}
 
           {showArrow && (
             <IoIosArrowForward size={"1rem"} className="absolute right-4 " />
@@ -317,6 +332,9 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
               filter: `brightness(${brightness})`,
               cursor: isDisabled || tempDisabled ? "not-allowed" : "pointer",
               opacity: isDisabled || tempDisabled ? 0.25 : 1,
+              // TODO: I really don't know why this wasn't working on mobile safari... explicitly defining for the time being
+              backgroundColor: "hsl(120deg, 100%, 86%)",
+              color: "hsl(120deg, 100%, 18%)",
             }}
             className={`${cn(buttonVariants({ variant, size, className }))}`}
             ref={ref}
