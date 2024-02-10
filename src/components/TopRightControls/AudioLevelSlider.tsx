@@ -7,7 +7,11 @@ import {
   BsFillVolumeDownFill,
 } from "react-icons/bs";
 
-function AudioLevelSlider() {
+interface IAudioLevelSlider {
+  forMobile?: boolean;
+}
+
+function AudioLevelSlider({ forMobile }: IAudioLevelSlider) {
   const { currentVolume, setCurrentVolume } = useRoomContext();
 
   const [values, setValues] = useState([0.01]);
@@ -30,19 +34,22 @@ function AudioLevelSlider() {
 
   return (
     <div
+      data-vaul-no-drag="" // TODO: I don't think this actually works atm
       style={{
         borderColor: "hsl(120deg 100% 86%)",
         color: "hsl(120deg 100% 86%)",
         backgroundColor: "hsl(120deg 100% 18%)",
       }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
+      onPointerEnter={() => setHovered(true)}
+      onPointerLeave={() => setHovered(false)}
       className={`baseFlex !justify-start 
-      ${hovered ? "w-full" : "w-[40px] md:w-full"}
-      ${hovered ? "h-full" : "h-[40px] md:h-full"}
-      ${hovered ? "gap-2" : "gap-0"} rounded-md border-2 p-2 transition-all`}
+      ${hovered || forMobile ? "w-full" : "w-[40px] md:w-full"}
+      ${hovered || forMobile ? "h-full" : "h-[40px] md:h-full"}
+      ${
+        hovered || forMobile ? "gap-2" : "gap-0"
+      } rounded-md border-2 p-2 transition-all`}
     >
-      {hovered && <div className="w-4">{values[0]}</div>}
+      {(hovered || forMobile) && <div className="w-4">{values[0]}</div>}
 
       <div
         style={{
@@ -52,10 +59,10 @@ function AudioLevelSlider() {
             min: 0,
             max: 100,
           }),
-          margin: hovered ? "0 0.5rem" : "0",
-          width: hovered ? "10rem" : "0rem",
+          margin: hovered || forMobile ? "0 0.5rem" : "0",
+          width: hovered || forMobile ? (forMobile ? "100%" : "10rem") : "0rem",
         }}
-        className="ml-2 mr-2 h-full transition-all"
+        className="ml-2 mr-2 h-[7px] transition-all"
       >
         <Range
           aria-label="Volume slider"
@@ -72,9 +79,14 @@ function AudioLevelSlider() {
               {...props}
               style={{
                 ...props.style,
-                height: hovered ? "6px" : "0px",
-                opacity: hovered ? "1" : "0",
-                width: hovered ? "10rem" : "0rem",
+                height: hovered || forMobile ? "6px" : "0px",
+                opacity: hovered || forMobile ? "1" : "0",
+                width:
+                  hovered || forMobile
+                    ? forMobile
+                      ? "100%"
+                      : "10rem"
+                    : "0rem",
                 transition: "width 0.2s",
               }}
             >

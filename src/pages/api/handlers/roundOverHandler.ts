@@ -97,8 +97,6 @@ export function generateAndEmitScoreboard({
   miscRoomDataObj.preventOtherPlayersFromSqueaking = true;
 
   // clearing out intervals + housekeeping
-  clearInterval(miscRoomDataObj.gameStuckInterval);
-
   for (const botInterval of miscRoomDataObj.botIntervals) {
     clearInterval(botInterval);
   }
@@ -286,6 +284,7 @@ export function generateAndEmitScoreboard({
   );
 
   io.in(roomCode).emit("scoreboardMetadata", {
+    playSqueakSound: playerWhoSqueakedID !== "",
     roundWinnerID,
     gameWinnerID,
     playerRoundDetails,

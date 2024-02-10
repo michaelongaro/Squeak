@@ -74,7 +74,7 @@ describe("SecondaryButton", () => {
       />
     );
     const buttonElement = getByRole("button");
-    fireEvent.mouseEnter(buttonElement);
+    fireEvent.pointerEnter(buttonElement);
     const tooltipElement = getByText(tooltipText);
     expect(tooltipElement).toBeDefined();
   });

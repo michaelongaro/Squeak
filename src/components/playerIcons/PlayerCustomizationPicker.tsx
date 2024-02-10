@@ -1,24 +1,21 @@
-import { useEffect, useRef, useState } from "react";
-import { useUserIDContext } from "../../context/UserIDContext";
+import { useEffect, useState } from "react";
 import { useRoomContext } from "../../context/RoomContext";
+import { useUserIDContext } from "../../context/UserIDContext";
 import { socket } from "../../pages";
-import Card from "../Play/Card";
-import PlayerIcon from "./PlayerIcon";
+import {
+  type IRoomPlayer,
+  type IRoomPlayersMetadata,
+  type IUpdatePlayerMetadata,
+} from "../../pages/api/socket";
 import { avatarPaths } from "../../utils/avatarPaths";
 import { deckHueRotations } from "../../utils/deckHueRotations";
 import { hslToDeckHueRotations } from "../../utils/hslToDeckHueRotations";
-import {
-  type IRoomPlayersMetadata,
-  type IRoomPlayer,
-  type IUpdatePlayerMetadata,
-} from "../../pages/api/socket";
-import useOnClickOutside from "../../hooks/useOnClickOutside";
-import { motion } from "framer-motion";
-import classes from "./PickerTooltip.module.css";
+import Card from "../Play/Card";
 import { type ILocalPlayerSettings } from "../modals/SettingsAndStats/UserSettingsAndStatsModal";
+import PlayerIcon from "./PlayerIcon";
 
-interface IPickerTooltip {
-  type: "avatar" | "color" | "cardFront";
+interface IPlayerCustomizationPicker {
+  type: "avatar" | "back" | "front";
   localPlayerMetadata?: IRoomPlayersMetadata;
   setLocalPlayerMetadata?: React.Dispatch<
     React.SetStateAction<IRoomPlayersMetadata>
@@ -26,16 +23,16 @@ interface IPickerTooltip {
   setLocalPlayerSettings?: React.Dispatch<
     React.SetStateAction<ILocalPlayerSettings>
   >;
-  openAbove?: boolean;
+  forDrawer?: boolean;
 }
 
-function PickerTooltip({
+function PlayerCustomizationPicker({
   type,
   localPlayerMetadata,
   setLocalPlayerMetadata,
   setLocalPlayerSettings,
-  openAbove = false,
-}: IPickerTooltip) {
+  forDrawer,
+}: IPlayerCustomizationPicker) {
   const userID = useUserIDContext();
 
   const {
@@ -52,26 +49,15 @@ function PickerTooltip({
   const setPlayerMetadata = setLocalPlayerMetadata ?? storeSetPlayerMetadata;
   const connectedToRoom = localPlayerMetadata ? false : storeConnectedToRoom;
 
-  const [showTooltip, setShowTooltip] = useState<boolean>(false);
   const [hoveredTooltip, setHoveredTooltip] = useState<
-    ["avatar" | "color", number] | null
+    ["avatar" | "back", number] | null
   >(null);
-  const [hoveringOnTooltip, setHoveringOnTooltip] = useState<boolean>(false);
   const [hoveringOnFrontCardTooltip, setHoveringOnFrontCardTooltip] = useState<
     "normal" | "simple" | null
   >(null);
 
   const [userAvatarIndex, setUserAvatarIndex] = useState<number>(-1);
   const [userDeckIndex, setUserDeckIndex] = useState<number>(-1);
-
-  const [relativeOffset, setRelativeOffset] = useState<{
-    left: string;
-    top: string;
-  }>({ left: "0px", top: "0px" });
-
-  const tooltipRef = useRef<HTMLDivElement>(null);
-
-  useOnClickOutside({ ref: tooltipRef, setShowModal: setShowTooltip });
 
   useEffect(() => {
     const userMetadata = playerMetadata[userID];
@@ -90,53 +76,8 @@ function PickerTooltip({
     setUserDeckIndex(deckIndex);
   }, [playerMetadata, userID]);
 
-  useEffect(() => {
-    function handleResize() {
-      const isBelowMobileViewport = window.innerWidth <= 768;
-
-      let left = "0px";
-      let top = "0px";
-
-      // TODO: these shouldn't be hardcoded
-      if (type === "avatar") {
-        left = isBelowMobileViewport ? "-118px" : "-135px";
-
-        if (openAbove) {
-          top = isBelowMobileViewport ? "-315px" : "-340px";
-        } else {
-          top = "110px";
-        }
-      } else if (type === "color") {
-        left = isBelowMobileViewport ? "-151px" : "-177px";
-
-        if (openAbove) {
-          top = isBelowMobileViewport ? "-375px" : "-310px";
-        } else {
-          top = "110px";
-        }
-      } else {
-        // TODO: change these
-        left = isBelowMobileViewport ? "-118px" : "-96px";
-
-        if (openAbove) {
-          top = isBelowMobileViewport ? "-315px" : "-182px";
-        } else {
-          top = "110px";
-        }
-      }
-
-      setRelativeOffset({ left, top });
-    }
-
-    handleResize();
-
-    window.addEventListener("resize", handleResize);
-
-    return () => window.removeEventListener("resize", handleResize);
-  }, [type, openAbove]);
-
   function isTooltipOptionAvailable(
-    type: "avatar" | "color",
+    type: "avatar" | "back",
     index: number
   ): boolean {
     if (type === "avatar") {
@@ -156,10 +97,10 @@ function PickerTooltip({
     );
   }
 
-  function calculateOutline(type: "avatar" | "color", index: number): string {
+  function calculateOutline(type: "avatar" | "back", index: number): string {
     if (
       (type === "avatar" && userAvatarIndex === index) ||
-      (type === "color" && userDeckIndex === index)
+      (type === "back" && userDeckIndex === index)
     )
       return "4px solid hsl(120deg 100% 18%)";
 
@@ -188,7 +129,7 @@ function PickerTooltip({
 
   function getMetadataOfPlayerByAttribute(
     attribute: string,
-    type: "avatar" | "color"
+    type: "avatar" | "back"
   ): string {
     if (type === "avatar") {
       const playersMetadata = Object.values(playerMetadata);
@@ -216,7 +157,7 @@ function PickerTooltip({
   function renderTooltip() {
     if (type === "avatar") {
       return renderAvatarTooltip();
-    } else if (type === "color") {
+    } else if (type === "back") {
       return renderDeckTooltip();
     }
 
@@ -229,14 +170,12 @@ function PickerTooltip({
         key={`${avatarPath}-${index}`}
         style={{
           outline: calculateOutline("avatar", index),
-          cursor:
-            showTooltip && isTooltipOptionAvailable("avatar", index)
-              ? "pointer"
-              : "auto",
-          pointerEvents:
-            showTooltip && isTooltipOptionAvailable("avatar", index)
-              ? "auto"
-              : "none",
+          cursor: isTooltipOptionAvailable("avatar", index)
+            ? "pointer"
+            : "auto",
+          pointerEvents: isTooltipOptionAvailable("avatar", index)
+            ? "auto"
+            : "none",
         }}
         className="relative rounded-[50%] outline-offset-4 transition-all"
         onMouseEnter={() => setHoveredTooltip(["avatar", index])}
@@ -269,6 +208,7 @@ function PickerTooltip({
           avatarPath={avatarPath}
           borderColor={"transparent"}
           size="4rem"
+          transparentBackground
         />
         {getMetadataOfPlayerByAttribute(avatarPath, "avatar") !==
           playerMetadata[userID]?.color &&
@@ -292,18 +232,14 @@ function PickerTooltip({
       <div
         key={`${color}-${index}`}
         style={{
-          outline: calculateOutline("color", index),
-          cursor:
-            showTooltip && isTooltipOptionAvailable("color", index)
-              ? "pointer"
-              : "auto",
-          pointerEvents:
-            showTooltip && isTooltipOptionAvailable("color", index)
-              ? "auto"
-              : "none",
+          outline: calculateOutline("back", index),
+          cursor: isTooltipOptionAvailable("back", index) ? "pointer" : "auto",
+          pointerEvents: isTooltipOptionAvailable("back", index)
+            ? "auto"
+            : "none",
         }}
         className="relative rounded-sm outline-offset-4 transition-all"
-        onMouseEnter={() => setHoveredTooltip(["color", index])}
+        onMouseEnter={() => setHoveredTooltip(["back", index])}
         onMouseLeave={() => setHoveredTooltip(null)}
         onClick={() => {
           // if user is connected to room
@@ -350,11 +286,11 @@ function PickerTooltip({
           }
         />
         <div className="absolute bottom-[-0.75rem] right-[-0.75rem] z-[150] h-12 w-12 rounded-[50%]">
-          {getMetadataOfPlayerByAttribute(color, "color") !==
+          {getMetadataOfPlayerByAttribute(color, "back") !==
             playerMetadata[userID]?.avatarPath &&
-            getMetadataOfPlayerByAttribute(color, "color") !== "" && (
+            getMetadataOfPlayerByAttribute(color, "back") !== "" && (
               <PlayerIcon
-                avatarPath={getMetadataOfPlayerByAttribute(color, "color")}
+                avatarPath={getMetadataOfPlayerByAttribute(color, "back")}
                 borderColor={"transparent"}
                 size="3rem"
               />
@@ -370,9 +306,6 @@ function PickerTooltip({
         <div
           style={{
             outline: calculateOutlineCardFront("normal"),
-            cursor: showTooltip && prefersSimpleCardAssets ? "pointer" : "auto",
-            pointerEvents:
-              showTooltip && prefersSimpleCardAssets ? "auto" : "none",
           }}
           className="relative rounded-sm outline-offset-4 transition-all"
           onMouseEnter={() => setHoveringOnFrontCardTooltip("normal")}
@@ -405,10 +338,8 @@ function PickerTooltip({
         <div
           style={{
             outline: calculateOutlineCardFront("simple"),
-            cursor:
-              showTooltip && !prefersSimpleCardAssets ? "pointer" : "auto",
-            pointerEvents:
-              showTooltip && !prefersSimpleCardAssets ? "auto" : "none",
+            cursor: !prefersSimpleCardAssets ? "pointer" : "auto",
+            pointerEvents: !prefersSimpleCardAssets ? "auto" : "none",
           }}
           className="relative rounded-sm outline-offset-4 transition-all"
           onMouseEnter={() => setHoveringOnFrontCardTooltip("simple")}
@@ -442,113 +373,26 @@ function PickerTooltip({
     );
   }
 
-  function renderTooltipPreview() {
-    if (type === "avatar") {
-      return (
-        <>
-          <PlayerIcon
-            avatarPath={
-              playerMetadata[userID]?.avatarPath || "/avatars/rabbit.svg"
-            }
-            borderColor={playerMetadata[userID]?.color || "#000000"}
-            size="3.25rem" // hopefully doesn't mess up positioning near player container on play
-            style={{
-              marginTop: type === "avatar" ? "0.35rem" : "0px",
-            }}
-          />
-          <p className="mt-[0.9rem]">Avatar</p>
-        </>
-      );
-    } else if (type === "color") {
-      return (
-        <>
-          <Card
-            draggable={false}
-            rotation={0}
-            showCardBack={true}
-            ownerID={userID}
-            width={48} // roughly correct for ratio of a card
-            height={64}
-            hueRotation={playerMetadata[userID]?.deckHueRotation || 0}
-          />
-          <p>Back</p>
-        </>
-      );
-    }
-
-    return (
-      <>
-        <Card
-          draggable={false}
-          rotation={0}
-          showCardBack={false}
-          ownerID={userID}
-          suit={"C"}
-          value={"8"}
-          width={48} // roughly correct for ratio of a card
-          height={64}
-          hueRotation={playerMetadata[userID]?.deckHueRotation || 0}
-          manuallyShowSpecificCardFront={
-            prefersSimpleCardAssets ? "simple" : "normal"
-          }
-        />
-        <p>Front</p>
-      </>
-    );
-  }
-
   return (
     <>
       {userID && (
-        <div className="relative">
-          {/* picker tooltip */}
-          <div
-            ref={tooltipRef}
-            style={{
-              left: relativeOffset.left,
-              top: relativeOffset.top,
-              opacity: showTooltip ? 1 : 0,
-              pointerEvents: showTooltip ? "auto" : "none",
-            }}
-            className={`${
-              openAbove ? classes.toolTipAbove : classes.toolTipBelow
-            } 
+        <div
+          className={`
               ${
                 type === "avatar"
                   ? "h-[18rem] w-[18rem] grid-cols-3 grid-rows-3 md:h-[20rem] md:w-[20rem]"
-                  : type === "color"
+                  : type === "back"
                   ? "h-[22rem] w-[22rem] grid-cols-3 grid-rows-3 md:h-[18rem] md:w-[25rem] md:grid-cols-4 md:grid-rows-2"
                   : "h-[10rem] w-[15rem] grid-cols-2 grid-rows-1"
               }
-              grid place-items-center rounded-md bg-white p-4 shadow-lg transition-all`}
-          >
-            {renderTooltip()}
-          </div>
-
-          {/* preview */}
-          {playerMetadata && (
-            <motion.div
-              key={`${type}-pickerTooltip`}
-              initial={{ opacity: 0, scale: 0.75 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.75 }}
-              transition={{ duration: 0.15 }}
-              style={{
-                color: "hsl(120deg 100% 86%)",
-                filter: `brightness(${hoveringOnTooltip ? 0.75 : 1})`,
-              }}
-              className="baseVertFlex h-[96px] cursor-pointer transition-[filter]"
-              onMouseEnter={() => setHoveringOnTooltip(true)}
-              onMouseLeave={() => setHoveringOnTooltip(false)}
-              onClick={() => setShowTooltip(true)}
-            >
-              {renderTooltipPreview()}
-            </motion.div>
-          )}
+              ${forDrawer ? "bg-zinc-200" : "white"}
+              grid place-items-center rounded-md p-4 transition-all`}
+        >
+          {renderTooltip()}
         </div>
       )}
     </>
   );
 }
 
-export default PickerTooltip;
+export default PlayerCustomizationPicker;

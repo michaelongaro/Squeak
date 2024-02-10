@@ -5,6 +5,7 @@ import { useUserIDContext } from "../../context/UserIDContext";
 import { useRoomContext } from "../../context/RoomContext";
 import baseplate from "../../../public/buzzer/baseplate.png";
 import squeakBuzzer from "../../../public/buzzer/buzzerButton.png";
+import useGetViewportLabel from "~/hooks/useGetViewportLabel";
 interface IBuzzer {
   playerID: string;
   roomCode: string;
@@ -24,19 +25,22 @@ function Buzzer({ playerID, roomCode, interactive }: IBuzzer) {
   } = useRoomContext();
 
   const [hoveringOnButton, setHoveringOnButton] = useState<boolean>(false);
-  const [mouseDownOnButton, setMouseDownOnButton] = useState<boolean>(false);
+  const [pointerDownOnButton, setPointerDownOnButton] =
+    useState<boolean>(false);
 
   const [playExpandingPulseWaveAnimation, setPlayExpandingPulseWaveAnimation] =
     useState<boolean>(false);
+
+  const viewportLabel = useGetViewportLabel();
 
   useEffect(() => {
     if (playerIDWhoSqueaked !== playerID) return;
 
     if (playerIDWhoSqueaked !== userID) {
-      // simulating a mouse click on the button to trigger the animation
-      setMouseDownOnButton(true);
+      // simulating a pointer click on the button to trigger the animation
+      setPointerDownOnButton(true);
       setTimeout(() => {
-        setMouseDownOnButton(false);
+        setPointerDownOnButton(false);
       }, 150);
     }
 
@@ -79,21 +83,21 @@ function Buzzer({ playerID, roomCode, interactive }: IBuzzer) {
         animation:
           hoveringOnButton || !interactive ? "none" : "pulse 3s infinite",
       }}
-      className="relative z-[150] h-[40px] w-[65px] rounded-[50%]"
-      onMouseEnter={() => {
+      className="relative z-[150] h-[30px] w-[52px] rounded-[50%] tablet:h-[35px] tablet:w-[57px] desktop:h-[40px] desktop:w-[65px]"
+      onPointerEnter={() => {
         if (interactive) setHoveringOnButton(true);
       }}
-      onMouseLeave={() => {
+      onPointerLeave={() => {
         if (interactive) {
           setHoveringOnButton(false);
-          setMouseDownOnButton(false);
+          setPointerDownOnButton(false);
         }
       }}
-      onMouseDown={() => {
-        if (interactive) setMouseDownOnButton(true);
+      onPointerDown={() => {
+        if (interactive) setPointerDownOnButton(true);
       }}
-      onMouseUp={() => {
-        if (interactive) setMouseDownOnButton(false);
+      onPointerUp={() => {
+        if (interactive) setPointerDownOnButton(false);
       }}
       onClick={() => {
         if (interactive && !playExpandingPulseWaveAnimation) {
@@ -119,21 +123,25 @@ function Buzzer({ playerID, roomCode, interactive }: IBuzzer) {
           draggable={false}
           src={baseplate.src}
           alt="baseplate for buzzer"
-          className="h-[40px] w-[75px]"
+          style={{
+            opacity: viewportLabel.includes("mobile") ? "0" : "1",
+          }}
+          className="h-[32px] w-[52px] tablet:h-[35px] tablet:w-[57px] desktop:h-[40px] desktop:w-[75px]"
         />
       </div>
 
       {/* actual button container */}
-      <div className="absolute left-[7px] top-[-5px] z-[140] h-[35px] w-[50px]">
+      <div className="absolute left-[6px] top-[-3px] z-[140] h-[28px] w-[40px] tablet:left-[9px] tablet:top-[-3px] tablet:h-[30px] tablet:w-[40px] desktop:left-[7px] desktop:top-[-5px] desktop:h-[35px] desktop:w-[50px]">
         <img
           style={{
-            top: mouseDownOnButton ? "8px" : "0px",
-            transform: mouseDownOnButton ? "rotateX(60deg)" : "rotateX(0deg)",
+            opacity: viewportLabel.includes("mobile") ? "0" : "1",
+            top: pointerDownOnButton ? "8px" : "0px",
+            transform: pointerDownOnButton ? "rotateX(60deg)" : "rotateX(0deg)",
           }}
           draggable={false}
           src={squeakBuzzer.src}
           alt="buzzer"
-          className="absolute h-[35px] w-[50px] transition-all"
+          className="absolute h-[28px] w-[40px] transition-all tablet:h-[30px] tablet:w-[40px] desktop:h-[35px] desktop:w-[50px]"
         />
       </div>
 

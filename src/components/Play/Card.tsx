@@ -591,6 +591,8 @@ function Card({
           <div
             ref={cardRef}
             style={{
+              width: width,
+              height: height,
               animation: getAnimationStyles(),
               filter: getFilterStyles(),
               transition: getTransitionStyles(),
@@ -619,7 +621,7 @@ function Card({
                     ? `hue-rotate(${hueRotation}deg)`
                     : "none",
               }}
-              className="pointer-events-none h-[64px] w-[48px] select-none rounded-[0.25rem] tall:h-[87px] tall:w-[67px]"
+              className="cardDimensions pointer-events-none select-none rounded-[0.25rem]"
               src={
                 showCardBack && !forceShowCardFront
                   ? (cardAssets["cardBack"] as StaticImageData).src

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import AnimatedCardContainer from "./AnimatedCardContainer";
 import AnimatedNumber from "react-awesome-animated-number";
 import confetti from "canvas-confetti";
@@ -6,7 +6,11 @@ import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRoomContext } from "../../../context/RoomContext";
 import PlayerIcon from "../../playerIcons/PlayerIcon";
+import { FaTrophy } from "react-icons/fa6";
 import confettiCannon from "../../../../public/scoreboard/confettiCannon.svg";
+import useGetViewportLabel from "../../../hooks/useGetViewportLabel";
+import { useUserIDContext } from "../../../context/UserIDContext";
+import { type IPlayerRoundDetails } from "../../../pages/api/handlers/roundOverHandler";
 
 interface IRanking {
   [key: number]: string;
@@ -19,6 +23,13 @@ const ranking: IRanking = {
   4: "4th",
 };
 
+const justEmojiRanks: IRanking = {
+  1: "🥇",
+  2: "🥈",
+  3: "🥉",
+  4: "",
+};
+
 interface IPlayerColorVariants {
   [userID: string]: {
     baseColor: string;
@@ -29,6 +40,8 @@ interface IPlayerColorVariants {
 }
 
 function Scoreboard() {
+  const userID = useUserIDContext();
+
   const {
     audioContext,
     masterVolumeGainNode,
@@ -37,6 +50,8 @@ function Scoreboard() {
     currentVolume,
     scoreboardMetadata,
   } = useRoomContext();
+
+  const [initalizedTimers, setInitalizedTimers] = useState(false);
 
   const [showNewRankings, setShowNewRankings] = useState<boolean>(false);
   const [showWinningPlayerMessage, setShowWinningPlayerMessage] =
@@ -55,7 +70,40 @@ function Scoreboard() {
   const [playerColorVariants, setPlayerColorVariants] =
     useState<IPlayerColorVariants>({});
 
+  const [sortedPlayerRoundDetails, setSortedPlayerRoundDetails] = useState<
+    IPlayerRoundDetails[]
+  >([]);
+
+  const viewportLabel = useGetViewportLabel();
+
+  const leftConfettiCannonRef = useRef<HTMLImageElement>(null);
+  const rightConfettiCannonRef = useRef<HTMLImageElement>(null);
+
   useEffect(() => {
+    if (initalizedTimers) return;
+
+    setInitalizedTimers(true);
+
+    // set with sorted playerIDs by their oldScore
+    if (
+      scoreboardMetadata &&
+      Object.values(scoreboardMetadata.playerRoundDetails)[0]?.oldScore !== 0
+    ) {
+      const playerRoundDetailsArray = Object.values(
+        scoreboardMetadata.playerRoundDetails
+      );
+
+      playerRoundDetailsArray.sort((a, b) => {
+        return b.oldScore - a.oldScore;
+      });
+
+      setSortedPlayerRoundDetails(playerRoundDetailsArray);
+    } else if (scoreboardMetadata) {
+      setSortedPlayerRoundDetails(
+        Object.values(scoreboardMetadata.playerRoundDetails)
+      );
+    }
+
     setTimeout(() => {
       setAnimateCardsPlayedValue(true);
     }, 1000);
@@ -69,6 +117,18 @@ function Scoreboard() {
     }, 4000);
 
     setTimeout(() => {
+      // set with sorted playerIDs by their newScore
+
+      const playerRoundDetailsArray = Object.values(
+        scoreboardMetadata!.playerRoundDetails
+      );
+
+      playerRoundDetailsArray.sort((a, b) => {
+        return b.newScore - a.newScore;
+      });
+
+      setSortedPlayerRoundDetails(playerRoundDetailsArray);
+
       setShowNewRankings(true);
     }, 4000);
 
@@ -87,14 +147,30 @@ function Scoreboard() {
         confettiPopBufferSource.start(0, 0.35);
       }
 
+      const leftConfettiCannonOffsets =
+        leftConfettiCannonRef.current?.getBoundingClientRect() ?? {
+          x: 0,
+          y: 0,
+        };
+      const rightConfettiCannonOffsets =
+        rightConfettiCannonRef.current?.getBoundingClientRect() ?? {
+          x: 0,
+          y: 0,
+        };
+
       confetti(
         Object.assign(
           {},
-          { origin: { x: 0.39, y: 0.72 } },
+          {
+            origin: {
+              x: leftConfettiCannonOffsets.x / window.innerWidth,
+              y: leftConfettiCannonOffsets.y / window.innerHeight,
+            },
+          },
           {
             spread: 26,
             startVelocity: 35,
-            angle: 135,
+            angle: viewportLabel.includes("mobile") ? 45 : 135,
             zIndex: 200,
           },
           {
@@ -106,11 +182,16 @@ function Scoreboard() {
       confetti(
         Object.assign(
           {},
-          { origin: { x: 0.6, y: 0.72 } },
+          {
+            origin: {
+              x: rightConfettiCannonOffsets.x / window.innerWidth,
+              y: rightConfettiCannonOffsets.y / window.innerHeight,
+            },
+          },
           {
             spread: 26,
             startVelocity: 35,
-            angle: 45,
+            angle: viewportLabel.includes("mobile") ? 135 : 45,
             zIndex: 200,
           },
           {
@@ -131,7 +212,15 @@ function Scoreboard() {
         setCountdownTimerValue(1);
       }, 2000);
     }, 10000);
-  }, [currentVolume, audioContext, masterVolumeGainNode, confettiPopBuffer]);
+  }, [
+    initalizedTimers,
+    currentVolume,
+    audioContext,
+    masterVolumeGainNode,
+    confettiPopBuffer,
+    viewportLabel,
+    scoreboardMetadata,
+  ]);
 
   useEffect(() => {
     if (Object.keys(playerColorVariants).length !== 0) return;
@@ -160,6 +249,424 @@ function Scoreboard() {
     setPlayerColorVariants(newPlayerColorVariants);
   }, [playerMetadata, playerColorVariants]);
 
+  const currentPlayerStats = useMemo(() => {
+    if (!scoreboardMetadata?.playerRoundDetails) return;
+
+    return scoreboardMetadata.playerRoundDetails[
+      userID as keyof typeof scoreboardMetadata.playerRoundDetails
+    ];
+  }, [userID, scoreboardMetadata]);
+
+  if (viewportLabel.includes("mobile")) {
+    return (
+      <motion.div
+        key={"scoreboardModal"}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.5 }}
+        className="baseFlex absolute left-0 top-0 z-[200] h-full w-full bg-black bg-opacity-60"
+      >
+        <motion.div
+          key={"scoreboardModalInner"}
+          initial={{ scale: 0.95 }}
+          animate={{ scale: 1 }}
+          exit={{ scale: 0.95 }}
+          transition={{ duration: 0.15, delay: 0.35 }}
+          style={{
+            color: "hsl(120deg 100% 86%)",
+            backgroundColor: "hsl(120deg 100% 18%)",
+            borderColor: "hsl(120deg 100% 86%)",
+          }}
+          className="h-[95%] w-[95%] rounded-lg border-2 p-4 shadow-md tablet:h-[75%] tablet:w-[75%]"
+        >
+          {scoreboardMetadata?.playerRoundDetails && currentPlayerStats && (
+            <div className="baseVertFlex h-full !justify-between gap-2 tablet:gap-8">
+              <div className="text-xl">Scoreboard</div>
+
+              {/* player totals */}
+              <div className="baseVertFlex min-h-[170px] w-full gap-1">
+                <div
+                  style={{
+                    gridTemplateColumns: "50px auto 50px",
+                  }}
+                  className="grid w-full max-w-xl place-items-center"
+                >
+                  <FaTrophy
+                    style={{
+                      color: "hsl(120deg 100% 86%)",
+                    }}
+                    className="h-4 w-4"
+                  />
+                  <div className="font-semibold">Player</div>
+                  <div className="font-semibold">Total</div>
+                </div>
+
+                {sortedPlayerRoundDetails.map((player) => (
+                  <motion.div
+                    key={player.playerID}
+                    layoutId={player.playerID}
+                    layout={"position"}
+                    style={{
+                      gridTemplateColumns: "50px auto 50px",
+                    }}
+                    className="grid w-full max-w-xl place-items-center"
+                  >
+                    {/* ranking */}
+                    <div
+                      style={{
+                        backgroundColor:
+                          playerColorVariants[player.playerID]?.baseColor ??
+                          "white",
+                        color:
+                          playerColorVariants[player.playerID]?.textColor ??
+                          "black",
+                      }}
+                      className="grid h-8 w-full grid-cols-1 items-center justify-items-center rounded-l-md"
+                    >
+                      <AnimatePresence mode={"wait"}>
+                        {showNewRankings && (
+                          <motion.div
+                            key={`newRanking${player.playerID}`}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.15 }}
+                            className="col-start-1 row-start-1 drop-shadow-md"
+                          >
+                            {justEmojiRanks[player.newRanking]}
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                      <AnimatePresence mode={"wait"}>
+                        {!showNewRankings && (
+                          <motion.div
+                            key={`oldRanking${player.playerID}`}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.15 }}
+                            className="col-start-1 row-start-1 drop-shadow-md"
+                          >
+                            {justEmojiRanks[player.oldRanking] ?? "-"}
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+
+                    <div
+                      style={{
+                        backgroundColor:
+                          playerColorVariants[player.playerID]?.baseColor ??
+                          "white",
+                      }}
+                      className="baseVertFlex h-8 w-full gap-2 p-2 font-semibold"
+                    >
+                      <div
+                        style={{
+                          color:
+                            playerColorVariants[player.playerID]?.textColor ??
+                            "black",
+                        }}
+                      >
+                        {playerMetadata[player.playerID]?.username}
+                      </div>
+                    </div>
+
+                    <div
+                      style={{
+                        backgroundColor:
+                          playerColorVariants[player.playerID]?.baseColor ??
+                          "white",
+                      }}
+                      className="baseFlex h-8 w-full rounded-r-md "
+                    >
+                      <AnimatedNumber
+                        value={
+                          animateTotalValue ? player.newScore : player.oldScore
+                        }
+                        duration={animateTotalValue ? 1000 : 0}
+                        order={
+                          player.newScore > player.oldScore ? "asc" : "desc"
+                        }
+                        style={{
+                          color:
+                            playerColorVariants[player.playerID]?.textColor,
+                        }}
+                        size={16}
+                      />
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+
+              <div className="baseFlex h-full max-h-80 w-full max-w-xl">
+                <div
+                  key={currentPlayerStats.playerID}
+                  className="baseVertFlex h-full w-full shadow-md"
+                >
+                  {/* avatar + username */}
+                  <div
+                    style={{
+                      backgroundColor:
+                        playerColorVariants[currentPlayerStats.playerID]
+                          ?.baseColor ?? "white",
+                      color:
+                        playerColorVariants[currentPlayerStats.playerID]
+                          ?.textColor ?? "black",
+                    }}
+                    className="baseVertFlex h-18 w-full gap-2 rounded-t-md py-1 font-semibold"
+                  >
+                    Score breakdown
+                  </div>
+
+                  {/* anim. scores + cards */}
+                  <div
+                    style={{
+                      backgroundColor:
+                        playerColorVariants[currentPlayerStats.playerID]
+                          ?.animatedCardsBackgroundColor ?? "white",
+                      color:
+                        playerColorVariants[currentPlayerStats.playerID]
+                          ?.textColor ?? "black",
+                    }}
+                    className="relative z-[1] h-full w-full overflow-hidden"
+                  >
+                    <div
+                      style={{
+                        backgroundColor:
+                          playerColorVariants[currentPlayerStats.playerID]
+                            ?.pointsBackgroundColor ?? "white",
+                      }}
+                      className="baseVertFlex absolute left-0 top-0 z-[3] w-full bg-black bg-opacity-30 p-2"
+                    >
+                      <div className="align-center flex w-full justify-between px-8 ">
+                        Cards played
+                        <div className="baseFlex">
+                          <div
+                            style={{
+                              opacity: animateCardsPlayedValue ? 1 : 0,
+                            }}
+                            className="transition-opacity"
+                          >
+                            +
+                          </div>
+                          <AnimatedNumber
+                            value={
+                              animateCardsPlayedValue
+                                ? currentPlayerStats.cardsPlayed.length
+                                : 0
+                            }
+                            duration={animateCardsPlayedValue ? 1000 : 0}
+                            order={"asc"}
+                            size={16}
+                          />
+                        </div>
+                      </div>
+                      <div className="align-center flex w-full justify-between px-8">
+                        Squeak
+                        <div className="baseFlex">
+                          <div
+                            style={{
+                              opacity: animateSqueakModifierValue ? 1 : 0,
+                            }}
+                            className="transition-opacity"
+                          >
+                            {currentPlayerStats.squeakModifier > 0 ? "+" : ""}
+                          </div>
+                          <AnimatedNumber
+                            value={
+                              animateSqueakModifierValue
+                                ? currentPlayerStats.squeakModifier
+                                : 0
+                            }
+                            duration={animateSqueakModifierValue ? 1000 : 0}
+                            order={
+                              currentPlayerStats.squeakModifier > 0
+                                ? "asc"
+                                : "desc"
+                            }
+                            size={16}
+                          />
+                        </div>
+                      </div>
+                      <div className="align-center flex w-full justify-between px-8 text-lg">
+                        Total
+                        <AnimatedNumber
+                          value={
+                            animateTotalValue
+                              ? currentPlayerStats.newScore
+                              : currentPlayerStats.oldScore
+                          }
+                          duration={animateTotalValue ? 1000 : 0}
+                          order={
+                            currentPlayerStats.newScore >
+                            currentPlayerStats.oldScore
+                              ? "asc"
+                              : "desc"
+                          }
+                          size={22}
+                        />
+                      </div>
+                    </div>
+
+                    <AnimatedCardContainer
+                      cards={currentPlayerStats.cardsPlayed}
+                      playerID={currentPlayerStats.playerID}
+                    />
+                  </div>
+
+                  {/* ranking */}
+                  <div
+                    style={{
+                      backgroundColor:
+                        playerColorVariants[currentPlayerStats.playerID]
+                          ?.baseColor ?? "white",
+                      color:
+                        playerColorVariants[currentPlayerStats.playerID]
+                          ?.textColor ?? "black",
+                    }}
+                    className="grid w-full grid-cols-1 items-center justify-items-center gap-2 rounded-b-md p-2"
+                  >
+                    <AnimatePresence mode={"wait"}>
+                      {showNewRankings && (
+                        <motion.div
+                          key={`newRanking${currentPlayerStats.playerID}`}
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          transition={{ duration: 0.15 }}
+                          className="col-start-1 row-start-1 font-semibold drop-shadow-md"
+                        >
+                          {ranking[currentPlayerStats.newRanking]}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                    <AnimatePresence mode={"wait"}>
+                      {!showNewRankings && (
+                        <motion.div
+                          key={`oldRanking${currentPlayerStats.playerID}`}
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          transition={{ duration: 0.15 }}
+                          className="col-start-1 row-start-1 font-semibold drop-shadow-md"
+                        >
+                          {ranking[currentPlayerStats.oldRanking] ?? "-"}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                </div>
+              </div>
+
+              {/* player who won banner */}
+              <div
+                style={{
+                  opacity: showWinningPlayerMessage ? 1 : 0,
+                  pointerEvents: showWinningPlayerMessage ? "auto" : "none",
+                  backgroundColor:
+                    playerColorVariants[
+                      scoreboardMetadata.gameWinnerID ??
+                        scoreboardMetadata.roundWinnerID
+                    ]?.baseColor ?? "black",
+                }}
+                className="baseFlex gap-4 rounded-md px-4 py-2 transition-all"
+              >
+                {/* left confetti cannon */}
+                <Image
+                  ref={leftConfettiCannonRef}
+                  style={{
+                    opacity: showConfetti ? 1 : 0,
+                    transform: showConfetti
+                      ? "scale(1) rotate(225deg)"
+                      : "scale(0) rotate(225deg)",
+                    filter: "drop-shadow(rgba(0,0,0, 0.10) 0px 0px 0.5rem)",
+                  }}
+                  className="h-6 w-6 transition-all"
+                  src={confettiCannon}
+                  alt={"left celebratory confetti cannon"}
+                />
+
+                <div className="baseFlex gap-2">
+                  <PlayerIcon
+                    avatarPath={
+                      playerMetadata[
+                        scoreboardMetadata.gameWinnerID ??
+                          scoreboardMetadata.roundWinnerID
+                      ]?.avatarPath ?? "/avatars/rabbit.svg"
+                    }
+                    borderColor={
+                      playerMetadata[
+                        scoreboardMetadata.gameWinnerID ??
+                          scoreboardMetadata.roundWinnerID
+                      ]?.color ?? "hsl(352deg, 69%, 61%)"
+                    }
+                    size={"2.5rem"}
+                  />
+                  <div
+                    style={{
+                      color:
+                        playerColorVariants[
+                          scoreboardMetadata.gameWinnerID ??
+                            scoreboardMetadata.roundWinnerID
+                        ]?.textColor ?? "black",
+                    }}
+                    className="text-sm"
+                  >
+                    {scoreboardMetadata.gameWinnerID
+                      ? playerMetadata[scoreboardMetadata.gameWinnerID]
+                          ?.username
+                      : playerMetadata[scoreboardMetadata.roundWinnerID]
+                          ?.username}
+                    {` won the ${
+                      scoreboardMetadata.gameWinnerID ? "game" : "round"
+                    }!`}
+                  </div>
+                </div>
+
+                {/* right confetti cannon */}
+                <Image
+                  ref={rightConfettiCannonRef}
+                  style={{
+                    opacity: showConfetti ? 1 : 0,
+                    transform: showConfetti
+                      ? "scale(1) rotate(135deg)"
+                      : "scale(0) rotate(135deg)",
+                    filter: "drop-shadow(rgba(0,0,0, 0.10) 0px 0px 0.5rem)",
+                  }}
+                  className="h-6 w-6 transition-all"
+                  src={confettiCannon}
+                  alt={"right celebratory confetti cannon"}
+                />
+              </div>
+              <div
+                style={{
+                  opacity: showCountdownTimer ? 1 : 0,
+                  pointerEvents: showCountdownTimer ? "auto" : "none",
+                }}
+                className="baseFlex gap-2 transition-all"
+              >
+                <div>
+                  {scoreboardMetadata.gameWinnerID
+                    ? "Returning to room in:"
+                    : "Next round starts in:"}
+                </div>
+
+                <AnimatedNumber
+                  value={countdownTimerValue}
+                  duration={1000}
+                  order={"desc"}
+                  size={16}
+                />
+              </div>
+            </div>
+          )}
+        </motion.div>
+      </motion.div>
+    );
+  }
+
   return (
     <motion.div
       key={"scoreboardModal"}
@@ -180,10 +687,10 @@ function Scoreboard() {
           backgroundColor: "hsl(120deg 100% 18%)",
           borderColor: "hsl(120deg 100% 86%)",
         }}
-        className="h-[95%] w-[95%] rounded-lg border-2 p-4 shadow-md tall:h-[75%] tall:w-[75%]"
+        className="h-[95%] w-[95%] rounded-lg border-2 p-4 shadow-md tablet:h-[85%] tablet:w-[85%] desktop:h-[75%] desktop:w-[75%]"
       >
         {scoreboardMetadata?.playerRoundDetails && (
-          <div className="baseVertFlex h-full gap-2 tall:gap-12">
+          <div className="baseVertFlex h-full gap-2 desktop:gap-12">
             <div className="text-2xl">Scoreboard</div>
 
             <div className="baseFlex h-full w-full gap-4">
@@ -245,7 +752,7 @@ function Scoreboard() {
                         }}
                         className="baseVertFlex absolute left-0 top-0 z-[3] w-full bg-black bg-opacity-30 p-2"
                       >
-                        <div className="align-center flex w-full justify-between pl-8 pr-8 text-lg ">
+                        <div className="align-center flex w-full justify-between px-4 text-lg desktop:px-8 ">
                           Cards played
                           <div className="baseFlex">
                             <div
@@ -269,7 +776,7 @@ function Scoreboard() {
                           </div>
                         </div>
                         {/* make this red/green text */}
-                        <div className="align-center flex w-full justify-between pl-8 pr-8 text-lg">
+                        <div className="align-center flex w-full justify-between px-4 text-lg desktop:px-8">
                           Squeak
                           <div className="baseFlex">
                             <div
@@ -292,7 +799,7 @@ function Scoreboard() {
                             />
                           </div>
                         </div>
-                        <div className="align-center flex w-full justify-between pl-8 pr-8 text-xl">
+                        <div className="align-center flex w-full justify-between px-4 text-xl desktop:px-8">
                           Total
                           <AnimatedNumber
                             value={
@@ -335,7 +842,7 @@ function Scoreboard() {
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             transition={{ duration: 0.15 }}
-                            className="col-start-1 row-start-1 font-semibold"
+                            className="col-start-1 row-start-1 font-semibold drop-shadow-md"
                           >
                             {ranking[player.newRanking]}
                           </motion.div>
@@ -349,7 +856,7 @@ function Scoreboard() {
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             transition={{ duration: 0.15 }}
-                            className="col-start-1 row-start-1 font-semibold"
+                            className="col-start-1 row-start-1 font-semibold drop-shadow-md"
                           >
                             {ranking[player.oldRanking] ?? "-"}
                           </motion.div>
@@ -372,10 +879,11 @@ function Scoreboard() {
                       scoreboardMetadata.roundWinnerID
                   ]?.baseColor ?? "black",
               }}
-              className="baseFlex gap-4 rounded-md p-4 transition-all"
+              className="baseFlex gap-4 rounded-md px-4 py-2 transition-all desktop:p-4"
             >
               {/* left confetti cannon */}
               <Image
+                ref={leftConfettiCannonRef}
                 style={{
                   opacity: showConfetti ? 1 : 0,
                   transform: showConfetti
@@ -423,6 +931,7 @@ function Scoreboard() {
 
               {/* right confetti cannon */}
               <Image
+                ref={rightConfettiCannonRef}
                 style={{
                   opacity: showConfetti ? 1 : 0,
                   transform: showConfetti

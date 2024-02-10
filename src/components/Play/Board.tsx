@@ -2,10 +2,7 @@ import { Fragment } from "react";
 import { useRoomContext } from "../../context/RoomContext";
 import useTrackHoverOverBoardCells from "../../hooks/useTrackHoverOverBoardCells";
 import BoardCell from "./BoardCell";
-
-interface IBoard {
-  boardClass: string | undefined;
-}
+import classes from "./Play.module.css";
 
 export interface IGetBoxShadowStyles {
   id: string;
@@ -14,7 +11,7 @@ export interface IGetBoxShadowStyles {
   squeakStackIdx?: number;
 }
 
-function Board({ boardClass }: IBoard) {
+function Board() {
   const {
     gameData,
     holdingADeckCard,
@@ -45,11 +42,12 @@ function Board({ boardClass }: IBoard) {
 
   return (
     <div
+      id={"board"}
       style={{
         outline: "4px ridge hsl(120deg 100% 86%)",
         boxShadow: "inset 0px 0px 16px 0px hsl(106deg 100% 5%)",
       }}
-      className={`${boardClass} grid w-full select-none grid-cols-5 gap-1 rounded-md p-2`}
+      className={`${classes.board} grid w-full select-none grid-cols-5 gap-2 rounded-md p-2 mobileLarge:gap-4 desktop:gap-1`}
     >
       {gameData?.board.map((row, rowIdx) => (
         <Fragment key={`boardRow${rowIdx}`}>
@@ -70,7 +68,7 @@ function Board({ boardClass }: IBoard) {
                     ? 0.35
                     : 1,
               }}
-              className="baseFlex relative z-0 h-[65px] min-h-fit w-[48px] min-w-fit select-none rounded-lg p-1 transition-all tall:h-[95px] tall:w-[75px]"
+              className="baseFlex relative z-0 h-[71px] min-h-fit w-[56px] min-w-fit select-none rounded-lg p-1 transition-all mobileLarge:h-[77px] mobileLarge:w-[61px] tablet:h-[81px] tablet:w-[64px] desktop:h-[95px] desktop:w-[75px]"
             >
               <div id={`cell${rowIdx}${colIdx}`} className="h-full w-full">
                 <BoardCell rowIdx={rowIdx} colIdx={colIdx} card={cell} />

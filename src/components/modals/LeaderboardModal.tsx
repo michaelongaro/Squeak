@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import useOnClickOutside from "../../hooks/useOnClickOutside";
 import { trpc } from "../../utils/trpc";
@@ -6,6 +6,7 @@ import Radio from "../Buttons/Radio";
 import PlayerIcon from "../playerIcons/PlayerIcon";
 import SecondaryButton from "../Buttons/SecondaryButton";
 import { IoClose, IoStatsChart } from "react-icons/io5";
+import useGetViewportLabel from "~/hooks/useGetViewportLabel";
 
 interface ILeaderboardModal {
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -30,27 +31,9 @@ function LeaderboardModal({ setShowModal }: ILeaderboardModal) {
   const [currentlySelectedIndex, setCurrentlySelectedIndex] =
     useState<number>(0);
 
+  const viewportLabel = useGetViewportLabel();
+
   const modalRef = useRef(null);
-
-  const [aboveMobileViewportWidth, setAboveMobileViewportWidth] =
-    useState<boolean>(false);
-
-  useEffect(() => {
-    function handleResize() {
-      if (window.innerWidth > 768) {
-        setAboveMobileViewportWidth(true);
-      } else {
-        setAboveMobileViewportWidth(false);
-      }
-    }
-
-    handleResize();
-
-    window.addEventListener("resize", handleResize);
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
 
   useOnClickOutside({
     ref: modalRef,
@@ -76,12 +59,12 @@ function LeaderboardModal({ setShowModal }: ILeaderboardModal) {
         className="baseVertFlex max-h-[90vh] w-[93vw] !justify-start overflow-y-auto rounded-md border-2 border-white shadow-md lg:w-auto"
       >
         {/* combine these classes with above? */}
-        <div className="baseVertFlex relative w-full !justify-start gap-8 rounded-md bg-green-800 p-8">
+        <div className="baseVertFlex relative w-full !justify-start gap-8 rounded-md bg-green-800  p-4 tablet:p-8">
           <div
             style={{
               color: "hsl(120deg 100% 86%)",
             }}
-            className="baseFlex gap-4 text-2xl"
+            className="baseFlex gap-4 pt-4 text-base font-semibold sm:text-xl md:pt-2"
           >
             <IoStatsChart size={"1.5rem"} />
             Leaderboard
@@ -105,7 +88,7 @@ function LeaderboardModal({ setShowModal }: ILeaderboardModal) {
                 () => setCurrentlySelectedIndex(4),
                 () => setCurrentlySelectedIndex(5),
               ]}
-              orientation={window.innerWidth > 1024 ? "horizontal" : "vertical"}
+              forMobileLeaderboard={viewportLabel.includes("mobile")}
               minHeight={"4rem"}
             />
 
@@ -119,8 +102,11 @@ function LeaderboardModal({ setShowModal }: ILeaderboardModal) {
               <div
                 style={{
                   borderColor: "hsl(120deg 100% 86%)",
+                  gridTemplateColumns: viewportLabel.includes("mobile")
+                    ? "50px auto 50px"
+                    : "1fr 1fr 1fr",
                 }}
-                className="grid w-full grid-cols-3 grid-rows-1 place-items-center border-b-2 font-semibold"
+                className="grid w-full grid-rows-1 place-items-center border-b-2 font-semibold"
               >
                 <p>#</p>
                 <p>Player</p>
@@ -131,17 +117,20 @@ function LeaderboardModal({ setShowModal }: ILeaderboardModal) {
                   (player, index) => (
                     <div
                       key={index}
-                      className="grid w-full grid-cols-3 grid-rows-1 place-items-center gap-2"
+                      style={{
+                        gridTemplateColumns: viewportLabel.includes("mobile")
+                          ? "50px auto 50px"
+                          : "1fr 1fr 1fr",
+                      }}
+                      className="grid w-full  grid-rows-1 place-items-center gap-2"
                     >
                       <p className="text-sm lg:text-xl">{orderValues[index]}</p>
                       <div className="baseFlex w-full gap-4 text-center md:!justify-start">
-                        {aboveMobileViewportWidth && (
-                          <PlayerIcon
-                            borderColor={player.color}
-                            avatarPath={player.avatarPath}
-                            size="2.5rem"
-                          />
-                        )}
+                        <PlayerIcon
+                          borderColor={player.color}
+                          avatarPath={player.avatarPath}
+                          size={"2.5rem"}
+                        />
                         <p className="text-sm lg:text-xl">{player.username}</p>
                       </div>
                       <p className="text-sm lg:text-xl">{player.value}</p>

@@ -51,9 +51,9 @@ function useTrackHoverOverBoardCells() {
   }, []);
 
   useEffect(() => {
-    // mousemove listener to check which squeak stack is being hovered over
+    // pointermove listener to check which squeak stack is being hovered over
     // excludes the squeak stack that the card is currently in
-    function mouseHandler(e: MouseEvent) {
+    function pointerHandler(e: PointerEvent) {
       if (!holdingADeckCard && !holdingASqueakCard) {
         if (hoveredCell !== null) setHoveredCell(null);
         return;
@@ -86,10 +86,10 @@ function useTrackHoverOverBoardCells() {
       }
     }
 
-    window.addEventListener("mousemove", mouseHandler);
+    window.addEventListener("pointermove", pointerHandler);
 
     return () => {
-      window.removeEventListener("mousemove", mouseHandler);
+      window.removeEventListener("pointermove", pointerHandler);
     };
   }, [
     boardCellBoundingRects,

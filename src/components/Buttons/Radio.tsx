@@ -7,8 +7,8 @@ interface IRadio {
   currentValueIndex: number;
   onClickFunctions: (() => void)[];
   disabledIndicies?: number[];
-  orientation?: "horizontal" | "vertical";
   minHeight?: string;
+  forMobileLeaderboard?: boolean;
 }
 
 function Radio({
@@ -16,8 +16,8 @@ function Radio({
   currentValueIndex,
   onClickFunctions,
   disabledIndicies,
-  orientation = "horizontal",
   minHeight,
+  forMobileLeaderboard,
 }: IRadio) {
   const [hoveredOptionIndex, setHoveredOptionIndex] = useState<number>(-1);
 
@@ -26,11 +26,7 @@ function Radio({
       style={{
         borderColor: "hsl(120deg 100% 86%)",
       }}
-      className={`${
-        orientation === "horizontal" ? classes.horizontal : classes.vertical
-      } baseFlex relative h-full w-full ${
-        minHeight && "flex-wrap"
-      } overflow-clip rounded-md border-2 transition-all lg:flex-nowrap`}
+      className={`${classes.horizontal} baseFlex relative h-full w-full snap-x snap-mandatory !justify-start overflow-x-auto rounded-md border-2 transition-all`}
     >
       {values.map((value, index) => (
         <button
@@ -38,12 +34,9 @@ function Radio({
           disabled={disabledIndicies?.includes(index)}
           style={{
             borderColor: "hsl(120deg 100% 86%)",
-            borderLeft:
-              orientation === "horizontal" && index !== 0
-                ? "1px solid hsl(120deg 100% 86%)"
-                : "none",
+            borderLeft: index !== 0 ? "1px solid hsl(120deg 100% 86%)" : "none",
             borderRight:
-              orientation === "horizontal" && index !== values.length - 1
+              index !== values.length - 1
                 ? "1px solid hsl(120deg 100% 86%)"
                 : "none",
             backgroundColor:
@@ -56,12 +49,12 @@ function Radio({
                 : "hsl(120deg 100% 86%)",
             padding: "0.5rem",
             height: minHeight ?? "100%",
+            width: "100%",
+            minWidth: forMobileLeaderboard ? "150px" : "auto",
           }}
-          className={`${classes.radioButton} relative h-full w-full text-sm ${
-            orientation === "horizontal" ? "border-x" : "border-y"
-          } transition-all`}
-          onMouseEnter={() => setHoveredOptionIndex(index)}
-          onMouseLeave={() => setHoveredOptionIndex(-1)}
+          className={`${classes.radioButton} relative h-full snap-center border-x text-sm transition-all tablet:min-w-fit`}
+          onPointerEnter={() => setHoveredOptionIndex(index)}
+          onPointerLeave={() => setHoveredOptionIndex(-1)}
           onClick={() => {
             onClickFunctions[index]?.();
           }}

@@ -77,13 +77,13 @@ function SecondaryButton({
         ...style,
       }}
       className="baseFlex relative h-full w-full gap-2 rounded-md border-2 transition-all"
-      onMouseEnter={() => setHoveringOnButton(true)}
-      onMouseLeave={() => {
+      onPointerEnter={() => setHoveringOnButton(true)}
+      onPointerLeave={() => {
         setHoveringOnButton(false);
         setBrightness(1);
       }}
-      onMouseDown={() => setBrightness(0.75)}
-      onMouseUp={() => setBrightness(1)}
+      onPointerDown={() => setBrightness(0.75)}
+      onPointerUp={() => setBrightness(1)}
       onClick={() => {
         if (disabled) return;
 

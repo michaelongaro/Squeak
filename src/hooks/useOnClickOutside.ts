@@ -5,13 +5,27 @@ interface IOnClickOutside {
   setShowModal: (showSettingsModal: boolean) => void;
 }
 
+// TODO: eventually migrate this to shadcnui Dialog component..
+
 export default function useOnClickOutside({
   ref,
   setShowModal,
 }: IOnClickOutside) {
   useEffect(() => {
-    const clickListener = (event: MouseEvent) => {
-      // Do nothing if clicking ref's element or descendent elements
+    const clickListener = (event: PointerEvent) => {
+      const popoverElement = document.getElementById("popover");
+      let popoverElementIsOpen = true;
+      if (!popoverElement) popoverElementIsOpen = false;
+
+      // If the popover is open and the click is inside the popover, do nothing
+      if (
+        popoverElementIsOpen &&
+        popoverElement?.contains(event.target as Node)
+      ) {
+        return;
+      }
+
+      // If the click is outside the ref element, close the modal
       if (!ref.current?.contains(event.target as Node)) {
         setShowModal(false);
       }
@@ -24,12 +38,12 @@ export default function useOnClickOutside({
       }
     };
 
-    document.addEventListener("mousedown", clickListener);
+    document.addEventListener("pointerdown", clickListener);
     document.addEventListener("keydown", keydownListener);
 
     return () => {
-      document.removeEventListener("mousedown", clickListener);
+      document.removeEventListener("pointerdown", clickListener);
       document.removeEventListener("keydown", keydownListener);
     };
-  }, []);
+  }, [ref, setShowModal]);
 }

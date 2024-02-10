@@ -10,6 +10,132 @@
   @apply flex flex-col items-center justify-center;
 }
 
+.cardDimensions {
+  @apply w-[50px] h-[65px] mobileLarge:w-[54px] mobileLarge:h-[70px] tablet:w-[57px] tablet:h-[74px] desktop:w-[67px] desktop:h-[87px];
+}
+
+/* you very well might have to programatically set the percentage back to 0% when
+    vote completes/timer runs out (inside of useVoteReceived hook) */
+@property --cooldown-percent {
+  initial-value: 0%;
+  inherits: false;
+  syntax: "<percentage>";
+}
+
+.countdownTimerToast {
+  background: conic-gradient(transparent var(--cooldown-percent), hsl(120deg 100% 18%) 0);
+  border-radius: 50%;
+  width: 1.25rem;
+  height: 1.25rem;
+  animation: timer 30s linear;
+}
+
+.cooldownVoteTimer {
+  background: conic-gradient(transparent var(--cooldown-percent), rgba(0, 0, 0, 0.5) 0);
+  border-radius: 0.375rem;
+  width: 44px;
+  height: 44px;
+  animation: timer 30s linear;
+}
+
+.drawerCooldownVoteTimer {
+  background: conic-gradient(transparent var(--cooldown-percent), rgba(0, 0, 0, 0.5) 0);
+  border-radius: 0.375rem;
+  width: 100%;
+  height: 3rem;
+  animation-play-state: paused;
+}
+
+.countdownTimerMiniMobileModal {
+  background: conic-gradient(transparent var(--cooldown-percent), hsl(120deg 100% 86%) 0);
+  border-radius: 50%;
+  width: 1.25rem;
+  height: 1.25rem;
+  animation: timer 30s linear;
+}
+
+@keyframes timer {
+  to {
+    --cooldown-percent: 100%;
+  }
+}
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    --primary: 120 100 86%;
+    --primary-foreground: 120 100% 18%;
+
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+
+    --mobile-drawer-input: 120 100% 18%;
+
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  /* body {
+    @apply bg-background text-foreground;
+  } */
+}
+
 /* Firefox */
 * {
   scrollbar-width: thin;
@@ -65,7 +191,7 @@ body {
   }
 
   35% {
-    top: -95px;
+    top: -85px;
   }
 
   65% {
@@ -79,6 +205,32 @@ body {
   100% {
     top: 0;
     z-index: 500;
+  }
+}
+
+@media (min-height: 800px) and (min-width: 1500px) {
+  @keyframes rotateDeck {
+    0% {
+      top: 0;
+      z-index: 1000;
+    }
+
+    35% {
+      top: -95px;
+    }
+
+    65% {
+      z-index: 1;
+    }
+
+    99% {
+      z-index: 1;
+    }
+
+    100% {
+      top: 0;
+      z-index: 500;
+    }
   }
 }
 

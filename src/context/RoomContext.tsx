@@ -82,10 +82,8 @@ interface IRoomContext {
   setProposedCardBoxShadow: React.Dispatch<
     React.SetStateAction<IProposedCardBoxShadow | null>
   >;
-  showDecksAreBeingRotatedModal: boolean;
-  setShowDecksAreBeingRotatedModal: React.Dispatch<
-    React.SetStateAction<boolean>
-  >;
+  decksAreBeingRotated: boolean;
+  setDecksAreBeingRotated: React.Dispatch<React.SetStateAction<boolean>>;
   playerIDWhoSqueaked: string | null;
   setPlayerIDWhoSqueaked: React.Dispatch<React.SetStateAction<string | null>>;
   showScoreboard: boolean;
@@ -111,8 +109,6 @@ interface IRoomContext {
   mirrorPlayerContainer: boolean;
   setMirrorPlayerContainer: React.Dispatch<React.SetStateAction<boolean>>;
 
-  showResetRoundModal: boolean;
-  setShowResetRoundModal: React.Dispatch<React.SetStateAction<boolean>>;
   scoreboardMetadata: IScoreboardMetadata | null;
   setScoreboardMetadata: React.Dispatch<
     React.SetStateAction<IScoreboardMetadata | null>
@@ -129,6 +125,39 @@ interface IRoomContext {
       [playerID: string]: SqueakStackDragAlterations;
     }>
   >;
+
+  smallerViewportCardBeingMoved: {
+    [playerID: string]: string | null; // string is the stringified card `${cardValue}${cardSuit}` being moved
+  };
+  setSmallerViewportCardBeingMoved: React.Dispatch<
+    React.SetStateAction<{
+      [playerID: string]: string | null;
+    }>
+  >;
+
+  // related to voting
+  currentVotes: ("agree" | "disagree")[];
+  setCurrentVotes: React.Dispatch<
+    React.SetStateAction<("agree" | "disagree")[]>
+  >;
+  voteType: "rotateDecks" | "finishRound" | null;
+  setVoteType: React.Dispatch<
+    React.SetStateAction<"rotateDecks" | "finishRound" | null>
+  >;
+  votingIsLockedOut: boolean;
+  setVotingIsLockedOut: React.Dispatch<React.SetStateAction<boolean>>;
+  showVotingModal: boolean;
+  setShowVotingModal: React.Dispatch<React.SetStateAction<boolean>>;
+  passiveVoteResolutionTimerId: NodeJS.Timeout | undefined;
+  setPassiveVoteResolutionTimerId: React.Dispatch<
+    React.SetStateAction<NodeJS.Timeout | undefined>
+  >;
+  votingLockoutStartTimestamp: number | null;
+  setVotingLockoutStartTimestamp: React.Dispatch<
+    React.SetStateAction<number | null>
+  >;
+  showVotingOptionButtons: boolean;
+  setShowVotingOptionButtons: React.Dispatch<React.SetStateAction<boolean>>;
 
   // audio file buffers
   successfulMoveBuffer: AudioBuffer | null;
@@ -209,7 +238,7 @@ export function RoomProvider(props: { children: React.ReactNode }) {
   const [proposedCardBoxShadow, setProposedCardBoxShadow] =
     useState<IProposedCardBoxShadow | null>(null);
 
-  const [showDecksAreBeingRotatedModal, setShowDecksAreBeingRotatedModal] =
+  const [decksAreBeingRotated, setDecksAreBeingRotated] =
     useState<boolean>(false);
 
   const [playerIDWhoSqueaked, setPlayerIDWhoSqueaked] = useState<string | null>(
@@ -220,8 +249,6 @@ export function RoomProvider(props: { children: React.ReactNode }) {
 
   const [showScoreboard, setShowScoreboard] = useState<boolean>(false);
   const [showShufflingCountdown, setShowShufflingCountdown] =
-    useState<boolean>(false);
-  const [showResetRoundModal, setShowResetRoundModal] =
     useState<boolean>(false);
 
   const [scoreboardMetadata, setScoreboardMetadata] =
@@ -243,6 +270,25 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     useState<{
       [playerID: string]: SqueakStackDragAlterations;
     }>({});
+
+  const [smallerViewportCardBeingMoved, setSmallerViewportCardBeingMoved] =
+    useState<{
+      [playerID: string]: string | null;
+    }>({});
+
+  const [currentVotes, setCurrentVotes] = useState<("agree" | "disagree")[]>(
+    []
+  );
+  const [voteType, setVoteType] = useState<
+    "rotateDecks" | "finishRound" | null
+  >(null);
+  const [votingIsLockedOut, setVotingIsLockedOut] = useState(false);
+  const [showVotingModal, setShowVotingModal] = useState(false);
+  const [passiveVoteResolutionTimerId, setPassiveVoteResolutionTimerId] =
+    useState<NodeJS.Timeout | undefined>();
+  const [votingLockoutStartTimestamp, setVotingLockoutStartTimestamp] =
+    useState<number | null>(null);
+  const [showVotingOptionButtons, setShowVotingOptionButtons] = useState(true);
 
   useEffect(() => {
     fetch("/api/socket");
@@ -379,8 +425,8 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     setHeldSqueakStackLocation,
     proposedCardBoxShadow,
     setProposedCardBoxShadow,
-    showDecksAreBeingRotatedModal,
-    setShowDecksAreBeingRotatedModal,
+    decksAreBeingRotated,
+    setDecksAreBeingRotated,
     playerIDWhoSqueaked,
     setPlayerIDWhoSqueaked,
     showScoreboard,
@@ -401,12 +447,26 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     setNewInviteNotification,
     mirrorPlayerContainer,
     setMirrorPlayerContainer,
-    showResetRoundModal,
-    setShowResetRoundModal,
     squeakDeckBeingMovedProgramatically,
     setSqueakDeckBeingMovedProgramatically,
     squeakStackDragAlterations,
     setOtherPlayerSqueakStacksBeingDragged,
+    smallerViewportCardBeingMoved,
+    setSmallerViewportCardBeingMoved,
+    currentVotes,
+    setCurrentVotes,
+    voteType,
+    setVoteType,
+    votingIsLockedOut,
+    setVotingIsLockedOut,
+    showVotingModal,
+    setShowVotingModal,
+    passiveVoteResolutionTimerId,
+    setPassiveVoteResolutionTimerId,
+    votingLockoutStartTimestamp,
+    setVotingLockoutStartTimestamp,
+    showVotingOptionButtons,
+    setShowVotingOptionButtons,
   };
 
   return (

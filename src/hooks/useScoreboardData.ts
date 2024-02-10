@@ -6,6 +6,7 @@ import { type IScoreboardMetadata } from "../pages/api/handlers/roundOverHandler
 
 interface IScoreboardMetadataWithPlayerIDToStartNextRound
   extends IScoreboardMetadata {
+  playSqueakSound: boolean;
   playerIDToStartNextRound: string;
 }
 
@@ -39,6 +40,7 @@ function useScoreboardData() {
       setDataFromBackend(null);
 
       const {
+        playSqueakSound,
         gameWinnerID,
         roundWinnerID,
         playerRoundDetails,
@@ -46,6 +48,7 @@ function useScoreboardData() {
       } = dataFromBackend;
 
       if (
+        playSqueakSound &&
         (userID !== roundWinnerID || userID !== gameWinnerID) &&
         audioContext &&
         masterVolumeGainNode
@@ -59,15 +62,18 @@ function useScoreboardData() {
 
       setPlayerIDWhoSqueaked(roundWinnerID);
 
-      setTimeout(() => {
-        setScoreboardMetadata({
-          gameWinnerID,
-          roundWinnerID,
-          playerRoundDetails,
-        });
+      setTimeout(
+        () => {
+          setScoreboardMetadata({
+            gameWinnerID,
+            roundWinnerID,
+            playerRoundDetails,
+          });
 
-        setShowScoreboard(true);
-      }, 1000); // waiting for pulsing animation to finish
+          setShowScoreboard(true);
+        },
+        playSqueakSound ? 1000 : 0
+      ); // waiting for pulsing animation to finish
 
       setTimeout(() => {
         setPlayerIDWhoSqueaked(null);
@@ -76,7 +82,6 @@ function useScoreboardData() {
 
         socket.emit("resetGame", {
           roomCode: roomConfig.code,
-          resettingRoundFromExcessiveDeckRotations: false,
           gameIsFinished: gameWinnerID !== null,
         });
       }, 14500);

@@ -6,6 +6,10 @@ import { trpc } from "../../utils/trpc";
 import SecondaryButton from "../Buttons/SecondaryButton";
 import { HiOutlineRefresh } from "react-icons/hi";
 import Filter from "bad-words";
+import { Button } from "~/components/ui/button";
+import { FaUsers } from "react-icons/fa";
+import { BiArrowBack } from "react-icons/bi";
+import useGetViewportLabel from "~/hooks/useGetViewportLabel";
 
 const filter = new Filter();
 
@@ -35,6 +39,8 @@ function PublicRooms() {
   const [roomCode, setRoomCode] = useState<string>("");
   const [fetchingNewRooms, setFetchingNewRooms] = useState<boolean>(false);
   const [hoveredIndex, setHoveredIndex] = useState<number>(-1);
+
+  const viewportLabel = useGetViewportLabel();
 
   const joinRoom = useCallback(() => {
     socket.emit("joinRoom", {
@@ -67,7 +73,7 @@ function PublicRooms() {
   }, [connectedToRoom, setConnectedToRoom, joinRoom, roomCode]);
 
   return (
-    <fieldset className="mt-8 rounded-md border-2 border-white bg-green-800 p-4">
+    <fieldset className="mt-8 w-[360px] rounded-md border-2 border-white bg-green-800 p-2 sm:w-full sm:p-4">
       <legend
         style={{
           color: "hsl(120deg 100% 86%)",
@@ -75,17 +81,15 @@ function PublicRooms() {
         className="baseFlex gap-4 pl-4 pr-4 text-left text-lg"
       >
         <div className="baseFlex gap-2 whitespace-nowrap">
-          <div className="text-xl">Public rooms</div>
+          <div className="text-base sm:text-xl">Public rooms</div>
           {publicRooms && <div>{`(${publicRooms.length})`}</div>}
         </div>
 
-        <SecondaryButton
+        <Button
+          variant={"secondary"}
           icon={<HiOutlineRefresh size={"1.5rem"} />}
-          extraPadding={false}
           innerText={"Refresh"}
-          style={{
-            padding: "0.25rem 1rem",
-          }}
+          className="gap-2"
           rotateIcon={isFetching || fetchingNewRooms}
           onClickFunction={() => {
             setFetchingNewRooms(true);
@@ -104,18 +108,22 @@ function PublicRooms() {
               style={{
                 borderColor: "hsl(120deg 100% 86%)",
               }}
-              className="baseVertFlex max-h-[400px] w-full !justify-start rounded-md border-2"
+              className="baseVertFlex mt-2 max-h-[400px] w-full !justify-start rounded-md border-2 sm:mt-0"
             >
               <div
                 style={{
                   backgroundColor: "hsl(120deg 100% 86%)",
                   color: "hsl(120deg 100% 18%)",
                 }}
-                className="grid w-full grid-cols-3 place-items-center p-4 pr-8 font-medium"
+                className="grid w-full grid-cols-3 place-items-center p-4 pr-8 text-sm font-medium sm:text-base"
               >
                 <div>Owner</div>
                 <div>Points to win</div>
-                <div>Players</div>
+                {viewportLabel.includes("mobile") ? (
+                  <FaUsers size={"1rem"} />
+                ) : (
+                  <div>Players</div>
+                )}
               </div>
 
               <div className="h-full w-full overflow-y-auto">
@@ -137,28 +145,42 @@ function PublicRooms() {
                           : "none",
                     }}
                     className="relative grid w-auto grid-cols-3 place-items-center border-b-2 p-4 pr-8 lg:w-[600px]"
-                    onMouseEnter={() => setHoveredIndex(index)}
-                    onMouseLeave={() => setHoveredIndex(-1)}
+                    onPointerEnter={() => setHoveredIndex(index)}
+                    onPointerLeave={() => setHoveredIndex(-1)}
                   >
-                    <div>{room.hostUsername}</div>
+                    <div className="max-w-24 truncate sm:max-w-full">
+                      {room.hostUsername}
+                    </div>
                     <div>{room.pointsToWin}</div>
                     <div className="baseFlex gap-2">
                       {room.playersInRoom} / {room.maxPlayers}
                     </div>
 
-                    <div className="absolute right-4 ">
-                      <SecondaryButton
-                        extraPadding={false} // maybe try other way too
+                    <div className="absolute right-2 sm:right-4 ">
+                      <Button
+                        variant={"secondary"}
                         disabled={
                           playerMetadata[userID]?.username.length === 0 ||
                           filter.isProfane(
                             playerMetadata[userID]?.username ?? ""
                           )
                         }
-                        width={"3.5rem"}
-                        height={"2.5rem"}
-                        innerText="Join"
-                        onClickFunction={() => {
+                        isDisabled={
+                          playerMetadata[userID]?.username.length === 0 ||
+                          filter.isProfane(
+                            playerMetadata[userID]?.username ?? ""
+                          )
+                        }
+                        className="px-2"
+                        icon={
+                          viewportLabel.includes("mobile") ? (
+                            <BiArrowBack size={"1rem"} className="rotate-180" />
+                          ) : undefined
+                        }
+                        innerText={
+                          viewportLabel.includes("mobile") ? undefined : "Join"
+                        }
+                        onClick={() => {
                           setRoomConfig(room);
                           setRoomCode(room.code);
                         }}
@@ -169,13 +191,10 @@ function PublicRooms() {
               </div>
             </div>
           ) : (
-            <div
-              style={{
-                color: "hsl(120deg 100% 86%)",
-              }}
-              className=" w-auto pb-4 pt-4 text-center text-lg lg:min-w-[658px]"
-            >
-              No rooms found. Create one or refresh to find more.
+            <div className="baseFlex w-full py-4 text-base text-lightGreen sm:text-lg lg:min-w-[658px]">
+              <p className="w-3/4 text-center sm:w-full">
+                No rooms found. Create one or refresh to find more.
+              </p>
             </div>
           )}
         </>

@@ -52,7 +52,7 @@ function BoardCell({ card, rowIdx, colIdx }: IBoardCell) {
               style={{
                 color: "hsl(120deg 100% 86%)",
               }}
-              className="absolute right-[-1.85rem] top-0 select-none text-xl tracking-wider"
+              className="absolute right-[-1.5rem] top-0 select-none text-lg tracking-wider tablet:right-[-1.85rem] desktop:text-xl"
             >
               +1
             </motion.div>

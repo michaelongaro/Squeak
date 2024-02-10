@@ -16,6 +16,7 @@ import { startGameHandler } from "./handlers/startGameHandler";
 import { createRoomHandler } from "./handlers/createRoomHandler";
 import { joinRoomHandler } from "./handlers/joinRoomHandler";
 import { updatePlayerMetadataHandler } from "./handlers/updatePlayerMetadataHandler";
+import { voteReceivedHandler } from "./handlers/voteReceivedHandler";
 
 // TODO: is there a better way to type these?
 export interface IFriendsData {
@@ -43,9 +44,7 @@ export interface IMiscRoomData {
 
 interface IMiscRoomMetadata {
   boardTimestamps: number[][];
-  rotateDecksCounter: number;
   preventOtherPlayersFromSqueaking: boolean;
-  gameStuckInterval?: NodeJS.Timeout; // TODO: most likely don't need this to be optional
   botIntervals: NodeJS.Timeout[];
 
   // used to keep track of squeak cards that have been moved to other squeak cards so that
@@ -57,6 +56,10 @@ interface IMiscRoomMetadata {
   blacklistedSqueakCards: {
     [playerID: string]: IBlacklistedSqueakCards;
   };
+
+  // related to voting
+  currentVotes: ("agree" | "disagree")[];
+  voteType: "rotateDecks" | "finishRound" | null;
 }
 
 interface IBlacklistedSqueakCards {
@@ -217,6 +220,8 @@ export default function SocketHandler(req, res) {
     resetGameHandler(io, socket, gameData, roomData, miscRoomData);
 
     leaveRoomHandler(io, socket, gameData, roomData, miscRoomData);
+
+    voteReceivedHandler(io, socket, gameData, miscRoomData, roomData);
 
     socket.on("directlyLeaveRoom", (roomCode) => {
       socket.leave(roomCode);

@@ -1,26 +1,29 @@
-import { useState, useEffect, useCallback } from "react";
-import { trpc } from "../../utils/trpc";
-import { socket } from "../../pages";
-import { useUserIDContext } from "../../context/UserIDContext";
-import { useRoomContext } from "../../context/RoomContext";
-import { type IRoomPlayer, type IGameMetadata } from "../../pages/api/socket";
-import PickerTooltip from "../playerIcons/PickerTooltip";
-import PlayerIcon from "../playerIcons/PlayerIcon";
-import SecondaryButton from "../Buttons/SecondaryButton";
-import { IoHome } from "react-icons/io5";
-import { BiArrowBack } from "react-icons/bi";
-import PrimaryButton from "../Buttons/PrimaryButton";
-import { MdCopyAll } from "react-icons/md";
-import { FiCheck } from "react-icons/fi";
-import { AnimatePresence, motion } from "framer-motion";
-import PublicRooms from "./PublicRooms";
-import { IoSettingsSharp } from "react-icons/io5";
-import { FaUsers } from "react-icons/fa";
-import Filter from "bad-words";
-import { useSession } from "next-auth/react";
 import { type Room } from "@prisma/client";
+import Filter from "bad-words";
+import { AnimatePresence, motion } from "framer-motion";
+import { useSession } from "next-auth/react";
+import { useCallback, useEffect, useState } from "react";
+import { BiArrowBack } from "react-icons/bi";
+import { FaUsers } from "react-icons/fa";
+import { FiCheck } from "react-icons/fi";
+import { IoHome, IoSettingsSharp } from "react-icons/io5";
+import { MdCopyAll } from "react-icons/md";
+import { useRoomContext } from "../../context/RoomContext";
+import { useUserIDContext } from "../../context/UserIDContext";
 import useLeaveRoom from "../../hooks/useLeaveRoom";
-
+import { socket } from "../../pages";
+import { type IGameMetadata, type IRoomPlayer } from "../../pages/api/socket";
+import { trpc } from "../../utils/trpc";
+import { Input } from "~/components/ui/input";
+import PrimaryButton from "../Buttons/PrimaryButton";
+import SecondaryButton from "../Buttons/SecondaryButton";
+import PlayerIcon from "../playerIcons/PlayerIcon";
+import PublicRooms from "./PublicRooms";
+import useGetViewportLabel from "~/hooks/useGetViewportLabel";
+import PlayerCustomizationDrawer from "../drawers/PlayerCustomizationDrawer";
+import PlayerCustomizationPreview from "../playerIcons/PlayerCustomizationPreview";
+import PlayerCustomizationPopover from "../popovers/PlayerCustomizationPopover";
+import { Button } from "~/components/ui/button";
 import classes from "./JoinRoom.module.css";
 
 const filter = new Filter();
@@ -52,6 +55,8 @@ function JoinRoom() {
   const [room, setRoom] = useState<Room | null>(null);
   const [roomError, setRoomError] = useState<string | null>(null);
   const [showAnimation, setShowAnimation] = useState<boolean>(false);
+
+  const viewportLabel = useGetViewportLabel();
 
   const { data: queriedRoom } = trpc.rooms.findRoomByCode.useQuery(
     submittedRoomCode,
@@ -164,11 +169,12 @@ function JoinRoom() {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.15 }}
-      className="baseVertFlex relative min-h-[100dvh]"
+      className="baseVertFlex relative min-h-[100dvh] py-16"
     >
       <div className="baseVertFlex relative gap-4">
-        <div className="absolute left-0 top-0">
-          <SecondaryButton
+        <div className="absolute left-4 top-0 sm:left-0">
+          <Button
+            variant={"secondary"}
             icon={
               connectedToRoom ? (
                 <BiArrowBack size={"1.5rem"} />
@@ -176,8 +182,8 @@ function JoinRoom() {
                 <IoHome size={"1.5rem"} />
               )
             }
-            extraPadding={false}
-            onClickFunction={() => leaveRoom(connectedToRoom ? false : true)}
+            className="h-10 w-10"
+            onClick={() => leaveRoom(connectedToRoom ? false : true)}
           />
         </div>
 
@@ -206,10 +212,9 @@ function JoinRoom() {
                 <div className="baseFlex w-full !justify-between gap-4">
                   <label>Username</label>
                   <div className="relative">
-                    <input
+                    <Input
                       type="text"
                       placeholder="username"
-                      className=" rounded-md py-1 pl-2 text-green-800"
                       maxLength={16}
                       onFocus={() => setFocusedInInput(true)}
                       onBlur={() => setFocusedInInput(false)}
@@ -234,7 +239,7 @@ function JoinRoom() {
                             ? 1
                             : 0,
                       }}
-                      className="absolute right-1 top-[-0.25rem] text-xl text-red-600 transition-opacity"
+                      className="absolute right-1 top-0 text-xl text-red-600 transition-opacity"
                     >
                       *
                     </div>
@@ -265,12 +270,12 @@ function JoinRoom() {
 
                 <div className="baseFlex w-full !justify-between gap-4">
                   <label>Room code</label>
-                  <input
+                  <Input
                     type="text"
                     placeholder="optional"
-                    className={`rounded-md py-1 pl-2 text-green-800 ${
+                    className={`${
                       roomCode.length === 0 ? "italic" : ""
-                    }`}
+                    } w-[201px]`}
                     maxLength={6}
                     onChange={(e) => setRoomCode(e.target.value)}
                     value={roomCode}
@@ -278,11 +283,46 @@ function JoinRoom() {
                 </div>
               </div>
 
-              <div className="baseFlex gap-12">
-                <PickerTooltip type={"avatar"} />
-                <PickerTooltip type={"cardFront"} />
-                <PickerTooltip type={"color"} />
-              </div>
+              {viewportLabel === "tablet" || viewportLabel === "desktop" ? (
+                <div className="baseFlex gap-12">
+                  <div className="baseVertFlex gap-2">
+                    <PlayerCustomizationPopover type={"avatar"} />
+                    <p className="mt-[0.25rem] text-lightGreen">Avatar</p>
+                  </div>
+                  <div className="baseVertFlex gap-2">
+                    <PlayerCustomizationPopover type={"front"} />
+                    <p className="text-lightGreen">Front</p>
+                  </div>
+                  <div className="baseVertFlex gap-2">
+                    <PlayerCustomizationPopover type={"back"} />
+                    <p className="text-lightGreen">Back</p>
+                  </div>
+                </div>
+              ) : (
+                <div className="baseVertFlex gap-4">
+                  <div className="baseFlex gap-12">
+                    <div className="baseVertFlex">
+                      <PlayerCustomizationPreview
+                        renderedView={"avatar"}
+                        forCreateAndJoin
+                      />
+                    </div>
+                    <div className="baseVertFlex gap-2">
+                      <PlayerCustomizationPreview
+                        renderedView={"front"}
+                        forCreateAndJoin
+                      />
+                    </div>
+                    <div className="baseVertFlex gap-2">
+                      <PlayerCustomizationPreview
+                        renderedView={"back"}
+                        forCreateAndJoin
+                      />
+                    </div>
+                  </div>
+                  <PlayerCustomizationDrawer />
+                </div>
+              )}
             </div>
 
             <div
@@ -392,7 +432,11 @@ function JoinRoom() {
                 <FaUsers size={"1.25rem"} />
               </legend>
               <div className="baseVertFlex gap-6 p-2">
-                <div className="baseVertFlex !justify-start gap-8 sm:!flex-row sm:!items-start">
+                <div
+                  className={`sm:baseVertFlex grid grid-cols-2 ${
+                    roomConfig.playersInRoom > 2 ? "grid-rows-2" : "grid-rows-1"
+                  } !items-start !justify-start gap-8 sm:flex sm:!flex-row`}
+                >
                   {Object.keys(playerMetadata)?.map((playerID) => (
                     <PlayerIcon
                       key={playerID}
@@ -423,11 +467,46 @@ function JoinRoom() {
 
                 <div className="h-[2px] w-full rounded-md bg-white"></div>
 
-                <div className="baseFlex gap-12">
-                  <PickerTooltip type={"avatar"} openAbove={true} />
-                  <PickerTooltip type={"cardFront"} openAbove={true} />
-                  <PickerTooltip type={"color"} openAbove={true} />
-                </div>
+                {viewportLabel === "tablet" || viewportLabel === "desktop" ? (
+                  <div className="baseFlex gap-12 text-lightGreen">
+                    <div className="baseVertFlex gap-2">
+                      <PlayerCustomizationPopover type={"avatar"} />
+                      <p className="mt-[0.25rem]">Avatar</p>
+                    </div>
+                    <div className="baseVertFlex gap-2">
+                      <PlayerCustomizationPopover type={"front"} />
+                      <p>Front</p>
+                    </div>
+                    <div className="baseVertFlex gap-2">
+                      <PlayerCustomizationPopover type={"back"} />
+                      <p>Back</p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="baseVertFlex gap-4">
+                    <div className="baseFlex gap-12">
+                      <div className="baseVertFlex gap-4">
+                        <PlayerCustomizationPreview
+                          renderedView={"avatar"}
+                          forCreateAndJoin
+                        />
+                      </div>
+                      <div className="baseVertFlex gap-2">
+                        <PlayerCustomizationPreview
+                          renderedView={"front"}
+                          forCreateAndJoin
+                        />
+                      </div>
+                      <div className="baseVertFlex gap-2">
+                        <PlayerCustomizationPreview
+                          renderedView={"back"}
+                          forCreateAndJoin
+                        />
+                      </div>
+                    </div>
+                    <PlayerCustomizationDrawer />
+                  </div>
+                )}
               </div>
             </fieldset>
             <div className="baseFlex !items-baseline gap-1">

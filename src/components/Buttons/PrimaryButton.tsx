@@ -40,14 +40,14 @@ function PrimaryButton({
         opacity: disabled || tempDisabled ? 0.25 : 1,
       }}
       className="baseFlex relative gap-2 rounded-md transition-all"
-      onMouseEnter={() => {
+      onPointerEnter={() => {
         setBrightness(0.9);
       }}
-      onMouseLeave={() => {
+      onPointerLeave={() => {
         setBrightness(1);
       }}
-      onMouseDown={() => setBrightness(0.75)}
-      onMouseUp={() => setBrightness(1)}
+      onPointerDown={() => setBrightness(0.75)}
+      onPointerUp={() => setBrightness(1)}
       onClick={() => {
         if (disabled) return;
 

@@ -1,33 +1,18 @@
 .fullBoardGrid {
-  width: 100vw;
-  height: 100dvh;
-  display: grid;
-  overflow: hidden;
-  grid-template-rows: 0.25fr 0.5fr 0.25fr;
-  grid-template-columns: 0.25fr 0.5fr 0.25fr;
-  grid-template-areas:
-    "leftPlayerCards topPlayerCards rightPlayerCards"
-    "leftPlayerCards board rightPlayerCards"
-    "leftPlayerCards currentPlayerCards rightPlayerCards";
-  gap: 1rem;
-}
-
-@media (max-height: 768px) or (max-width: 1500px) {
-  .fullBoardGrid {
-    max-width: 100%;
-    row-gap: 0.5rem;
-  }
-}
-
-/* keeps proportions when playing with less than 4 players */
-.fullBoardGrid>div {
-  min-width: 100%;
-  min-height: 1%;
-}
-
-.leftPlayerCards,
-.rightPlayerCards {
-  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden !important;
+  /* this should already be always hidden? I think the buzzer will set it to visible for a second as is */
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  row-gap: 0.5rem;
+  padding: 1rem;
+  margin-top: 2rem;
+  /* for the ellipsis button to open controls <Drawer /> */
+  gap: 0.5rem;
 }
 
 .currentPlayerCards,
@@ -39,6 +24,13 @@
   align-items: center;
 }
 
+.leftPlayerCards,
+.rightPlayerCards,
+.topPlayerCards {
+  width: 0;
+  height: 0;
+}
+
 .topPlayerCards {
   grid-area: topPlayerCards;
 }
@@ -47,17 +39,120 @@
   grid-area: leftPlayerCards;
 }
 
-.board {
-  grid-area: board;
-  align-items: center;
-  justify-items: center;
-  height: 100% !important;
-}
-
 .rightPlayerCards {
   grid-area: rightPlayerCards;
 }
 
 .currentPlayerCards {
   grid-area: currentPlayerCards;
+}
+
+.boardContainer {
+  display: grid;
+  grid-template-columns: 0fr 1fr 0fr;
+  grid-template-rows: 0fr 1fr;
+  grid-template-areas:
+    ". topPlayerCards ."
+    "leftPlayerCards board rightPlayerCards";
+  place-items: center;
+  place-content: center;
+  width: 100%;
+  height: 100%;
+  max-width: 750px;
+}
+
+.board {
+  grid-area: board;
+  align-items: center;
+  justify-items: center;
+  height: 100% !important;
+  max-width: 750px;
+}
+
+/* allowed to show avatars for other user's on left/top/right of board */
+@media (min-height: 700px) and (min-width: 1000px) {
+  .fullBoardGrid {
+    gap: 1rem;
+    margin-top: 0rem;
+  }
+
+  .boardContainer {
+    /* assuming 100px is size of avatar */
+    /* not 100% sure on hardcoding 750px but it was getting way too large
+       at 1200px+ on the width */
+    grid-template-columns: 100px 750px 100px;
+    grid-template-rows: 100px 1fr;
+    grid-template-areas:
+      ". topPlayerCards ."
+      "leftPlayerCards board rightPlayerCards";
+    max-width: 750px;
+  }
+
+  .leftPlayerCards,
+  .rightPlayerCards,
+  .topPlayerCards {
+    height: 50px;
+    width: 50px
+  }
+}
+
+/* larger desktop viewport styles */
+@media (min-height: 800px) and (min-width: 1500px) {
+  .fullBoardGrid {
+    width: 100vw;
+    height: 100dvh;
+    display: grid;
+    overflow: hidden;
+    grid-template-rows: 0.25fr 0.5fr 0.25fr;
+    grid-template-columns: 0.25fr 0.5fr 0.25fr;
+    grid-template-areas:
+      "leftPlayerCards topPlayerCards rightPlayerCards"
+      "leftPlayerCards board rightPlayerCards"
+      "leftPlayerCards currentPlayerCards rightPlayerCards";
+    place-items: center;
+    place-content: center;
+    gap: 1rem;
+    padding: 0;
+    margin-top: 0;
+  }
+
+  .boardContainer {
+    display: block;
+    grid-area: board;
+    max-width: 100%;
+  }
+
+  .board {
+    align-items: center;
+    justify-items: center;
+    height: 100% !important;
+    max-width: 950px;
+    /* ^ could maybe do 100% but idk how stretched it would look on ultrawide viewports */
+  }
+
+  .leftPlayerCards,
+  .rightPlayerCards,
+  .topPlayerCards {
+    position: relative;
+    top: auto;
+    left: auto;
+    right: auto;
+    transform: none;
+  }
+
+  .topPlayerCards {
+    height: 210px;
+    width: 502px;
+  }
+
+  .leftPlayerCards {
+    height: 502px;
+    width: 210px;
+  }
+
+  .rightPlayerCards {
+    height: 502px;
+    width: 210px;
+  }
+
 }

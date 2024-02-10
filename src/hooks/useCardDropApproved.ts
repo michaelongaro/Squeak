@@ -49,6 +49,8 @@ function useCardDropApproved({
     setProposedCardBoxShadow,
     squeakStackDragAlterations,
     setOtherPlayerSqueakStacksBeingDragged,
+    smallerViewportCardBeingMoved,
+    setSmallerViewportCardBeingMoved,
   } = useRoomContext();
 
   const [dataFromBackend, setDataFromBackend] =
@@ -84,6 +86,16 @@ function useCardDropApproved({
         playerID !== ownerID
       )
         return;
+
+      // setting ctx state for smaller viewports to know which card
+      // should be made visible during it's programmatic move that's about to happen
+
+      if (userID !== playerID && endID.includes("cell")) {
+        setSmallerViewportCardBeingMoved({
+          ...smallerViewportCardBeingMoved,
+          [playerID]: `${suit}${value}`,
+        });
+      }
 
       const endLocation = document
         .getElementById(endID)
@@ -196,6 +208,13 @@ function useCardDropApproved({
         flip: false,
         rotate: endID.includes("cell"),
         callbackFunction: () => {
+          if (endID.includes("cell")) {
+            setSmallerViewportCardBeingMoved({
+              ...smallerViewportCardBeingMoved,
+              [playerID]: null,
+            });
+          }
+
           setOtherPlayerSqueakStacksBeingDragged({
             ...squeakStackDragAlterations,
             [ownerID]: {
@@ -237,6 +256,8 @@ function useCardDropApproved({
     value,
     rotation,
     userID,
+    smallerViewportCardBeingMoved,
+    setSmallerViewportCardBeingMoved,
   ]);
 }
 

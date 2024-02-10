@@ -4,10 +4,13 @@ import {
   type IRoomPlayersMetadata,
   type IRoomPlayer,
 } from "../../../pages/api/socket";
-import PickerTooltip from "../../playerIcons/PickerTooltip";
 import { AnimatePresence, motion } from "framer-motion";
 import { type ILocalPlayerSettings } from "./UserSettingsAndStatsModal";
 import Filter from "bad-words";
+import { Switch } from "~/components/ui/switch";
+import { Label } from "~/components/ui/label";
+import { Input } from "~/components/ui/input";
+import PlayerCustomizationPopover from "~/components/popovers/PlayerCustomizationPopover";
 
 const filter = new Filter();
 
@@ -44,12 +47,12 @@ function Settings({
       className="baseVertFlex w-[700px] gap-8 bg-green-800 p-8"
     >
       <div className="baseFlex gap-2">
-        <label>Username</label>
+        <Label htmlFor="username">Username</Label>
         <div className="relative">
-          <input
+          <Input
+            id="username"
             type="text"
             placeholder="username"
-            className=" rounded-md py-1 pl-2 text-green-800"
             maxLength={16}
             onFocus={() => setFocusedInInput(true)}
             onBlur={() => setFocusedInInput(false)}
@@ -75,7 +78,7 @@ function Settings({
                   ? 1
                   : 0,
             }}
-            className="absolute right-1 top-[-0.25rem] text-xl text-red-600 transition-opacity"
+            className="absolute right-1 top-0 text-xl text-red-600 transition-opacity"
           >
             *
           </div>
@@ -103,47 +106,73 @@ function Settings({
       </div>
 
       <div className="baseFlex gap-12">
-        <PickerTooltip
-          type={"avatar"}
-          localPlayerMetadata={localPlayerMetadata}
-          setLocalPlayerMetadata={setLocalPlayerMetadata}
-        />
-        <PickerTooltip
-          type={"cardFront"}
-          localPlayerMetadata={localPlayerMetadata}
-          setLocalPlayerSettings={setLocalPlayerSettings}
-        />
-        <PickerTooltip
-          type={"color"}
-          localPlayerMetadata={localPlayerMetadata}
-          setLocalPlayerMetadata={setLocalPlayerMetadata}
-        />
+        <div className="baseVertFlex gap-2">
+          <PlayerCustomizationPopover
+            type={"avatar"}
+            localPlayerMetadata={localPlayerMetadata}
+            setLocalPlayerMetadata={setLocalPlayerMetadata}
+          />
+          <p className="mt-[0.25rem] text-lightGreen">Avatar</p>
+        </div>
+        <div className="baseVertFlex gap-2">
+          <PlayerCustomizationPopover
+            type={"front"}
+            localPlayerMetadata={localPlayerMetadata}
+            setLocalPlayerMetadata={setLocalPlayerMetadata}
+          />
+          <p className="text-lightGreen">Front</p>
+        </div>
+        <div className="baseVertFlex gap-2">
+          <PlayerCustomizationPopover
+            type={"back"}
+            localPlayerMetadata={localPlayerMetadata}
+            setLocalPlayerMetadata={setLocalPlayerMetadata}
+          />
+          <p className="text-lightGreen">Back</p>
+        </div>
       </div>
 
-      <div className="baseFlex mt-4 gap-2">
-        <label>Show Squeak Pile on left</label>
-        <input
-          className="h-[1.15rem] w-[1.15rem] cursor-pointer"
-          aria-label="toggle squeak pile location between left and right"
-          type="checkbox"
+      <div
+        style={{
+          gridTemplateColumns: "minmax(204px, auto) auto",
+        }}
+        className="mt-4 grid grid-cols-2 gap-4"
+      >
+        <Label
+          htmlFor="squeakPileOnLeft"
+          className="self-center justify-self-start"
+        >
+          Show Squeak Pile on left
+        </Label>
+        <Switch
+          id="squeakPileOnLeft"
           checked={localPlayerSettings.squeakPileOnLeft}
-          onChange={() =>
+          onCheckedChange={() =>
             setLocalPlayerSettings((prevSettings) => ({
               ...prevSettings,
               squeakPileOnLeft: !prevSettings.squeakPileOnLeft,
             }))
           }
+          className="self-center"
         />
       </div>
 
-      <div className="baseFlex gap-2">
-        <label>Enable desktop notifications</label>
-        <input
-          className="h-[1.15rem] w-[1.15rem] cursor-pointer"
-          aria-label="toggle desktop notifications"
-          type="checkbox"
+      <div
+        style={{
+          gridTemplateColumns: "minmax(204px, auto) auto",
+        }}
+        className="grid grid-cols-2 items-center gap-4"
+      >
+        <Label
+          htmlFor="enableDesktopNotifications"
+          className="justify-self-start"
+        >
+          Enable desktop notifications
+        </Label>
+        <Switch
+          id="enableDesktopNotifications"
           checked={localPlayerSettings.desktopNotifications}
-          onChange={() => {
+          onCheckedChange={() => {
             Notification.requestPermission().then((result) => {
               if (result === "granted") {
                 setLocalPlayerSettings((prevSettings) => ({
@@ -153,6 +182,7 @@ function Settings({
               }
             });
           }}
+          className="self-center"
         />
       </div>
     </div>

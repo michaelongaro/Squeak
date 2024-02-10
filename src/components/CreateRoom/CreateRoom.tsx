@@ -9,7 +9,6 @@ import { type IGameMetadata, type IRoomPlayer } from "../../pages/api/socket";
 import { IoSettingsSharp } from "react-icons/io5";
 import { FaRobot } from "react-icons/fa6";
 import { FaUsers } from "react-icons/fa";
-import PickerTooltip from "../playerIcons/PickerTooltip";
 import PlayerIcon from "../playerIcons/PlayerIcon";
 import SecondaryButton from "../Buttons/SecondaryButton";
 import Radio from "../Buttons/Radio";
@@ -19,8 +18,16 @@ import { IoHome } from "react-icons/io5";
 import { BiArrowBack } from "react-icons/bi";
 import { FiCheck } from "react-icons/fi";
 import { AnimatePresence, motion } from "framer-motion";
+import { Input } from "~/components/ui/input";
 import Filter from "bad-words";
 import useLeaveRoom from "../../hooks/useLeaveRoom";
+import useGetViewportLabel from "~/hooks/useGetViewportLabel";
+import PlayerCustomizationPopover from "../popovers/PlayerCustomizationPopover";
+import PlayerCustomizationPreview from "../playerIcons/PlayerCustomizationPreview";
+import PlayerCustomizationDrawer from "../drawers/PlayerCustomizationDrawer";
+import { Label } from "~/components/ui/label";
+import { Button } from "~/components/ui/button";
+
 const filter = new Filter();
 
 const botNames = [
@@ -68,6 +75,8 @@ function CreateRoom() {
   } = useRoomContext();
 
   const leaveRoom = useLeaveRoom();
+
+  const viewportLabel = useGetViewportLabel();
 
   const { data: authenticatedUsers } = trpc.users.getUsersFromIDList.useQuery(
     Object.keys(playerMetadata)
@@ -186,11 +195,12 @@ function CreateRoom() {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.15 }}
-      className="baseVertFlex relative min-h-[100dvh] py-8"
+      className="baseVertFlex relative min-h-[100dvh] py-16"
     >
       <div className="baseVertFlex relative gap-4">
-        <div className="absolute left-[-3.5rem] top-0">
-          <SecondaryButton
+        <div className="absolute left-4 top-0 sm:left-0">
+          <Button
+            variant={"secondary"}
             icon={
               connectedToRoom ? (
                 <BiArrowBack size={"1.5rem"} />
@@ -198,8 +208,8 @@ function CreateRoom() {
                 <IoHome size={"1.5rem"} />
               )
             }
-            extraPadding={false}
-            onClickFunction={() => {
+            className="h-10 w-10"
+            onClick={() => {
               setConfigAndMetadataInitialized(false);
               leaveRoom(connectedToRoom ? false : true);
             }}
@@ -223,18 +233,17 @@ function CreateRoom() {
         {!connectedToRoom && (
           <div className="baseVertFlex mt-4 gap-4 rounded-md border-2 border-white bg-green-800 p-4">
             <div className="baseFlex gap-2">
-              <label
+              <Label
                 style={{
                   color: "hsl(120deg 100% 86%)",
                 }}
               >
                 Username
-              </label>
+              </Label>
               <div className="relative">
-                <input
+                <Input
                   type="text"
                   placeholder="username"
-                  className=" rounded-md py-1 pl-2 text-green-800"
                   maxLength={16}
                   onFocus={() => setFocusedInInput(true)}
                   onBlur={() => setFocusedInInput(false)}
@@ -260,7 +269,7 @@ function CreateRoom() {
                         ? 1
                         : 0,
                   }}
-                  className="absolute right-1 top-[-0.25rem] text-xl text-red-600 transition-opacity"
+                  className="absolute right-1 top-0 text-xl text-red-600 transition-opacity"
                 >
                   *
                 </div>
@@ -289,15 +298,50 @@ function CreateRoom() {
               </div>
             </div>
 
-            <div className="baseFlex gap-12">
-              <PickerTooltip type={"avatar"} />
-              <PickerTooltip type={"cardFront"} />
-              <PickerTooltip type={"color"} />
-            </div>
+            {viewportLabel === "tablet" || viewportLabel === "desktop" ? (
+              <div className="baseFlex gap-12 text-lightGreen">
+                <div className="baseVertFlex gap-2">
+                  <PlayerCustomizationPopover type={"avatar"} />
+                  <p className="mt-[0.25rem]">Avatar</p>
+                </div>
+                <div className="baseVertFlex gap-2">
+                  <PlayerCustomizationPopover type={"front"} />
+                  <p>Front</p>
+                </div>
+                <div className="baseVertFlex gap-2">
+                  <PlayerCustomizationPopover type={"back"} />
+                  <p>Back</p>
+                </div>
+              </div>
+            ) : (
+              <div className="baseVertFlex gap-4">
+                <div className="baseFlex gap-12">
+                  <div className="baseVertFlex">
+                    <PlayerCustomizationPreview
+                      renderedView={"avatar"}
+                      forCreateAndJoin
+                    />
+                  </div>
+                  <div className="baseVertFlex gap-2">
+                    <PlayerCustomizationPreview
+                      renderedView={"front"}
+                      forCreateAndJoin
+                    />
+                  </div>
+                  <div className="baseVertFlex gap-2">
+                    <PlayerCustomizationPreview
+                      renderedView={"back"}
+                      forCreateAndJoin
+                    />
+                  </div>
+                </div>
+                <PlayerCustomizationDrawer />
+              </div>
+            )}
           </div>
         )}
 
-        <fieldset className="mt-4 min-w-[350px] rounded-md border-2 border-white bg-green-800 p-4 sm:min-w-[450px]">
+        <fieldset className="mt-4 w-[350px] rounded-md border-2 border-white bg-green-800 p-2 sm:min-w-[450px] sm:p-4">
           <legend
             style={{
               color: "hsl(120deg 100% 86%)",
@@ -312,9 +356,9 @@ function CreateRoom() {
             style={{
               color: "hsl(120deg 100% 86%)",
             }}
-            className="grid grid-cols-2 grid-rows-4 items-center gap-y-4 p-2"
+            className="grid grid-cols-2 grid-rows-4 items-center gap-y-4 p-1 sm:p-2"
           >
-            <label>Points to win:</label>
+            <Label>Points to win:</Label>
             <div className=" baseFlex !justify-between gap-2 pl-4 pr-4">
               <SecondaryButton
                 innerText={"-25"}
@@ -327,13 +371,7 @@ function CreateRoom() {
                 }
               />
 
-              <div
-                style={{
-                  color: "hsl(120deg 100% 86%)",
-                }}
-              >
-                {roomConfig.pointsToWin}
-              </div>
+              <div className="text-lightGreen">{roomConfig.pointsToWin}</div>
 
               <SecondaryButton
                 innerText={"+25"}
@@ -347,7 +385,7 @@ function CreateRoom() {
               />
             </div>
 
-            <label>Players:</label>
+            <Label>Players:</Label>
             <Radio
               values={[2, 3, 4]}
               disabledIndicies={[0, 1, 2].slice(
@@ -362,7 +400,7 @@ function CreateRoom() {
               ]}
             />
 
-            <label>Room visibility:</label>
+            <Label>Room visibility:</Label>
             <Radio
               values={["Public", "Private"]}
               currentValueIndex={["Public", "Private"].indexOf(
@@ -374,7 +412,7 @@ function CreateRoom() {
               ]}
             />
 
-            <label>Room code:</label>
+            <Label>Room code:</Label>
             <div className="baseFlex gap-4">
               <div
                 style={{
@@ -417,7 +455,11 @@ function CreateRoom() {
                 <FaUsers size={"1.25rem"} />
               </legend>
               <div className="baseVertFlex gap-6 p-2">
-                <div className="baseVertFlex !justify-start gap-8 sm:!flex-row sm:!items-start">
+                <div
+                  className={`sm:baseVertFlex grid grid-cols-2 ${
+                    roomConfig.playersInRoom > 2 ? "grid-rows-2" : "grid-rows-1"
+                  } !items-start !justify-start gap-8 sm:flex sm:!flex-row`}
+                >
                   {Object.keys(playerMetadata)?.map((playerID) => (
                     <PlayerIcon
                       key={playerID}
@@ -450,44 +492,82 @@ function CreateRoom() {
                   {/* Add bot button */}
                   {Object.keys(playerMetadata).length <
                     roomConfig.maxPlayers && (
-                    <SecondaryButton
-                      icon={<FaRobot size={"1.5rem"} />}
-                      extraPadding={false}
-                      innerText="Add bot"
-                      style={{
-                        width: "4rem",
-                        height: "4rem",
-                        fontSize: "0.75rem",
-                        whiteSpace: "nowrap",
-                        flexDirection: "column-reverse",
-                      }}
-                      onClickFunction={() => {
-                        const botID = cryptoRandomString({ length: 16 });
+                    <div className="baseFlex h-full w-full !items-start sm:w-auto">
+                      <SecondaryButton
+                        icon={<FaRobot size={"1.5rem"} />}
+                        extraPadding={false}
+                        innerText="Add bot"
+                        style={{
+                          width: "4rem",
+                          height: "4rem",
+                          fontSize: "0.75rem",
+                          whiteSpace: "nowrap",
+                          flexDirection: "column-reverse",
+                        }}
+                        onClickFunction={() => {
+                          const botID = cryptoRandomString({ length: 16 });
 
-                        socket.emit("joinRoom", {
-                          code: roomConfig.code,
-                          userID: botID,
-                          playerMetadata: getNewBotMetadata(),
-                        });
-                      }}
-                    />
+                          socket.emit("joinRoom", {
+                            code: roomConfig.code,
+                            userID: botID,
+                            playerMetadata: getNewBotMetadata(),
+                          });
+                        }}
+                      />
+                    </div>
                   )}
                 </div>
 
                 <div className="h-[2px] w-full rounded-md bg-white"></div>
 
-                <div className="baseFlex gap-12">
-                  <PickerTooltip type={"avatar"} openAbove={true} />
-                  <PickerTooltip type={"cardFront"} openAbove={true} />
-                  <PickerTooltip type={"color"} openAbove={true} />
-                </div>
+                {viewportLabel === "tablet" || viewportLabel === "desktop" ? (
+                  <div className="baseFlex gap-12 text-lightGreen">
+                    <div className="baseVertFlex gap-2">
+                      <PlayerCustomizationPopover type={"avatar"} />
+                      <p className="mt-[0.25rem]">Avatar</p>
+                    </div>
+                    <div className="baseVertFlex gap-2">
+                      <PlayerCustomizationPopover type={"front"} />
+                      <p>Front</p>
+                    </div>
+                    <div className="baseVertFlex gap-2">
+                      <PlayerCustomizationPopover type={"back"} />
+                      <p>Back</p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="baseVertFlex gap-4">
+                    <div className="baseFlex gap-12">
+                      <div className="baseVertFlex">
+                        <PlayerCustomizationPreview
+                          renderedView={"avatar"}
+                          forCreateAndJoin
+                        />
+                      </div>
+                      <div className="baseVertFlex gap-2">
+                        <PlayerCustomizationPreview
+                          renderedView={"front"}
+                          forCreateAndJoin
+                        />
+                      </div>
+                      <div className="baseVertFlex gap-2">
+                        <PlayerCustomizationPreview
+                          renderedView={"back"}
+                          forCreateAndJoin
+                        />
+                      </div>
+                    </div>
+                    <PlayerCustomizationDrawer />
+                  </div>
+                )}
               </div>
             </fieldset>
 
-            <PrimaryButton
+            <Button
               innerText={"Start game"}
               innerTextWhenLoading={"Starting game"}
               disabled={roomConfig.playersInRoom < 2}
+              isDisabled={roomConfig.playersInRoom < 2}
               width={"14rem"}
               onClickFunction={() => {
                 socket.emit("startGame", {
@@ -496,19 +576,24 @@ function CreateRoom() {
                 });
               }}
               showLoadingSpinnerOnClick={true}
+              className="h-12 w-[12rem] gap-4 text-[1.05rem]"
             />
           </div>
         ) : (
-          <PrimaryButton
+          <Button
             innerText={"Create"}
             innerTextWhenLoading={"Creating"}
-            width={"14rem"}
             disabled={
+              Object.values(playerMetadata)[0]?.username.length === 0 ||
+              usernameIsProfane
+            }
+            isDisabled={
               Object.values(playerMetadata)[0]?.username.length === 0 ||
               usernameIsProfane
             }
             onClickFunction={() => createRoom()}
             showLoadingSpinnerOnClick={true}
+            className="h-12 w-[12rem] gap-4 text-[1.05rem]"
           />
         )}
       </div>

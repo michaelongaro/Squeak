@@ -1,34 +1,15 @@
-.gridContainer {
-  position: relative;
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  grid-template-rows: 1fr 1fr;
-  justify-items: center;
-  align-items: center;
-  gap: 1rem;
-  grid-template-areas:
-    ". squeakDeck squeakHand0 squeakHand1 squeakHand2 squeakHand3"
-    "playerDeck playerHand . . . .";
-  max-width: 70%;
-  background-color: rgb(22 101 52);
-  padding: 0.5rem;
-  border-radius: 0.375rem;
-  border: 2px solid hsl(120deg 100% 86%);
-  transition: all 150ms;
-}
-
+.gridContainer,
 .reversedGridContainer {
   position: relative;
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  grid-template-rows: 1fr 1fr;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: repeat(3, 1fr);
   justify-items: center;
   align-items: center;
-  gap: 1rem;
-  grid-template-areas:
-    "squeakHand3 squeakHand2 squeakHand1 squeakHand0 squeakDeck ."
-    ". . . . playerHand playerDeck";
-  max-width: 70%;
+  gap: 0.5rem;
+  /* ^ should prob be 0.5rem or 1rem? */
+  height: 250px;
+  width: 100%;
   background-color: rgb(22 101 52);
   padding: 0.5rem;
   border-radius: 0.375rem;
@@ -36,12 +17,54 @@
   transition: all 150ms;
 }
 
-@media (max-height: 768px) or (max-width: 1500px) {
+.gridContainer {
+  grid-template-areas:
+    "squeakDeck squeakHand0 squeakHand1 squeakHand2 squeakHand3"
+    "playerHand . . . . "
+    "playerDeck . . . . ";
+}
+
+.reversedGridContainer {
+  grid-template-areas:
+    "squeakHand3 squeakHand2 squeakHand1 squeakHand0 squeakDeck "
+    ". . . . playerHand "
+    ". . . . playerDeck ";
+}
+
+@media (min-width: 1000px) {
 
   .gridContainer,
   .reversedGridContainer {
+    height: 210px;
+    width: 402px;
+    /* ^ maybe should be auto? */
     max-width: 100%;
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: repeat(2, 1fr);
   }
+
+  .gridContainer {
+    grid-template-areas:
+      ". squeakDeck squeakHand0 squeakHand1 squeakHand2 squeakHand3"
+      "playerDeck playerHand . . . .";
+  }
+
+  .reversedGridContainer {
+    grid-template-areas:
+      "squeakHand3 squeakHand2 squeakHand1 squeakHand0 squeakDeck ."
+      ". . . . playerHand playerDeck";
+  }
+}
+
+@media (min-height: 800px) and (min-width: 1500px) {
+
+  .gridContainer,
+  .reversedGridContainer {
+    height: 210px;
+    width: auto;
+    gap: 1rem;
+  }
+
 }
 
 .squeakDeck {

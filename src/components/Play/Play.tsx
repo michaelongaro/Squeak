@@ -11,13 +11,12 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useUserIDContext } from "../../context/UserIDContext";
 import { useRoomContext } from "../../context/RoomContext";
 import useResetDeckFromCardDraw from "../../hooks/useResetDeckFromCardDraw";
-import ResetRoundModal from "../modals/ResetRoundModal";
-import useManuallyResetRound from "../../hooks/useManuallyResetRound";
 import useScoreboardData from "../../hooks/useScoreboardData";
 import OtherPlayerIcons from "./OtherPlayerIcons";
 import classes from "./Play.module.css";
-import DecksAreBeingRotatedModal from "../modals/DecksAreBeingRotatedModal";
 import useSyncClientWithServer from "../../hooks/useSyncClientWithServer";
+import useGetViewportLabel from "../../hooks/useGetViewportLabel";
+import MiniMobileVotingModal from "../modals/MiniMobileVotingModal";
 
 function Play() {
   const userID = useUserIDContext();
@@ -29,18 +28,20 @@ function Play() {
     showScoreboard,
     setShowShufflingCountdown,
     showShufflingCountdown,
-    showResetRoundModal,
-    showDecksAreBeingRotatedModal,
+    voteType,
+    showVotingModal,
+    setShowVotingModal,
   } = useRoomContext();
 
-  const [initialEffectRan, setInitialEffectRan] = useState<boolean>(false);
+  const [initialEffectRan, setInitialEffectRan] = useState(false);
 
   useStartAnotherRoundHandler();
   useReturnToRoomHandler();
   useResetDeckFromCardDraw();
-  useManuallyResetRound();
   useScoreboardData();
   useSyncClientWithServer();
+
+  const viewportLabel = useGetViewportLabel();
 
   useEffect(() => {
     if (initialEffectRan) return;
@@ -69,37 +70,52 @@ function Play() {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.3 }}
-      className="relative"
+      className="baseVertFlex relative h-dvh w-screen desktop:block"
     >
       <div
         id={"playContainer"}
         className={`${classes.fullBoardGrid} relative z-[150]`}
+        onClick={() => {
+          if (showVotingModal && voteType === null) setShowVotingModal(false);
+        }}
       >
-        <Board boardClass={classes.board} />
-
-        <OtherPlayersCardContainers
-          orderedClassNames={[
-            classes.topPlayerCards,
-            classes.leftPlayerCards,
-            classes.rightPlayerCards,
-          ]}
-        />
+        {viewportLabel !== "desktop" ? (
+          <div className={classes.boardContainer}>
+            <Board />
+            <OtherPlayersCardContainers
+              orderedClassNames={[
+                classes.topPlayerCards,
+                classes.leftPlayerCards,
+                classes.rightPlayerCards,
+              ]}
+            />
+          </div>
+        ) : (
+          <>
+            <Board />
+            <OtherPlayersCardContainers
+              orderedClassNames={[
+                classes.topPlayerCards,
+                classes.leftPlayerCards,
+                classes.rightPlayerCards,
+              ]}
+            />
+          </>
+        )}
 
         <PlayerCardContainer cardContainerClass={classes.currentPlayerCards} />
       </div>
 
-      <OtherPlayerIcons />
+      {!viewportLabel.includes("mobile") && <OtherPlayerIcons />}
 
       <AnimatePresence mode={"wait"}>
-        {showDecksAreBeingRotatedModal && <DecksAreBeingRotatedModal />}
+        {voteType !== null && viewportLabel === "mobile" && (
+          <MiniMobileVotingModal />
+        )}
       </AnimatePresence>
 
       <AnimatePresence mode={"wait"}>
         {showShufflingCountdown && <ShufflingCountdownModal />}
-      </AnimatePresence>
-
-      <AnimatePresence mode={"wait"}>
-        {showResetRoundModal && <ResetRoundModal />}
       </AnimatePresence>
 
       <AnimatePresence mode={"wait"}>

@@ -9,6 +9,7 @@ import { type Session } from "next-auth";
 
 import "react-awesome-animated-number/dist/index.css";
 import "../styles/globals.css";
+import { Toaster, ToastBar } from "react-hot-toast";
 
 const montserrat = Montserrat({
   weight: "variable",
@@ -26,6 +27,14 @@ const MyApp: AppType<{ session: Session | null }> = ({
           <main className={montserrat.className}>
             <Component {...pageProps} />
           </main>
+          <Toaster
+            position={"top-center"}
+            toastOptions={{
+              duration: 30000,
+            }}
+          >
+            {(t) => <ToastBar toast={t} />}
+          </Toaster>
         </RoomProvider>
       </UserIDProvider>
     </SessionProvider>

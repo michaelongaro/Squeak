@@ -44,7 +44,7 @@ function UserSettingsAndStatsModal({
     setMirrorPlayerContainer,
   } = useRoomContext();
 
-  const utils = trpc.useContext();
+  const utils = trpc.useUtils();
   const { data: user } = trpc.users.getUserByID.useQuery(userID);
   const updateUser = trpc.users.updateUser.useMutation({
     onMutate: () => {
@@ -219,11 +219,8 @@ function UserSettingsAndStatsModal({
         {!showSettings && <Stats />}
 
         <div className="baseFlex w-full gap-16 rounded-b-md bg-green-900 pb-4 pl-12 pr-12 pt-4">
-          {/* determine what type/family of icons to use */}
-
           <SecondaryButton
             innerText="Log out"
-            icon={<IoLogOutOutline size={"1.25rem"} />}
             extraPadding={false}
             width={"10rem"}
             height={"3rem"}

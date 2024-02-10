@@ -12,7 +12,6 @@ import { PrismaClient } from "@prisma/client";
 
 interface IResetGame {
   gameIsFinished: boolean;
-  resettingRoundFromExcessiveDeckRotations: boolean;
   roomCode: string;
 }
 
@@ -25,11 +24,7 @@ export function resetGameHandler(
   roomData: IRoomData,
   miscRoomData: IMiscRoomData
 ) {
-  async function resetGame({
-    gameIsFinished,
-    resettingRoundFromExcessiveDeckRotations,
-    roomCode,
-  }: IResetGame) {
+  async function resetGame({ gameIsFinished, roomCode }: IResetGame) {
     const miscRoomDataObj = miscRoomData[roomCode];
 
     if (miscRoomDataObj) {
@@ -122,12 +117,7 @@ export function resetGameHandler(
 
     // appending the new player card metadata to the game object
     game.players = tempNewPlayerCardMetadata;
-
-    if (!resettingRoundFromExcessiveDeckRotations) {
-      game.currentRound += 1;
-    } else if (miscRoomDataObj) {
-      miscRoomDataObj.rotateDecksCounter = 0;
-    }
+    game.currentRound += 1;
 
     // pick the first present human player to start the next round
     const playerIDsPresentlyInRoom = Object.keys(room.players).filter(

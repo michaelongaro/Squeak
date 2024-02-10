@@ -12,6 +12,7 @@ import Image from "next/image";
 import disconnectIcon from "../../../public/disconnect/disconnect.svg";
 import { AnimatePresence } from "framer-motion";
 import useFilterCardsInHandFromDeck from "../../hooks/useFilterCardsInHandFromDeck";
+import useGetViewportLabel from "../../hooks/useGetViewportLabel";
 
 interface IOtherPlayersCardContainers {
   orderedClassNames: (string | undefined)[];
@@ -40,11 +41,12 @@ function OtherPlayersCardContainers({
   const {
     playerMetadata,
     gameData,
-    showDecksAreBeingRotatedModal,
+    decksAreBeingRotated,
     squeakDeckBeingMovedProgramatically,
     cardBeingMovedProgramatically,
     roomConfig,
     squeakStackDragAlterations,
+    smallerViewportCardBeingMoved,
   } = useRoomContext();
 
   const otherPlayerIDs = Object.keys(gameData.players).filter(
@@ -54,18 +56,35 @@ function OtherPlayersCardContainers({
   const [showDummyDeckCardStates, setShowDummyDeckCardStates] = useState<{
     [playerID: string]: [boolean, boolean, boolean, boolean];
   }>();
-  const [decksAreBeingRotated, setDecksAreBeingRotated] = useState(false);
+  const [topOffsetsFromBoard, setTopOffsetsFromBoard] = useState([
+    -9999,
+    -9999,
+    -9999, // making sure that the inital render doesn't for a brief moment show
+    // the other player's cards on the screen
+  ]);
 
   useEffect(() => {
-    if (showDecksAreBeingRotatedModal) {
+    function handleResize() {
+      const boardElement = document.getElementById("board");
+
+      if (!boardElement) return;
+
       setTimeout(() => {
-        setDecksAreBeingRotated(true);
-        setTimeout(() => {
-          setDecksAreBeingRotated(false);
-        }, 1000);
-      }, 500);
+        const { top, left } = boardElement.getBoundingClientRect();
+
+        // left and right values should be the same
+        setTopOffsetsFromBoard([top, left, left]);
+      }, 50); // waiting for board to fully render, ideally shouldn't need this..
     }
-  }, [showDecksAreBeingRotatedModal]);
+
+    handleResize();
+
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const viewportLabel = useGetViewportLabel();
 
   useEffect(() => {
     let tempDummyDeckCardStates = { ...showDummyDeckCardStates };
@@ -147,6 +166,248 @@ function OtherPlayersCardContainers({
     return `${(20 - squeakStackLength) * cardIdx}px`;
   }
 
+  if (viewportLabel !== "desktop") {
+    return (
+      <>
+        {otherPlayerIDs.map((playerID, idx) => (
+          <div
+            key={playerID}
+            className={`${orderedClassNames[idx]} select-none`}
+          >
+            <div
+              id={`${playerID}container`}
+              style={{
+                opacity: gameData.playerIDsThatLeftMidgame.includes(playerID)
+                  ? 0.25
+                  : 1,
+              }}
+              className={`${internalOrderedGridClassNames[idx]} relative block select-none`}
+            >
+              <div
+                style={{
+                  width: `${cardDimensions.width}px`,
+                  height: `${cardDimensions.height}px`,
+                  top: `${topOffsetsFromBoard[idx]}px`,
+                  left: `${-cardDimensions.width / 2}px`,
+                }}
+                className="absolute"
+              >
+                {gameData.players[playerID]?.squeakHand.map(
+                  (cards, squeakStackIdx) => (
+                    <div
+                      key={`${playerID}squeakStack${squeakStackIdx}`}
+                      className={`absolute left-0 top-0 h-full w-full select-none`}
+                    >
+                      <div
+                        id={`${playerID}squeakHand${squeakStackIdx}`}
+                        style={{
+                          height:
+                            cards.length === 0 || cards.length === 1
+                              ? `${cardDimensions.height}px`
+                              : `${
+                                  (cards.length - 1) * (20 - cards.length) +
+                                  cardDimensions.height
+                                }px`,
+                        }}
+                        className="absolute h-full w-full select-none"
+                      >
+                        {cards.map((card, cardIdx) => (
+                          <div
+                            key={`${playerID}squeakCard${card.suit}${card.value}`}
+                            id={`${playerID}squeakStack${squeakStackIdx}${cardIdx}`}
+                            style={{
+                              opacity:
+                                smallerViewportCardBeingMoved[playerID] ===
+                                `${card.suit}${card.value}`
+                                  ? 1
+                                  : 0,
+                              transition: "opacity 0.15s ease-in-out",
+                            }}
+                            className={
+                              "cardDimenions absolute left-0 top-0 select-none"
+                            }
+                          >
+                            <Card
+                              value={card.value}
+                              suit={card.suit}
+                              draggable={false}
+                              origin={"squeakHand"}
+                              squeakStackLocation={[squeakStackIdx, cardIdx]}
+                              ownerID={playerID}
+                              hueRotation={
+                                playerMetadata[playerID]?.deckHueRotation || 0
+                              }
+                              startID={`${playerID}squeakStack${squeakStackIdx}${cardIdx}`}
+                              rotation={rotationOrder[idx] as number}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )
+                )}
+
+                <div
+                  id={`${playerID}squeakDeck`}
+                  className={`${classes.squeakDeck} baseFlex h-full w-full select-none`}
+                >
+                  {gameData.players[playerID]!.squeakDeck.length > 0 && (
+                    <div className="relative h-full w-full">
+                      {gameData.players[playerID]?.squeakDeck.map(
+                        (card, cardIdx) => (
+                          <div
+                            key={`${playerID}squeakDeckCard${card.suit}${card.value}`}
+                            style={{
+                              zIndex:
+                                cardIdx ===
+                                  gameData.players[playerID]!.squeakDeck
+                                    .length -
+                                    1 &&
+                                squeakDeckBeingMovedProgramatically[playerID] &&
+                                !cardBeingMovedProgramatically[playerID]
+                                  ? 150
+                                  : 90,
+                            }}
+                            className="absolute left-0 top-0 h-full w-full select-none"
+                          >
+                            <Card
+                              value={card.value}
+                              suit={card.suit}
+                              showCardBack={true} // this would need to be changed halfway through card flip
+                              draggable={false}
+                              ownerID={playerID}
+                              hueRotation={
+                                playerMetadata[playerID]?.deckHueRotation || 0
+                              }
+                              startID={`${playerID}squeakDeck`}
+                              origin={"squeakDeck"}
+                              rotation={rotationOrder[idx] as number}
+                            />
+                          </div>
+                        )
+                      )}
+                    </div>
+                  )}
+
+                  {gameData.players[playerID]!.squeakDeck.length === 0 && (
+                    <div
+                      style={{
+                        position: "absolute",
+                        top: `${
+                          topOffsetsFromBoard[idx]
+                            ? -topOffsetsFromBoard[idx]!
+                            : 0
+                        }px`,
+                        left: 25,
+                        width: "75px",
+                        height: "50px",
+                      }}
+                    >
+                      <Buzzer
+                        playerID={playerID}
+                        roomCode={roomConfig.code}
+                        interactive={false}
+                      />
+                    </div>
+                  )}
+                </div>
+
+                <div
+                  id={`${playerID}hand`}
+                  style={{
+                    zIndex:
+                      cardBeingMovedProgramatically[playerID] === true
+                        ? 150
+                        : 100,
+                  }}
+                  className={`absolute left-0 top-0 h-full w-full select-none`}
+                >
+                  {gameData.players[playerID]?.topCardsInDeck.map(
+                    (card) =>
+                      card !== null && (
+                        <div
+                          key={`${playerID}handCard${card.suit}${card.value}`}
+                          style={{
+                            opacity:
+                              smallerViewportCardBeingMoved[playerID] ===
+                              `${card.suit}${card.value}`
+                                ? 1
+                                : 0,
+                            transition: "opacity 0.15s ease-in-out",
+                          }}
+                          className="absolute left-0 top-0 select-none"
+                        >
+                          <Card
+                            value={card.value}
+                            suit={card.suit}
+                            draggable={false}
+                            origin={"hand"}
+                            ownerID={playerID}
+                            hueRotation={
+                              playerMetadata[playerID]?.deckHueRotation || 0
+                            }
+                            startID={`${playerID}hand`}
+                            rotation={rotationOrder[idx] as number}
+                          />
+                        </div>
+                      )
+                  )}
+                </div>
+
+                <div className={`${classes.playerDeck} select-none`}>
+                  <div id={`${playerID}deck`} className="h-full w-full">
+                    {gameData?.players[playerID]?.nextTopCardInDeck ? (
+                      <div className="relative h-full w-full select-none">
+                        {filteredCardsInHandFromDeck[idx]?.map((card) => (
+                          <div
+                            key={`${playerID}deckCard${card.suit}${card.value}`}
+                            className="absolute left-0 top-0 h-full w-full select-none"
+                          >
+                            <Card
+                              value={card.value}
+                              suit={card.suit}
+                              showCardBack={true} // separate state inside overrides this halfway through flip
+                              draggable={false}
+                              ownerID={playerID}
+                              hueRotation={
+                                playerMetadata[playerID]?.deckHueRotation || 0
+                              }
+                              origin={"deck"}
+                              startID={`${playerID}deck`}
+                              rotation={rotationOrder[idx] as number}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="grid select-none grid-cols-1 items-center justify-items-center">
+                        <div className="col-start-1 row-start-1">
+                          <FaRedoAlt size={"1.5rem"} />
+                        </div>
+                        <div className="col-start-1 row-start-1 select-none opacity-25">
+                          <Card
+                            showCardBack={true}
+                            draggable={false}
+                            ownerID={playerID}
+                            hueRotation={
+                              playerMetadata[playerID]?.deckHueRotation || 0
+                            }
+                            startID={`${playerID}deck`}
+                            rotation={rotationOrder[idx] as number}
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </>
+    );
+  }
+
   return (
     <>
       {otherPlayerIDs.map((playerID, idx) => (
@@ -193,7 +454,7 @@ function OtherPlayersCardContainers({
                           ),
                           transition: "top 0.25s ease-in-out",
                         }}
-                        className={`absolute left-0 h-[64px] w-[48px] select-none tall:h-[87px] tall:w-[67px]`}
+                        className={"cardDimensions absolute left-0 select-none"}
                       >
                         <Card
                           value={card.value}
@@ -273,7 +534,7 @@ function OtherPlayersCardContainers({
                 zIndex:
                   cardBeingMovedProgramatically[playerID] === true ? 150 : 100,
               }}
-              className={`${classes.playerHand} relative h-[64px] w-[48px] select-none tall:h-[87px] tall:w-[67px]`}
+              className={`${classes.playerHand} cardDimensions relative select-none`}
             >
               <>
                 {gameData.players[playerID]?.topCardsInDeck.map(
@@ -301,41 +562,53 @@ function OtherPlayersCardContainers({
               </>
             </div>
 
-            <div
-              className={`${classes.playerDeck} h-[64px] w-[48px] select-none tall:h-[87px] tall:w-[67px]`}
-            >
+            <div className={`${classes.playerDeck} cardDimensions select-none`}>
               <div id={`${playerID}deck`} className="h-full w-full">
                 {gameData?.players[playerID]?.nextTopCardInDeck ? (
                   <div className="relative h-full w-full select-none">
-                    <div
-                      style={{
-                        animationPlayState: decksAreBeingRotated
-                          ? "running"
-                          : "paused",
-                      }}
-                      className="topBackFacingCardInDeck absolute left-0 top-0 h-full w-full select-none"
-                    >
-                      {filteredCardsInHandFromDeck[idx]?.map((card) => (
-                        <div
-                          key={`${playerID}deckCard${card.suit}${card.value}`}
-                          className="absolute left-0 top-0 h-full w-full select-none"
-                        >
-                          <Card
-                            value={card.value}
-                            suit={card.suit}
-                            showCardBack={true} // separate state inside overrides this halfway through flip
-                            draggable={false}
-                            ownerID={playerID}
-                            hueRotation={
-                              playerMetadata[playerID]?.deckHueRotation || 0
-                            }
-                            origin={"deck"}
-                            startID={`${playerID}deck`}
-                            rotation={rotationOrder[idx] as number}
-                          />
-                        </div>
-                      ))}
-                    </div>
+                    <>
+                      <div
+                        style={{
+                          animationPlayState: decksAreBeingRotated
+                            ? "running"
+                            : "paused",
+                        }}
+                        className="topBackFacingCardInDeck absolute left-0 top-0 h-full w-full select-none"
+                      >
+                        {filteredCardsInHandFromDeck[idx]?.map((card) => (
+                          <div
+                            key={`${playerID}deckCard${card.suit}${card.value}`}
+                            className="absolute left-0 top-0 h-full w-full select-none"
+                          >
+                            <Card
+                              value={card.value}
+                              suit={card.suit}
+                              showCardBack={true} // separate state inside overrides this halfway through flip
+                              draggable={false}
+                              ownerID={playerID}
+                              hueRotation={
+                                playerMetadata[playerID]?.deckHueRotation || 0
+                              }
+                              origin={"deck"}
+                              startID={`${playerID}deck`}
+                              rotation={rotationOrder[idx] as number}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                      <div className="absolute left-0 top-0 h-full w-full select-none">
+                        <Card
+                          showCardBack={true}
+                          draggable={false}
+                          ownerID={userID}
+                          hueRotation={
+                            playerMetadata[playerID]?.deckHueRotation || 0
+                          }
+                          origin={"deck"}
+                          rotation={0}
+                        />
+                      </div>
+                    </>
                   </div>
                 ) : (
                   <div className="grid select-none grid-cols-1 items-center justify-items-center">

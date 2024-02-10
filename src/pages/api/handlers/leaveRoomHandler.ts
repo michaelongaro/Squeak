@@ -76,8 +76,6 @@ export function leaveRoomHandler(
       delete gameData[roomCode];
 
       if (miscRoomDataObj) {
-        clearInterval(miscRoomDataObj.gameStuckInterval);
-
         // clear any bot intervals
         for (const botInterval of miscRoomDataObj.botIntervals) {
           clearInterval(botInterval);

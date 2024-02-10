@@ -10,11 +10,21 @@ import { motion } from "framer-motion";
 import SecondaryButton from "../Buttons/SecondaryButton";
 import { AiOutlineCheck, AiOutlineClose } from "react-icons/ai";
 import { FaTrashAlt } from "react-icons/fa";
-import { BiMailSend } from "react-icons/bi";
-import { IoEnterOutline } from "react-icons/io5";
+import { TbDoorEnter } from "react-icons/tb";
 import DangerButton from "../Buttons/DangerButton";
-import { ImEnter } from "react-icons/im";
 import useOnClickOutside from "../../hooks/useOnClickOutside";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "~/components/ui/tooltip";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "~/components/ui/popover";
+import { Button } from "~/components/ui/button";
 
 const customButtonStyles = {
   height: "2rem",
@@ -51,10 +61,7 @@ function FriendsList({ setShowFriendsListModal }: IFriendsList) {
     friendData?.roomInviteIDs ?? []
   );
 
-  const [
-    showingDeleteFriendConfirmationModal,
-    setShowingDeleteFriendConfirmationModal,
-  ] = useState<boolean>(false);
+  const [openPopoverID, setOpenPopoverID] = useState("");
 
   const modalRef = useRef<HTMLDivElement>(null);
 
@@ -88,7 +95,7 @@ function FriendsList({ setShowFriendsListModal }: IFriendsList) {
           className="baseFlex mb-4 gap-2 border-b-2 border-white text-xl"
         >
           <FiMail size={"1.5rem"} />
-          <div className="baseFlex gap-2 ">
+          <div className="baseFlex gap-2">
             Pending
             <div className="baseFlex gap-[0.1rem]">
               <div>(</div>
@@ -183,10 +190,10 @@ function FriendsList({ setShowFriendsListModal }: IFriendsList) {
                 color: "hsl(120deg 100% 86%)",
                 zIndex: roomInviteIDs.length - index,
               }}
-              className="baseFlex gap-4"
+              className="baseFlex gap-4 p-2"
             >
-              <div className="baseFlex gap-2">
-                <ImEnter size={"2rem"} />
+              <div className="baseFlex gap-2 pl-2">
+                <TbDoorEnter size={"2rem"} />
                 <div className="baseVertFlex !items-start ">
                   {friend.username}
                   <div className="text-sm opacity-80">room invite</div>
@@ -284,13 +291,13 @@ function FriendsList({ setShowFriendsListModal }: IFriendsList) {
         {friends ? (
           // extra padding bottom so that scrollbar doesn't show unless needed
           <div
-            style={{
-              paddingBottom:
-                showingDeleteFriendConfirmationModal && friends.length > 0
-                  ? "7rem"
-                  : "3rem",
-            }}
-            className="flex w-full flex-col items-start justify-start gap-4 overflow-auto p-2  "
+            // style={{
+            //   paddingBottom:
+            //     showingDeleteFriendConfirmationModal && friends.length > 0
+            //       ? "7rem"
+            //       : "3rem",
+            // }}
+            className="flex w-full flex-col items-start justify-start gap-4 overflow-auto p-2 "
           >
             {friends
               .sort(
@@ -328,7 +335,7 @@ function FriendsList({ setShowFriendsListModal }: IFriendsList) {
                   </div>
                   <div className="baseFlex gap-2">
                     <SecondaryButton
-                      icon={<BiMailSend size={"1.5rem"} />}
+                      icon={<FiMail size={"1.5rem"} />}
                       extraPadding={false}
                       disabled={
                         !friend.online ||
@@ -350,7 +357,7 @@ function FriendsList({ setShowFriendsListModal }: IFriendsList) {
                       style={customButtonStyles}
                     />
                     <SecondaryButton
-                      icon={<IoEnterOutline size={"1.5rem"} />}
+                      icon={<TbDoorEnter size={"1.5rem"} />}
                       extraPadding={false}
                       disabled={
                         !friend.online ||
@@ -392,24 +399,60 @@ function FriendsList({ setShowFriendsListModal }: IFriendsList) {
                       style={customButtonStyles}
                     />
 
-                    <DangerButton
-                      icon={<FaTrashAlt size={"1.25rem"} />}
-                      innerText="Confirm"
-                      innerTooltipText="Remove friend?"
-                      hoverTooltipText="Remove friend"
-                      forFriendsList={true}
-                      setShowingDeleteFriendConfirmationModal={
-                        setShowingDeleteFriendConfirmationModal
-                      }
-                      onClickFunction={() =>
-                        socket.emit("modifyFriendData", {
-                          action: "removeFriend",
-                          initiatorID: userID,
-                          targetID: friend.id,
-                        })
-                      }
-                      style={customButtonStyles}
-                    />
+                    <Popover
+                      open={openPopoverID === friend.id}
+                      onOpenChange={(open) => {
+                        if (!open) setOpenPopoverID("");
+                      }}
+                    >
+                      <PopoverTrigger>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                variant={"destructive"}
+                                icon={<FaTrashAlt size={"1.25rem"} />}
+                                className="h-[36px] w-[36px] rounded-[50%] p-0"
+                                onClick={() => setOpenPopoverID(friend.id)}
+                              />
+                            </TooltipTrigger>
+                            <TooltipContent
+                              side={"bottom"}
+                              className="border-2 border-[hsl(0,84%,60%)] bg-[hsl(0,84%,95%)] text-[hsl(0,84%,40%)]"
+                            >
+                              <p>Remove friend</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </PopoverTrigger>
+                      <PopoverContent
+                        redArrow
+                        className="text-[hsl(0,84%,40%) border-2 border-[hsl(0,84%,60%)] bg-[hsl(0,84%,95%)]"
+                      >
+                        <div className="baseVertFlex w-64 gap-3 p-2">
+                          <p className="text-center font-semibold text-[hsl(0,84%,40%)]">
+                            Are you sure you want to remove &ldquo;
+                            {friend.username}
+                            &rdquo; as a friend?
+                          </p>
+                          <Button
+                            variant={"destructive"}
+                            innerText={"Confirm"}
+                            onClick={() => {
+                              setOpenPopoverID("");
+
+                              setTimeout(() => {
+                                socket.emit("modifyFriendData", {
+                                  action: "removeFriend",
+                                  initiatorID: userID,
+                                  targetID: friend.id,
+                                });
+                              }, 350);
+                            }}
+                          />
+                        </div>
+                      </PopoverContent>
+                    </Popover>
                   </div>
                 </div>
               ))}

@@ -1,4 +1,4 @@
-import { useState, useEffect, type MouseEvent } from "react";
+import { useState, useEffect, type PointerEvent } from "react";
 import { socket } from "../../pages";
 import { useUserIDContext } from "../../context/UserIDContext";
 import { useRoomContext } from "../../context/RoomContext";
@@ -36,7 +36,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
     hoveredSqueakStack,
     holdingADeckCard,
     proposedCardBoxShadow,
-    showDecksAreBeingRotatedModal,
+    decksAreBeingRotated,
     originIndexForHeldSqueakCard,
     setHoldingADeckCard,
     cardBeingMovedProgramatically,
@@ -45,27 +45,30 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
     setHoldingASqueakCard,
     setHoveredSqueakStack,
     squeakStackDragAlterations,
+    hoveredCell,
+    setHoveredCell,
   } = useRoomContext();
 
   const [hoveringOverDeck, setHoveringOverDeck] = useState(false);
-  const [mouseDownOnDeck, setMouseDownOnDeck] = useState(false);
+  const [pointerDownOnDeck, setPointerDownOnDeck] = useState(false);
   const [drawingFromDeck, setDrawingFromDeck] = useState(false);
-  const [decksAreBeingRotated, setDecksAreBeingRotated] = useState(false);
 
   useRotatePlayerDecks();
 
   const cardDimensions = useResponsiveCardDimensions();
 
   useEffect(() => {
-    if (showDecksAreBeingRotatedModal) {
-      setTimeout(() => {
-        setDecksAreBeingRotated(true);
-        setTimeout(() => {
-          setDecksAreBeingRotated(false);
-        }, 1000);
-      }, 500);
+    if (!holdingADeckCard && !holdingASqueakCard) {
+      setHoveredCell(null);
+      setHoveredSqueakStack(null);
     }
-  }, [showDecksAreBeingRotatedModal]);
+  }, [
+    holdingADeckCard,
+    holdingASqueakCard,
+    hoveredCell,
+    setHoveredCell,
+    setHoveredSqueakStack,
+  ]);
 
   function getDynamicTopValue(
     squeakStackIdx: number,
@@ -100,9 +103,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
     return `${(20 - squeakStackLength) * cardIdx}px`;
   }
 
-  function mouseMoveHandler(
-    e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>
-  ) {
+  function pointerMoveHandler(e: PointerEvent<HTMLDivElement>) {
     if (userID === null) return;
 
     const squeakHand0 = document
@@ -182,7 +183,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
     <div
       id={"playerContainer"}
       className={`${cardContainerClass}`}
-      onMouseMove={(e) => mouseMoveHandler(e)}
+      onPointerMove={(e) => pointerMoveHandler(e)}
     >
       {userID && (
         <div
@@ -238,15 +239,19 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                         ),
                         transition: "top 0.25s ease-in-out",
                       }}
-                      className={`absolute left-0 h-[64px] w-[48px] select-none tall:h-[87px] tall:w-[67px]`}
-                      onMouseDown={() => {
+                      className={"cardDimensions absolute left-0 select-none"}
+                      onPointerDown={() => {
                         setOriginIndexForHeldSqueakCard(squeakStackIdx);
                         setHoldingASqueakCard(true);
                         setHoveredSqueakStack(null);
                       }}
-                      onMouseUp={() => {
-                        setHoldingASqueakCard(false);
-                        setOriginIndexForHeldSqueakCard(null);
+                      onPointerUp={() => {
+                        // pointer events fire before the drop event in <Card />,
+                        // so just waiting for next event loop tick
+                        setTimeout(() => {
+                          setHoldingASqueakCard(false);
+                          setOriginIndexForHeldSqueakCard(null);
+                        }, 0);
                       }}
                     >
                       <Card
@@ -322,8 +327,9 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
             id={`${userID}hand`}
             style={{
               zIndex: holdingADeckCard ? 150 : 100,
+              opacity: decksAreBeingRotated ? 0 : 1,
             }}
-            className={`${classes.playerHand} relative h-[64px] w-[48px] select-none tall:h-[87px] tall:w-[67px]`}
+            className={`${classes.playerHand} cardDimensions relative select-none transition-opacity`}
           >
             <>
               {gameData.players[userID]?.topCardsInDeck.map(
@@ -332,18 +338,22 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                     <div
                       key={`${userID}handCard${card.suit}${card.value}`}
                       className="absolute left-0 top-0 select-none"
-                      onMouseEnter={() => {
+                      onPointerEnter={() => {
                         setHoveringOverDeck(false);
                       }}
-                      onMouseDown={() => {
+                      onPointerDown={() => {
                         if (
                           idx ===
                           gameData.players[userID]!.topCardsInDeck.length - 1
                         )
                           setHoldingADeckCard(true);
                       }}
-                      onMouseUp={() => {
-                        setHoldingADeckCard(false);
+                      onPointerUp={() => {
+                        // pointer events fire before the drop event in <Card />,
+                        // so just waiting for next event loop tick
+                        setTimeout(() => {
+                          setHoldingADeckCard(false);
+                        }, 0);
                       }}
                     >
                       <Card
@@ -367,9 +377,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
             </>
           </div>
 
-          <div
-            className={`${classes.playerDeck} h-[64px] w-[48px] select-none tall:h-[87px] tall:w-[67px]`}
-          >
+          <div className={`${classes.playerDeck} cardDimensions select-none`}>
             <div
               id={`${userID}deck`}
               style={{
@@ -377,29 +385,29 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                   hoveringOverDeck &&
                   !holdingADeckCard &&
                   !drawingFromDeck &&
-                  !mouseDownOnDeck
+                  !pointerDownOnDeck
                     ? "0px 0px 4px 3px rgba(184,184,184,1)"
                     : "none",
                 cursor: drawingFromDeck ? "auto" : "pointer",
                 pointerEvents: drawingFromDeck ? "none" : "auto",
-                filter: mouseDownOnDeck ? "brightness(0.8)" : "none",
+                filter: pointerDownOnDeck ? "brightness(0.8)" : "none",
                 transition:
                   "box-shadow 150ms cubic-bezier(0.4, 0, 0.2, 1), filter 150ms ease-in-out",
               }}
               className="h-full w-full select-none rounded-[0.1rem]"
-              onMouseEnter={() => {
+              onPointerEnter={() => {
                 if (drawingFromDeck) return;
                 setHoveringOverDeck(true);
               }}
-              onMouseLeave={() => {
+              onPointerLeave={() => {
                 setHoveringOverDeck(false);
-                setMouseDownOnDeck(false);
+                setPointerDownOnDeck(false);
               }}
-              onMouseDown={() => {
-                setMouseDownOnDeck(true);
+              onPointerDown={() => {
+                setPointerDownOnDeck(true);
               }}
-              onMouseUp={() => {
-                setMouseDownOnDeck(false);
+              onPointerUp={() => {
+                setPointerDownOnDeck(false);
               }}
               onClick={() => {
                 if (drawingFromDeck) return;
@@ -419,35 +427,49 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
             >
               {gameData?.players[userID]?.nextTopCardInDeck ? (
                 <div className="relative h-full w-full select-none">
-                  <div
-                    style={{
-                      animationPlayState: decksAreBeingRotated
-                        ? "running"
-                        : "paused",
-                    }}
-                    className="topBackFacingCardInDeck h-full w-full select-none"
-                  >
-                    {filteredCardsInHandFromDeck?.map((card) => (
-                      <div
-                        key={`${userID}deckCard${card.suit}${card.value}`}
-                        className="absolute left-0 top-0 h-full w-full select-none"
-                      >
-                        <Card
-                          value={card.value}
-                          suit={card.suit}
-                          showCardBack={true} // separate state inside overrides this halfway through flip
-                          draggable={false}
-                          ownerID={userID}
-                          hueRotation={
-                            playerMetadata[userID]?.deckHueRotation || 0
-                          }
-                          origin={"deck"}
-                          startID={`${userID}deck`}
-                          rotation={0}
-                        />
-                      </div>
-                    ))}
-                  </div>
+                  <>
+                    <div
+                      style={{
+                        animationPlayState: decksAreBeingRotated
+                          ? "running"
+                          : "paused",
+                      }}
+                      className="topBackFacingCardInDeck absolute left-0 top-0 h-full w-full select-none"
+                    >
+                      {filteredCardsInHandFromDeck?.map((card) => (
+                        <div
+                          key={`${userID}deckCard${card.suit}${card.value}`}
+                          className="absolute left-0 top-0 h-full w-full select-none"
+                        >
+                          <Card
+                            value={card.value}
+                            suit={card.suit}
+                            showCardBack={true} // separate state inside overrides this halfway through flip
+                            draggable={false}
+                            ownerID={userID}
+                            hueRotation={
+                              playerMetadata[userID]?.deckHueRotation || 0
+                            }
+                            origin={"deck"}
+                            startID={`${userID}deck`}
+                            rotation={0}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                    <div className="absolute left-0 top-0 h-full w-full select-none">
+                      <Card
+                        showCardBack={true}
+                        draggable={false}
+                        ownerID={userID}
+                        hueRotation={
+                          playerMetadata[userID]?.deckHueRotation || 0
+                        }
+                        origin={"deck"}
+                        rotation={0}
+                      />
+                    </div>
+                  </>
                 </div>
               ) : (
                 <div className="grid cursor-pointer select-none grid-cols-1 items-center justify-items-center">
@@ -480,7 +502,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                 : 50,
             }}
             id={`${userID}icon`}
-            className={classes.playerAvatar}
+            className={`${classes.playerAvatar} hidden tablet:block`}
           >
             <PlayerIcon
               avatarPath={

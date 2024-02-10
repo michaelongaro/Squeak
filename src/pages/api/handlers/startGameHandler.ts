@@ -7,7 +7,6 @@ import {
 } from "../socket";
 import { PrismaClient } from "@prisma/client";
 import { drawFromSqueakDeck } from "../helpers/drawFromSqueakDeck";
-import { gameStuckHandler } from "./gameStuckHandler";
 import { botMoveHandler } from "./botMoveHandler";
 import generateDeckAndSqueakCards from "../../../utils/generateDeckAndSqueakCards";
 
@@ -117,10 +116,6 @@ export function startGameHandler(
       if (!miscRoomDataObj) return;
 
       setTimeout(() => {
-        miscRoomDataObj.gameStuckInterval = setInterval(() => {
-          gameStuckHandler(io, roomCode, gameData, miscRoomData);
-        }, 15000);
-
         for (const index in Object.keys(currentRoomPlayers)) {
           const playerID = Object.keys(currentRoomPlayers)[parseInt(index)];
           const player = currentRoomPlayers[playerID || ""];

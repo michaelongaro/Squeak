@@ -33,10 +33,11 @@ export function createRoomHandler(
 
       miscRoomData[roomConfig.code] = {
         boardTimestamps,
-        rotateDecksCounter: 0,
         preventOtherPlayersFromSqueaking: false,
         botIntervals: [],
         blacklistedSqueakCards: {},
+        currentVotes: [],
+        voteType: null,
       };
 
       io.in(roomConfig.code).emit("roomWasCreated");

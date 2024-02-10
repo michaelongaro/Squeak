@@ -24,6 +24,12 @@ const Home: NextPage = () => {
           content="Welcome to Squeak! A fun, fast-paced multiplayer rendition of solitaire.
                    Games can be played with 2-4 players, lasting around 20 minutes."
         />
+        {/* TODO: make sure this doesn't introduce any weird ui bugs, was put in here to prevent
+            the safari auto zoom in on input focus */}
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no"
+        />
         <link rel="icon" href="/favicon.ico" />
         <link rel="canonical" href="https://playsqueak.com" />
       </Head>

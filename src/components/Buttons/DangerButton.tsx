@@ -51,23 +51,23 @@ function DangerButton({
         ...style,
       }}
       className="relative grid cursor-pointer place-content-center gap-2 rounded-md border-2 p-2 transition-all"
-      onMouseEnter={() => {
+      onPointerEnter={() => {
         if (!showTooltip) {
           setHoveringOnButton(true);
         }
       }}
-      onMouseLeave={() => {
+      onPointerLeave={() => {
         if (!showTooltip) {
           setHoveringOnButton(false);
           setBrightness(1);
         }
       }}
-      onMouseDown={() => {
+      onPointerDown={() => {
         if (!showTooltip) {
           setBrightness(0.75);
         }
       }}
-      onMouseUp={() => {
+      onPointerUp={() => {
         if (!showTooltip) {
           setBrightness(1);
         }
