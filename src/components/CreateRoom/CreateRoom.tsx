@@ -568,7 +568,6 @@ function CreateRoom() {
               innerTextWhenLoading={"Starting game"}
               disabled={roomConfig.playersInRoom < 2}
               isDisabled={roomConfig.playersInRoom < 2}
-              width={"14rem"}
               onClickFunction={() => {
                 socket.emit("startGame", {
                   roomCode: roomConfig.code,
