@@ -528,7 +528,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   if (
     ctx.params?.roomCode &&
     typeof ctx.params.roomCode === "string" &&
-    ctx.params.roomCode.length > 6
+    ctx.params.roomCode.length !== 6
   ) {
     return {
       props: {
