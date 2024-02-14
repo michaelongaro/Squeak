@@ -1,9 +1,7 @@
 import { type Server, type Socket } from "socket.io";
-import { type IRoomConfig } from "../../../components/CreateRoom/CreateRoom";
+import { type IRoomConfig } from "~/pages/create";
 import { type IRoomData } from "../socket";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { prisma } from "~/server/db";
 
 export function updateRoomConfigHandler(
   io: Server,
@@ -27,6 +25,7 @@ export function updateRoomConfigHandler(
         maxPlayers: room.roomConfig.maxPlayers,
         isPublic: room.roomConfig.isPublic,
         playersInRoom: room.roomConfig.playersInRoom,
+        playerIDsInRoom: Object.keys(room.players),
         code: room.roomConfig.code,
         hostUsername: room.roomConfig.hostUsername,
         hostUserID: room.roomConfig.hostUserID,

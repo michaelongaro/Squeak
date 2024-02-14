@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { socket } from "../../pages";
+import { socket } from "~/pages/_app";
 import { motion } from "framer-motion";
 import { useUserIDContext } from "../../context/UserIDContext";
 import { useRoomContext } from "../../context/RoomContext";

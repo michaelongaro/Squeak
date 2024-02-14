@@ -1,6 +1,6 @@
-import { socket } from "../pages";
-import { trpc } from "../utils/trpc";
-import { useSession } from "next-auth/react";
+import { socket } from "~/pages/_app";
+import { api } from "~/utils/api";
+import { useAuth } from "@clerk/nextjs";
 import { useUserIDContext } from "../context/UserIDContext";
 import { useRoomContext } from "../context/RoomContext";
 import {
@@ -8,12 +8,18 @@ import {
   type IRoomPlayer,
   type IRoomPlayersMetadata,
 } from "../pages/api/socket";
+import { useRouter } from "next/router";
 
-function useLeaveRoom() {
-  const { status } = useSession();
+interface IUseLeaveRoom {
+  routeToNavigateTo: string;
+}
+
+function useLeaveRoom({ routeToNavigateTo }: IUseLeaveRoom) {
+  const { isSignedIn } = useAuth();
   const userID = useUserIDContext();
+  const { push } = useRouter();
 
-  const { data: user } = trpc.users.getUserByID.useQuery(userID);
+  const { data: user } = api.users.getUserByID.useQuery(userID);
 
   const {
     roomConfig,
@@ -22,17 +28,16 @@ function useLeaveRoom() {
     setGameData,
     connectedToRoom,
     setConnectedToRoom,
-    setPageToRender,
   } = useRoomContext();
 
-  function leaveRoom(moveBackToHome: boolean) {
-    if (moveBackToHome) {
-      setPageToRender("home");
-    }
+  function leaveRoom() {
+    push(routeToNavigateTo);
+
     setRoomConfig({
       pointsToWin: 100,
       maxPlayers: 2,
       playersInRoom: 1,
+      playerIDsInRoom: [userID],
       isPublic: true,
       code: "",
       hostUsername: "",
@@ -59,7 +64,7 @@ function useLeaveRoom() {
         playerWasKicked: false,
       });
 
-      if (status === "authenticated") {
+      if (isSignedIn) {
         socket.emit("modifyFriendData", {
           action: "leaveRoom",
           initiatorID: userID,

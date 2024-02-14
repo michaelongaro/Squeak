@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import useOnClickOutside from "../../hooks/useOnClickOutside";
-import { trpc } from "../../utils/trpc";
+import { api } from "~/utils/api";
 import Radio from "../Buttons/Radio";
 import PlayerIcon from "../playerIcons/PlayerIcon";
 import SecondaryButton from "../Buttons/SecondaryButton";
@@ -26,7 +26,7 @@ const orderValues = [
 ];
 
 function LeaderboardModal({ setShowModal }: ILeaderboardModal) {
-  const { data: leaderboardStats } = trpc.users.getLeaderboardStats.useQuery();
+  const { data: leaderboardStats } = api.users.getLeaderboardStats.useQuery();
 
   const [currentlySelectedIndex, setCurrentlySelectedIndex] =
     useState<number>(0);
@@ -39,6 +39,10 @@ function LeaderboardModal({ setShowModal }: ILeaderboardModal) {
     ref: modalRef,
     setShowModal,
   });
+
+  const results = Object.values(leaderboardStats || {})?.[
+    currentlySelectedIndex
+  ];
 
   return (
     <motion.div
@@ -97,7 +101,7 @@ function LeaderboardModal({ setShowModal }: ILeaderboardModal) {
                 borderColor: "hsl(120deg 100% 86%)",
                 color: "hsl(120deg 100% 86%)",
               }}
-              className="baseVertFlex min-h-auto lg:min-h-auto mt-4 w-auto !justify-start gap-6 rounded-md border-2 p-4 lg:min-w-[500px]"
+              className="baseVertFlex mt-4 h-[63dvh] w-auto !justify-start gap-6 rounded-md border-2 p-4 lg:min-w-[500px]"
             >
               <div
                 style={{
@@ -113,30 +117,38 @@ function LeaderboardModal({ setShowModal }: ILeaderboardModal) {
                 <p>Value</p>
               </div>
               {leaderboardStats ? (
-                Object.values(leaderboardStats)?.[currentlySelectedIndex]?.map(
-                  (player, index) => (
-                    <div
-                      key={index}
-                      style={{
-                        gridTemplateColumns: viewportLabel.includes("mobile")
-                          ? "50px auto 50px"
-                          : "1fr 1fr 1fr",
-                      }}
-                      className="grid w-full  grid-rows-1 place-items-center gap-2"
-                    >
-                      <p className="text-sm lg:text-xl">{orderValues[index]}</p>
-                      <div className="baseFlex w-full gap-4 text-center md:!justify-start">
-                        <PlayerIcon
-                          borderColor={player.color}
-                          avatarPath={player.avatarPath}
-                          size={"2.5rem"}
-                        />
-                        <p className="text-sm lg:text-xl">{player.username}</p>
+                <>
+                  {results && results.length > 0 ? (
+                    results?.map((player, index) => (
+                      <div
+                        key={index}
+                        style={{
+                          gridTemplateColumns: viewportLabel.includes("mobile")
+                            ? "50px auto 50px"
+                            : "1fr 1fr 1fr",
+                        }}
+                        className="grid w-full  grid-rows-1 place-items-center gap-2"
+                      >
+                        <p className="text-sm lg:text-xl">
+                          {orderValues[index]}
+                        </p>
+                        <div className="baseFlex w-full gap-4 text-center md:!justify-start">
+                          <PlayerIcon
+                            borderColor={player.color}
+                            avatarPath={player.avatarPath}
+                            size={"2.5rem"}
+                          />
+                          <p className="text-sm lg:text-xl">
+                            {player.username}
+                          </p>
+                        </div>
+                        <p className="text-sm lg:text-xl">{player.value}</p>
                       </div>
-                      <p className="text-sm lg:text-xl">{player.value}</p>
-                    </div>
-                  )
-                )
+                    ))
+                  ) : (
+                    <p>No results</p>
+                  )}
+                </>
               ) : (
                 <div className="baseFlex h-[420px] w-full">
                   <div

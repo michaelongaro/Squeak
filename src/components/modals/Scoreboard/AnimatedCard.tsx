@@ -40,7 +40,7 @@ function AnimatedCard({
 
     const middleOfContainer = Math.floor(animatedCardContainer.width / 2) - 25;
 
-    const finalY = Math.floor(animatedCardContainer.height * 0.6) - index;
+    const finalY = Math.floor(animatedCardContainer.height * 0.55) - index;
 
     // Calculate delay and duration based on totalCardsPlayed
     const totalAnimationTime = 4000; // Total time (ms) for all cards to be played

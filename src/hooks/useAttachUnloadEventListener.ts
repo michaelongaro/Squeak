@@ -1,11 +1,11 @@
 import { useEffect } from "react";
-import { useSession } from "next-auth/react";
-import { socket } from "../pages";
+import { useAuth } from "@clerk/nextjs";
+import { socket } from "~/pages/_app";
 import { useUserIDContext } from "../context/UserIDContext";
 import { useRoomContext } from "../context/RoomContext";
 
 function useAttachUnloadEventListener() {
-  const { status } = useSession();
+  const { isSignedIn } = useAuth();
   const userID = useUserIDContext();
 
   const { roomConfig, connectedToRoom } = useRoomContext();
@@ -20,7 +20,7 @@ function useAttachUnloadEventListener() {
         });
       }
 
-      if (status === "authenticated") {
+      if (isSignedIn) {
         socket.emit("modifyFriendData", {
           action: "goOffline",
           initiatorID: userID,
@@ -34,7 +34,7 @@ function useAttachUnloadEventListener() {
     roomConfig.code,
     roomConfig.playersInRoom,
     connectedToRoom,
-    status,
+    isSignedIn,
   ]);
 }
 

@@ -1,30 +1,31 @@
-import { useState, useEffect, useCallback } from "react";
-import { socket } from "../../pages";
+import { useState, useCallback } from "react";
+import { socket } from "~/pages/_app";
 import { useUserIDContext } from "../../context/UserIDContext";
 import { useRoomContext } from "../../context/RoomContext";
-import { trpc } from "../../utils/trpc";
-import SecondaryButton from "../Buttons/SecondaryButton";
+import { api } from "~/utils/api";
 import { HiOutlineRefresh } from "react-icons/hi";
 import Filter from "bad-words";
 import { Button } from "~/components/ui/button";
 import { FaUsers } from "react-icons/fa";
 import { BiArrowBack } from "react-icons/bi";
 import useGetViewportLabel from "~/hooks/useGetViewportLabel";
+import { useRouter } from "next/router";
 
 const filter = new Filter();
 
 function PublicRooms() {
   const userID = useUserIDContext();
+  const { push } = useRouter();
 
   const {
     playerMetadata,
     setConnectedToRoom,
-    connectedToRoom,
+    roomConfig,
     setRoomConfig,
     friendData,
   } = useRoomContext();
 
-  const { data: roomInviteIDs } = trpc.users.getUsersFromIDList.useQuery(
+  const { data: roomInviteIDs } = api.users.getUsersFromIDList.useQuery(
     friendData?.roomInviteIDs ?? []
   );
 
@@ -32,45 +33,53 @@ function PublicRooms() {
     data: publicRooms,
     refetch,
     isFetching,
-  } = trpc.rooms.getAllAvailableRooms.useQuery(undefined, {
+  } = api.rooms.getAllAvailableRooms.useQuery(undefined, {
     refetchInterval: 30000,
   });
 
-  const [roomCode, setRoomCode] = useState<string>("");
   const [fetchingNewRooms, setFetchingNewRooms] = useState<boolean>(false);
   const [hoveredIndex, setHoveredIndex] = useState<number>(-1);
 
   const viewportLabel = useGetViewportLabel();
 
   const joinRoom = useCallback(() => {
-    socket.emit("joinRoom", {
-      userID,
-      code: roomCode,
-      playerMetadata: playerMetadata[userID],
-    });
+    socket.emit(
+      "joinRoom",
+      {
+        userID,
+        code: roomConfig.code,
+        playerMetadata: playerMetadata[userID],
+      },
+      (response?: "roomIsFull") => {
+        if (response !== "roomIsFull") {
+          setConnectedToRoom(true);
+          push(`join/${roomConfig.code}`);
+        }
+      }
+    );
 
     // if player has invite(s) to this room, remove them
     if (roomInviteIDs) {
       for (const friend of roomInviteIDs) {
-        if (friend.roomCode === roomCode) {
+        if (friend.roomCode === roomConfig.code) {
           socket.emit("modifyFriendData", {
             action: "acceptRoomInvite",
             initiatorID: userID,
             targetID: friend.id,
-            roomCode: roomCode,
+            roomCode: roomConfig.code,
             currentRoomIsPublic: true,
           });
         }
       }
     }
-  }, [roomCode, userID, playerMetadata, roomInviteIDs]);
-
-  useEffect(() => {
-    if (roomCode.length > 0 && !connectedToRoom) {
-      joinRoom();
-      setConnectedToRoom(true);
-    }
-  }, [connectedToRoom, setConnectedToRoom, joinRoom, roomCode]);
+  }, [
+    roomConfig,
+    userID,
+    playerMetadata,
+    roomInviteIDs,
+    push,
+    setConnectedToRoom,
+  ]);
 
   return (
     <fieldset className="mt-8 w-[360px] rounded-md border-2 border-white bg-green-800 p-2 sm:w-full sm:p-4">
@@ -182,7 +191,9 @@ function PublicRooms() {
                         }
                         onClick={() => {
                           setRoomConfig(room);
-                          setRoomCode(room.code);
+                          joinRoom();
+                          // TODO: could be flaky/cause race conditions if setRoomConfig isn't
+                          // finished before joinRoom is called... just do a setTimeout?
                         }}
                       />
                     </div>

@@ -1,25 +1,24 @@
 import { useState, useEffect } from "react";
-import { socket } from "../pages";
-import { useSession } from "next-auth/react";
+import { socket } from "~/pages/_app";
 import { useUserIDContext } from "../context/UserIDContext";
 import { useRoomContext } from "../context/RoomContext";
 import { type IPlayerHasLeftRoom } from "./../pages/api/socket";
 import useLeaveRoom from "./useLeaveRoom";
+import { useRouter } from "next/router";
+
+// this hook has auth hook in it but I think it was just from a copy paste
+// from another hook to get a boilerplate
 
 function usePlayerLeftRoom() {
-  const { status } = useSession();
-
   const userID = useUserIDContext();
+  const { push } = useRouter();
 
-  const {
-    setRoomConfig,
-    setPlayerMetadata,
-    setGameData,
-    connectedToRoom,
-    setPageToRender,
-  } = useRoomContext();
+  const { setRoomConfig, setPlayerMetadata, setGameData, connectedToRoom } =
+    useRoomContext();
 
-  const leaveRoom = useLeaveRoom();
+  const leaveRoom = useLeaveRoom({
+    routeToNavigateTo: "/",
+  });
 
   const [dataFromBackend, setDataFromBackend] =
     useState<IPlayerHasLeftRoom | null>(null);
@@ -49,7 +48,7 @@ function usePlayerLeftRoom() {
 
       // gets called if current user was kicked from room by host
       if (playerWhoLeftID === userID && playerWasKicked) {
-        leaveRoom(false);
+        leaveRoom();
 
         socket.emit("directlyLeaveRoom", roomConfig.code);
         return;
@@ -62,16 +61,15 @@ function usePlayerLeftRoom() {
       }
 
       if (newHostID === userID && !roomConfig.gameStarted) {
-        setPageToRender("createRoom");
+        push("/create");
       }
     }
   }, [
     dataFromBackend,
-    status,
     setGameData,
     setPlayerMetadata,
     setRoomConfig,
-    setPageToRender,
+    push,
     userID,
     leaveRoom,
   ]);

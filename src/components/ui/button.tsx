@@ -19,6 +19,7 @@ const buttonVariants = cva(
         outline:
           "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
         secondary: "border-2 transition-all",
+        // ideally wanted a link variant but wasn't conducive to how we set up the button variants below..
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
         drawer:

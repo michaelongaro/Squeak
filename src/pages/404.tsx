@@ -4,7 +4,7 @@ import PrimaryButton from "../components/Buttons/PrimaryButton";
 import { useRouter } from "next/navigation";
 
 function Custom404() {
-  const router = useRouter();
+  const { push } = useRouter();
 
   return (
     <div className="baseVertFlex min-h-[100dvh] w-[100vw]">
@@ -21,7 +21,7 @@ function Custom404() {
 
           <PrimaryButton
             innerText={"Go back to home page"}
-            onClickFunction={() => router.push("/")}
+            onClickFunction={() => push("/")}
           />
         </div>
       </div>

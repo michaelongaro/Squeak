@@ -6,10 +6,7 @@ import {
 } from "../socket";
 import { avatarPaths } from "../../../utils/avatarPaths";
 import { hslToDeckHueRotations } from "../../../utils/hslToDeckHueRotations";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
-
+import { prisma } from "~/server/db";
 interface IJoinRoomConfig {
   code: string;
   userID: string;
@@ -23,11 +20,16 @@ export function joinRoomHandler(
 ) {
   socket.on(
     "joinRoom",
-    async ({ userID, playerMetadata, code }: IJoinRoomConfig) => {
+    async ({ userID, playerMetadata, code }: IJoinRoomConfig, callback) => {
       const room = roomData[code];
       const players = roomData[code]?.players;
 
       if (!room || !players) return;
+
+      if (room.roomConfig.playersInRoom >= room.roomConfig.maxPlayers) {
+        callback?.("roomIsFull");
+        return;
+      }
 
       socket.join(code);
 
@@ -57,8 +59,12 @@ export function joinRoomHandler(
       io.in(code).emit("playerMetadataUpdated", players);
 
       room.roomConfig.playersInRoom++;
+      room.roomConfig.playerIDsInRoom.push(userID);
 
       io.in(code).emit("roomConfigUpdated", room.roomConfig);
+
+      // TODO: this prob errors out if not defined in inital socket.emit("joinRoom") right?
+      callback?.(undefined);
 
       await prisma.room.update({
         where: {
@@ -66,6 +72,7 @@ export function joinRoomHandler(
         },
         data: {
           playersInRoom: room.roomConfig.playersInRoom,
+          playerIDsInRoom: Object.keys(players),
         },
       });
     }

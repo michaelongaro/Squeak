@@ -5,12 +5,10 @@ import {
   type IRoomData,
   type IPlayerCardsMetadata,
 } from "../socket";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "~/server/db";
 import { drawFromSqueakDeck } from "../helpers/drawFromSqueakDeck";
 import { botMoveHandler } from "./botMoveHandler";
 import generateDeckAndSqueakCards from "../../../utils/generateDeckAndSqueakCards";
-
-const prisma = new PrismaClient();
 
 const botDifficultyDelay = {
   Easy: 7000,

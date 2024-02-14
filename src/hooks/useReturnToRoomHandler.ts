@@ -1,19 +1,16 @@
 import { useState, useEffect } from "react";
-import { socket } from "../pages";
+import { socket } from "~/pages/_app";
 import { useUserIDContext } from "../context/UserIDContext";
 import { useRoomContext } from "../context/RoomContext";
 import { type IMoveBackToLobby } from "../pages/api/socket";
+import { useRouter } from "next/router";
 
 function useReturnToRoomHandler() {
   const userID = useUserIDContext();
+  const { push } = useRouter();
 
-  const {
-    roomConfig,
-    setRoomConfig,
-    setPlayerMetadata,
-    setGameData,
-    setPageToRender,
-  } = useRoomContext();
+  const { roomConfig, setRoomConfig, setPlayerMetadata, setGameData } =
+    useRoomContext();
 
   const [dataFromBackend, setDataFromBackend] =
     useState<IMoveBackToLobby | null>(null);
@@ -37,14 +34,14 @@ function useReturnToRoomHandler() {
       setGameData(gameData);
 
       if (userID === newRoomConfig.hostUserID) {
-        setPageToRender("createRoom");
+        push("/create");
       } else {
-        setPageToRender("joinRoom");
+        push(`/join/${newRoomConfig.code}`);
       }
     }
   }, [
     dataFromBackend,
-    setPageToRender,
+    push,
     roomConfig.hostUserID,
     userID,
     setGameData,

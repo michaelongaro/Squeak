@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { signOut } from "next-auth/react";
 import React, { useRef } from "react";
+import { SignOutButton } from "@clerk/nextjs";
 import useOnClickOutside from "../../../hooks/useOnClickOutside";
 import Settings from "./Settings";
 import Stats from "./Stats";
@@ -10,14 +10,13 @@ import {
 } from "../../../pages/api/socket";
 import { useUserIDContext } from "../../../context/UserIDContext";
 import { useRoomContext } from "../../../context/RoomContext";
-import { trpc } from "../../../utils/trpc";
+import { api } from "~/utils/api";
 import { motion } from "framer-motion";
 import SecondaryButton from "../../Buttons/SecondaryButton";
 import {
   IoSettingsSharp,
   IoStatsChart,
   IoClose,
-  IoLogOutOutline,
   IoSave,
 } from "react-icons/io5";
 import PrimaryButton from "../../Buttons/PrimaryButton";
@@ -44,9 +43,9 @@ function UserSettingsAndStatsModal({
     setMirrorPlayerContainer,
   } = useRoomContext();
 
-  const utils = trpc.useUtils();
-  const { data: user } = trpc.users.getUserByID.useQuery(userID);
-  const updateUser = trpc.users.updateUser.useMutation({
+  const utils = api.useUtils();
+  const { data: user } = api.users.getUserByID.useQuery(userID);
+  const updateUser = api.users.updateUser.useMutation({
     onMutate: () => {
       // relatively sure we are doing this wrong with the "keys" that it is going off of.
       utils.users.getUserByID.cancel(userID);
@@ -126,7 +125,7 @@ function UserSettingsAndStatsModal({
       return;
 
     updateUser.mutate({
-      id: userID,
+      userId: userID,
       username: updatedMetadata.username,
       avatarPath: updatedMetadata.avatarPath,
       color: updatedMetadata.color,
@@ -219,14 +218,14 @@ function UserSettingsAndStatsModal({
         {!showSettings && <Stats />}
 
         <div className="baseFlex w-full gap-16 rounded-b-md bg-green-900 pb-4 pl-12 pr-12 pt-4">
-          <SecondaryButton
-            innerText="Log out"
-            extraPadding={false}
-            width={"10rem"}
-            height={"3rem"}
-            onClickFunction={() => signOut()}
-          />
-
+          <SignOutButton>
+            <SecondaryButton
+              innerText="Log out"
+              extraPadding={false}
+              width={"10rem"}
+              height={"3rem"}
+            />
+          </SignOutButton>
           {showSettings && (
             <PrimaryButton
               innerText="Save"

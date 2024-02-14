@@ -1,5 +1,5 @@
 import { useState, useEffect, type PointerEvent } from "react";
-import { socket } from "../../pages";
+import { socket } from "~/pages/_app";
 import { useUserIDContext } from "../../context/UserIDContext";
 import { useRoomContext } from "../../context/RoomContext";
 import Card from "./Card";
@@ -37,6 +37,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
     holdingADeckCard,
     proposedCardBoxShadow,
     decksAreBeingRotated,
+    setDecksAreBeingRotated,
     originIndexForHeldSqueakCard,
     setHoldingADeckCard,
     cardBeingMovedProgramatically,
@@ -429,12 +430,11 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                 <div className="relative h-full w-full select-none">
                   <>
                     <div
-                      style={{
-                        animationPlayState: decksAreBeingRotated
-                          ? "running"
-                          : "paused",
-                      }}
-                      className="topBackFacingCardInDeck absolute left-0 top-0 h-full w-full select-none"
+                      id={"hello"}
+                      onAnimationEnd={() => setDecksAreBeingRotated(false)}
+                      className={`${
+                        decksAreBeingRotated ? "topBackFacingCardInDeck" : ""
+                      } absolute left-0 top-0 h-full w-full select-none`}
                     >
                       {filteredCardsInHandFromDeck?.map((card) => (
                         <div

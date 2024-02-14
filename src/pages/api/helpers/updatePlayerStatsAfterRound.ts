@@ -1,7 +1,5 @@
 import { type IPlayerRoundDetails } from "../handlers/roundOverHandler";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { prisma } from "~/server/db";
 
 interface IUpdatePlayerStatsAfterRound {
   playerID: string;

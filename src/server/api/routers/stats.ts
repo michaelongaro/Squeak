@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { router, publicProcedure } from "../trpc";
+import { createTRPCRouter, publicProcedure } from "../trpc";
 
-export const statsRouter = router({
+export const statsRouter = createTRPCRouter({
   initializeUser: publicProcedure // maybe go protected if it still will return null on "" input
     .input(z.string())
     .mutation(async ({ ctx, input }) => {

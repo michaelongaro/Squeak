@@ -8,14 +8,12 @@ import {
   type IMiscRoomData,
   type IPlayerCardsMetadata,
 } from "../socket";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "~/server/db";
 
 interface IResetGame {
   gameIsFinished: boolean;
   roomCode: string;
 }
-
-const prisma = new PrismaClient();
 
 export function resetGameHandler(
   io: Server,
@@ -82,6 +80,7 @@ export function resetGameHandler(
           },
           data: {
             playersInRoom: room.roomConfig.playersInRoom,
+            playerIDsInRoom: Object.keys(room.players),
             hostUserID: room.roomConfig.hostUserID,
             hostUsername: room.roomConfig.hostUsername,
             gameStarted: room.roomConfig.gameStarted,

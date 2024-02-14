@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
-import { signOut, useSession } from "next-auth/react";
 import { useRoomContext } from "../../context/RoomContext";
-import { socket } from "../../pages";
-import { trpc } from "../../utils/trpc";
+import { useAuth, SignOutButton } from "@clerk/nextjs";
+import { socket } from "~/pages/_app";
+import { api } from "~/utils/api";
 import {
   type IRoomPlayersMetadata,
   type IRoomPlayer,
@@ -51,6 +51,7 @@ import {
 } from "~/components/ui/drawer";
 import FriendsList from "../modals/FriendsList";
 import DangerButton from "../Buttons/DangerButton";
+import { useRouter } from "next/router";
 import { Label } from "~/components/ui/label";
 import { Button } from "~/components/ui/button";
 import { Switch } from "~/components/ui/switch";
@@ -76,12 +77,9 @@ type allViewLabels =
 const mainViewLabels = ["Settings", "Statistics", "Friends list"] as const;
 const settingsViewLabels = ["avatar", "front", "back"] as const;
 
-interface ITopRightControls {
-  forPlayScreen: boolean;
-}
-
-function TopRightControls({ forPlayScreen }: ITopRightControls) {
-  const { status } = useSession();
+function TopRightControls() {
+  const { isSignedIn, isLoaded } = useAuth();
+  const { asPath } = useRouter();
 
   const {
     showSettingsModal,
@@ -95,7 +93,9 @@ function TopRightControls({ forPlayScreen }: ITopRightControls) {
     setShowVotingOptionButtons,
   } = useRoomContext();
 
-  const leaveRoom = useLeaveRoom();
+  const leaveRoom = useLeaveRoom({
+    routeToNavigateTo: "/",
+  });
   const viewportLabel = useGetViewportLabel();
   useVoteReceived();
 
@@ -152,7 +152,7 @@ function TopRightControls({ forPlayScreen }: ITopRightControls) {
       >
         <div
           className={`absolute right-2 h-8 w-8 ${
-            !forPlayScreen ? "top-4 rotate-90" : "top-0.5"
+            !asPath.includes("/game") ? "top-4 rotate-90" : "top-0.5"
           }`}
         >
           <DrawerTrigger onClick={() => setShowDrawer(true)}>
@@ -172,7 +172,7 @@ function TopRightControls({ forPlayScreen }: ITopRightControls) {
               zIndex: 250,
             }}
           >
-            {forPlayScreen ? (
+            {asPath.includes("/game") ? (
               <WhilePlayingDrawer
                 setShowDrawer={setShowDrawer}
                 leaveRoom={leaveRoom}
@@ -180,7 +180,16 @@ function TopRightControls({ forPlayScreen }: ITopRightControls) {
                 setShowVotingOptionButtons={setShowVotingOptionButtons}
               />
             ) : (
-              <MainDrawer status={status} setShowDrawer={setShowDrawer} />
+              <MainDrawer
+                status={
+                  isLoaded
+                    ? isSignedIn
+                      ? "authenticated"
+                      : "unauthenticated"
+                    : "loading"
+                }
+                setShowDrawer={setShowDrawer}
+              />
             )}
           </DrawerContent>
         </DrawerPortal>
@@ -191,22 +200,22 @@ function TopRightControls({ forPlayScreen }: ITopRightControls) {
   return (
     <div
       style={{
-        alignItems: !forPlayScreen ? "flex-end" : "center",
+        alignItems: !asPath.includes("/game") ? "flex-end" : "center",
       }}
       className={`${
-        forPlayScreen ? "baseFlex" : "baseVertFlex"
+        asPath.includes("/game") ? "baseFlex" : "baseVertFlex"
       } fixed right-1 top-1 z-[190] !min-w-fit gap-3 sm:gap-4 lg:right-4 lg:top-4`}
     >
-      {!forPlayScreen && (
+      {!asPath.includes("/game") && (
         <div className="h-[40px] w-[40px] md:h-[44px] md:w-[44px]">
           <SecondaryButton
             icon={<IoSettingsSharp size={"1.5rem"} />}
             extraPadding={false}
-            disabled={status !== "authenticated"}
+            disabled={!isSignedIn}
             hoverTooltipText={"Only available for logged in users"}
             hoverTooltipTextPosition={"left"}
             onClickFunction={() => {
-              if (status === "authenticated") {
+              if (isSignedIn) {
                 setShowSettingsModal(true);
               }
             }}
@@ -216,7 +225,7 @@ function TopRightControls({ forPlayScreen }: ITopRightControls) {
 
       <AudioLevelSlider />
 
-      {forPlayScreen && (
+      {asPath.includes("/game") && (
         <>
           <AlertDialog>
             <AlertDialogTrigger asChild>
@@ -247,7 +256,7 @@ function TopRightControls({ forPlayScreen }: ITopRightControls) {
                     className="w-24"
                     onClick={() => {
                       setShowDrawer(false);
-                      leaveRoom(true);
+                      leaveRoom();
                     }}
                   />
                 </AlertDialogAction>
@@ -293,12 +302,12 @@ function TopRightControls({ forPlayScreen }: ITopRightControls) {
         </>
       )}
 
-      {!forPlayScreen && (
+      {!asPath.includes("/game") && (
         <div className="relative h-[40px] w-[40px] md:h-[44px] md:w-[44px]">
           <SecondaryButton
             icon={<FaUserFriends size={"1.5rem"} />}
             extraPadding={false}
-            disabled={status !== "authenticated"}
+            disabled={!isSignedIn}
             hoverTooltipText={"Only available for logged in users"}
             hoverTooltipTextPosition={"left"}
             onClickFunction={() => setShowFriendsList(!showFriendsList)}
@@ -738,13 +747,14 @@ function MainDrawer({ status, setShowDrawer }: IMainDrawer) {
 
             {status === "authenticated" && (
               <div className="baseFlex w-full px-2 pt-4">
-                <SecondaryButton
-                  innerText="Log out"
-                  extraPadding={false}
-                  width={"8rem"}
-                  height={"2.5rem"}
-                  onClickFunction={() => signOut()}
-                />
+                <SignOutButton>
+                  <SecondaryButton
+                    innerText="Log out"
+                    extraPadding={false}
+                    width={"8rem"}
+                    height={"2.5rem"}
+                  />
+                </SignOutButton>
               </div>
             )}
 
@@ -897,9 +907,9 @@ function DrawerSettings({
     setMirrorPlayerContainer,
   } = useRoomContext();
 
-  const utils = trpc.useUtils();
-  const { data: user } = trpc.users.getUserByID.useQuery(userID);
-  const updateUser = trpc.users.updateUser.useMutation({
+  const utils = api.useUtils();
+  const { data: user } = api.users.getUserByID.useQuery(userID);
+  const updateUser = api.users.updateUser.useMutation({
     onMutate: () => {
       // relatively sure we are doing this wrong with the "keys" that it is going off of.
       utils.users.getUserByID.cancel(userID);
@@ -975,7 +985,7 @@ function DrawerSettings({
       return;
 
     updateUser.mutate({
-      id: userID,
+      userId: userID,
       username: updatedMetadata.username,
       avatarPath: updatedMetadata.avatarPath,
       color: updatedMetadata.color,
@@ -1203,7 +1213,7 @@ interface IDrawerStatistics {
 function DrawerStatistics({ setRenderedView }: IDrawerStatistics) {
   const userID = useUserIDContext();
 
-  const { data: userStats } = trpc.stats.getStatsByID.useQuery(userID);
+  const { data: userStats } = api.stats.getStatsByID.useQuery(userID);
 
   const [filteredStats, setFilteredStats] = useState<IFilteredStats>();
 
@@ -1276,6 +1286,7 @@ function DrawerFriendsList({
   setShowDrawer,
 }: IDrawerFriendsList) {
   const userID = useUserIDContext();
+  const { push } = useRouter();
 
   const {
     playerMetadata,
@@ -1284,17 +1295,16 @@ function DrawerFriendsList({
     newInviteNotification,
     setNewInviteNotification,
     roomConfig,
-    setPageToRender,
     setConnectedToRoom,
   } = useRoomContext();
 
-  const { data: friends } = trpc.users.getUsersFromIDList.useQuery(
+  const { data: friends } = api.users.getUsersFromIDList.useQuery(
     friendData?.friendIDs ?? []
   );
-  const { data: friendInviteIDs } = trpc.users.getUsersFromIDList.useQuery(
+  const { data: friendInviteIDs } = api.users.getUsersFromIDList.useQuery(
     friendData?.friendInviteIDs ?? []
   );
-  const { data: roomInviteIDs } = trpc.users.getUsersFromIDList.useQuery(
+  const { data: roomInviteIDs } = api.users.getUsersFromIDList.useQuery(
     friendData?.roomInviteIDs ?? []
   );
 
@@ -1455,7 +1465,7 @@ function DrawerFriendsList({
                         });
                       }
 
-                      setPageToRender("joinRoom");
+                      push(`/join/${roomCodeOfRoomBeingJoined}`);
 
                       socket.emit("modifyFriendData", {
                         action: "joinRoom",
@@ -1583,17 +1593,13 @@ function FriendActions({
   setShowDrawer,
 }: IFriendActions) {
   const userID = useUserIDContext();
+  const { push } = useRouter();
 
   const [sendInviteInnerText, setSendInviteInnerText] = useState("Send invite");
   const [buttonIsActive, setButtonIsActive] = useState(false);
 
-  const {
-    playerMetadata,
-    connectedToRoom,
-    roomConfig,
-    setPageToRender,
-    setConnectedToRoom,
-  } = useRoomContext();
+  const { playerMetadata, connectedToRoom, roomConfig, setConnectedToRoom } =
+    useRoomContext();
 
   return (
     <>
@@ -1687,7 +1693,7 @@ function FriendActions({
               });
             }
 
-            setPageToRender("joinRoom");
+            push(`/join/${friend.roomCode}`);
 
             socket.emit("modifyFriendData", {
               action: "joinRoom",
@@ -1779,7 +1785,7 @@ function FriendActions({
 
 interface IWhilePlayingDrawer {
   setShowDrawer: React.Dispatch<React.SetStateAction<boolean>>;
-  leaveRoom: (isDrawer: boolean) => void;
+  leaveRoom: () => void;
   showVotingOptionButtons: boolean;
   setShowVotingOptionButtons: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -1839,7 +1845,7 @@ function WhilePlayingDrawer({
                   className="w-24"
                   onClick={() => {
                     setShowDrawer(false);
-                    leaveRoom(true);
+                    leaveRoom();
                   }}
                 />
               </AlertDialogAction>

@@ -264,6 +264,8 @@ export function generateAndEmitScoreboard({
 
   // updating stats for each user in the room
   for (const playerID of Object.keys(playerRoundDetails)) {
+    if (room.players[playerID]?.botDifficulty) continue;
+
     updatePlayerStatsAfterRound({
       playerID,
       playerRoundDetails: playerRoundDetails[playerID]!,

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useRoomContext } from "../../context/RoomContext";
 import { useUserIDContext } from "../../context/UserIDContext";
-import { socket } from "../../pages";
+import { socket } from "~/pages/_app";
 import {
   type IRoomPlayer,
   type IRoomPlayersMetadata,

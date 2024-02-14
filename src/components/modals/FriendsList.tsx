@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
-import { socket } from "../../pages";
-import { trpc } from "../../utils/trpc";
+import { socket } from "~/pages/_app";
+import { api } from "~/utils/api";
 import { FiMail } from "react-icons/fi";
 import { FaUserFriends } from "react-icons/fa";
 import { useUserIDContext } from "../../context/UserIDContext";
@@ -25,6 +25,7 @@ import {
   PopoverTrigger,
 } from "~/components/ui/popover";
 import { Button } from "~/components/ui/button";
+import { useRouter } from "next/router";
 
 const customButtonStyles = {
   height: "2rem",
@@ -39,6 +40,7 @@ interface IFriendsList {
 
 function FriendsList({ setShowFriendsListModal }: IFriendsList) {
   const userID = useUserIDContext();
+  const { push } = useRouter();
 
   const {
     playerMetadata,
@@ -47,17 +49,16 @@ function FriendsList({ setShowFriendsListModal }: IFriendsList) {
     newInviteNotification,
     setNewInviteNotification,
     roomConfig,
-    setPageToRender,
     setConnectedToRoom,
   } = useRoomContext();
 
-  const { data: friends } = trpc.users.getUsersFromIDList.useQuery(
+  const { data: friends } = api.users.getUsersFromIDList.useQuery(
     friendData?.friendIDs ?? []
   );
-  const { data: friendInviteIDs } = trpc.users.getUsersFromIDList.useQuery(
+  const { data: friendInviteIDs } = api.users.getUsersFromIDList.useQuery(
     friendData?.friendInviteIDs ?? []
   );
-  const { data: roomInviteIDs } = trpc.users.getUsersFromIDList.useQuery(
+  const { data: roomInviteIDs } = api.users.getUsersFromIDList.useQuery(
     friendData?.roomInviteIDs ?? []
   );
 
@@ -229,7 +230,7 @@ function FriendsList({ setShowFriendsListModal }: IFriendsList) {
                       });
                     }
 
-                    setPageToRender("joinRoom");
+                    push(`/join/${roomCodeOfRoomBeingJoined}`);
 
                     socket.emit("modifyFriendData", {
                       action: "joinRoom",
@@ -379,7 +380,7 @@ function FriendsList({ setShowFriendsListModal }: IFriendsList) {
                           });
                         }
 
-                        setPageToRender("joinRoom");
+                        push(`/join/${friend.roomCode}`);
 
                         socket.emit("modifyFriendData", {
                           action: "joinRoom",

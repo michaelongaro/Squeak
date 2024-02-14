@@ -1,5 +1,5 @@
 import { useState, type CSSProperties } from "react";
-import { socket } from "../../pages";
+import { socket } from "~/pages/_app";
 import { motion } from "framer-motion";
 import { useUserIDContext } from "../../context/UserIDContext";
 import { useRoomContext } from "../../context/RoomContext";
@@ -189,7 +189,7 @@ function PlayerIcon({
                         </TooltipTrigger>
                         <TooltipContent
                           side={"bottom"}
-                          className="border-2 border-lightGreen bg-darkGreen text-lightGreen"
+                          className="border-2 border-lightGreen bg-green-800 text-lightGreen"
                         >
                           <p>Send friend invite</p>
                         </TooltipContent>

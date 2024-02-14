@@ -6,10 +6,7 @@ import {
   type IRoomData,
   type IMiscRoomData,
 } from "../socket";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
-
+import { prisma } from "~/server/db";
 interface ILeaveRoomHandler {
   playerID: string;
   roomCode: string;
@@ -41,6 +38,8 @@ export function leaveRoomHandler(
     // per player who called it
     if (!room.players[playerID]) return;
 
+    // ^^^^ is this returning early somehow?
+
     if (!game) {
       // safe to directly delete player if game hasn't started yet
       delete room.players[playerID];
@@ -49,6 +48,11 @@ export function leaveRoomHandler(
     // testing this outside to make sure room still gets deleted if no other players
     // are in the room
     room.roomConfig.playersInRoom--;
+
+    delete room.players[playerID];
+    room.roomConfig.playerIDsInRoom = room.roomConfig.playerIDsInRoom.filter(
+      (id) => id !== playerID
+    );
 
     if (game) {
       // extra precaution to make sure playerID isn't added to array more than once
@@ -119,6 +123,7 @@ export function leaveRoomHandler(
           playersInRoom: room.roomConfig.playersInRoom,
           hostUserID: room.roomConfig.hostUserID,
           hostUsername: room.roomConfig.hostUsername,
+          playerIDsInRoom: Object.keys(room.players),
         },
       });
     }

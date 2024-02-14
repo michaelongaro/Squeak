@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
-import { useSession } from "next-auth/react";
-import { socket } from "../pages";
+import { useAuth } from "@clerk/nextjs";
+import { socket } from "~/pages/_app";
 import { useUserIDContext } from "../context/UserIDContext";
 import { useRoomContext } from "../context/RoomContext";
 import { type IReceiveFriendData } from "../pages/api/socket";
 
 function useReceiveFriendData() {
-  const { status } = useSession();
+  const { isSignedIn } = useAuth();
 
   const userID = useUserIDContext();
 
@@ -36,7 +36,7 @@ function useReceiveFriendData() {
 
       if (playerID === userID) {
         // send "go online" emit if friendData hasn't been initialized yet
-        if (status === "authenticated" && friendData === undefined) {
+        if (isSignedIn && friendData === undefined) {
           socket.emit("modifyFriendData", {
             action: "goOnline",
             initiatorID: userID,
@@ -72,7 +72,7 @@ function useReceiveFriendData() {
     }
   }, [
     dataFromBackend,
-    status,
+    isSignedIn,
     userID,
     friendData,
     setFriendData,

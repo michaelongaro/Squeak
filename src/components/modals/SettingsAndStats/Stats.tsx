@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useUserIDContext } from "../../../context/UserIDContext";
-import { trpc } from "../../../utils/trpc";
+import { api } from "~/utils/api";
 
 const rowNames = [
   "Total Squeaks",
@@ -21,7 +21,7 @@ interface IFilteredStats {
 function Stats() {
   const userID = useUserIDContext();
 
-  const { data: userStats } = trpc.stats.getStatsByID.useQuery(userID);
+  const { data: userStats } = api.stats.getStatsByID.useQuery(userID);
 
   const [filteredStats, setFilteredStats] = useState<IFilteredStats>();
 

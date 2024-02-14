@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { router, publicProcedure, protectedProcedure } from "../trpc";
+import { createTRPCRouter, publicProcedure, protectedProcedure } from "../trpc";
 
 interface IFormattedStats {
   [category: string]: IFormattedStat[];
@@ -12,7 +12,7 @@ interface IFormattedStat {
   value: number;
 }
 
-export const usersRouter = router({
+export const usersRouter = createTRPCRouter({
   getUserByID: publicProcedure // maybe go protected if it still will return null on "" input
     .input(z.string())
     .query(async ({ ctx, input }) => {
@@ -21,7 +21,7 @@ export const usersRouter = router({
       try {
         const user = await ctx.prisma.user.findUnique({
           where: {
-            id: input,
+            userId: input,
           },
         });
         return user;
@@ -40,7 +40,7 @@ export const usersRouter = router({
       try {
         const users = ctx.prisma.user.findMany({
           where: {
-            id: { in: input },
+            userId: { in: input },
           },
         });
 
@@ -53,7 +53,7 @@ export const usersRouter = router({
   updateUser: protectedProcedure
     .input(
       z.object({
-        id: z.string(),
+        userId: z.string(),
         username: z.string(),
         avatarPath: z.string(),
         color: z.string(),
@@ -67,7 +67,7 @@ export const usersRouter = router({
       try {
         await ctx.prisma.user.update({
           where: {
-            id: input.id,
+            userId: input.userId, // TODO: gotta update all of these occurances...
           },
           data: {
             username: input.username,

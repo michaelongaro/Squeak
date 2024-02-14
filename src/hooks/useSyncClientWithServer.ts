@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { socket } from "../pages";
+import { socket } from "~/pages/_app";
 import { type IGameMetadata } from "../pages/api/socket";
 import { useRoomContext } from "../context/RoomContext";
 

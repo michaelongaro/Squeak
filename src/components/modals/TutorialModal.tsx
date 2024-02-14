@@ -230,36 +230,6 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
             }}
             className="pl-4 pr-4 text-left text-base lg:text-lg"
           >
-            Voting
-          </legend>
-          <ul
-            style={{
-              color: "hsl(120deg 100% 86%)",
-            }}
-            className="baseVertFlex w-auto list-disc !items-start gap-4 p-4 pl-8 text-sm lg:w-[1000px] lg:text-base"
-          >
-            <li>
-              If a player feels that no one has a valid move to make, they may
-              start a vote to rotate everyone&apos;s deck by one card. This
-              should hopefully allow for more valid moves to be made.
-            </li>
-            <li>
-              Otherwise, if the decks have been rotated multiple times and it
-              feels like the game is at a standstill, players may vote to end
-              the round where it is. Note that nobody will receive the Squeak
-              bonus if this vote passes.
-            </li>
-            <li>Votes require each player to agree in order to pass.</li>
-          </ul>
-        </fieldset>
-
-        <fieldset className="mt-4 rounded-md border-2 border-white bg-green-800 p-4">
-          <legend
-            style={{
-              color: "hsl(120deg 100% 86%)",
-            }}
-            className="pl-4 pr-4 text-left text-base lg:text-lg"
-          >
             Scoring
           </legend>
           <ul
@@ -281,6 +251,36 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
               When a player reaches the room&apos;s predetermined point
               threshold, that player has won and the game is over.
             </li>
+          </ul>
+        </fieldset>
+
+        <fieldset className="mt-4 rounded-md border-2 border-white bg-green-800 p-4">
+          <legend
+            style={{
+              color: "hsl(120deg 100% 86%)",
+            }}
+            className="pl-4 pr-4 text-left text-base lg:text-lg"
+          >
+            Voting
+          </legend>
+          <ul
+            style={{
+              color: "hsl(120deg 100% 86%)",
+            }}
+            className="baseVertFlex w-auto list-disc !items-start gap-4 p-4 pl-8 text-sm lg:w-[1000px] lg:text-base"
+          >
+            <li>
+              If a player feels that no one has a valid move to make, they may
+              start a vote to rotate everyone&apos;s deck by one card. This
+              should hopefully allow for more valid moves to be made.
+            </li>
+            <li>
+              Otherwise, if the decks have been rotated multiple times and it
+              feels like the game is at a standstill, players may vote to end
+              the round where it is. Note that nobody will receive the Squeak
+              bonus if this vote passes.
+            </li>
+            <li>Votes require each player to agree in order to pass.</li>
           </ul>
         </fieldset>
 

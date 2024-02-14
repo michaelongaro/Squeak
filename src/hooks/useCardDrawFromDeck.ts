@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { socket } from "../pages";
+import { socket } from "~/pages/_app";
 import { useRoomContext } from "../context/RoomContext";
 import { type IDrawFromDeck } from "../pages/api/socket";
 import { type IMoveCard } from "../components/Play/Card";

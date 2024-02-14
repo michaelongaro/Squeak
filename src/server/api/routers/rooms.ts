@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { router, publicProcedure } from "../trpc";
+import { createTRPCRouter, publicProcedure } from "../trpc";
 
-export const roomsRouter = router({
+export const roomsRouter = createTRPCRouter({
   createRoom: publicProcedure
     .input(
       z.object({

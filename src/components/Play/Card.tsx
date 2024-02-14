@@ -4,7 +4,7 @@ import Draggable, {
   type DraggableData,
   type DraggableEvent,
 } from "react-draggable";
-import { socket } from "../../pages/";
+import { socket } from "~/pages/_app";
 import { useUserIDContext } from "../../context/UserIDContext";
 import { useRoomContext } from "../../context/RoomContext";
 import cardPlacementIsValid from "../../utils/cardPlacementIsValid";

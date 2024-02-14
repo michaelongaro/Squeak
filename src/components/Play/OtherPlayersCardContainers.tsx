@@ -42,6 +42,7 @@ function OtherPlayersCardContainers({
     playerMetadata,
     gameData,
     decksAreBeingRotated,
+    setDecksAreBeingRotated,
     squeakDeckBeingMovedProgramatically,
     cardBeingMovedProgramatically,
     roomConfig,
@@ -568,12 +569,10 @@ function OtherPlayersCardContainers({
                   <div className="relative h-full w-full select-none">
                     <>
                       <div
-                        style={{
-                          animationPlayState: decksAreBeingRotated
-                            ? "running"
-                            : "paused",
-                        }}
-                        className="topBackFacingCardInDeck absolute left-0 top-0 h-full w-full select-none"
+                        onAnimationEnd={() => setDecksAreBeingRotated(false)}
+                        className={`${
+                          decksAreBeingRotated ? "topBackFacingCardInDeck" : ""
+                        } select-none" absolute left-0 top-0 h-full w-full`}
                       >
                         {filteredCardsInHandFromDeck[idx]?.map((card) => (
                           <div

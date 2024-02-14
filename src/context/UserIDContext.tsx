@@ -1,33 +1,33 @@
 import cryptoRandomString from "crypto-random-string";
-import { useSession } from "next-auth/react";
+import { useAuth } from "@clerk/nextjs";
 import { createContext, useContext, useState, useEffect } from "react";
 
 const UserIDContext = createContext<string | null>(null);
 
 export function UserIDProvider(props: { children: React.ReactNode }) {
-  const { data: session, status } = useSession();
+  const { userId, isLoaded } = useAuth();
 
   const [value, setValue] = useState<string>(""); // way to avoid init of ""?
 
   useEffect(() => {
-    if (status === "unauthenticated") {
+    if (!isLoaded) return;
+
+    if (!userId) {
       let userID: string;
-      if (localStorage.getItem("userID") === null) {
+      if (localStorage.getItem("squeakUserID") === null) {
         userID = cryptoRandomString({ length: 16 });
-        localStorage.setItem("userID", userID);
+        localStorage.setItem("squeakUserID", userID);
       } else {
-        userID = localStorage.getItem("userID") as string;
+        userID = localStorage.getItem("squeakUserID") as string;
       }
       setValue(userID);
-    }
-
-    if (status === "authenticated" && session.user) {
-      if (localStorage.getItem("userID") !== null) {
-        localStorage.removeItem("userID");
+    } else {
+      if (localStorage.getItem("squeakUserID") !== null) {
+        localStorage.removeItem("squeakUserID");
       }
-      setValue(session.user.id);
+      setValue(userId);
     }
-  }, [status, session]);
+  }, [userId, isLoaded]);
 
   return (
     <UserIDContext.Provider value={value}>

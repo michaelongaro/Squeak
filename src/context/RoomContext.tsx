@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { socket } from "../pages";
-import { type IRoomConfig } from "../components/CreateRoom/CreateRoom";
+import { socket } from "~/pages/_app";
+import { useAuth } from "@clerk/nextjs";
+import { type IRoomConfig } from "~/pages/create";
 import {
   type IRoomPlayer,
   type IRoomPlayersMetadata,
@@ -8,9 +9,8 @@ import {
 } from "../pages/api/socket";
 import { type IGameMetadata } from "../pages/api/socket";
 import { type IScoreboardMetadata } from "../pages/api/handlers/roundOverHandler";
-import { useSession } from "next-auth/react";
 import { useUserIDContext } from "./UserIDContext";
-import { trpc } from "../utils/trpc";
+import { api } from "~/utils/api";
 
 interface IHeldSqueakStackLocation {
   [playerID: string]: {
@@ -46,10 +46,6 @@ export interface IInitSqueakStackCardBeingDealt {
 interface IRoomContext {
   audioContext: AudioContext | null;
   masterVolumeGainNode: GainNode | null;
-  pageToRender: "home" | "createRoom" | "joinRoom" | "play";
-  setPageToRender: React.Dispatch<
-    React.SetStateAction<"home" | "createRoom" | "joinRoom" | "play">
-  >;
   showSettingsModal: boolean;
   setShowSettingsModal: React.Dispatch<React.SetStateAction<boolean>>;
   roomConfig: IRoomConfig;
@@ -170,11 +166,11 @@ interface IRoomContext {
 const RoomContext = createContext<IRoomContext | null>(null);
 
 export function RoomProvider(props: { children: React.ReactNode }) {
-  const { data: session, status } = useSession();
+  const { isLoaded, isSignedIn } = useAuth();
   const userID = useUserIDContext();
 
   // probably want to remove the default "refetch on page focus" behavior
-  const { data: user } = trpc.users.getUserByID.useQuery(userID);
+  const { data: user } = api.users.getUserByID.useQuery(userID);
 
   const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
   const [masterVolumeGainNode, setMasterVolumeGainNode] =
@@ -196,15 +192,13 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     boolean | null
   >(null);
 
-  const [pageToRender, setPageToRender] = useState<
-    "home" | "createRoom" | "joinRoom" | "play"
-  >("home");
   const [showSettingsModal, setShowSettingsModal] = useState<boolean>(false);
 
   const [roomConfig, setRoomConfig] = useState<IRoomConfig>({
     pointsToWin: 100,
     maxPlayers: 2,
     playersInRoom: 1,
+    playerIDsInRoom: [userID],
     isPublic: true,
     code: "",
     hostUsername: "",
@@ -357,7 +351,7 @@ export function RoomProvider(props: { children: React.ReactNode }) {
   }, [currentVolume, masterVolumeGainNode]);
 
   useEffect(() => {
-    if (status === "authenticated") {
+    if (isSignedIn) {
       socket.emit("modifyFriendData", {
         action: "roomMetadataUpdate",
         initiatorID: userID,
@@ -365,18 +359,19 @@ export function RoomProvider(props: { children: React.ReactNode }) {
         currentRoomIsFull: roomConfig.playersInRoom === roomConfig.maxPlayers,
       });
     }
-  }, [roomConfig, status, userID]);
+  }, [roomConfig, isSignedIn, userID]);
 
+  // initializing player metadata w/ their database values (if authenticated)
   useEffect(() => {
     if (
       playerMetadata[userID] !== undefined ||
-      status === "loading" ||
+      !isLoaded ||
+      !isSignedIn ||
       user === undefined ||
       userID === ""
     )
       return;
 
-    // initializing player metadata w/ their database values (if authenticated)
     setPlayerMetadata((prev) => ({
       ...prev,
       [userID]: {
@@ -389,7 +384,31 @@ export function RoomProvider(props: { children: React.ReactNode }) {
 
     setPrefersSimpleCardAssets(user ? user.prefersSimpleCardAssets : false);
     setMirrorPlayerContainer(user ? !user.squeakPileOnLeft : false);
-  }, [userID, user, playerMetadata, session, status]);
+  }, [userID, user, playerMetadata, isLoaded, isSignedIn]);
+
+  // initializing player metadata w/ their database values (if not authenticated)
+  useEffect(() => {
+    if (
+      playerMetadata[userID] !== undefined ||
+      !isLoaded ||
+      isSignedIn ||
+      user !== null
+    )
+      return;
+
+    setPlayerMetadata((prev) => ({
+      ...prev,
+      [userID]: {
+        username: "",
+        avatarPath: "/avatars/rabbit.svg",
+        color: "hsl(352deg, 69%, 61%)",
+        deckHueRotation: 232,
+      } as IRoomPlayer,
+    }));
+
+    setPrefersSimpleCardAssets(false);
+    setMirrorPlayerContainer(false);
+  }, [userID, user, playerMetadata, isLoaded, isSignedIn]);
 
   const context: IRoomContext = {
     audioContext,
@@ -399,8 +418,6 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     otherPlayerCardMoveBuffer,
     squeakButtonPressBuffer,
     confettiPopBuffer,
-    pageToRender,
-    setPageToRender,
     showSettingsModal,
     setShowSettingsModal,
     roomConfig,

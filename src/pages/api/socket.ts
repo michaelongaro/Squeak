@@ -1,5 +1,5 @@
 import { Server, type Socket } from "socket.io";
-import { type IRoomConfig } from "../../components/CreateRoom/CreateRoom";
+import { type IRoomConfig } from "../create";
 import {
   type IPlayerCards,
   type ICard,
@@ -17,6 +17,7 @@ import { createRoomHandler } from "./handlers/createRoomHandler";
 import { joinRoomHandler } from "./handlers/joinRoomHandler";
 import { updatePlayerMetadataHandler } from "./handlers/updatePlayerMetadataHandler";
 import { voteReceivedHandler } from "./handlers/voteReceivedHandler";
+import { rejoinRoomHandler } from "./handlers/rejoinRoomHandler";
 
 // TODO: is there a better way to type these?
 export interface IFriendsData {
@@ -180,6 +181,13 @@ export interface IPlayerHasLeftRoom {
   playerWasKicked: boolean;
 }
 
+export interface IRejoinData {
+  userID: string;
+  roomConfig: IRoomConfig;
+  players: IRoomPlayersMetadata;
+  gameData: IGameMetadata;
+}
+
 const roomData: IRoomData = {};
 const gameData: IGameData = {};
 const friendsData: IFriendsData = {};
@@ -223,25 +231,11 @@ export default function SocketHandler(req, res) {
 
     voteReceivedHandler(io, socket, gameData, miscRoomData, roomData);
 
+    rejoinRoomHandler(io, socket, gameData, roomData);
+
     socket.on("directlyLeaveRoom", (roomCode) => {
       socket.leave(roomCode);
     });
-
-    // TODO: automatic server side disconnecting of socket from room is theoretically possible
-    // assuming that the socket.id is stable, if it is then we could add a property onto the
-    // miscRoomData object that has key of roomCode and value of socket.id and playerID.
-    // but to be honest this approach seems flaky at best...
-
-    // socket.on("disconnecting", (reason) => {
-    //   console.log(reason);
-    //   console.dir(socket.rooms);
-    //   for (const room of socket.rooms) {
-    //     if (room !== socket.id) {
-    //       // socket.to(room).emit("user has left", socket.id);
-    //       console.log("disconnecting", socket.id, "from", room);
-    //     }
-    //   }
-    // });
 
     // friends handlers
     initializePlayerInFriendsObject(io, socket, friendsData);

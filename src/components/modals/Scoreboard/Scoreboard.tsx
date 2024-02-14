@@ -84,26 +84,6 @@ function Scoreboard() {
 
     setInitalizedTimers(true);
 
-    // set with sorted playerIDs by their oldScore
-    if (
-      scoreboardMetadata &&
-      Object.values(scoreboardMetadata.playerRoundDetails)[0]?.oldScore !== 0
-    ) {
-      const playerRoundDetailsArray = Object.values(
-        scoreboardMetadata.playerRoundDetails
-      );
-
-      playerRoundDetailsArray.sort((a, b) => {
-        return b.oldScore - a.oldScore;
-      });
-
-      setSortedPlayerRoundDetails(playerRoundDetailsArray);
-    } else if (scoreboardMetadata) {
-      setSortedPlayerRoundDetails(
-        Object.values(scoreboardMetadata.playerRoundDetails)
-      );
-    }
-
     setTimeout(() => {
       setAnimateCardsPlayedValue(true);
     }, 1000);
@@ -221,6 +201,28 @@ function Scoreboard() {
     viewportLabel,
     scoreboardMetadata,
   ]);
+
+  useEffect(() => {
+    // set with sorted playerIDs by their oldScore
+    if (
+      scoreboardMetadata &&
+      Object.values(scoreboardMetadata.playerRoundDetails)[0]?.oldScore !== 0
+    ) {
+      const playerRoundDetailsArray = Object.values(
+        scoreboardMetadata.playerRoundDetails
+      );
+
+      playerRoundDetailsArray.sort((a, b) => {
+        return b.oldScore - a.oldScore;
+      });
+
+      setSortedPlayerRoundDetails(playerRoundDetailsArray);
+    } else if (scoreboardMetadata) {
+      setSortedPlayerRoundDetails(
+        Object.values(scoreboardMetadata.playerRoundDetails)
+      );
+    }
+  }, [scoreboardMetadata]);
 
   useEffect(() => {
     if (Object.keys(playerColorVariants).length !== 0) return;

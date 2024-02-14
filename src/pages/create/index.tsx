@@ -1,19 +1,22 @@
 import { useState, useEffect } from "react";
-import { useSession } from "next-auth/react";
+import { useAuth } from "@clerk/nextjs";
 import cryptoRandomString from "crypto-random-string";
-import { trpc } from "../../utils/trpc";
-import { socket } from "../../pages";
+import { api } from "~/utils/api";
+import { socket } from "~/pages/_app";
 import { useUserIDContext } from "../../context/UserIDContext";
 import { useRoomContext } from "../../context/RoomContext";
-import { type IGameMetadata, type IRoomPlayer } from "../../pages/api/socket";
+import {
+  type IRoomPlayersMetadata,
+  type IGameMetadata,
+  type IRoomPlayer,
+} from "../../pages/api/socket";
 import { IoSettingsSharp } from "react-icons/io5";
 import { FaRobot } from "react-icons/fa6";
 import { FaUsers } from "react-icons/fa";
-import PlayerIcon from "../playerIcons/PlayerIcon";
-import SecondaryButton from "../Buttons/SecondaryButton";
-import Radio from "../Buttons/Radio";
+import PlayerIcon from "~/components/playerIcons/PlayerIcon";
+import SecondaryButton from "~/components/Buttons/SecondaryButton";
+import Radio from "~/components/Buttons/Radio";
 import { MdCopyAll } from "react-icons/md";
-import PrimaryButton from "../Buttons/PrimaryButton";
 import { IoHome } from "react-icons/io5";
 import { BiArrowBack } from "react-icons/bi";
 import { FiCheck } from "react-icons/fi";
@@ -22,11 +25,13 @@ import { Input } from "~/components/ui/input";
 import Filter from "bad-words";
 import useLeaveRoom from "../../hooks/useLeaveRoom";
 import useGetViewportLabel from "~/hooks/useGetViewportLabel";
-import PlayerCustomizationPopover from "../popovers/PlayerCustomizationPopover";
-import PlayerCustomizationPreview from "../playerIcons/PlayerCustomizationPreview";
-import PlayerCustomizationDrawer from "../drawers/PlayerCustomizationDrawer";
+import PlayerCustomizationPopover from "~/components/popovers/PlayerCustomizationPopover";
+import PlayerCustomizationPreview from "~/components/playerIcons/PlayerCustomizationPreview";
+import PlayerCustomizationDrawer from "~/components/drawers/PlayerCustomizationDrawer";
 import { Label } from "~/components/ui/label";
 import { Button } from "~/components/ui/button";
+import Head from "next/head";
+import { useRouter } from "next/router";
 
 const filter = new Filter();
 
@@ -50,6 +55,7 @@ export interface IRoomConfig {
   pointsToWin: number;
   maxPlayers: number;
   playersInRoom: number;
+  playerIDsInRoom: string[];
   isPublic: boolean;
   code: string;
   hostUsername: string;
@@ -58,7 +64,8 @@ export interface IRoomConfig {
 }
 
 function CreateRoom() {
-  const { status } = useSession();
+  const { isSignedIn } = useAuth();
+  const { push } = useRouter();
 
   const userID = useUserIDContext();
 
@@ -71,14 +78,15 @@ function CreateRoom() {
     setConnectedToRoom,
     friendData,
     setGameData,
-    setPageToRender,
   } = useRoomContext();
 
-  const leaveRoom = useLeaveRoom();
+  const leaveRoom = useLeaveRoom({
+    routeToNavigateTo: connectedToRoom ? "/create" : "/",
+  });
 
   const viewportLabel = useGetViewportLabel();
 
-  const { data: authenticatedUsers } = trpc.users.getUsersFromIDList.useQuery(
+  const { data: authenticatedUsers } = api.users.getUsersFromIDList.useQuery(
     Object.keys(playerMetadata)
   );
 
@@ -95,6 +103,7 @@ function CreateRoom() {
       setRoomConfig({
         ...roomConfig,
         code: cryptoRandomString({ length: 6 }),
+        playerIDsInRoom: [userID],
         hostUsername: playerMetadata[userID]?.username || "",
         hostUserID: userID,
       });
@@ -111,34 +120,36 @@ function CreateRoom() {
   ]);
 
   useEffect(() => {
-    socket.on("roomWasCreated", () => setConnectedToRoom(true));
-
-    socket.on("playerMetadataUpdated", (newUsers) => {
+    function handlePlayerMetadataUpdated(newUsers: IRoomPlayersMetadata) {
       setPlayerMetadata(newUsers);
-    });
+    }
 
-    socket.on("roomConfigUpdated", (roomConfig) => setRoomConfig(roomConfig));
+    function handleRoomConfigUpdated(roomConfig: IRoomConfig) {
+      setRoomConfig(roomConfig);
+    }
 
-    socket.on("navigateToPlayScreen", (initGameData: IGameMetadata) => {
-      setPageToRender("play");
+    function handleNavigateToPlayScreen(initGameData: IGameMetadata) {
+      push(`/game/${roomConfig.code}`);
       setGameData(initGameData);
-    });
+    }
+
+    socket.on("playerMetadataUpdated", handlePlayerMetadataUpdated);
+    socket.on("roomConfigUpdated", handleRoomConfigUpdated);
+    socket.on("navigateToPlayScreen", handleNavigateToPlayScreen);
 
     return () => {
-      socket.off("roomWasCreated", () => setConnectedToRoom(true));
-      socket.off("playerMetadataUpdated", (newUsers) =>
-        setPlayerMetadata(newUsers)
-      );
-      socket.off("roomConfigUpdated", (roomConfig) =>
-        setRoomConfig(roomConfig)
-      );
-      socket.off("navigateToPlayScreen", (initGameData: IGameMetadata) => {
-        setPageToRender("play");
-        setGameData(initGameData);
-      });
+      socket.off("playerMetadataUpdated", handlePlayerMetadataUpdated);
+      socket.off("roomConfigUpdated", handleRoomConfigUpdated);
+      socket.off("navigateToPlayScreen", handleNavigateToPlayScreen);
     };
-  }, []);
-  // might need to add roomCtx to deps here
+  }, [
+    setConnectedToRoom,
+    setGameData,
+    setPlayerMetadata,
+    setRoomConfig,
+    push,
+    roomConfig.code,
+  ]);
 
   function createRoom() {
     if (roomConfig && userID) {
@@ -146,7 +157,7 @@ function CreateRoom() {
 
       socket.emit("createRoom", roomConfig, playerMetadata[userID]);
 
-      if (status === "authenticated") {
+      if (isSignedIn) {
         socket.emit("modifyFriendData", {
           action: "createRoom",
           initiatorID: userID,
@@ -197,6 +208,10 @@ function CreateRoom() {
       transition={{ duration: 0.15 }}
       className="baseVertFlex relative min-h-[100dvh] py-16"
     >
+      <Head>
+        <title>Create | Squeak</title>
+      </Head>
+
       <div className="baseVertFlex relative gap-4">
         <div className="absolute left-4 top-0 sm:left-0">
           <Button
@@ -211,7 +226,7 @@ function CreateRoom() {
             className="h-10 w-10"
             onClick={() => {
               setConfigAndMetadataInitialized(false);
-              leaveRoom(connectedToRoom ? false : true);
+              leaveRoom();
             }}
           />
         </div>
@@ -221,7 +236,7 @@ function CreateRoom() {
             color: "hsl(120deg 100% 86%)",
             filter: "drop-shadow(2px 3px 2px rgba(0, 0, 0, 0.2))",
           }}
-          className="text-xl font-medium"
+          className="mt-1.5 text-xl font-medium"
         >
           {`${
             connectedToRoom
@@ -432,7 +447,9 @@ function CreateRoom() {
                 innerText={showCheckmark ? "Copied" : "Copy"}
                 extraPadding={false}
                 onClickFunction={() => {
-                  navigator.clipboard.writeText(roomConfig.code);
+                  navigator.clipboard.writeText(
+                    `${process.env.NEXT_PUBLIC_DOMAIN_URL}/join/${roomConfig.code}`
+                  );
                   setShowCheckmark(true);
                   setTimeout(() => setShowCheckmark(false), 1000);
                 }}

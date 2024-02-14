@@ -8,15 +8,17 @@ datasource db {
 }
 
 model Room {
-  id            String  @id @default(cuid())
-  pointsToWin   Int     @default(100)
-  maxPlayers    Int     @default(4)
-  playersInRoom Int     @default(1)
-  isPublic      Boolean @default(true)
-  code          String  @unique
-  hostUsername  String
-  hostUserID    String
-  gameStarted   Boolean @default(false)
+  id              String   @id @default(cuid())
+  createdAt       DateTime @default(now())
+  pointsToWin     Int      @default(100)
+  maxPlayers      Int      @default(4)
+  playersInRoom   Int      @default(1)
+  playerIDsInRoom String[] @default([])
+  isPublic        Boolean  @default(true)
+  code            String   @unique
+  hostUsername    String
+  hostUserID      String
+  gameStarted     Boolean  @default(false)
 }
 
 model Stats {
@@ -29,52 +31,20 @@ model Stats {
   highestScore            Int    @default(0)
   totalGamesPlayed        Int    @default(0)
   totalRoundsPlayed       Int    @default(0)
-  user                    User   @relation(fields: [userID], references: [id], onDelete: Cascade)
+  user                    User   @relation(fields: [userID], references: [userId], onDelete: Cascade)
   userID                  String @unique
 }
 
-// Necessary for Next auth
-model Account {
-  id                String  @id @default(cuid())
-  userId            String
-  type              String
-  provider          String
-  providerAccountId String
-  refresh_token     String? // @db.Text
-  access_token      String? // @db.Text
-  expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token          String? // @db.Text
-  session_state     String?
-  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([provider, providerAccountId])
-}
-
-model Session {
-  id           String   @id @default(cuid())
-  sessionToken String   @unique
-  userId       String
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
 model User {
-  // next-auth
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  accounts      Account[]
-  sessions      Session[]
+  id       String  @id @default(cuid())
+  userId   String  @unique // used from Clerk
+  imageUrl String?
 
   // user metadata
   username                String  @default("Rabbit")
   avatarPath              String  @default("/avatars/rabbit.svg")
-  color                   String  @default("hsl(352deg, 69%, 61%)")
-  deckHueRotation         Int     @default(0)
+  color                   String  @default("hsl(352deg, 69%, 61%)") // defaults to red color
+  deckHueRotation         Int     @default(232) // defaults to red color
   prefersSimpleCardAssets Boolean @default(false)
   squeakPileOnLeft        Boolean @default(true)
   desktopNotifications    Boolean @default(false)
@@ -91,12 +61,4 @@ model User {
   roomCode            String?
   currentRoomIsPublic Boolean?
   currentRoomIsFull   Boolean?
-}
-
-model VerificationToken {
-  identifier String
-  token      String   @unique
-  expires    DateTime
-
-  @@unique([identifier, token])
 }
