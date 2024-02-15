@@ -284,7 +284,7 @@ function Scoreboard() {
         >
           {scoreboardMetadata?.playerRoundDetails && currentPlayerStats && (
             <div className="baseVertFlex h-full !justify-between gap-2 tablet:gap-8">
-              <div className="text-xl">Scoreboard</div>
+              <div className="text-xl font-semibold">Scoreboard</div>
 
               {/* player totals */}
               <div className="baseVertFlex min-h-[170px] w-full gap-1">
@@ -693,7 +693,7 @@ function Scoreboard() {
       >
         {scoreboardMetadata?.playerRoundDetails && (
           <div className="baseVertFlex h-full gap-2 desktop:gap-12">
-            <div className="text-2xl">Scoreboard</div>
+            <div className="text-2xl font-semibold">Scoreboard</div>
 
             <div className="baseFlex h-full w-full gap-4">
               {Object.values(scoreboardMetadata.playerRoundDetails).map(
