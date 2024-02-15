@@ -136,7 +136,6 @@ function JoinRoom() {
       setRoomConfig(room);
       setSubmittedRoomCode("");
       joinRoom();
-      setConnectedToRoom(true);
     }
   }, [connectedToRoom, setConnectedToRoom, joinRoom, setRoomConfig, room]);
 
@@ -277,12 +276,12 @@ function JoinRoom() {
               </div>
             </div>
 
-            <div className="baseFlex w-full !justify-between gap-4">
+            <div className="baseFlex w-full !justify-between gap-2">
               <label>Room code</label>
               <Input
                 type="text"
                 placeholder="optional"
-                className={`${roomCode.length === 0 ? "italic" : ""} w-[201px]`}
+                className={`${roomCode.length === 0 ? "italic" : ""}`}
                 maxLength={6}
                 onChange={(e) => setRoomCode(e.target.value)}
                 value={roomCode}
