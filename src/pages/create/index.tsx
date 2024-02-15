@@ -592,7 +592,7 @@ function CreateRoom() {
                 });
               }}
               showLoadingSpinnerOnClick={true}
-              className="h-12 w-[12rem] gap-4 text-[1.05rem]"
+              className="h-12 w-[14rem] gap-4 text-[1.05rem]"
             />
           </div>
         ) : (
