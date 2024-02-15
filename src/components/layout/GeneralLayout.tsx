@@ -63,10 +63,10 @@ function GeneralLayout({ children }: GeneralLayout) {
                    Games can be played with 2-4 players, lasting around 20 minutes."
         />
         <meta property="og:type" content="website" />
-        {/* <meta
+        <meta
           property="og:image"
-          content="https://www.autostrum.com/opengraphScreenshots/homepage.png"
-        ></meta> */}
+          content="https://www.playsqueak.com/openGraphImage.png"
+        ></meta>
       </Head>
 
       <AnimatePresence mode="wait">{children}</AnimatePresence>
