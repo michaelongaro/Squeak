@@ -1,7 +1,6 @@
 import { useAuth } from "@clerk/nextjs";
 import { PrismaClient, type Room } from "@prisma/client";
 import { motion, AnimatePresence } from "framer-motion";
-import { buildClerkProps } from "@clerk/nextjs/server";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
 import { BiArrowBack } from "react-icons/bi";
@@ -533,7 +532,6 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     return {
       props: {
         room: null,
-        ...buildClerkProps(ctx.req),
       },
     };
   }
@@ -549,7 +547,6 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   return {
     props: {
       room: JSON.parse(JSON.stringify(room)) as Room,
-      ...buildClerkProps(ctx.req),
     },
   };
 };

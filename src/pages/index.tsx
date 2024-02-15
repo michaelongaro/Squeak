@@ -1,12 +1,6 @@
 import { useState } from "react";
 import { api } from "~/utils/api";
-import {
-  SignInButton,
-  SignUpButton,
-  UserButton,
-  useAuth,
-  useUser,
-} from "@clerk/nextjs";
+import { SignInButton, SignUpButton, useAuth } from "@clerk/nextjs";
 import { AnimatePresence, motion } from "framer-motion";
 import { useUserIDContext } from "~/context/UserIDContext";
 import SecondaryButton from "~/components/Buttons/SecondaryButton";

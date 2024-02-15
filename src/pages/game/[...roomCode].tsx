@@ -18,7 +18,6 @@ import { Button } from "~/components/ui/button";
 import useSyncClientWithServer from "../../hooks/useSyncClientWithServer";
 import useGetViewportLabel from "../../hooks/useGetViewportLabel";
 import MiniMobileVotingModal from "~/components/modals/MiniMobileVotingModal";
-import { buildClerkProps } from "@clerk/nextjs/server";
 import { type GetServerSideProps } from "next";
 import { PrismaClient, type Room } from "@prisma/client";
 import { useRouter } from "next/router";
@@ -250,7 +249,6 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     return {
       props: {
         room: null,
-        ...buildClerkProps(ctx.req),
       },
     };
   }
@@ -266,7 +264,6 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   return {
     props: {
       room: JSON.parse(JSON.stringify(room)) as Room,
-      ...buildClerkProps(ctx.req),
     },
   };
 };
