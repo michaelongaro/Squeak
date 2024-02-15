@@ -24,9 +24,7 @@ function useResetDeckFromCardDraw() {
 
       const { resetDeck, updatedGameData } = dataFromBackend;
 
-      if (resetDeck) {
-        setGameData(updatedGameData);
-      }
+      if (resetDeck) setGameData(updatedGameData);
     }
   }, [dataFromBackend, setGameData]);
 }

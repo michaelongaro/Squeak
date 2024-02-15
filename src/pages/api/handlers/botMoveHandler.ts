@@ -240,16 +240,9 @@ export function botMoveHandler(
   }
 
   // 4th priority: bot can play a card from the top card in their hand onto the board
-  let topCardInHand: ICard | null | undefined = null;
 
   // cards are rendered on the client with the last card in the array at the top of stack
-  for (let i = 2; i >= 0; i--) {
-    const card = players[playerID]?.topCardsInDeck[i];
-    if (card !== null) {
-      topCardInHand = card;
-      break;
-    }
-  }
+  const topCardInHand = players[playerID]?.hand.at(-1);
 
   if (topCardInHand) {
     // check all board cells randomly, place if valid

@@ -30,8 +30,7 @@ export function deckToSqueak({
 
   squeakStackLocation.push(card);
 
-  player.topCardsInDeck.pop();
-  player.topCardsInDeck.unshift(null);
+  player.hand.pop();
 
   player.deck = player.deck.filter((c) => {
     if (c.value === card.value && c.suit === card.suit) {

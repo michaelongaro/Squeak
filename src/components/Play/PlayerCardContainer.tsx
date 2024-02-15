@@ -12,7 +12,6 @@ import PlayerIcon from "../playerIcons/PlayerIcon";
 import useResponsiveCardDimensions from "../../hooks/useResponsiveCardDimensions";
 import { AnimatePresence } from "framer-motion";
 import Buzzer from "./Buzzer";
-import useFilterCardsInHandFromDeck from "../../hooks/useFilterCardsInHandFromDeck";
 interface IPlayerCardContainer {
   cardContainerClass: string | undefined;
 }
@@ -173,13 +172,6 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
     return "none";
   }
 
-  // necessary to prevent card in hand + card in .mapped deck from both being
-  // moved at the same time.
-  const filteredCardsInHandFromDeck = useFilterCardsInHandFromDeck({
-    array: gameData.players[userID]?.deck,
-    playerID: userID,
-  });
-
   return (
     <div
       id={"playerContainer"}
@@ -333,7 +325,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
             className={`${classes.playerHand} cardDimensions relative select-none transition-opacity`}
           >
             <>
-              {gameData.players[userID]?.topCardsInDeck.map(
+              {gameData.players[userID]?.hand.map(
                 (card, idx) =>
                   card !== null && (
                     <div
@@ -343,10 +335,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                         setHoveringOverDeck(false);
                       }}
                       onPointerDown={() => {
-                        if (
-                          idx ===
-                          gameData.players[userID]!.topCardsInDeck.length - 1
-                        )
+                        if (idx === gameData.players[userID]!.hand.length - 1)
                           setHoldingADeckCard(true);
                       }}
                       onPointerUp={() => {
@@ -361,8 +350,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                         value={card.value}
                         suit={card.suit}
                         draggable={
-                          idx ===
-                          gameData.players[userID]!.topCardsInDeck.length - 1
+                          idx === gameData.players[userID]!.hand.length - 1
                         }
                         origin={"hand"}
                         ownerID={userID}
@@ -426,17 +414,16 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                 });
               }}
             >
-              {gameData?.players[userID]?.nextTopCardInDeck ? (
+              {gameData?.players[userID]?.deck?.length ? (
                 <div className="relative h-full w-full select-none">
                   <>
                     <div
-                      id={"hello"}
                       onAnimationEnd={() => setDecksAreBeingRotated(false)}
                       className={`${
                         decksAreBeingRotated ? "topBackFacingCardInDeck" : ""
                       } absolute left-0 top-0 h-full w-full select-none`}
                     >
-                      {filteredCardsInHandFromDeck?.map((card) => (
+                      {gameData?.players[userID]?.deck?.map((card) => (
                         <div
                           key={`${userID}deckCard${card.suit}${card.value}`}
                           className="absolute left-0 top-0 h-full w-full select-none"

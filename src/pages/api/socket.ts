@@ -137,9 +137,8 @@ export interface IDrawFromSqueakDeck {
 }
 
 export interface IDrawFromDeck {
-  nextTopCardInDeck: ICard | null;
+  cardBeingAnimated: ICard | null; // this will be the (up to) third top card from deck being drawn
   resetDeck?: boolean;
-  topCardsInDeck: (ICard | null)[];
   playerID: string;
   roomCode: string;
   updatedGameData: IGameMetadata;

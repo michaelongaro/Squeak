@@ -1,5 +1,6 @@
 import { type Server, type Socket } from "socket.io";
 import { type IGameData } from "../socket";
+import { type ICard } from "~/utils/generateDeckAndSqueakCards";
 
 interface IDrawFromDeckBackendVersion {
   io: Server;
@@ -34,82 +35,63 @@ export function drawFromDeck({
   const board = gameData[roomCode]?.board;
   const players = gameData[roomCode]?.players;
   const playerCards = gameData[roomCode]?.players[playerID];
-  let deckIdx = playerCards?.deckIdx;
   const deck = playerCards?.deck;
-  let topCardsInDeck = playerCards?.topCardsInDeck;
-  if (
-    !playerCards ||
-    !players ||
-    !board ||
-    !deck ||
-    !deckIdx ||
-    !topCardsInDeck
-  )
-    return;
+  const hand = playerCards?.hand;
+
+  if (!playerCards || !players || !board || !deck || !hand) return;
 
   // resets the deck if the player has drawn all the cards
-  if (playerCards.nextTopCardInDeck === null) {
+  // this has it's own hook because there will be no cards to "target" to listen for
+  // this event being emitted. Therefore we just listen for it on the main /game/code component
+  if (playerCards.deck.length === 0) {
     // updating the reference to the actual player object
-    playerCards.deckIdx = -1;
-    playerCards.nextTopCardInDeck = deck[2] || null;
-    playerCards.topCardsInDeck = [null, null, null];
+    playerCards.deck = hand.reverse(); // in real life you would physically flip over the hand pile to become the deck
+    playerCards.hand = [];
 
     io.in(roomCode).emit("playerDrawnFromDeck", {
-      nextTopCardInDeck: playerCards.nextTopCardInDeck,
       resetDeck: true,
-      playerID,
       updatedGameData: gameData[roomCode],
     });
     return;
   }
 
-  // adjusting deckIdx to account for the # of cards that were played since
-  // last draw
-  // below potentially prone to bugs when there are only 2 cards left in the deck
-  if (deckIdx !== -1) {
-    deckIdx -= topCardsInDeck.filter((card) => card === null).length;
-  }
+  let cardBeingAnimated: ICard | null = null;
 
   // cards are rendered on the client with the last card in the array at
   // the top of stack
-  if (deckIdx + 3 <= deck.length - 1) {
-    topCardsInDeck = [
-      deck[deckIdx + 1] || null,
-      deck[deckIdx + 2] || null,
-      deck[deckIdx + 3] || null,
-    ];
+  if (deck.length >= 3) {
+    const firstTopCard = deck.pop();
+    const secondTopCard = deck.pop();
+    const thirdTopCard = deck.pop();
 
-    deckIdx + 3 === deck.length - 1 ? (deckIdx = -1) : (deckIdx += 3);
-  } else {
-    if (deckIdx + 2 === deck.length - 1) {
-      topCardsInDeck = [
-        null,
-        deck[deckIdx + 1] || null,
-        deck[deckIdx + 2] || null,
-      ];
-    } else if (deckIdx + 1 === deck.length - 1) {
-      topCardsInDeck = [null, null, deck[deckIdx + 1] || null];
-    } else {
-      topCardsInDeck = [null, null, null];
-    }
-    deckIdx = -1;
+    if (
+      thirdTopCard === undefined ||
+      secondTopCard === undefined ||
+      firstTopCard === undefined
+    )
+      return;
+
+    hand.push(firstTopCard, secondTopCard, thirdTopCard);
+    cardBeingAnimated = thirdTopCard;
+  } else if (deck.length === 2) {
+    const firstTopCard = deck.pop();
+    const secondTopCard = deck.pop();
+
+    if (firstTopCard === undefined || secondTopCard === undefined) return;
+
+    hand.push(firstTopCard, secondTopCard);
+    cardBeingAnimated = secondTopCard;
+  } else if (deck.length === 1) {
+    const firstTopCard = deck.pop();
+
+    if (firstTopCard === undefined) return;
+
+    hand.push(firstTopCard);
+    cardBeingAnimated = firstTopCard;
   }
-
-  const currentTopCardInDeck = playerCards.nextTopCardInDeck;
-
-  // updating the reference to the actual player object
-  if (deckIdx === -1) {
-    playerCards.nextTopCardInDeck = null;
-  } else {
-    playerCards.nextTopCardInDeck =
-      deck[deckIdx + 3] ?? deck[deckIdx + 2] ?? deck[deckIdx + 1] ?? null;
-  }
-
-  playerCards.deckIdx = deckIdx;
-  playerCards.topCardsInDeck = topCardsInDeck;
 
   io.in(roomCode).emit("playerDrawnFromDeck", {
-    nextTopCardInDeck: currentTopCardInDeck,
+    cardBeingAnimated,
     playerID,
     updatedGameData: gameData[roomCode],
   });

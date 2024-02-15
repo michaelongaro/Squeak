@@ -52,8 +52,7 @@ export function deckToBoard({
       miscRoomDataObj.boardTimestamps[row]![col] = Date.now();
     }
 
-    player.topCardsInDeck.pop();
-    player.topCardsInDeck.unshift(null);
+    player.hand.pop();
 
     player.deck = player.deck.filter((c) => {
       if (c.value === card.value && c.suit === card.suit) {

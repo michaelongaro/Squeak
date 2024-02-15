@@ -7,9 +7,7 @@ export interface IPlayerCards {
   squeakDeck: ICard[];
   squeakHand: ICard[][];
   deck: ICard[];
-  deckIdx: number;
-  topCardsInDeck: (ICard | null)[];
-  nextTopCardInDeck: ICard | null;
+  hand: ICard[];
 }
 
 const suits = ["C", "S", "H", "D"];
@@ -62,17 +60,13 @@ function generateDeckAndSqueakCards(): IPlayerCards {
   const squeakDeck = deck.splice(0, 13);
   const squeakHand = [[], [], [], []];
 
-  const deckIdx = -1;
-  const topCardsInDeck = [null, null, null];
-  const nextTopCardInDeck = deck[2] || null;
+  const hand: ICard[] = [];
 
   return {
     squeakDeck,
     squeakHand,
     deck,
-    deckIdx,
-    topCardsInDeck,
-    nextTopCardInDeck,
+    hand,
   };
 }
 

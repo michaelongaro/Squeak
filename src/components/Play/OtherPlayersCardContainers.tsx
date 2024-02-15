@@ -4,14 +4,12 @@ import { useRoomContext } from "../../context/RoomContext";
 import useResponsiveCardDimensions from "../../hooks/useResponsiveCardDimensions";
 import Card from "./Card";
 import { FaRedoAlt } from "react-icons/fa";
-import isEqual from "lodash.isequal";
 import classes from "./OtherPlayersCardContainers.module.css";
 import useRotatePlayerDecks from "../../hooks/useRotatePlayerDecks";
 import Buzzer from "./Buzzer";
 import Image from "next/image";
 import disconnectIcon from "../../../public/disconnect/disconnect.svg";
 import { AnimatePresence } from "framer-motion";
-import useFilterCardsInHandFromDeck from "../../hooks/useFilterCardsInHandFromDeck";
 import useGetViewportLabel from "../../hooks/useGetViewportLabel";
 
 interface IOtherPlayersCardContainers {
@@ -54,9 +52,6 @@ function OtherPlayersCardContainers({
     (playerID) => playerID !== userID
   );
 
-  const [showDummyDeckCardStates, setShowDummyDeckCardStates] = useState<{
-    [playerID: string]: [boolean, boolean, boolean, boolean];
-  }>();
   const [topOffsetsFromBoard, setTopOffsetsFromBoard] = useState([
     -9999,
     -9999,
@@ -87,51 +82,8 @@ function OtherPlayersCardContainers({
 
   const viewportLabel = useGetViewportLabel();
 
-  useEffect(() => {
-    let tempDummyDeckCardStates = { ...showDummyDeckCardStates };
-
-    for (const playerID of otherPlayerIDs) {
-      const player = gameData.players[playerID];
-
-      if (!player) return;
-
-      if (player.squeakHand.length > 0) {
-        tempDummyDeckCardStates = {
-          ...tempDummyDeckCardStates,
-          [playerID]: [
-            player.deck.length - player.deckIdx >= 2,
-            player.deck.length - player.deckIdx >= 1,
-            player.squeakDeck.length > 2,
-            player.squeakDeck.length > 1,
-          ],
-        };
-      }
-    }
-
-    if (!isEqual(tempDummyDeckCardStates, showDummyDeckCardStates)) {
-      setShowDummyDeckCardStates(tempDummyDeckCardStates);
-    }
-  }, [gameData.players, otherPlayerIDs, showDummyDeckCardStates]);
-
   const cardDimensions = useResponsiveCardDimensions();
   useRotatePlayerDecks();
-
-  // necessary to prevent card in hand + card in .mapped deck from both being
-  // moved at the same time.
-  const filteredCardsInHandFromDeck = [
-    useFilterCardsInHandFromDeck({
-      array: gameData.players[otherPlayerIDs[0]!]?.deck,
-      playerID: otherPlayerIDs[0],
-    }),
-    useFilterCardsInHandFromDeck({
-      array: gameData.players[otherPlayerIDs[1]!]?.deck,
-      playerID: otherPlayerIDs[1],
-    }),
-    useFilterCardsInHandFromDeck({
-      array: gameData.players[otherPlayerIDs[2]!]?.deck,
-      playerID: otherPlayerIDs[2],
-    }),
-  ];
 
   function getDynamicTopValue(
     squeakStackIdx: number,
@@ -323,7 +275,7 @@ function OtherPlayersCardContainers({
                   }}
                   className={`absolute left-0 top-0 h-full w-full select-none`}
                 >
-                  {gameData.players[playerID]?.topCardsInDeck.map(
+                  {gameData.players[playerID]?.hand.map(
                     (card) =>
                       card !== null && (
                         <div
@@ -357,9 +309,9 @@ function OtherPlayersCardContainers({
 
                 <div className={`${classes.playerDeck} select-none`}>
                   <div id={`${playerID}deck`} className="h-full w-full">
-                    {gameData?.players[playerID]?.nextTopCardInDeck ? (
+                    {gameData?.players[playerID]?.deck.length ? (
                       <div className="relative h-full w-full select-none">
-                        {filteredCardsInHandFromDeck[idx]?.map((card) => (
+                        {gameData?.players[playerID]?.deck.map((card) => (
                           <div
                             key={`${playerID}deckCard${card.suit}${card.value}`}
                             className="absolute left-0 top-0 h-full w-full select-none"
@@ -538,7 +490,7 @@ function OtherPlayersCardContainers({
               className={`${classes.playerHand} cardDimensions relative select-none`}
             >
               <>
-                {gameData.players[playerID]?.topCardsInDeck.map(
+                {gameData.players[playerID]?.hand.map(
                   (card) =>
                     card !== null && (
                       <div
@@ -565,7 +517,7 @@ function OtherPlayersCardContainers({
 
             <div className={`${classes.playerDeck} cardDimensions select-none`}>
               <div id={`${playerID}deck`} className="h-full w-full">
-                {gameData?.players[playerID]?.nextTopCardInDeck ? (
+                {gameData?.players[playerID]?.deck.length ? (
                   <div className="relative h-full w-full select-none">
                     <>
                       <div
@@ -574,7 +526,7 @@ function OtherPlayersCardContainers({
                           decksAreBeingRotated ? "topBackFacingCardInDeck" : ""
                         } select-none" absolute left-0 top-0 h-full w-full`}
                       >
-                        {filteredCardsInHandFromDeck[idx]?.map((card) => (
+                        {gameData?.players[playerID]?.deck.map((card) => (
                           <div
                             key={`${playerID}deckCard${card.suit}${card.value}`}
                             className="absolute left-0 top-0 h-full w-full select-none"

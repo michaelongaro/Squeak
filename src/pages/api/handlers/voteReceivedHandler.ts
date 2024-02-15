@@ -124,10 +124,7 @@ export function voteReceived({
           if (!player) return;
 
           player.deck = rotateDeckByOneCard(player.deck);
-          player.deckIdx = -1;
-          player.topCardsInDeck = [null, null, null];
-          player.nextTopCardInDeck =
-            player.deck[2] ?? player.deck[1] ?? player.deck[0] ?? null;
+          player.hand = [];
         });
         io.in(roomCode).emit("decksWereRotated", gameData[roomCode]);
       } else if (miscRoomDataObj.voteType === "finishRound") {

@@ -43,15 +43,15 @@ function useCardDrawFromDeck({
       setDataFromBackend(null);
 
       const {
-        nextTopCardInDeck: currentTopCardInDeck, // is actually referencing the current top card in deck
+        cardBeingAnimated, // whatever card will be showing as top card of player's hand
         playerID,
         updatedGameData,
       } = dataFromBackend;
 
       if (
         ownerID !== playerID ||
-        currentTopCardInDeck?.value !== value ||
-        currentTopCardInDeck?.suit !== suit
+        cardBeingAnimated?.value !== value ||
+        cardBeingAnimated?.suit !== suit
       )
         return;
 
