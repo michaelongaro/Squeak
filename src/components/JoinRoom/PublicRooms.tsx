@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { socket } from "~/pages/_app";
 import { useUserIDContext } from "../../context/UserIDContext";
 import { useRoomContext } from "../../context/RoomContext";
@@ -22,6 +22,7 @@ function PublicRooms() {
     setConnectedToRoom,
     roomConfig,
     setRoomConfig,
+    connectedToRoom,
     friendData,
   } = useRoomContext();
 
@@ -81,6 +82,18 @@ function PublicRooms() {
     setConnectedToRoom,
   ]);
 
+  useEffect(() => {
+    if (roomConfig && !connectedToRoom) {
+      joinRoom();
+    }
+  }, [
+    connectedToRoom,
+    setConnectedToRoom,
+    joinRoom,
+    setRoomConfig,
+    roomConfig,
+  ]);
+
   return (
     <fieldset className="mt-8 w-[360px] rounded-md border-2 border-white bg-green-800 p-2 sm:w-full sm:p-4">
       <legend
@@ -100,7 +113,7 @@ function PublicRooms() {
           innerText={"Refresh"}
           className="gap-2"
           rotateIcon={isFetching || fetchingNewRooms}
-          onClickFunction={() => {
+          onClick={() => {
             setFetchingNewRooms(true);
             setTimeout(() => {
               setFetchingNewRooms(false);
@@ -189,12 +202,7 @@ function PublicRooms() {
                         innerText={
                           viewportLabel.includes("mobile") ? undefined : "Join"
                         }
-                        onClick={() => {
-                          setRoomConfig(room);
-                          joinRoom();
-                          // TODO: could be flaky/cause race conditions if setRoomConfig isn't
-                          // finished before joinRoom is called... just do a setTimeout?
-                        }}
+                        onClick={() => setRoomConfig(room)}
                       />
                     </div>
                   </div>
