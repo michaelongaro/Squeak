@@ -126,6 +126,7 @@ function Play({ room }: { room: Room | null }) {
     if (initialEffectRan) return;
 
     setInitialEffectRan(true);
+    setDynamicInitializationFlowStarted(true);
 
     if (Object.keys(gameData).length === 0) return;
 
