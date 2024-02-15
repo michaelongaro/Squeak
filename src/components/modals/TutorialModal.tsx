@@ -6,7 +6,7 @@ import { IoClose } from "react-icons/io5";
 import { AiOutlineInfoCircle } from "react-icons/ai";
 import { HiExternalLink } from "react-icons/hi";
 import useOnClickOutside from "../../hooks/useOnClickOutside";
-
+import { IoMdHeart } from "react-icons/io";
 import labeledPlayerContainer from "../../../public/tutorial/labeledPlayerContainer.png";
 import boardPlacementExample from "../../../public/tutorial/boardPlacementExample.png";
 import squeakStackPlacementExample from "../../../public/tutorial/squeakStackPlacementExample.png";
@@ -90,14 +90,14 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
                   Nerts
                   <HiExternalLink size={"1.25rem"} />
                 </a>
-                . Games can be played with 2-4 players, each player starting
+                . Games can be played with 2-4 players, where each player starts
                 with a regular deck of cards. After shuffling, each player
-                places 13 cards in their &quot;Squeak pile&quot;, with an
+                places 13 cards in their &quot;Squeak deck&quot;, with an
                 additional four cards face up beside it. These four cards will
-                be referred to as the player&apos;s &quot;Squeak stacks&quot;.
-                Cards are drawn three at a time, however only the top card from
-                these three is immediately available for play. The player&apos;s
-                remaining deck stays below their Squeak pile as shown below.
+                be referred to as the player&apos;s &quot;Squeak piles&quot;.
+                Cards are drawn from the player&apos;s hand to their deck three
+                at a time, however only the top card from the player&apos;s hand
+                is available for play.
               </p>
             </div>
 
@@ -129,10 +129,10 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
             className="w-auto p-4 text-sm lg:w-[1000px] lg:text-base"
           >
             The goal of each round is to accrue as many points as possible and
-            empty your Squeak pile, which reveals your &quot;Squeak&quot;
-            button. When pressed, it ends the round and adds ten extra points to
-            your total. You may delay pressing the Squeak button if you think
-            you can still get more points.
+            empty your Squeak deck, which reveals your Squeak button. When
+            pressed, it ends the round and adds ten extra points to your total.
+            You may delay pressing the Squeak button if you think you can still
+            get more points.
           </p>
         </fieldset>
 
@@ -160,9 +160,27 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
                 <p>
                   To earn points, you must place cards on piles on the board.
                   Each pile must start with an ace, and every card placed
-                  afterwards on that pile must be of the same suit and be one
-                  value higher than the previous card (ex. Ace of Hearts, 2 of
-                  Hearts, 3 of Hearts). Each card placed is worth one point.
+                  afterwards on that pile must be of the{" "}
+                  <span className="font-semibold underline underline-offset-2">
+                    same suit
+                  </span>{" "}
+                  and be{" "}
+                  <span className="font-semibold underline underline-offset-2">
+                    one rank higher
+                  </span>{" "}
+                  than the previous card (ex. A
+                  <span className="inline-flex font-semibold underline underline-offset-2">
+                    <IoMdHeart size="0.8rem" />
+                  </span>{" "}
+                  , 2
+                  <span className="inline-flex font-semibold underline underline-offset-2">
+                    <IoMdHeart size="0.8rem" />
+                  </span>{" "}
+                  , 3
+                  <span className="inline-flex font-semibold underline underline-offset-2">
+                    <IoMdHeart size="0.8rem" />
+                  </span>
+                  ). Each card placed is worth one point.
                 </p>
                 <Image
                   src={boardPlacementExample}
@@ -183,8 +201,8 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
               </div>
               <div className="baseVertFlex w-full gap-4">
                 <p>
-                  You may place cards on your squeak stacks as well, however
-                  each card must be of{" "}
+                  You may place cards on your squeak piles as well, however each
+                  card must be of{" "}
                   <span className="font-semibold underline underline-offset-2">
                     opposite color
                   </span>{" "}
@@ -194,9 +212,9 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
                   </span>{" "}
                   than the previous card, similar to Solitaire (ex. Jack of
                   Spades, 10 of Hearts, 9 of Clubs). Only the last card in your
-                  squeak stack is able to be played on the board, however you
-                  can move sections of one stack to another as long as the
-                  stacking rules are followed.
+                  squeak pile is able to be played on the board, however you can
+                  move a group of cards between piles as long as the stacking
+                  rules are followed.
                 </p>
                 <Image
                   src={squeakStackPlacementExample}
