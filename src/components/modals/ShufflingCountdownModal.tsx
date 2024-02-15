@@ -92,7 +92,7 @@ function ShufflingCountdownModal() {
             </div>
             <div
               style={{
-                animationPlayState: timersInitiated ? "running" : "paused",
+                animationIterationCount: "5",
               }}
               className={`topBackFacingCardInDeck absolute left-0 top-0 h-full w-full`}
             >
