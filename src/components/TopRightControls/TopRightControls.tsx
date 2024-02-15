@@ -255,7 +255,6 @@ function TopRightControls() {
                     innerText={"Confirm"}
                     className="w-24"
                     onClick={() => {
-                      setShowDrawer(false);
                       leaveRoom();
                     }}
                   />
