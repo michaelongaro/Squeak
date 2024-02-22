@@ -18,6 +18,7 @@ import { joinRoomHandler } from "./handlers/joinRoomHandler";
 import { updatePlayerMetadataHandler } from "./handlers/updatePlayerMetadataHandler";
 import { voteReceivedHandler } from "./handlers/voteReceivedHandler";
 import { rejoinRoomHandler } from "./handlers/rejoinRoomHandler";
+import { oldRoomCleanupCron } from "~/pages/api/handlers/oldRoomCleanupCron";
 
 // TODO: is there a better way to type these?
 export interface IFriendsData {
@@ -231,6 +232,8 @@ export default function SocketHandler(req, res) {
     voteReceivedHandler(io, socket, gameData, miscRoomData, roomData);
 
     rejoinRoomHandler(io, socket, gameData, roomData);
+
+    oldRoomCleanupCron(io, socket, gameData, roomData, miscRoomData);
 
     socket.on("directlyLeaveRoom", (roomCode) => {
       socket.leave(roomCode);
