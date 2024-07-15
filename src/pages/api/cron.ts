@@ -18,7 +18,10 @@ export default async function handler(
 
   // Assuming your Socket.IO server is running on the same server but different port or path
   // Adjust the URL to match your actual Socket.IO server URL
-  const socket = io("http://localhost:3000", {
+  //  do we include the :8080? no way right?
+
+  // also make sure this thing closes itself out after it's done
+  const socket = io("https://playsqueak.com/", {
     path: "/api/socket",
   });
 
