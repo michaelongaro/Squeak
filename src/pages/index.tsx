@@ -18,6 +18,7 @@ import { Button } from "~/components/ui/button";
 import { useRouter } from "next/router";
 import useReceiveFriendData from "~/hooks/useReceiveFriendData";
 import useInitializeUserStats from "~/hooks/useInitializeUserStats";
+import usePostSignUpRegistration from "~/hooks/usePostSignUpRegistration";
 
 function MainOptions() {
   const { isSignedIn } = useAuth();
@@ -35,6 +36,8 @@ function MainOptions() {
 
   useReceiveFriendData();
   useInitializeUserStats();
+
+  usePostSignUpRegistration();
 
   return (
     <motion.div
@@ -75,26 +78,10 @@ function MainOptions() {
             </div>
           ) : (
             <div className="baseFlex gap-4">
-              <SignUpButton
-                mode="modal"
-                afterSignUpUrl={`${
-                  process.env.NEXT_PUBLIC_DOMAIN_URL ?? ""
-                }/postSignUpRegistration`}
-                afterSignInUrl={`${
-                  process.env.NEXT_PUBLIC_DOMAIN_URL ?? ""
-                }${asPath}`}
-              >
+              <SignUpButton mode="modal">
                 <Button innerText={"Sign up"} className="w-28" />
               </SignUpButton>
-              <SignInButton
-                mode="modal"
-                afterSignUpUrl={`${
-                  process.env.NEXT_PUBLIC_DOMAIN_URL ?? ""
-                }/postSignUpRegistration`}
-                afterSignInUrl={`${
-                  process.env.NEXT_PUBLIC_DOMAIN_URL ?? ""
-                }${asPath}`}
-              >
+              <SignInButton mode="modal">
                 <Button
                   variant={"secondary"}
                   innerText={"Sign in"}

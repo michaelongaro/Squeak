@@ -32,6 +32,7 @@ export const roomsRouter = createTRPCRouter({
         console.log(error);
       }
     }),
+
   getAllAvailableRooms: publicProcedure.query(async ({ ctx }) => {
     try {
       let rooms = await ctx.prisma.room.findMany({
@@ -48,19 +49,27 @@ export const roomsRouter = createTRPCRouter({
       console.log(error);
     }
   }),
+
   findRoomByCode: publicProcedure
-    .input(z.string())
+    .input(
+      z.object({
+        roomCode: z.string(),
+        playerID: z.string().optional(),
+      })
+    )
     .query(async ({ ctx, input }) => {
-      if (input === "") return null;
+      const { roomCode, playerID } = input;
+
+      if (roomCode === "") return null;
 
       try {
         const room = await ctx.prisma.room.findFirst({
           where: {
-            code: input,
-            gameStarted: false,
-            playersInRoom: { lt: 4 },
+            code: roomCode,
           },
         });
+
+        if (playerID && room?.playerIDsInRoom.includes(playerID)) return room;
 
         if (!room) return "Room not found.";
 
@@ -73,6 +82,7 @@ export const roomsRouter = createTRPCRouter({
         console.log(error);
       }
     }),
+
   updateRoomConfig: publicProcedure
     .input(
       z.object({
@@ -107,6 +117,7 @@ export const roomsRouter = createTRPCRouter({
         console.log(error);
       }
     }),
+
   deleteRoom: publicProcedure
     .input(z.string())
     .mutation(async ({ ctx, input }) => {

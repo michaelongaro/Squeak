@@ -18,15 +18,19 @@ import { Button } from "~/components/ui/button";
 import useSyncClientWithServer from "../../hooks/useSyncClientWithServer";
 import useGetViewportLabel from "../../hooks/useGetViewportLabel";
 import MiniMobileVotingModal from "~/components/modals/MiniMobileVotingModal";
-import { type GetServerSideProps } from "next";
-import { PrismaClient, type Room } from "@prisma/client";
+import { type Room } from "@prisma/client";
 import { useRouter } from "next/router";
 import { IoHome, IoWarningOutline } from "react-icons/io5";
 import { useAuth } from "@clerk/nextjs";
+import { api } from "~/utils/api";
 
-function Play({ room }: { room: Room | null }) {
+function Play() {
   const { isLoaded } = useAuth();
   const userID = useUserIDContext();
+  const { query } = useRouter();
+
+  const roomCode = query?.roomCode?.[0];
+
   const {
     roomConfig,
     gameData,
@@ -41,6 +45,32 @@ function Play({ room }: { room: Room | null }) {
     connectedToRoom,
     setConnectedToRoom,
   } = useRoomContext();
+
+  const { data: roomResult } = api.rooms.findRoomByCode.useQuery(
+    {
+      roomCode: roomCode ?? "",
+      playerID: userID,
+    },
+    {
+      enabled: Boolean(roomCode && typeof roomCode === "string"),
+    }
+  );
+
+  const [room, setRoom] = useState<Room | null>(null);
+
+  useEffect(() => {
+    if (roomResult && typeof roomResult === "object") {
+      setRoom(roomResult);
+    } else {
+      if (roomResult === "Room not found.") {
+        setShowRoomNotFoundModal(true);
+      } else if (roomResult === "Room is full.") {
+        setShowRoomIsFullModal(true);
+      } else if (roomResult === "Game has already started.") {
+        setShowGameAlreadyStartedModal(true);
+      }
+    }
+  }, [roomResult]);
 
   const [initialEffectRan, setInitialEffectRan] = useState(false);
 
@@ -72,31 +102,9 @@ function Play({ room }: { room: Room | null }) {
 
       setConnectedToRoom(true);
     }
-
-    // player wasn't a part of the room, room is full
-    else if (
-      room &&
-      !room.playerIDsInRoom.includes(userID) &&
-      room.playerIDsInRoom.length >= room.maxPlayers
-    ) {
-      setShowRoomIsFullModal(true);
-    }
-
-    // player wasn't a part of the room, game already started
-    else if (
-      room &&
-      !room.playerIDsInRoom.includes(userID) &&
-      room.gameStarted
-    ) {
-      setShowGameAlreadyStartedModal(true);
-    }
   }, [connectedToRoom, room, setConnectedToRoom, userID]);
 
   useEffect(() => {
-    if (room === null) {
-      setShowRoomNotFoundModal(true);
-    }
-
     if (
       dynamicInitializationFlowStarted ||
       !isLoaded ||
@@ -238,36 +246,6 @@ function Play({ room }: { room: Room | null }) {
 
 export default Play;
 
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const prisma = new PrismaClient();
-
-  if (
-    ctx.params?.roomCode &&
-    typeof ctx.params.roomCode === "string" &&
-    ctx.params.roomCode.length !== 6
-  ) {
-    return {
-      props: {
-        room: null,
-      },
-    };
-  }
-
-  const roomCode = ctx.params?.roomCode;
-
-  const room = await prisma.room.findUnique({
-    where: {
-      code: roomCode ? roomCode[0] : "",
-    },
-  });
-
-  return {
-    props: {
-      room: JSON.parse(JSON.stringify(room)) as Room,
-    },
-  };
-};
-
 function RoomNotFound() {
   const router = useRouter();
 
@@ -276,18 +254,18 @@ function RoomNotFound() {
       <div className="baseVertFlex w-10/12 gap-4 rounded-md border-2 border-lightGreen bg-green-800 p-4 text-lightGreen md:w-[500px] md:p-8">
         <div className="baseFlex gap-2">
           <IoWarningOutline className="h-8 w-8" />
-          <h1 className="text-2xl font-bold">Room not found</h1>
+          <h1 className="text-2xl font-semibold">Room not found</h1>
         </div>
         <p className="text-center text-lg">
           The room you are looking for does not exist.
         </p>
 
         <Button
-          icon={<IoHome size={"1.5rem"} />}
-          innerText={"Return to homepage"}
+          icon={<IoHome size={"1.25rem"} />}
+          innerText={"Return home"}
           iconOnLeft
           onClickFunction={() => router.push("/")}
-          className="mt-4 gap-2"
+          className="mt-4 gap-3"
         />
       </div>
     </div>
@@ -302,18 +280,18 @@ function RoomIsFull() {
       <div className="baseVertFlex w-10/12 gap-4 rounded-md border-2 border-lightGreen bg-green-800 p-4 text-lightGreen md:w-[500px]  md:p-8">
         <div className="baseFlex gap-2">
           <IoWarningOutline className="h-8 w-8" />
-          <h1 className="text-2xl font-bold">Room is full</h1>
+          <h1 className="text-2xl font-semibold">Room is full</h1>
         </div>
         <p className="text-center text-lg">
           The room you are trying to join is full.
         </p>
 
         <Button
-          icon={<IoHome size={"1.5rem"} />}
-          innerText={"Return to homepage"}
+          icon={<IoHome size={"1.25rem"} />}
+          innerText={"Return home"}
           iconOnLeft
           onClickFunction={() => router.push("/")}
-          className="mt-4 gap-2"
+          className="mt-4 gap-3"
         />
       </div>
     </div>
@@ -328,18 +306,18 @@ function GameAlreadyStarted() {
       <div className="baseVertFlex w-10/12 gap-4 rounded-md border-2 border-lightGreen bg-green-800 p-4 text-lightGreen md:w-[500px] md:p-8">
         <div className="baseFlex gap-2">
           <IoWarningOutline className="h-8 w-8" />
-          <h1 className="text-2xl font-bold">Game in progress</h1>
+          <h1 className="text-2xl font-semibold">Game in progress</h1>
         </div>
         <p className="text-center text-lg">
           The room you are trying to join is has already started its game.
         </p>
 
         <Button
-          icon={<IoHome size={"1.5rem"} />}
-          innerText={"Return to homepage"}
+          icon={<IoHome size={"1.25rem"} />}
+          innerText={"Return home"}
           iconOnLeft
           onClickFunction={() => router.push("/")}
-          className="mt-4 gap-2"
+          className="mt-4 gap-3"
         />
       </div>
     </div>

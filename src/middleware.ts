@@ -1,12 +1,14 @@
-import { authMiddleware } from "@clerk/nextjs";
+import {
+  clerkMiddleware,
+  // , createRouteMatcher
+} from "@clerk/nextjs/server";
+// import { clerkClient } from "@clerk/nextjs/server";
+// import { NextResponse } from "next/server";
 
-export default authMiddleware({
-  // not intuitive to let every route be public, but we handle
-  // proper auth protection in each trpc handler and in appropriate pages
-  // with getServerSideProps
-  publicRoutes: ["/(.*)"],
+export default clerkMiddleware(async (auth, req) => {
+  return;
 });
 
 export const config = {
-  matcher: ["/((?!.+\\.[\\w]+$|_next).*)", "/", "/(api|trpc)(.*)"],
+  matcher: ["/((?!.*\\..*|_next).*)", "/", "/(api|trpc)(.*)"],
 };

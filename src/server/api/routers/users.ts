@@ -13,6 +13,21 @@ interface IFormattedStat {
 }
 
 export const usersRouter = createTRPCRouter({
+  isUserRegistered: publicProcedure
+    .input(z.string())
+    .query(async ({ ctx, input: userId }) => {
+      const user = await ctx.prisma.user.findFirst({
+        where: {
+          userId,
+        },
+        select: {
+          userId: true, // prisma throws runtime error if select is empty
+        },
+      });
+
+      return Boolean(user);
+    }),
+
   getUserByID: publicProcedure // maybe go protected if it still will return null on "" input
     .input(z.string())
     .query(async ({ ctx, input }) => {
@@ -48,6 +63,31 @@ export const usersRouter = createTRPCRouter({
       } catch (error) {
         console.log(error);
       }
+    }),
+
+  create: protectedProcedure
+    .input(
+      z.object({
+        userId: z.string(),
+        username: z.string(),
+        imageUrl: z.string(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      await ctx.prisma.user
+        .create({
+          data: {
+            userId: input.userId,
+            username: input.username,
+            imageUrl: input.imageUrl,
+          },
+        })
+        .catch((err) => {
+          console.log(err);
+          return false;
+        });
+
+      return true;
     }),
 
   updateUser: protectedProcedure

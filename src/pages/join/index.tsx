@@ -60,7 +60,9 @@ function JoinRoom() {
   const viewportLabel = useGetViewportLabel();
 
   const { data: queriedRoom } = api.rooms.findRoomByCode.useQuery(
-    submittedRoomCode,
+    {
+      roomCode: submittedRoomCode,
+    },
     {
       refetchOnWindowFocus: false,
     }

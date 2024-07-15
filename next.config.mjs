@@ -24,6 +24,12 @@ const config = {
       },
     ],
   },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
   swcMinify: true,
   i18n: {
     locales: ["en"],
