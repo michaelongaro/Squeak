@@ -2,6 +2,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { UserIDProvider } from "../context/UserIDContext";
 import type { AppProps } from "next/app";
 import { RoomProvider } from "../context/RoomContext";
+import NextProgress from "next-progress";
 import { api } from "~/utils/api";
 import { io } from "socket.io-client";
 import GeneralLayout from "~/components/layout/GeneralLayout";
@@ -40,6 +41,14 @@ function App({ Component, pageProps }: ComponentWithPageLayout) {
       }}
       {...pageProps}
     >
+      <NextProgress
+        color={"rgb(184, 255, 184)"}
+        height={4}
+        delay={300}
+        disableSameRoute
+        options={{ showSpinner: false }}
+      />
+
       <UserIDProvider>
         <RoomProvider>
           <GeneralLayout>

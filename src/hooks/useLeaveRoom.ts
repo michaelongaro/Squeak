@@ -45,14 +45,17 @@ function useLeaveRoom({ routeToNavigateTo }: IUseLeaveRoom) {
       gameStarted: false,
     });
 
-    setPlayerMetadata({
-      [userID]: {
-        username: user?.username ?? "",
-        avatarPath: user?.avatarPath ?? "/avatars/rabbit.svg",
-        color: user?.color ?? "hsl(352deg, 69%, 61%)",
-        deckHueRotation: user?.deckHueRotation ?? 232,
-      } as IRoomPlayer,
-    } as IRoomPlayersMetadata);
+    if (userID !== "") {
+      setPlayerMetadata({
+        [userID]: {
+          username: user?.username ?? "",
+          avatarPath: user?.avatarPath ?? "/avatars/rabbit.svg",
+          color: user?.color ?? "hsl(352deg, 69%, 61%)",
+          deckHueRotation: user?.deckHueRotation ?? 232,
+        } as IRoomPlayer,
+      } as IRoomPlayersMetadata);
+    }
+
     setGameData({} as IGameMetadata);
 
     if (connectedToRoom) {

@@ -281,8 +281,8 @@ export function generateAndEmitScoreboard({
   // pick the first present human player to start the next round
   const playerIDsPresentlyInRoom = Object.keys(room.players).filter(
     (playerID) =>
-      !game?.playerIDsThatLeftMidgame.includes(playerID) &&
-      !room.players[playerID]?.botDifficulty
+      game.playerIDsThatLeftMidgame.includes(playerID) === false &&
+      room.players[playerID]?.botDifficulty === undefined
   );
 
   io.in(roomCode).emit("scoreboardMetadata", {

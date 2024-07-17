@@ -704,7 +704,7 @@ function MainDrawer({ status, setShowDrawer }: IMainDrawer) {
       }}
       className="baseVertFlex w-full"
     >
-      <AnimatePresence mode="popLayout">
+      <AnimatePresence mode="popLayout" initial={false}>
         {renderedView === undefined && (
           <motion.div
             key="mainDrawerTopButtons"
@@ -757,7 +757,7 @@ function MainDrawer({ status, setShowDrawer }: IMainDrawer) {
               </div>
             )}
 
-            <div className="baseFlex mt-2 gap-1.5 py-2 text-sm">
+            <div className="baseFlex gap-1.5 py-2 text-sm">
               Made by
               <a
                 href="https://michaelongaro.com"

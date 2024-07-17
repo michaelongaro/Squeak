@@ -600,12 +600,10 @@ function CreateRoom() {
             innerText={"Create"}
             innerTextWhenLoading={"Creating"}
             disabled={
-              Object.values(playerMetadata)[0]?.username.length === 0 ||
-              usernameIsProfane
+              playerMetadata[userID]?.username.length === 0 || usernameIsProfane
             }
             isDisabled={
-              Object.values(playerMetadata)[0]?.username.length === 0 ||
-              usernameIsProfane
+              playerMetadata[userID]?.username.length === 0 || usernameIsProfane
             }
             onClickFunction={() => createRoom()}
             showLoadingSpinnerOnClick={true}

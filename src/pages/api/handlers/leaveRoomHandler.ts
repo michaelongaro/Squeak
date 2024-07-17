@@ -68,11 +68,10 @@ export async function leaveRoom({
   // workaround because I couldn't get "leaveRoom" emit to work properly on client
   // without calling it multiple times, this gate keeps it from running more than once
   // per player who called it
-  if (!room.players[playerID]) return;
-
+  if (room.players[playerID] === undefined) return;
   // ^^^^ is this returning early somehow?
 
-  if (!game) {
+  if (!room.roomConfig.gameStarted) {
     // safe to directly delete player if game hasn't started yet
     delete room.players[playerID];
   }
@@ -81,21 +80,26 @@ export async function leaveRoom({
   // are in the room
   room.roomConfig.playersInRoom--;
 
-  delete room.players[playerID];
   room.roomConfig.playerIDsInRoom = room.roomConfig.playerIDsInRoom.filter(
     (id) => id !== playerID
   );
 
-  if (game) {
-    // extra precaution to make sure playerID isn't added to array more than once
-    if (game.playerIDsThatLeftMidgame.includes(playerID)) return;
+  // extra precaution to make sure playerID isn't added to array more than once
+  if (
+    room.roomConfig.gameStarted &&
+    game?.playerIDsThatLeftMidgame &&
+    game.playerIDsThatLeftMidgame.includes(playerID) === false
+  ) {
     game.playerIDsThatLeftMidgame.push(playerID);
   }
 
+  const playerIDsThatLeftMidgame =
+    room.roomConfig.gameStarted && game ? game.playerIDsThatLeftMidgame : [];
+
   const playerIDsPresentlyInRoom = Object.keys(room.players).filter(
     (playerID) =>
-      !game?.playerIDsThatLeftMidgame.includes(playerID) &&
-      !room.players[playerID]?.botDifficulty
+      playerIDsThatLeftMidgame.includes(playerID) === false &&
+      room.players[playerID]?.botDifficulty === undefined
   );
 
   // assign a new host (if available) if the host left

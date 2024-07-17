@@ -331,21 +331,21 @@ function PlayerIcon({
             >
               {/* <p className="text-sm italic underline">Difficulty</p> */}
               <div className="baseFlex w-full gap-2">
-                <div className="h-2 w-full rounded-md bg-lightGreen"></div>
+                <div className="h-2 w-full rounded-md bg-lightGreen transition-all"></div>
                 <div
                   className={`${
                     playerMetadata.botDifficulty === "Medium" ||
                     playerMetadata.botDifficulty === "Hard"
                       ? "bg-lightGreen"
                       : "bg-lightGreen/20"
-                  } h-2 w-full rounded-md`}
+                  } h-2 w-full rounded-md transition-all`}
                 ></div>
                 <div
                   className={`${
                     playerMetadata.botDifficulty === "Hard"
                       ? "bg-lightGreen"
                       : "bg-lightGreen/20"
-                  } h-2 w-full rounded-md`}
+                  } h-2 w-full rounded-md transition-all`}
                 ></div>
               </div>
               {roomHostIsRendering ? (
@@ -360,6 +360,7 @@ function PlayerIcon({
                     transform: "translate(-50%, -50%)",
                     minWidth: "fit-content",
                     marginTop: "2rem",
+                    fontSize: "0.875rem",
                   }}
                   onClickFunction={() => {
                     if (!playerID) return;
@@ -379,7 +380,7 @@ function PlayerIcon({
                   }}
                 />
               ) : (
-                <p>{playerMetadata.botDifficulty}</p>
+                <p className="mt-1 text-sm">{playerMetadata.botDifficulty}</p>
               )}
             </div>
           )}

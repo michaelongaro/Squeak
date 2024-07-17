@@ -132,12 +132,14 @@ function LeaderboardModal({ setShowModal }: ILeaderboardModal) {
                         <p className="text-sm lg:text-xl">
                           {orderValues[index]}
                         </p>
-                        <div className="baseFlex w-full gap-4 text-center md:!justify-start">
-                          <PlayerIcon
-                            borderColor={player.color}
-                            avatarPath={player.avatarPath}
-                            size={"2.5rem"}
-                          />
+                        <div className="baseFlex w-full !justify-start gap-4">
+                          <div className="scale-90 sm:scale-100">
+                            <PlayerIcon
+                              borderColor={player.color}
+                              avatarPath={player.avatarPath}
+                              size={"2.5rem"}
+                            />
+                          </div>
                           <p className="text-sm lg:text-xl">
                             {player.username}
                           </p>

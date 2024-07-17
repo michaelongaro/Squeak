@@ -53,7 +53,6 @@ function JoinRoom() {
   const [focusedInInput, setFocusedInInput] = useState<boolean>(false);
   const [usernameIsProfane, setUsernameIsProfane] = useState<boolean>(false);
 
-  const [room, setRoom] = useState<Room | null>(null);
   const [roomError, setRoomError] = useState<string | null>(null);
   const [showAnimation, setShowAnimation] = useState<boolean>(false);
 
@@ -64,6 +63,7 @@ function JoinRoom() {
       roomCode: submittedRoomCode,
     },
     {
+      enabled: submittedRoomCode !== "",
       refetchOnWindowFocus: false,
     }
   );
@@ -123,23 +123,17 @@ function JoinRoom() {
   ]);
 
   useEffect(() => {
-    if (queriedRoom && typeof queriedRoom !== "string") {
-      setRoom(queriedRoom);
+    if (queriedRoom && typeof queriedRoom !== "string" && !connectedToRoom) {
+      setRoomConfig(queriedRoom);
+      setSubmittedRoomCode("");
+      joinRoom();
+
       setRoomError(null);
     } else if (typeof queriedRoom === "string") {
       setRoomError(queriedRoom);
       setShowAnimation(true);
     }
-  }, [queriedRoom]);
-
-  useEffect(() => {
-    // rough way to check whether store data has been initialized
-    if (room && !connectedToRoom) {
-      setRoomConfig(room);
-      setSubmittedRoomCode("");
-      joinRoom();
-    }
-  }, [connectedToRoom, setConnectedToRoom, joinRoom, setRoomConfig, room]);
+  }, [queriedRoom, connectedToRoom, joinRoom, setRoomConfig]);
 
   // TODO: not sure if this will refire & work as expected when player actually joins room socket wise
   useEffect(() => {
@@ -218,8 +212,8 @@ function JoinRoom() {
           }}
           className="baseVertFlex mt-4 gap-8 rounded-md border-2 border-white bg-green-800 p-4"
         >
-          <div className="baseVertFlex gap-4">
-            <div className="baseFlex w-full !justify-between gap-4">
+          <div className="baseVertFlex !items-start gap-4">
+            <div className="baseFlex w-full !justify-between gap-5">
               <label>Username</label>
               <div className="relative">
                 <Input
@@ -278,12 +272,14 @@ function JoinRoom() {
               </div>
             </div>
 
-            <div className="baseFlex w-full !justify-between gap-2">
+            <div className="baseFlex !justify-between gap-3">
               <label>Room code</label>
               <Input
                 type="text"
                 placeholder="optional"
-                className={`${roomCode.length === 0 ? "italic" : ""}`}
+                className={`${
+                  roomCode.length === 0 ? "italic text-gray-300" : ""
+                } w-[120px]`}
                 maxLength={6}
                 onChange={(e) => setRoomCode(e.target.value)}
                 value={roomCode}

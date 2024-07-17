@@ -14,19 +14,15 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  console.log("hit");
+  console.log("cron job starting");
 
-  // Assuming your Socket.IO server is running on the same server but different port or path
-  // Adjust the URL to match your actual Socket.IO server URL
-  //  do we include the :8080? no way right?
-
-  // also make sure this thing closes itself out after it's done
-  const socket = io("https://playsqueak.com/", {
+  const socket = io("https://playsqueak.com:8080", {
+    // ^ do we include the :8080?
     path: "/api/socket",
   });
 
   socket.on("connect", async () => {
-    console.log("Connected to the Socket.IO server as client");
+    console.log("Connected to the Socket.IO server as cron client");
     console.dir(socket);
 
     const oldRooms = await prisma.room.findMany({
@@ -48,16 +44,15 @@ export default async function handler(
         if (code) {
           socket.emit("oldRoomCleanupCron", { code });
         }
+
+        // Close the socket after the last room is processed
+        if (i === oldRooms.length - 1) {
+          socket.close();
+        }
       }, delay);
       delay += 5000;
-
-      if (i === oldRooms.length - 1) {
-        socket.close();
-      }
     }
-    // TODO: not the biggest fan of this delay setup, but should be semi-okay for now
-    // honestly not sure if it's even needed, just didn't want to spam database with
-    // too many operations at once
+    // ^ unsure of if delay is necessary
 
     res
       .status(200)
@@ -70,5 +65,9 @@ export default async function handler(
       status: "error",
       message: "Failed to connect to Socket.IO server",
     });
+  });
+
+  socket.on("disconnect", () => {
+    console.log("Socket disconnected from cron");
   });
 }

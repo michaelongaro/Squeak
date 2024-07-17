@@ -168,7 +168,9 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
               backgroundColor: buttonIsActive
                 ? "hsl(0, 84%, 50%)"
                 : "hsl(0, 84%, 95%)",
-              color: buttonIsActive ? "hsl(0, 84%, 80%)" : "hsl(0, 84%, 40%)",
+              color: buttonIsActive
+                ? "hsl(255, 100%, 100%)"
+                : "hsl(0, 84%, 40%)",
               filter: `brightness(${brightness})`,
             }}
             className={`${cn(

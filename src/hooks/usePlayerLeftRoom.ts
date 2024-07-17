@@ -6,9 +6,6 @@ import { type IPlayerHasLeftRoom } from "./../pages/api/socket";
 import useLeaveRoom from "./useLeaveRoom";
 import { useRouter } from "next/router";
 
-// this hook has auth hook in it but I think it was just from a copy paste
-// from another hook to get a boilerplate
-
 function usePlayerLeftRoom() {
   const userID = useUserIDContext();
   const { push } = useRouter();

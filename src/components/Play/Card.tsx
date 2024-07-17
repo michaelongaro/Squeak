@@ -621,7 +621,7 @@ function Card({
                     ? `hue-rotate(${hueRotation}deg)`
                     : "none",
               }}
-              className="cardDimensions pointer-events-none select-none rounded-[0.25rem]"
+              className="cardDimensions pointer-events-none select-none rounded-[0.15rem]"
               src={
                 showCardBack && !forceShowCardFront
                   ? (cardAssets["cardBack"] as StaticImageData).src

@@ -61,7 +61,7 @@ function PlayerCustomizationDrawer() {
             className="baseVertFlex w-full"
           >
             {/* main three buttons */}
-            <AnimatePresence mode="popLayout">
+            <AnimatePresence mode="popLayout" initial={false}>
               {renderedView === undefined && (
                 <motion.div
                   key="mainButtons"

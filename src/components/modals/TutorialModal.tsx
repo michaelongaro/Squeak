@@ -48,20 +48,19 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
         animate={{ scale: 1 }}
         exit={{ scale: 0.95 }}
         transition={{ duration: 0.15 }}
-        className="baseVertFlex relative h-[95%] w-[95%] !justify-start gap-8 overflow-y-scroll rounded-md rounded-t-md border-2 border-white bg-green-800 p-4 shadow-lg md:p-8 tablet:max-h-[90dvh] tablet:w-auto"
+        className="baseVertFlex relative h-[95%] w-[95%] !justify-start gap-8 overflow-y-scroll rounded-md rounded-t-md border-2 border-white bg-gradient-to-br from-green-800 to-green-900 p-4 shadow-lg md:p-8 tablet:max-h-[90dvh] tablet:w-auto"
       >
         <div
           style={{
             color: "hsl(120deg 100% 86%)",
           }}
-          className="baseFlex gap-4 pt-4 text-xl font-medium lg:text-2xl"
+          className="baseFlex gap-2 pt-4 text-xl font-medium lg:text-2xl"
         >
-          <AiOutlineInfoCircle size={"2rem"} />
+          <AiOutlineInfoCircle size={"1.5rem"} />
           How to play
         </div>
 
-        {/* maybe use other green instead of green-800 */}
-        <fieldset className="rounded-md border-2 border-white bg-green-800 p-4">
+        <fieldset className="rounded-md border-2 border-white p-4">
           <legend
             style={{
               color: "hsl(120deg 100% 86%)",
@@ -76,7 +75,7 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
               style={{
                 color: "hsl(120deg 100% 86%)",
               }}
-              className="w-auto p-4 text-sm lg:w-[1000px] lg:text-base"
+              className="w-auto p-4 pt-0 text-sm lg:w-[1000px] lg:text-base"
             >
               <p>
                 Squeak is a multiplayer rendition of Solitaire, otherwise known
@@ -113,7 +112,7 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
           </div>
         </fieldset>
 
-        <fieldset className="mt-4 rounded-md border-2 border-white bg-green-800 p-4">
+        <fieldset className="mt-4 rounded-md border-2 border-white p-4">
           <legend
             style={{
               color: "hsl(120deg 100% 86%)",
@@ -126,7 +125,7 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
             style={{
               color: "hsl(120deg 100% 86%)",
             }}
-            className="w-auto p-4 text-sm lg:w-[1000px] lg:text-base"
+            className="w-auto p-4 pt-0 text-sm lg:w-[1000px] lg:text-base"
           >
             The goal of each round is to accrue as many points as possible and
             empty your Squeak deck, which reveals your Squeak button. When
@@ -136,7 +135,7 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
           </p>
         </fieldset>
 
-        <fieldset className="mt-4 rounded-md border-2 border-white bg-green-800 p-4">
+        <fieldset className="mt-4 rounded-md border-2 border-white p-4">
           <legend
             style={{
               color: "hsl(120deg 100% 86%)",
@@ -150,7 +149,7 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
             style={{
               color: "hsl(120deg 100% 86%)",
             }}
-            className="baseVertFlex w-auto !justify-start gap-8 p-4 text-sm sm:gap-4 lg:w-[1000px] lg:text-base"
+            className="baseVertFlex w-auto !justify-start gap-8 p-4 pt-0 text-sm sm:gap-4 lg:w-[1000px] lg:text-base"
           >
             <div className="baseVertFlex w-full !items-start !justify-start gap-4 sm:!flex-row">
               <div className="baseFlex h-[35px] w-[35px] rounded-full border-2 border-white sm:h-[35px] sm:w-[38px]">
@@ -241,7 +240,7 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
           </div>
         </fieldset>
 
-        <fieldset className="mt-4 rounded-md border-2 border-white bg-green-800 p-4">
+        <fieldset className="mt-4 rounded-md border-2 border-white p-4">
           <legend
             style={{
               color: "hsl(120deg 100% 86%)",
@@ -254,7 +253,7 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
             style={{
               color: "hsl(120deg 100% 86%)",
             }}
-            className="baseVertFlex w-auto list-disc !items-start gap-4 p-4 pl-8 text-sm lg:w-[1000px] lg:text-base"
+            className="baseVertFlex w-auto list-disc !items-start gap-4 p-4 pl-8 pt-0 text-sm lg:w-[1000px] lg:text-base"
           >
             <li>
               Points are calculated after the end of each round. Each card a
@@ -272,7 +271,7 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
           </ul>
         </fieldset>
 
-        <fieldset className="mt-4 rounded-md border-2 border-white bg-green-800 p-4">
+        <fieldset className="mt-4 rounded-md border-2 border-white p-4">
           <legend
             style={{
               color: "hsl(120deg 100% 86%)",
@@ -285,7 +284,7 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
             style={{
               color: "hsl(120deg 100% 86%)",
             }}
-            className="baseVertFlex w-auto list-disc !items-start gap-4 p-4 pl-8 text-sm lg:w-[1000px] lg:text-base"
+            className="baseVertFlex w-auto list-disc !items-start gap-4 p-4 pl-8 pt-0 text-sm lg:w-[1000px] lg:text-base"
           >
             <li>
               If a player feels that no one has a valid move to make, they may

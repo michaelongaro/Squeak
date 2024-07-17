@@ -193,9 +193,16 @@ const gameData: IGameData = {};
 const friendsData: IFriendsData = {};
 const miscRoomData: IMiscRoomData = {};
 
+// unsure of if this is necessary
+export const config = {
+  api: {
+    externalResolver: true,
+  },
+};
+
 // @ts-expect-error sdf
 export default function SocketHandler(req, res) {
-  // means that socket server was already initialised
+  // means that socket server was already initialized
   if (res.socket.server.io) {
     res.end();
     return;

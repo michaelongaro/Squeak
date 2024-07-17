@@ -55,8 +55,6 @@ export function oldRoomCleanupCron(
       }, delay);
       delay += 5000;
     }
-    // TODO: not the biggest fan of this delay setup, but should be semi-okay for now
-    // honestly not sure if it's even needed, just didn't want to spam database with
-    // too many operations at once
+    // ^ unsure of if delay is necessary
   });
 }

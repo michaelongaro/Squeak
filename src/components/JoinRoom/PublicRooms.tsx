@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState } from "react";
 import { socket } from "~/pages/_app";
 import { useUserIDContext } from "../../context/UserIDContext";
 import { useRoomContext } from "../../context/RoomContext";
@@ -8,6 +8,7 @@ import Filter from "bad-words";
 import { Button } from "~/components/ui/button";
 import { FaUsers } from "react-icons/fa";
 import { BiArrowBack } from "react-icons/bi";
+import { type IRoomConfig } from "~/pages/create";
 import useGetViewportLabel from "~/hooks/useGetViewportLabel";
 import { useRouter } from "next/router";
 
@@ -17,14 +18,8 @@ function PublicRooms() {
   const userID = useUserIDContext();
   const { push } = useRouter();
 
-  const {
-    playerMetadata,
-    setConnectedToRoom,
-    roomConfig,
-    setRoomConfig,
-    connectedToRoom,
-    friendData,
-  } = useRoomContext();
+  const { playerMetadata, setConnectedToRoom, setRoomConfig, friendData } =
+    useRoomContext();
 
   const { data: roomInviteIDs } = api.users.getUsersFromIDList.useQuery(
     friendData?.roomInviteIDs ?? []
@@ -43,7 +38,9 @@ function PublicRooms() {
 
   const viewportLabel = useGetViewportLabel();
 
-  const joinRoom = useCallback(() => {
+  function joinRoom(roomConfig: IRoomConfig) {
+    setRoomConfig(roomConfig);
+
     socket.emit(
       "joinRoom",
       {
@@ -73,26 +70,7 @@ function PublicRooms() {
         }
       }
     }
-  }, [
-    roomConfig,
-    userID,
-    playerMetadata,
-    roomInviteIDs,
-    push,
-    setConnectedToRoom,
-  ]);
-
-  useEffect(() => {
-    if (roomConfig && !connectedToRoom) {
-      joinRoom();
-    }
-  }, [
-    connectedToRoom,
-    setConnectedToRoom,
-    joinRoom,
-    setRoomConfig,
-    roomConfig,
-  ]);
+  }
 
   return (
     <fieldset className="mt-8 w-[360px] rounded-md border-2 border-white bg-green-800 p-2 sm:w-full sm:p-4">
@@ -202,7 +180,7 @@ function PublicRooms() {
                         innerText={
                           viewportLabel.includes("mobile") ? undefined : "Join"
                         }
-                        onClick={() => setRoomConfig(room)}
+                        onClick={() => joinRoom(room)}
                       />
                     </div>
                   </div>
