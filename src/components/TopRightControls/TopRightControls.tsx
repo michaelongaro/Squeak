@@ -39,7 +39,6 @@ import { IoIosCheckmark } from "react-icons/io";
 import { IoClose, IoSave } from "react-icons/io5";
 import useVoteReceived from "~/hooks/useVoteReceived";
 import toast from "react-hot-toast";
-import useGetViewportLabel from "~/hooks/useGetViewportLabel";
 import { HiExternalLink } from "react-icons/hi";
 import { HiEllipsisHorizontal } from "react-icons/hi2";
 import { IoIosArrowForward } from "react-icons/io";
@@ -91,12 +90,12 @@ function TopRightControls() {
     setShowVotingModal,
     showVotingOptionButtons,
     setShowVotingOptionButtons,
+    viewportLabel,
   } = useRoomContext();
 
   const leaveRoom = useLeaveRoom({
     routeToNavigateTo: "/",
   });
-  const viewportLabel = useGetViewportLabel();
   useVoteReceived();
 
   const [showFriendsList, setShowFriendsList] = useState<boolean>(false);
@@ -644,8 +643,7 @@ function VotingModalToast({
           animate={{ opacity: 1, translateY: "0%" }}
           exit={{ opacity: 0, translateY: "-100%" }}
           transition={{ duration: 0.15 }}
-          className={`
-            baseFlex pointer-events-auto h-full w-full max-w-96 rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5`}
+          className={`baseFlex pointer-events-auto h-full w-full max-w-96 rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5`}
         >
           <VotingModal
             showVotingOptionButtons={showVotingOptionButtons}
@@ -839,8 +837,8 @@ function MainDrawer({ status, setShowDrawer }: IMainDrawer) {
               {renderedView === "avatar"
                 ? "Avatar"
                 : renderedView === "front"
-                ? "Card front"
-                : "Card back"}
+                  ? "Card front"
+                  : "Card back"}
             </p>
             <PlayerCustomizationPicker
               type={renderedView}
@@ -1298,13 +1296,13 @@ function DrawerFriendsList({
   } = useRoomContext();
 
   const { data: friends } = api.users.getUsersFromIDList.useQuery(
-    friendData?.friendIDs ?? []
+    friendData?.friendIDs ?? [],
   );
   const { data: friendInviteIDs } = api.users.getUsersFromIDList.useQuery(
-    friendData?.friendInviteIDs ?? []
+    friendData?.friendInviteIDs ?? [],
   );
   const { data: roomInviteIDs } = api.users.getUsersFromIDList.useQuery(
-    friendData?.roomInviteIDs ?? []
+    friendData?.roomInviteIDs ?? [],
   );
 
   useEffect(() => {
@@ -1329,7 +1327,7 @@ function DrawerFriendsList({
         <div className="baseVertFlex w-full !items-start gap-2">
           <div className="baseFlex mb-4 gap-2 border-b-2 border-darkGreen text-xl text-darkGreen">
             <FiMail size={"1.5rem"} />
-            <div className="baseFlex gap-2 ">
+            <div className="baseFlex gap-2">
               Pending
               <div className="baseFlex gap-[0.1rem]">
                 <div>(</div>
@@ -1522,7 +1520,7 @@ function DrawerFriendsList({
               {friends
                 .sort(
                   ({ online: onlineA = false }, { online: onlineB = false }) =>
-                    Number(onlineB) - Number(onlineA)
+                    Number(onlineB) - Number(onlineA),
                 )
                 .map((friend, index) => (
                   <Button
@@ -1797,7 +1795,7 @@ function WhilePlayingDrawer({
 }: IWhilePlayingDrawer) {
   return (
     <div className="baseVertFlex w-full">
-      <div className="baseVertFlex w-full !items-start gap-2  border-darkGreen px-2 py-4">
+      <div className="baseVertFlex w-full !items-start gap-2 border-darkGreen px-2 py-4">
         <Label className="pl-1">Volume</Label>
         <AudioLevelSlider forMobile />
       </div>

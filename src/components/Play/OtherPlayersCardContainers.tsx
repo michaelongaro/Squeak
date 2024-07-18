@@ -10,7 +10,6 @@ import Buzzer from "./Buzzer";
 import Image from "next/image";
 import disconnectIcon from "../../../public/disconnect/disconnect.svg";
 import { AnimatePresence } from "framer-motion";
-import useGetViewportLabel from "../../hooks/useGetViewportLabel";
 
 interface IOtherPlayersCardContainers {
   orderedClassNames: (string | undefined)[];
@@ -46,10 +45,11 @@ function OtherPlayersCardContainers({
     roomConfig,
     squeakStackDragAlterations,
     smallerViewportCardBeingMoved,
+    viewportLabel,
   } = useRoomContext();
 
   const otherPlayerIDs = Object.keys(gameData.players).filter(
-    (playerID) => playerID !== userID
+    (playerID) => playerID !== userID,
   );
 
   const [topOffsetsFromBoard, setTopOffsetsFromBoard] = useState([
@@ -80,8 +80,6 @@ function OtherPlayersCardContainers({
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const viewportLabel = useGetViewportLabel();
-
   const cardDimensions = useResponsiveCardDimensions();
   useRotatePlayerDecks();
 
@@ -89,7 +87,7 @@ function OtherPlayersCardContainers({
     squeakStackIdx: number,
     squeakStackLength: number,
     cardIdx: number,
-    playerID: string
+    playerID: string,
   ) {
     const draggedData = squeakStackDragAlterations[playerID];
 
@@ -197,7 +195,7 @@ function OtherPlayersCardContainers({
                         ))}
                       </div>
                     </div>
-                  )
+                  ),
                 )}
 
                 <div
@@ -237,7 +235,7 @@ function OtherPlayersCardContainers({
                               rotation={rotationOrder[idx] as number}
                             />
                           </div>
-                        )
+                        ),
                       )}
                     </div>
                   )}
@@ -303,7 +301,7 @@ function OtherPlayersCardContainers({
                             rotation={rotationOrder[idx] as number}
                           />
                         </div>
-                      )
+                      ),
                   )}
                 </div>
 
@@ -403,7 +401,7 @@ function OtherPlayersCardContainers({
                             squeakStackIdx,
                             cards.length,
                             cardIdx,
-                            playerID
+                            playerID,
                           ),
                           transition: "top 0.25s ease-in-out",
                         }}
@@ -426,7 +424,7 @@ function OtherPlayersCardContainers({
                     ))}
                   </div>
                 </div>
-              )
+              ),
             )}
 
             <div
@@ -449,7 +447,7 @@ function OtherPlayersCardContainers({
                               ? 150
                               : 90,
                         }}
-                        className="absolute left-0 top-0 h-full w-full select-none "
+                        className="absolute left-0 top-0 h-full w-full select-none"
                       >
                         <Card
                           value={card.value}
@@ -465,7 +463,7 @@ function OtherPlayersCardContainers({
                           rotation={rotationOrder[idx] as number}
                         />
                       </div>
-                    )
+                    ),
                   )}
                 </div>
               )}
@@ -510,7 +508,7 @@ function OtherPlayersCardContainers({
                           rotation={rotationOrder[idx] as number}
                         />
                       </div>
-                    )
+                    ),
                 )}
               </>
             </div>

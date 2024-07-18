@@ -16,7 +16,6 @@ import OtherPlayerIcons from "~/components/Play/OtherPlayerIcons";
 import classes from "~/components/Play/Play.module.css";
 import { Button } from "~/components/ui/button";
 import useSyncClientWithServer from "../../hooks/useSyncClientWithServer";
-import useGetViewportLabel from "../../hooks/useGetViewportLabel";
 import MiniMobileVotingModal from "~/components/modals/MiniMobileVotingModal";
 import { type Room } from "@prisma/client";
 import { useRouter } from "next/router";
@@ -44,6 +43,7 @@ function Play() {
     setShowVotingModal,
     connectedToRoom,
     setConnectedToRoom,
+    viewportLabel,
   } = useRoomContext();
 
   const { data: roomResult } = api.rooms.findRoomByCode.useQuery(
@@ -53,7 +53,7 @@ function Play() {
     },
     {
       enabled: Boolean(roomCode && typeof roomCode === "string"),
-    }
+    },
   );
 
   const [room, setRoom] = useState<Room | null>(null);
@@ -89,8 +89,6 @@ function Play() {
   useResetDeckFromCardDraw();
   useScoreboardData();
   useSyncClientWithServer();
-
-  const viewportLabel = useGetViewportLabel();
 
   const dynamicallyHandleInitializationFlow = useCallback(() => {
     // player was a part of the room already, rejoining.
@@ -277,7 +275,7 @@ function RoomIsFull() {
 
   return (
     <div className="baseVertFlex min-h-[100dvh] py-16">
-      <div className="baseVertFlex w-10/12 gap-4 rounded-md border-2 border-lightGreen bg-green-800 p-4 text-lightGreen md:w-[500px]  md:p-8">
+      <div className="baseVertFlex w-10/12 gap-4 rounded-md border-2 border-lightGreen bg-green-800 p-4 text-lightGreen md:w-[500px] md:p-8">
         <div className="baseFlex gap-2">
           <IoWarningOutline className="h-8 w-8" />
           <h1 className="text-2xl font-semibold">Room is full</h1>

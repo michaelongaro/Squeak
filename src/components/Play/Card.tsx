@@ -156,8 +156,8 @@ function Card({
         });
       }
 
-      cardRef.current.style.transition = "all 300ms ease-in-out, filter 150ms";
-      imageRef.current.style.transition = "transform 150ms linear";
+      cardRef.current.style.transition = "all 325ms ease-in-out, filter 163ms";
+      imageRef.current.style.transition = "transform 163ms ease-in";
 
       const currentImageTransform = imageRef.current.style.transform;
 
@@ -214,7 +214,7 @@ function Card({
           adjustCoordinatesByRotation(
             Math.floor(newPosition.x - currentX),
             Math.floor(newPosition.y - currentY),
-            rotation
+            rotation,
           );
 
         setCardOffsetPosition({
@@ -261,9 +261,9 @@ function Card({
 
           imageRef.current.style.transform = currentImageTransform.replace(
             "rotateY(90deg)",
-            "rotateY(0deg)"
+            "rotateY(0deg)",
           );
-        }, 150);
+        }, 163);
       }
 
       function step(timestamp: number) {
@@ -272,8 +272,10 @@ function Card({
         }
         const elapsed = timestamp - start;
 
-        // trying to add slight buffer around the regular 300ms animation
-        if (elapsed < 325) {
+        // 325ms is the duration of the card movement animation
+        // TODO: we had a +25ms "buffer" on this value before, but I really don't
+        // know if it was helping at all
+        if (elapsed <= 325) {
           if (!done) {
             window.requestAnimationFrame(step);
           }
@@ -304,7 +306,7 @@ function Card({
       heldSqueakStackLocation,
       squeakDeckBeingMovedProgramatically,
       setSqueakDeckBeingMovedProgramatically,
-    ]
+    ],
   );
 
   // hooks to handle socket emits from server
@@ -551,9 +553,9 @@ function Card({
             cardOffsetPosition.y))
     ) {
       transitionStyles =
-        "transform 300ms ease-in-out, filter 100ms ease-in-out";
+        "transform 325ms ease-in-out, filter 100ms ease-in-out";
     } else if (ownerID === userID) {
-      transitionStyles = "filter 150ms ease-in-out";
+      transitionStyles = "filter 163ms ease-in-out";
     } else {
       transitionStyles = "none";
     }
@@ -600,10 +602,10 @@ function Card({
                 inMovingSqueakStack ||
                 cardOffsetPosition.x !== 0 ||
                 cardOffsetPosition.y !== 0
-                  ? 150
+                  ? 163
                   : origin === "deck"
-                  ? 50
-                  : 100, // makes sure child cards stay on top whenever moving
+                    ? 50
+                    : 100, // makes sure child cards stay on top whenever moving
               // TODO: should probably have _all_ styles be directly tied to state, instead of manually
               // setting the .style properties above in moveCard()
             }}

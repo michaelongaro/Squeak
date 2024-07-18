@@ -9,7 +9,6 @@ import { useRoomContext } from "../../../context/RoomContext";
 import PlayerIcon from "../../playerIcons/PlayerIcon";
 import { FaTrophy } from "react-icons/fa6";
 import confettiPopper from "../../../../public/scoreboard/confettiPopper.svg";
-import useGetViewportLabel from "../../../hooks/useGetViewportLabel";
 import { useUserIDContext } from "../../../context/UserIDContext";
 import { type IPlayerRoundDetails } from "../../../pages/api/handlers/roundOverHandler";
 import { Button } from "~/components/ui/button";
@@ -45,6 +44,7 @@ function Scoreboard() {
     currentVolume,
     roomConfig,
     scoreboardMetadata,
+    viewportLabel,
     setPlayerIDWhoSqueaked,
   } = useRoomContext();
 
@@ -73,8 +73,6 @@ function Scoreboard() {
   const [sortedPlayerRoundDetails, setSortedPlayerRoundDetails] = useState<
     IPlayerRoundDetails[]
   >([]);
-
-  const viewportLabel = useGetViewportLabel();
 
   const leftConfettiCannonRef = useRef<HTMLImageElement>(null);
   const rightConfettiCannonRef = useRef<HTMLImageElement>(null);
@@ -117,6 +115,15 @@ function Scoreboard() {
     }, 6000);
 
     setTimeout(() => {
+      console.log(
+        "shooting confetti",
+        "is mobile?",
+        viewportLabel.includes("mobile"),
+      );
+
+      // as a hack, could avoid call to viewportLabel and just directly get it right here from
+      // window.innerWidth and window.innerHeight but feels so bad
+
       setShowConfettiPoppers(true);
 
       if (audioContext && masterVolumeGainNode) {

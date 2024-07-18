@@ -16,7 +16,6 @@ import PlayerCustomizationPreview from "~/components/playerIcons/PlayerCustomiza
 import PlayerIcon from "~/components/playerIcons/PlayerIcon";
 import PlayerCustomizationPopover from "~/components/popovers/PlayerCustomizationPopover";
 import { Button } from "~/components/ui/button";
-import useGetViewportLabel from "~/hooks/useGetViewportLabel";
 import { socket } from "~/pages/_app";
 import { api } from "~/utils/api";
 import { useRoomContext } from "../../context/RoomContext";
@@ -49,6 +48,7 @@ function JoinRoom() {
     connectedToRoom,
     setConnectedToRoom,
     friendData,
+    viewportLabel,
   } = useRoomContext();
 
   const leaveRoom = useLeaveRoom({
@@ -72,8 +72,6 @@ function JoinRoom() {
   const [showRoomIsFullModal, setShowRoomIsFullModal] = useState(false);
   const [showGameAlreadyStartedModal, setShowGameAlreadyStartedModal] =
     useState(false);
-
-  const viewportLabel = useGetViewportLabel();
 
   const { data: roomResult } = api.rooms.findRoomByCode.useQuery(
     {
@@ -379,8 +377,8 @@ function JoinRoom() {
               >
                 <fieldset className="baseVertFlex mt-4 gap-4 rounded-md border-2 border-white bg-green-800 p-4">
                   <legend className="baseFlex gap-2 pl-4 pr-4 text-left text-lg">
-                    Room settings
                     <IoSettingsSharp size={"1.25rem"} />
+                    Room settings
                   </legend>
                   <div className="grid grid-cols-2 grid-rows-4 items-center gap-x-24 gap-y-2 p-2">
                     <div>Points to win:</div>
@@ -425,9 +423,9 @@ function JoinRoom() {
                 </fieldset>
                 <fieldset className="rounded-md border-2 border-white bg-green-800 p-4">
                   <legend className="baseFlex gap-2 pl-4 pr-4 text-left text-lg">
+                    <FaUsers size={"1.25rem"} className="ml-1" />
                     Players
                     <div className="tracking-tighter">{`( ${roomConfig.playersInRoom} / ${roomConfig.maxPlayers} )`}</div>
-                    <FaUsers size={"1.25rem"} className="ml-1" />
                   </legend>
                   <div className="baseVertFlex gap-6 p-2">
                     <div

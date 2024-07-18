@@ -24,7 +24,6 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Input } from "~/components/ui/input";
 import Filter from "bad-words";
 import useLeaveRoom from "../../hooks/useLeaveRoom";
-import useGetViewportLabel from "~/hooks/useGetViewportLabel";
 import PlayerCustomizationPopover from "~/components/popovers/PlayerCustomizationPopover";
 import PlayerCustomizationPreview from "~/components/playerIcons/PlayerCustomizationPreview";
 import PlayerCustomizationDrawer from "~/components/drawers/PlayerCustomizationDrawer";
@@ -78,13 +77,12 @@ function CreateRoom() {
     setConnectedToRoom,
     friendData,
     setGameData,
+    viewportLabel,
   } = useRoomContext();
 
   const leaveRoom = useLeaveRoom({
     routeToNavigateTo: connectedToRoom ? "/create" : "/",
   });
-
-  const viewportLabel = useGetViewportLabel();
 
   const { data: authenticatedUsers } = api.users.getUsersFromIDList.useQuery(
     Object.keys(playerMetadata),
@@ -363,8 +361,8 @@ function CreateRoom() {
             }}
             className="baseFlex gap-2 pl-4 pr-4 text-left text-lg"
           >
-            Room settings
             <IoSettingsSharp size={"1.25rem"} />
+            Room settings
           </legend>
 
           <div
@@ -467,9 +465,9 @@ function CreateRoom() {
           >
             <fieldset className="min-w-[14rem] rounded-md border-2 border-white bg-green-800 p-4">
               <legend className="baseFlex gap-2 pl-4 pr-4 text-left text-lg">
+                <FaUsers size={"1.25rem"} className="ml-1" />
                 Players
                 <div className="tracking-tighter">{`( ${roomConfig.playersInRoom} / ${roomConfig.maxPlayers} )`}</div>
-                <FaUsers size={"1.25rem"} className="ml-1" />
               </legend>
               <div className="baseVertFlex gap-6 p-2">
                 <div

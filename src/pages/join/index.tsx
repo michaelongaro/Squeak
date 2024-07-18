@@ -12,7 +12,6 @@ import PlayerCustomizationPreview from "~/components/playerIcons/PlayerCustomiza
 import PlayerCustomizationPopover from "~/components/popovers/PlayerCustomizationPopover";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
-import useGetViewportLabel from "~/hooks/useGetViewportLabel";
 import { socket } from "~/pages/_app";
 import { api } from "~/utils/api";
 import { useRoomContext } from "../../context/RoomContext";
@@ -42,6 +41,7 @@ function JoinRoom() {
     connectedToRoom,
     setConnectedToRoom,
     friendData,
+    viewportLabel,
   } = useRoomContext();
 
   const leaveRoom = useLeaveRoom({
@@ -56,8 +56,6 @@ function JoinRoom() {
   const [roomError, setRoomError] = useState<string | null>(null);
   const [showAnimation, setShowAnimation] = useState<boolean>(false);
 
-  const viewportLabel = useGetViewportLabel();
-
   const { data: queriedRoom } = api.rooms.findRoomByCode.useQuery(
     {
       roomCode: submittedRoomCode,
@@ -65,11 +63,11 @@ function JoinRoom() {
     {
       enabled: submittedRoomCode !== "",
       refetchOnWindowFocus: false,
-    }
+    },
   );
 
   const { data: roomInviteIDs } = api.users.getUsersFromIDList.useQuery(
-    friendData?.roomInviteIDs ?? []
+    friendData?.roomInviteIDs ?? [],
   );
 
   const joinRoom = useCallback(() => {
@@ -85,7 +83,7 @@ function JoinRoom() {
           setConnectedToRoom(true);
           push(`join/${roomCode}`);
         }
-      }
+      },
     );
 
     if (!queriedRoom || typeof queriedRoom === "string" || !isSignedIn) return;

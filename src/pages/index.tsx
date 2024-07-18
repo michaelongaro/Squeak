@@ -13,12 +13,12 @@ import LeaderboardModal from "~/components/modals/LeaderboardModal";
 import { HiExternalLink } from "react-icons/hi";
 import Image from "next/image";
 import logo from "public/logo/squeakLogo.svg";
-import useGetViewportLabel from "~/hooks/useGetViewportLabel";
 import { Button } from "~/components/ui/button";
 import { useRouter } from "next/router";
 import useReceiveFriendData from "~/hooks/useReceiveFriendData";
 import useInitializeUserStats from "~/hooks/useInitializeUserStats";
 import usePostSignUpRegistration from "~/hooks/usePostSignUpRegistration";
+import { useRoomContext } from "~/context/RoomContext";
 
 function MainOptions() {
   const { isSignedIn } = useAuth();
@@ -28,16 +28,18 @@ function MainOptions() {
   // probably want to remove the default "refetch on page focus" behavior
   const { data: user } = api.users.getUserByID.useQuery(userID);
 
+  const { viewportLabel } = useRoomContext();
+
   const [hoveringOnAboutMe, setHoveringOnAboutMe] = useState(false);
   const [showTutorialModal, setShowTutorialModal] = useState(false);
   const [showLeaderboardModal, setShowLeaderboardModal] = useState(false);
-
-  const viewportLabel = useGetViewportLabel();
 
   useReceiveFriendData();
   useInitializeUserStats();
 
   usePostSignUpRegistration();
+
+  console.log(viewportLabel);
 
   return (
     <motion.div
@@ -140,11 +142,7 @@ function MainOptions() {
             transition: "all 0.3s ease-in-out",
           }}
           // leading-normal md:leading-6
-          className={`baseFlex fixed 
-          
-          ${hoveringOnAboutMe ? "shadow-md" : "shadow-none"}
-          ${hoveringOnAboutMe ? "w-[18rem]" : "w-8"}
-        bottom-2 right-2 !justify-end overflow-hidden rounded-full border-2 px-[0.75rem] py-[0.15rem] md:px-[0.7rem] md:py-0 lg:bottom-4 lg:right-4`}
+          className={`baseFlex fixed ${hoveringOnAboutMe ? "shadow-md" : "shadow-none"} ${hoveringOnAboutMe ? "w-[18rem]" : "w-8"} bottom-2 right-2 !justify-end overflow-hidden rounded-full border-2 px-[0.75rem] py-[0.15rem] md:px-[0.7rem] md:py-0 lg:bottom-4 lg:right-4`}
           onPointerEnter={() => setHoveringOnAboutMe(true)}
           onPointerLeave={() => setHoveringOnAboutMe(false)}
         >

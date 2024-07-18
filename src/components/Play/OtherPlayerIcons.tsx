@@ -3,14 +3,11 @@ import { useUserIDContext } from "../../context/UserIDContext";
 import { useRoomContext } from "../../context/RoomContext";
 import PlayerIcon from "../playerIcons/PlayerIcon";
 import { AnimatePresence, motion } from "framer-motion";
-import useGetViewportLabel from "../../hooks/useGetViewportLabel";
-import Image from "next/image";
-import disconnectIcon from "public/disconnect/disconnect.svg";
 
 function OtherPlayerIcons() {
   const userID = useUserIDContext();
 
-  const { gameData, playerMetadata } = useRoomContext();
+  const { gameData, playerMetadata, viewportLabel } = useRoomContext();
 
   // don't need leftPlayerIconRef since it is flows left-to-right already
   // and doesn't need any offset positioning wise.
@@ -28,7 +25,7 @@ function OtherPlayerIcons() {
   const [hideUsernames, setHideUsernames] = useState(false);
 
   const otherPlayerIDs = Object.keys(gameData.players).filter(
-    (playerID) => playerID !== userID
+    (playerID) => playerID !== userID,
   );
 
   // maybe turn into actual state?
@@ -40,8 +37,6 @@ function OtherPlayerIcons() {
     playerIDsShowingSqueakButton[id] =
       gameData.players[id]?.squeakDeck.length === 0;
   }
-
-  const viewportLabel = useGetViewportLabel();
 
   // probably easier to adj offsets for squeak button based on initial position of
   // containers, and only recalculate if those values have changed
@@ -139,7 +134,7 @@ function OtherPlayerIcons() {
               style={{
                 ...absolutePositioning[0],
                 opacity: gameData.playerIDsThatLeftMidgame.includes(
-                  otherPlayerIDs[0]
+                  otherPlayerIDs[0],
                 )
                   ? 0.25
                   : 1,
@@ -179,7 +174,7 @@ function OtherPlayerIcons() {
               style={{
                 ...absolutePositioning[1],
                 opacity: gameData.playerIDsThatLeftMidgame.includes(
-                  otherPlayerIDs[1]
+                  otherPlayerIDs[1],
                 )
                   ? 0.25
                   : 1,
@@ -220,7 +215,7 @@ function OtherPlayerIcons() {
               style={{
                 ...absolutePositioning[2],
                 opacity: gameData.playerIDsThatLeftMidgame.includes(
-                  otherPlayerIDs[2]
+                  otherPlayerIDs[2],
                 )
                   ? 0.25
                   : 1,

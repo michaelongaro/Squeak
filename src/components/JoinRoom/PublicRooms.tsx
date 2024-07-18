@@ -9,7 +9,6 @@ import { Button } from "~/components/ui/button";
 import { FaUsers } from "react-icons/fa";
 import { BiArrowBack } from "react-icons/bi";
 import { type IRoomConfig } from "~/pages/create";
-import useGetViewportLabel from "~/hooks/useGetViewportLabel";
 import { useRouter } from "next/router";
 
 const filter = new Filter();
@@ -18,11 +17,16 @@ function PublicRooms() {
   const userID = useUserIDContext();
   const { push } = useRouter();
 
-  const { playerMetadata, setConnectedToRoom, setRoomConfig, friendData } =
-    useRoomContext();
+  const {
+    playerMetadata,
+    setConnectedToRoom,
+    setRoomConfig,
+    friendData,
+    viewportLabel,
+  } = useRoomContext();
 
   const { data: roomInviteIDs } = api.users.getUsersFromIDList.useQuery(
-    friendData?.roomInviteIDs ?? []
+    friendData?.roomInviteIDs ?? [],
   );
 
   const {
@@ -35,8 +39,6 @@ function PublicRooms() {
 
   const [fetchingNewRooms, setFetchingNewRooms] = useState<boolean>(false);
   const [hoveredIndex, setHoveredIndex] = useState<number>(-1);
-
-  const viewportLabel = useGetViewportLabel();
 
   function joinRoom(roomConfig: IRoomConfig) {
     setRoomConfig(roomConfig);
@@ -53,7 +55,7 @@ function PublicRooms() {
           setConnectedToRoom(true);
           push(`join/${roomConfig.code}`);
         }
-      }
+      },
     );
 
     // if player has invite(s) to this room, remove them
@@ -156,19 +158,19 @@ function PublicRooms() {
                       {room.playersInRoom} / {room.maxPlayers}
                     </div>
 
-                    <div className="absolute right-2 sm:right-4 ">
+                    <div className="absolute right-2 sm:right-4">
                       <Button
                         variant={"secondary"}
                         disabled={
                           playerMetadata[userID]?.username.length === 0 ||
                           filter.isProfane(
-                            playerMetadata[userID]?.username ?? ""
+                            playerMetadata[userID]?.username ?? "",
                           )
                         }
                         isDisabled={
                           playerMetadata[userID]?.username.length === 0 ||
                           filter.isProfane(
-                            playerMetadata[userID]?.username ?? ""
+                            playerMetadata[userID]?.username ?? "",
                           )
                         }
                         className="px-2"

@@ -20,7 +20,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "~/components/ui/popover";
-import useGetViewportLabel from "~/hooks/useGetViewportLabel";
 import { Drawer, DrawerTrigger, DrawerContent } from "~/components/ui/drawer";
 import { FiMail } from "react-icons/fi";
 
@@ -55,13 +54,11 @@ function PlayerIcon({
 }: IPlayerIcon) {
   const userID = useUserIDContext();
 
-  const { roomConfig } = useRoomContext();
+  const { roomConfig, viewportLabel } = useRoomContext();
 
   const [friendInviteSent, setFriendInviteSent] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [popoverOpen, setPopoverOpen] = useState(false);
-
-  const viewportLabel = useGetViewportLabel();
 
   return (
     <>
@@ -373,8 +370,8 @@ function PlayerIcon({
                           playerMetadata.botDifficulty === "Easy"
                             ? "Medium"
                             : playerMetadata.botDifficulty === "Medium"
-                            ? "Hard"
-                            : "Easy",
+                              ? "Hard"
+                              : "Easy",
                       },
                     });
                   }}

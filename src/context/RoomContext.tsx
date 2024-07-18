@@ -11,6 +11,7 @@ import { type IGameMetadata } from "../pages/api/socket";
 import { type IScoreboardMetadata } from "../pages/api/handlers/roundOverHandler";
 import { useUserIDContext } from "./UserIDContext";
 import { api } from "~/utils/api";
+import useGetViewportLabel from "~/hooks/useGetViewportLabel";
 
 interface IHeldSqueakStackLocation {
   [playerID: string]: {
@@ -44,6 +45,7 @@ export interface IInitSqueakStackCardBeingDealt {
 }
 
 interface IRoomContext {
+  viewportLabel: "mobile" | "mobileLarge" | "tablet" | "desktop";
   audioContext: AudioContext | null;
   masterVolumeGainNode: GainNode | null;
   showSettingsModal: boolean;
@@ -172,6 +174,8 @@ export function RoomProvider(props: { children: React.ReactNode }) {
   // probably want to remove the default "refetch on page focus" behavior
   const { data: user } = api.users.getUserByID.useQuery(userID);
 
+  const viewportLabel = useGetViewportLabel();
+
   const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
   const [masterVolumeGainNode, setMasterVolumeGainNode] =
     useState<GainNode | null>(null);
@@ -206,7 +210,7 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     gameStarted: false,
   });
   const [playerMetadata, setPlayerMetadata] = useState<IRoomPlayersMetadata>(
-    {} as IRoomPlayersMetadata
+    {} as IRoomPlayersMetadata,
   );
 
   const [mirrorPlayerContainer, setMirrorPlayerContainer] =
@@ -219,7 +223,7 @@ export function RoomProvider(props: { children: React.ReactNode }) {
 
   const [hoveredCell, setHoveredCell] = useState<[number, number] | null>(null);
   const [hoveredSqueakStack, setHoveredSqueakStack] = useState<number | null>(
-    null
+    null,
   );
   const [holdingADeckCard, setHoldingADeckCard] = useState<boolean>(false);
   const [holdingASqueakCard, setHoldingASqueakCard] = useState<boolean>(false);
@@ -236,7 +240,7 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     useState<boolean>(false);
 
   const [playerIDWhoSqueaked, setPlayerIDWhoSqueaked] = useState<string | null>(
-    null
+    null,
   );
 
   const [connectedToRoom, setConnectedToRoom] = useState<boolean>(false);
@@ -271,7 +275,7 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     }>({});
 
   const [currentVotes, setCurrentVotes] = useState<("agree" | "disagree")[]>(
-    []
+    [],
   );
   const [voteType, setVoteType] = useState<
     "rotateDecks" | "finishRound" | null
@@ -298,19 +302,19 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     };
 
     fetchAudioFile("/sounds/successfulMove.mp3").then((buffer) =>
-      setSuccessfulMoveBuffer(buffer)
+      setSuccessfulMoveBuffer(buffer),
     );
     fetchAudioFile("/sounds/notAllowed.mp3").then((buffer) =>
-      setNotAllowedMoveBuffer(buffer)
+      setNotAllowedMoveBuffer(buffer),
     );
     fetchAudioFile("/sounds/otherPlayerCardMove.mp3").then((buffer) =>
-      setOtherPlayerCardMoveBuffer(buffer)
+      setOtherPlayerCardMoveBuffer(buffer),
     );
     fetchAudioFile("/sounds/squeakButtonPress.mp3").then((buffer) =>
-      setSqueakButtonPressBuffer(buffer)
+      setSqueakButtonPressBuffer(buffer),
     );
     fetchAudioFile("/sounds/confettiPop.mp3").then((buffer) =>
-      setConfettiPopBuffer(buffer)
+      setConfettiPopBuffer(buffer),
     );
   }, [audioContext]);
 
@@ -337,7 +341,7 @@ export function RoomProvider(props: { children: React.ReactNode }) {
 
     localStorage.setItem(
       "squeakPrefersSimpleCardAssets",
-      prefersSimpleCardAssets.toString()
+      prefersSimpleCardAssets.toString(),
     );
   }, [prefersSimpleCardAssets]);
 
@@ -411,6 +415,7 @@ export function RoomProvider(props: { children: React.ReactNode }) {
   }, [userID, user, playerMetadata, isLoaded, isSignedIn]);
 
   const context: IRoomContext = {
+    viewportLabel,
     audioContext,
     masterVolumeGainNode,
     successfulMoveBuffer,

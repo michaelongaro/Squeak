@@ -5,7 +5,6 @@ import { useUserIDContext } from "../../context/UserIDContext";
 import { useRoomContext } from "../../context/RoomContext";
 import baseplate from "../../../public/buzzer/baseplate.png";
 import squeakBuzzer from "../../../public/buzzer/buzzerButton.png";
-import useGetViewportLabel from "~/hooks/useGetViewportLabel";
 interface IBuzzer {
   playerID: string;
   roomCode: string;
@@ -22,6 +21,7 @@ function Buzzer({ playerID, roomCode, interactive }: IBuzzer) {
     currentVolume,
     playerMetadata,
     playerIDWhoSqueaked,
+    viewportLabel,
   } = useRoomContext();
 
   const [hoveringOnButton, setHoveringOnButton] = useState<boolean>(false);
@@ -30,8 +30,6 @@ function Buzzer({ playerID, roomCode, interactive }: IBuzzer) {
 
   const [playExpandingPulseWaveAnimation, setPlayExpandingPulseWaveAnimation] =
     useState<boolean>(false);
-
-  const viewportLabel = useGetViewportLabel();
 
   useEffect(() => {
     if (playerIDWhoSqueaked !== playerID) return;
