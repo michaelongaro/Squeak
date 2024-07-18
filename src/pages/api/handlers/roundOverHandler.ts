@@ -119,7 +119,8 @@ export function generateAndEmitScoreboard({
 
     if (!player) return;
 
-    const deckCards = player.deck;
+    // all cards in player's hand need to be counted as deck cards
+    const deckCards = [...player.deck, ...player.hand];
     const squeakDeckCards = player.squeakDeck;
     const squeakHandCards = player.squeakHand.flat();
 
@@ -150,7 +151,8 @@ export function generateAndEmitScoreboard({
 
     if (!player) return;
 
-    const deckCards = player.deck;
+    // all cards in player's hand need to be counted as deck cards
+    const deckCards = [...player.deck, ...player.hand];
     const squeakDeckCards = player.squeakDeck;
     const squeakHandCards = player.squeakHand.flat();
 
@@ -165,7 +167,7 @@ export function generateAndEmitScoreboard({
     const oldScore = player.totalPoints;
     const newScore = oldScore + cardsPlayed.length + squeakModifier;
     const oldRanking = player.rankInRoom;
-    const newRanking = oldRanking; // we calculate this value down later once playerRoundDetails is populated
+    const newRanking = oldRanking; // we calculate this value farther below once playerRoundDetails is populated
 
     playerRoundDetails[playerID] = {
       playerID,
