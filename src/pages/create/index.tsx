@@ -87,7 +87,7 @@ function CreateRoom() {
   const viewportLabel = useGetViewportLabel();
 
   const { data: authenticatedUsers } = api.users.getUsersFromIDList.useQuery(
-    Object.keys(playerMetadata)
+    Object.keys(playerMetadata),
   );
 
   const [configAndMetadataInitialized, setConfigAndMetadataInitialized] =
@@ -186,7 +186,7 @@ function CreateRoom() {
       ] as string;
     } while (
       Object.values(playerMetadata).findIndex(
-        (player) => player?.username === uniqueBotName
+        (player) => player?.username === uniqueBotName,
       ) !== -1
     );
 
@@ -374,7 +374,7 @@ function CreateRoom() {
             className="grid grid-cols-2 grid-rows-4 items-center gap-y-4 p-1 sm:p-2"
           >
             <Label>Points to win:</Label>
-            <div className=" baseFlex !justify-between gap-2 pl-4 pr-4">
+            <div className="baseFlex !justify-between gap-2 pl-4 pr-4">
               <SecondaryButton
                 innerText={"-25"}
                 disabled={roomConfig.pointsToWin <= 25}
@@ -405,7 +405,7 @@ function CreateRoom() {
               values={[2, 3, 4]}
               disabledIndicies={[0, 1, 2].slice(
                 0,
-                Math.max(0, Object.keys(playerMetadata).length - 2)
+                Math.max(0, Object.keys(playerMetadata).length - 2),
               )}
               currentValueIndex={[2, 3, 4].indexOf(roomConfig.maxPlayers)}
               onClickFunctions={[
@@ -419,7 +419,7 @@ function CreateRoom() {
             <Radio
               values={["Public", "Private"]}
               currentValueIndex={["Public", "Private"].indexOf(
-                roomConfig.isPublic ? "Public" : "Private"
+                roomConfig.isPublic ? "Public" : "Private",
               )}
               onClickFunctions={[
                 () => updateRoomConfig("isPublic", true),
@@ -448,7 +448,7 @@ function CreateRoom() {
                 extraPadding={false}
                 onClickFunction={() => {
                   navigator.clipboard.writeText(
-                    `${process.env.NEXT_PUBLIC_DOMAIN_URL}/join/${roomConfig.code}`
+                    `${process.env.NEXT_PUBLIC_DOMAIN_URL}/join/${roomConfig.code}`,
                   );
                   setShowCheckmark(true);
                   setTimeout(() => setShowCheckmark(false), 1000);
@@ -468,8 +468,8 @@ function CreateRoom() {
             <fieldset className="min-w-[14rem] rounded-md border-2 border-white bg-green-800 p-4">
               <legend className="baseFlex gap-2 pl-4 pr-4 text-left text-lg">
                 Players
-                <div className="tracking-widest">{`(${roomConfig.playersInRoom}/${roomConfig.maxPlayers})`}</div>
-                <FaUsers size={"1.25rem"} />
+                <div className="tracking-tighter">{`( ${roomConfig.playersInRoom} / ${roomConfig.maxPlayers} )`}</div>
+                <FaUsers size={"1.25rem"} className="ml-1" />
               </legend>
               <div className="baseVertFlex gap-6 p-2">
                 <div
@@ -496,7 +496,7 @@ function CreateRoom() {
                         friendData?.friendIDs?.indexOf(playerID) === -1 &&
                         authenticatedUsers
                           ? authenticatedUsers.findIndex(
-                              (player) => player.id === playerID
+                              (player) => player.id === playerID,
                             ) !== -1
                           : false
                       }

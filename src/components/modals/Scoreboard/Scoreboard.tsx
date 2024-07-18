@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo, useRef } from "react";
+import { socket } from "~/pages/_app";
 import AnimatedCardContainer from "./AnimatedCardContainer";
 import AnimatedNumber from "react-awesome-animated-number";
 import confetti from "canvas-confetti";
@@ -7,27 +8,21 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useRoomContext } from "../../../context/RoomContext";
 import PlayerIcon from "../../playerIcons/PlayerIcon";
 import { FaTrophy } from "react-icons/fa6";
-import confettiCannon from "../../../../public/scoreboard/confettiCannon.svg";
+import confettiPopper from "../../../../public/scoreboard/confettiPopper.svg";
 import useGetViewportLabel from "../../../hooks/useGetViewportLabel";
 import { useUserIDContext } from "../../../context/UserIDContext";
 import { type IPlayerRoundDetails } from "../../../pages/api/handlers/roundOverHandler";
+import { Button } from "~/components/ui/button";
 
 interface IRanking {
   [key: number]: string;
 }
 
 const ranking: IRanking = {
-  1: "🥇 1st",
-  2: "🥈 2nd",
-  3: "🥉 3rd",
+  1: "1st",
+  2: "2nd",
+  3: "3rd",
   4: "4th",
-};
-
-const justEmojiRanks: IRanking = {
-  1: "🥇",
-  2: "🥈",
-  3: "🥉",
-  4: "",
 };
 
 interface IPlayerColorVariants {
@@ -48,7 +43,9 @@ function Scoreboard() {
     confettiPopBuffer,
     playerMetadata,
     currentVolume,
+    roomConfig,
     scoreboardMetadata,
+    setPlayerIDWhoSqueaked,
   } = useRoomContext();
 
   const [initalizedTimers, setInitalizedTimers] = useState(false);
@@ -56,16 +53,19 @@ function Scoreboard() {
   const [showNewRankings, setShowNewRankings] = useState<boolean>(false);
   const [showWinningPlayerMessage, setShowWinningPlayerMessage] =
     useState<boolean>(false);
-  const [showCountdownTimer, setShowCountdownTimer] = useState<boolean>(false);
+  const [showHostActionButton, setShowHostActionButton] =
+    useState<boolean>(false);
+  // const [showCountdownTimer, setShowCountdownTimer] = useState<boolean>(false);
 
   const [animateCardsPlayedValue, setAnimateCardsPlayedValue] =
     useState<boolean>(false);
   const [animateSqueakModifierValue, setAnimateSqueakModifierValue] =
     useState<boolean>(false);
   const [animateTotalValue, setAnimateTotalValue] = useState<boolean>(false);
-  const [showConfetti, setShowConfetti] = useState<boolean>(false);
+  const [showConfettiPoppers, setShowConfettiPoppers] =
+    useState<boolean>(false);
 
-  const [countdownTimerValue, setCountdownTimerValue] = useState<number>(3);
+  // const [countdownTimerValue, setCountdownTimerValue] = useState<number>(3);
 
   const [playerColorVariants, setPlayerColorVariants] =
     useState<IPlayerColorVariants>({});
@@ -100,7 +100,7 @@ function Scoreboard() {
       // set with sorted playerIDs by their newScore
 
       const playerRoundDetailsArray = Object.values(
-        scoreboardMetadata!.playerRoundDetails
+        scoreboardMetadata!.playerRoundDetails,
       );
 
       playerRoundDetailsArray.sort((a, b) => {
@@ -117,7 +117,7 @@ function Scoreboard() {
     }, 6000);
 
     setTimeout(() => {
-      setShowConfetti(true);
+      setShowConfettiPoppers(true);
 
       if (audioContext && masterVolumeGainNode) {
         const confettiPopBufferSource = audioContext.createBufferSource();
@@ -155,8 +155,8 @@ function Scoreboard() {
           },
           {
             particleCount: 100,
-          }
-        )
+          },
+        ),
       );
 
       confetti(
@@ -176,22 +176,28 @@ function Scoreboard() {
           },
           {
             particleCount: 100,
-          }
-        )
+          },
+        ),
       );
     }, 6500);
 
     setTimeout(() => {
-      setShowCountdownTimer(true);
+      setShowHostActionButton(true);
+    }, 8500);
 
-      setTimeout(() => {
-        setCountdownTimerValue(2);
-      }, 1000);
+    // TODO: re-enable this functionality with special handler on backend that listens/propagates
+    // out to other players when host has clicked to move back to lobby/start next round
+    // setTimeout(() => {
+    //   setShowCountdownTimer(true);
 
-      setTimeout(() => {
-        setCountdownTimerValue(1);
-      }, 2000);
-    }, 10000);
+    //   setTimeout(() => {
+    //     setCountdownTimerValue(2);
+    //   }, 1000);
+
+    //   setTimeout(() => {
+    //     setCountdownTimerValue(1);
+    //   }, 2000);
+    // }, 10000);
   }, [
     initalizedTimers,
     currentVolume,
@@ -200,6 +206,7 @@ function Scoreboard() {
     confettiPopBuffer,
     viewportLabel,
     scoreboardMetadata,
+    userID,
   ]);
 
   useEffect(() => {
@@ -209,7 +216,7 @@ function Scoreboard() {
       Object.values(scoreboardMetadata.playerRoundDetails)[0]?.oldScore !== 0
     ) {
       const playerRoundDetailsArray = Object.values(
-        scoreboardMetadata.playerRoundDetails
+        scoreboardMetadata.playerRoundDetails,
       );
 
       playerRoundDetailsArray.sort((a, b) => {
@@ -219,7 +226,7 @@ function Scoreboard() {
       setSortedPlayerRoundDetails(playerRoundDetailsArray);
     } else if (scoreboardMetadata) {
       setSortedPlayerRoundDetails(
-        Object.values(scoreboardMetadata.playerRoundDetails)
+        Object.values(scoreboardMetadata.playerRoundDetails),
       );
     }
   }, [scoreboardMetadata]);
@@ -236,7 +243,7 @@ function Scoreboard() {
 
       const strippedHSLColor = hslColor.slice(0, -4);
       const lightness = parseInt(
-        hslColor.slice(hslColor.length - 4, hslColor.length).trim()
+        hslColor.slice(hslColor.length - 4, hslColor.length).trim(),
       );
 
       newPlayerColorVariants[userID] = {
@@ -336,7 +343,7 @@ function Scoreboard() {
                             transition={{ duration: 0.15 }}
                             className="col-start-1 row-start-1 drop-shadow-md"
                           >
-                            {justEmojiRanks[player.newRanking]}
+                            {ranking[player.newRanking]}
                           </motion.div>
                         )}
                       </AnimatePresence>
@@ -350,7 +357,7 @@ function Scoreboard() {
                             transition={{ duration: 0.15 }}
                             className="col-start-1 row-start-1 drop-shadow-md"
                           >
-                            {justEmojiRanks[player.oldRanking] ?? "-"}
+                            {ranking[player.oldRanking] ?? "-"}
                           </motion.div>
                         )}
                       </AnimatePresence>
@@ -381,7 +388,7 @@ function Scoreboard() {
                           playerColorVariants[player.playerID]?.baseColor ??
                           "white",
                       }}
-                      className="baseFlex h-8 w-full rounded-r-md "
+                      className="baseFlex h-8 w-full rounded-r-md"
                     >
                       <AnimatedNumber
                         value={
@@ -442,7 +449,7 @@ function Scoreboard() {
                       }}
                       className="baseVertFlex absolute left-0 top-0 z-[3] w-full bg-black bg-opacity-30 p-2"
                     >
-                      <div className="align-center flex w-full justify-between px-8 ">
+                      <div className="align-center flex w-full justify-between px-8">
                         Cards played
                         <div className="baseFlex">
                           <div
@@ -579,14 +586,14 @@ function Scoreboard() {
                 <Image
                   ref={leftConfettiCannonRef}
                   style={{
-                    opacity: showConfetti ? 1 : 0,
-                    transform: showConfetti
+                    opacity: showConfettiPoppers ? 1 : 0,
+                    transform: showConfettiPoppers
                       ? "scale(1) rotate(225deg)"
                       : "scale(0) rotate(225deg)",
                     filter: "drop-shadow(rgba(0,0,0, 0.10) 0px 0px 0.5rem)",
                   }}
                   className="h-6 w-6 transition-all"
-                  src={confettiCannon}
+                  src={confettiPopper}
                   alt={"left celebratory confetti cannon"}
                 />
 
@@ -631,18 +638,18 @@ function Scoreboard() {
                 <Image
                   ref={rightConfettiCannonRef}
                   style={{
-                    opacity: showConfetti ? 1 : 0,
-                    transform: showConfetti
+                    opacity: showConfettiPoppers ? 1 : 0,
+                    transform: showConfettiPoppers
                       ? "scale(1) rotate(135deg)"
                       : "scale(0) rotate(135deg)",
                     filter: "drop-shadow(rgba(0,0,0, 0.10) 0px 0px 0.5rem)",
                   }}
                   className="h-6 w-6 transition-all"
-                  src={confettiCannon}
+                  src={confettiPopper}
                   alt={"right celebratory confetti cannon"}
                 />
               </div>
-              <div
+              {/* <div
                 style={{
                   opacity: showCountdownTimer ? 1 : 0,
                   pointerEvents: showCountdownTimer ? "auto" : "none",
@@ -661,7 +668,7 @@ function Scoreboard() {
                   order={"desc"}
                   size={16}
                 />
-              </div>
+              </div> */}
             </div>
           )}
         </motion.div>
@@ -745,7 +752,6 @@ function Scoreboard() {
                       }}
                       className="relative z-[1] h-full w-full overflow-hidden"
                     >
-                      {/* ideally some kind of glassmorphism  */}
                       <div
                         style={{
                           backgroundColor:
@@ -754,7 +760,7 @@ function Scoreboard() {
                         }}
                         className="baseVertFlex absolute left-0 top-0 z-[3] w-full bg-black bg-opacity-30 p-2"
                       >
-                        <div className="align-center flex w-full justify-between px-4 text-lg desktop:px-8 ">
+                        <div className="align-center flex w-full justify-between px-4 text-lg desktop:px-8">
                           Cards played
                           <div className="baseFlex">
                             <div
@@ -866,7 +872,7 @@ function Scoreboard() {
                       </AnimatePresence>
                     </div>
                   </div>
-                )
+                ),
               )}
             </div>
 
@@ -887,14 +893,14 @@ function Scoreboard() {
               <Image
                 ref={leftConfettiCannonRef}
                 style={{
-                  opacity: showConfetti ? 1 : 0,
-                  transform: showConfetti
+                  opacity: showConfettiPoppers ? 1 : 0,
+                  transform: showConfettiPoppers
                     ? "scale(1) rotate(135deg)"
                     : "scale(0) rotate(135deg)",
                   filter: "drop-shadow(rgba(0,0,0, 0.10) 0px 0px 0.5rem)",
                 }}
                 className="h-8 w-8 transition-all"
-                src={confettiCannon}
+                src={confettiPopper}
                 alt={"left celebratory confetti cannon"}
               />
 
@@ -935,19 +941,73 @@ function Scoreboard() {
               <Image
                 ref={rightConfettiCannonRef}
                 style={{
-                  opacity: showConfetti ? 1 : 0,
-                  transform: showConfetti
+                  opacity: showConfettiPoppers ? 1 : 0,
+                  transform: showConfettiPoppers
                     ? "scale(1) rotate(225deg)"
                     : "scale(0) rotate(225deg)",
                   filter: "drop-shadow(rgba(0,0,0, 0.10) 0px 0px 0.5rem)",
                 }}
                 className="h-8 w-8 transition-all"
-                src={confettiCannon}
+                src={confettiPopper}
                 alt={"right celebratory confetti cannon"}
               />
             </div>
 
             <div
+              style={{
+                opacity: showHostActionButton ? 1 : 0,
+                pointerEvents: showHostActionButton ? "auto" : "none",
+              }}
+              className="baseFlex gap-2"
+            >
+              {userID === roomConfig.hostUserID ? (
+                <Button
+                  innerText={
+                    scoreboardMetadata.gameWinnerID !== null
+                      ? "Return to room"
+                      : "Start next round"
+                  }
+                  innerTextWhenLoading={
+                    scoreboardMetadata.gameWinnerID !== null
+                      ? "Returning to room"
+                      : "Starting next round"
+                  }
+                  onClickFunction={() => {
+                    setPlayerIDWhoSqueaked(null);
+
+                    if (userID === roomConfig.hostUserID) {
+                      socket.emit("resetGame", {
+                        roomCode: roomConfig.code,
+                        gameIsFinished:
+                          scoreboardMetadata.gameWinnerID !== null,
+                      });
+                    }
+                  }}
+                  showLoadingSpinnerOnClick={true}
+                  className="gap-2"
+                />
+              ) : (
+                <div className="baseFlex !items-baseline gap-1">
+                  <p>
+                    waiting for{" "}
+                    <span className="font-semibold">
+                      {roomConfig.hostUsername}
+                    </span>{" "}
+                    to
+                    {scoreboardMetadata.gameWinnerID
+                      ? " return to room"
+                      : " start next round"}
+                  </p>
+                  <div className="loadingDots">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* <div
               style={{
                 opacity: showCountdownTimer ? 1 : 0,
                 pointerEvents: showCountdownTimer ? "auto" : "none",
@@ -966,7 +1026,7 @@ function Scoreboard() {
                 order={"desc"}
                 size={20}
               />
-            </div>
+            </div> */}
           </div>
         )}
       </motion.div>

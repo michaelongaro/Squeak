@@ -20,7 +20,7 @@ export function resetGameHandler(
   socket: Socket,
   gameData: IGameData,
   roomData: IRoomData,
-  miscRoomData: IMiscRoomData
+  miscRoomData: IMiscRoomData,
 ) {
   async function resetGame({ gameIsFinished, roomCode }: IResetGame) {
     const miscRoomDataObj = miscRoomData[roomCode];
@@ -43,7 +43,7 @@ export function resetGameHandler(
         const playerIDsPresentlyInRoom = Object.keys(room.players).filter(
           (playerID) =>
             game.playerIDsThatLeftMidgame.includes(playerID) === false &&
-            room.players[playerID]?.botDifficulty === undefined
+            room.players[playerID]?.botDifficulty === undefined,
         );
 
         // assign a new host (if available) if the host left
@@ -92,7 +92,7 @@ export function resetGameHandler(
 
     // resetting the board
     game.board = Array.from({ length: 4 }, () =>
-      Array.from({ length: 5 }, () => null)
+      Array.from({ length: 5 }, () => null),
     );
 
     const tempNewPlayerCardMetadata = {} as IPlayerCardsMetadata;
@@ -116,22 +116,9 @@ export function resetGameHandler(
     game.players = tempNewPlayerCardMetadata;
     game.currentRound += 1;
 
-    // pick the first present human player to start the next round
-    // TODO: any reason we can't just use the room.roomConfig.hostUserID here?
-    // shouldn't they be guaranteed to be in the room since if the original host left,
-    // another one would have been assigned or the room would have been deleted?
-    const playerIDsPresentlyInRoom = Object.keys(room.players).filter(
-      (playerID) =>
-        game.playerIDsThatLeftMidgame.includes(playerID) === false &&
-        room.players[playerID]?.botDifficulty === undefined
-    );
-
-    if (playerIDsPresentlyInRoom.length === 0) return;
-
     io.in(roomCode).emit("startNewRound", {
       roomCode: roomCode,
       gameData: game,
-      playerIDToStartNextRound: playerIDsPresentlyInRoom[0],
     });
   }
 

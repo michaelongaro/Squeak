@@ -21,7 +21,7 @@ export function startGameHandler(
   socket: Socket,
   roomData: IRoomData,
   gameData: IGameData,
-  miscRoomData: IMiscRoomData
+  miscRoomData: IMiscRoomData,
 ) {
   socket.on(
     "startGame",
@@ -38,7 +38,7 @@ export function startGameHandler(
 
       if (firstRound) {
         const board = Array.from({ length: 4 }, () =>
-          Array.from({ length: 5 }, () => null)
+          Array.from({ length: 5 }, () => null),
         );
 
         const playerCards: IPlayerCardsMetadata = {};
@@ -68,52 +68,62 @@ export function startGameHandler(
             const playerID = Object.keys(currentRoomPlayers)[parseInt(index)];
             if (playerID === undefined) return;
 
-            setTimeout(() => {
-              drawFromSqueakDeck({
-                indexToDrawTo: 0,
-                playerID,
-                roomCode,
-                gameData,
-                io,
-              });
-            }, 1500 + parseInt(index) * 400);
+            setTimeout(
+              () => {
+                drawFromSqueakDeck({
+                  indexToDrawTo: 0,
+                  playerID,
+                  roomCode,
+                  gameData,
+                  io,
+                });
+              },
+              1500 + parseInt(index) * 400,
+            );
 
-            setTimeout(() => {
-              drawFromSqueakDeck({
-                indexToDrawTo: 1,
-                playerID,
-                roomCode,
-                gameData,
-                io,
-              });
-            }, 2000 + parseInt(index) * 400);
+            setTimeout(
+              () => {
+                drawFromSqueakDeck({
+                  indexToDrawTo: 1,
+                  playerID,
+                  roomCode,
+                  gameData,
+                  io,
+                });
+              },
+              2000 + parseInt(index) * 400,
+            );
 
-            setTimeout(() => {
-              drawFromSqueakDeck({
-                indexToDrawTo: 2,
-                playerID,
-                roomCode,
-                gameData,
-                io,
-              });
-            }, 2500 + parseInt(index) * 400);
+            setTimeout(
+              () => {
+                drawFromSqueakDeck({
+                  indexToDrawTo: 2,
+                  playerID,
+                  roomCode,
+                  gameData,
+                  io,
+                });
+              },
+              2500 + parseInt(index) * 400,
+            );
 
-            setTimeout(() => {
-              drawFromSqueakDeck({
-                indexToDrawTo: 3,
-                playerID,
-                roomCode,
-                gameData,
-                io,
-              });
-            }, 3000 + parseInt(index) * 400);
+            setTimeout(
+              () => {
+                drawFromSqueakDeck({
+                  indexToDrawTo: 3,
+                  playerID,
+                  roomCode,
+                  gameData,
+                  io,
+                });
+              },
+              3000 + parseInt(index) * 400,
+            );
           }
         },
-        firstRound ? 1500 : 0
+        firstRound ? 1500 : 0,
       ); // allows for page to be fully* loaded when first navigating to play screen
 
-      // start interval that checks + handles if game is stuck
-      // (no player has a valid move available)
       const miscRoomDataObj = miscRoomData[roomCode];
 
       if (!miscRoomDataObj) return;
@@ -128,33 +138,36 @@ export function startGameHandler(
             if (!player || !playerID || botDifficulty === undefined) continue;
 
             let botInterval: NodeJS.Timeout | null = null;
-            setTimeout(() => {
-              // TODO: could probably move this directly to happen when bot joins a room in joinHandler.ts
-              if (
-                miscRoomDataObj.blacklistedSqueakCards[playerID] === undefined
-              ) {
-                miscRoomDataObj.blacklistedSqueakCards[playerID] = {};
-              }
+            setTimeout(
+              () => {
+                // TODO: could probably move this directly to happen when bot joins a room in joinHandler.ts
+                if (
+                  miscRoomDataObj.blacklistedSqueakCards[playerID] === undefined
+                ) {
+                  miscRoomDataObj.blacklistedSqueakCards[playerID] = {};
+                }
 
-              botInterval = setInterval(
-                () =>
-                  botMoveHandler(
-                    io,
-                    roomCode,
-                    gameData,
-                    roomData,
-                    miscRoomData,
-                    playerID
-                  ),
-                botDifficultyDelay[botDifficulty] +
-                  (Math.floor(Math.random() * 1000) - 500) // random offset by +- 500ms
-              );
+                botInterval = setInterval(
+                  () =>
+                    botMoveHandler(
+                      io,
+                      roomCode,
+                      gameData,
+                      roomData,
+                      miscRoomData,
+                      playerID,
+                    ),
+                  botDifficultyDelay[botDifficulty] +
+                    (Math.floor(Math.random() * 1000) - 500), // random offset by +- 500ms to make bot moves less predictable
+                );
 
-              if (botInterval) miscRoomDataObj.botIntervals.push(botInterval);
-            }, 1500 * parseInt(index)); // TODO: still test out better variations with delay..
+                if (botInterval) miscRoomDataObj.botIntervals.push(botInterval);
+              },
+              1500 * parseInt(index),
+            ); // TODO: still test out better variations with delay..
           }
         },
-        firstRound ? 8500 : 7000
+        firstRound ? 8500 : 7000,
       ); // roughly the time it takes for the cards to be dealt to the players on client side
 
       if (firstRound && prisma) {
@@ -169,6 +182,6 @@ export function startGameHandler(
           },
         });
       }
-    }
+    },
   );
 }

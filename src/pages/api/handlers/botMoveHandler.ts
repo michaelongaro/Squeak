@@ -21,7 +21,7 @@ export function botMoveHandler(
   gameData: IGameData,
   roomData: IRoomData,
   miscRoomData: IMiscRoomData,
-  playerID: string
+  playerID: string,
 ) {
   const players = gameData[roomCode]?.players;
   const miscRoomDataObj = miscRoomData[roomCode];
@@ -117,7 +117,7 @@ export function botMoveHandler(
               },
               needToWaitForTimestampLockout
                 ? minTimestampDelays[botDifficulty]
-                : 0
+                : 0,
             );
 
             foundValidCell = true;
@@ -125,7 +125,7 @@ export function botMoveHandler(
           } else {
             // remove the indicies from the array so we don't check them again
             const indexToRemove = flatBoard.findIndex(
-              (cell) => cell?.row === row && cell?.col === col
+              (cell) => cell?.row === row && cell?.col === col,
             );
 
             flatBoard.splice(indexToRemove, 1);
@@ -161,9 +161,8 @@ export function botMoveHandler(
           });
 
           // add to blacklist so we don't move it back to the same squeak stack
-          blacklistedSqueakCards[
-            `${card.value}${card.suit}`
-          ] = `${bottomCard.value}${bottomCard.suit}`;
+          blacklistedSqueakCards[`${card.value}${card.suit}`] =
+            `${bottomCard.value}${bottomCard.suit}`;
 
           return;
         }
@@ -223,7 +222,7 @@ export function botMoveHandler(
               }
             }
           },
-          needToWaitForTimestampLockout ? minTimestampDelays[botDifficulty] : 0
+          needToWaitForTimestampLockout ? minTimestampDelays[botDifficulty] : 0,
         );
         foundValidCell = true;
 
@@ -231,7 +230,7 @@ export function botMoveHandler(
       } else {
         // remove the indicies from the array so we don't check them again
         const indexToRemove = flatBoard.findIndex(
-          (cell) => cell?.row === row && cell?.col === col
+          (cell) => cell?.row === row && cell?.col === col,
         );
 
         flatBoard.splice(indexToRemove, 1);
@@ -264,7 +263,7 @@ export function botMoveHandler(
           cell,
           topCardInHand.value,
           topCardInHand.suit,
-          true
+          true,
         )
       ) {
         const needToWaitForTimestampLockout =
@@ -283,14 +282,14 @@ export function botMoveHandler(
               boardEndLocation: { row, col },
             });
           },
-          needToWaitForTimestampLockout ? minTimestampDelays[botDifficulty] : 0
+          needToWaitForTimestampLockout ? minTimestampDelays[botDifficulty] : 0,
         );
         foundValidCell = true;
         return;
       } else {
         // remove the indicies from the array so we don't check them again
         const indexToRemove = flatBoard.findIndex(
-          (cell) => cell?.row === row && cell?.col === col
+          (cell) => cell?.row === row && cell?.col === col,
         );
 
         flatBoard.splice(indexToRemove, 1);
@@ -312,7 +311,7 @@ export function botMoveHandler(
           bottomCard,
           topCardInHand.value,
           topCardInHand.suit,
-          false
+          false,
         )
       ) {
         deckToSqueak({
@@ -365,9 +364,8 @@ export function botMoveHandler(
           });
 
           // add to blacklist so we don't move it back to the same squeak stack
-          blacklistedSqueakCards[
-            `${card.value}${card.suit}`
-          ] = `${bottomCard.value}${bottomCard.suit}`;
+          blacklistedSqueakCards[`${card.value}${card.suit}`] =
+            `${bottomCard.value}${bottomCard.suit}`;
           return;
         }
       }
@@ -386,7 +384,7 @@ export function botMoveHandler(
 }
 
 function getRandomUniqueBoardCell(
-  flatBoard: Array<{ row: number; col: number }>
+  flatBoard: Array<{ row: number; col: number }>,
 ) {
   if (flatBoard.length === 0) {
     return null;

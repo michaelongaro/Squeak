@@ -11,7 +11,7 @@ export function createRoomHandler(
   io: Server,
   socket: Socket,
   roomData: IRoomData,
-  miscRoomData: IMiscRoomData
+  miscRoomData: IMiscRoomData,
 ) {
   socket.on(
     "createRoom",
@@ -26,7 +26,7 @@ export function createRoomHandler(
       };
 
       const boardTimestamps = Array.from({ length: 4 }, () =>
-        Array.from({ length: 5 }, () => 0)
+        Array.from({ length: 5 }, () => 0),
       );
 
       miscRoomData[roomConfig.code] = {
@@ -53,6 +53,6 @@ export function createRoomHandler(
           gameStarted: roomConfig.gameStarted,
         },
       });
-    }
+    },
   );
 }

@@ -44,7 +44,7 @@ export function roundOverHandler(
   socket: Socket,
   gameData: IGameData,
   roomData: IRoomData,
-  miscRoomData: IMiscRoomData
+  miscRoomData: IMiscRoomData,
 ) {
   socket.on(
     "roundOver",
@@ -62,7 +62,7 @@ export function roundOverHandler(
         miscRoomData,
         playerWhoSqueakedID,
         roomCode,
-      })
+      }),
   );
 }
 
@@ -126,7 +126,7 @@ export function generateAndEmitScoreboard({
     const cardsPlayed = calculateCardsPlayedDuringRound(
       deckCards,
       squeakDeckCards,
-      squeakHandCards
+      squeakHandCards,
     );
 
     const squeakModifier =
@@ -157,7 +157,7 @@ export function generateAndEmitScoreboard({
     const cardsPlayed = calculateCardsPlayedDuringRound(
       deckCards,
       squeakDeckCards,
-      squeakHandCards
+      squeakHandCards,
     );
 
     const squeakModifier =
@@ -185,7 +185,7 @@ export function generateAndEmitScoreboard({
     const player = playerCards[playerID];
 
     const idx = playerScoresForThisRound.findIndex(
-      (playerRank) => playerRank[0] === playerID
+      (playerRank) => playerRank[0] === playerID,
     );
 
     const currPlayerRoundDetails = playerRoundDetails[playerID];
@@ -273,24 +273,16 @@ export function generateAndEmitScoreboard({
       gameWinnerID,
       playerRankForThisRound: playerRanksForThisRound[playerID]!,
       playerScoreForThisRound: playerScoresForThisRound.find(
-        (player) => player[0] === playerID
+        (player) => player[0] === playerID,
       )![1],
     });
   }
-
-  // pick the first present human player to start the next round
-  const playerIDsPresentlyInRoom = Object.keys(room.players).filter(
-    (playerID) =>
-      game.playerIDsThatLeftMidgame.includes(playerID) === false &&
-      room.players[playerID]?.botDifficulty === undefined
-  );
 
   io.in(roomCode).emit("scoreboardMetadata", {
     playSqueakSound: playerWhoSqueakedID !== "",
     roundWinnerID,
     gameWinnerID,
     playerRoundDetails,
-    playerIDToStartNextRound: playerIDsPresentlyInRoom[0],
   });
 
   return {
@@ -303,7 +295,7 @@ export function generateAndEmitScoreboard({
 export function calculateCardsPlayedDuringRound(
   cardsLeftInDeck: ICard[],
   cardsLeftInSqueakDeck: ICard[],
-  cardsLeftInSqueakHands: ICard[]
+  cardsLeftInSqueakHands: ICard[],
 ): ICard[] {
   const fullDeck = createAndFormatDeck();
 

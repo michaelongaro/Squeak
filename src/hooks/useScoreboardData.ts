@@ -4,10 +4,8 @@ import { useUserIDContext } from "../context/UserIDContext";
 import { useRoomContext } from "../context/RoomContext";
 import { type IScoreboardMetadata } from "../pages/api/handlers/roundOverHandler";
 
-interface IScoreboardMetadataWithPlayerIDToStartNextRound
-  extends IScoreboardMetadata {
+interface IScoreboardMetadataWithSqueakSound extends IScoreboardMetadata {
   playSqueakSound: boolean;
-  playerIDToStartNextRound: string;
 }
 
 function useScoreboardData() {
@@ -25,7 +23,7 @@ function useScoreboardData() {
   } = useRoomContext();
 
   const [dataFromBackend, setDataFromBackend] =
-    useState<IScoreboardMetadataWithPlayerIDToStartNextRound | null>(null);
+    useState<IScoreboardMetadataWithSqueakSound | null>(null);
 
   useEffect(() => {
     socket.on("scoreboardMetadata", (data) => setDataFromBackend(data));
@@ -44,7 +42,6 @@ function useScoreboardData() {
         gameWinnerID,
         roundWinnerID,
         playerRoundDetails,
-        playerIDToStartNextRound,
       } = dataFromBackend;
 
       if (
@@ -72,19 +69,21 @@ function useScoreboardData() {
 
           setShowScoreboard(true);
         },
-        playSqueakSound ? 1000 : 0
+        playSqueakSound ? 1000 : 0,
       ); // waiting for pulsing animation to finish
 
-      setTimeout(() => {
-        setPlayerIDWhoSqueaked(null);
+      // setTimeout(() => {
+      //   // this whole block needs to be in response to "Start next round" button click
 
-        if (userID !== playerIDToStartNextRound) return;
+      //   setPlayerIDWhoSqueaked(null);
 
-        socket.emit("resetGame", {
-          roomCode: roomConfig.code,
-          gameIsFinished: gameWinnerID !== null,
-        });
-      }, 14500);
+      //   if (userID !== playerIDToStartNextRound) return;
+
+      //   socket.emit("resetGame", {
+      //     roomCode: roomConfig.code,
+      //     gameIsFinished: gameWinnerID !== null,
+      //   });
+      // }, 14500);
     }
   }, [
     dataFromBackend,

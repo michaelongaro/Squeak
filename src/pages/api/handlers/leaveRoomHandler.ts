@@ -18,7 +18,7 @@ export function leaveRoomHandler(
   socket: Socket,
   gameData: IGameData,
   roomData: IRoomData,
-  miscRoomData: IMiscRoomData
+  miscRoomData: IMiscRoomData,
 ) {
   socket.on(
     "leaveRoom",
@@ -32,7 +32,7 @@ export function leaveRoomHandler(
         roomCode,
         playerID,
         playerWasKicked,
-      })
+      }),
   );
 }
 
@@ -71,7 +71,13 @@ export async function leaveRoom({
   if (room.players[playerID] === undefined) return;
   // ^^^^ is this returning early somehow?
 
-  if (!room.roomConfig.gameStarted) {
+  // TODO: really not my favorite approach below but you can't use the previous implementation of
+  // !game as a way to check if the game has started because it will return false if the game
+  // value is an empty object since empty objects are truthy in JS
+
+  const gameHasStarted = (game && Object.keys(game).length > 0) ?? false;
+
+  if (gameHasStarted === false) {
     // safe to directly delete player if game hasn't started yet
     delete room.players[playerID];
   }
@@ -81,25 +87,24 @@ export async function leaveRoom({
   room.roomConfig.playersInRoom--;
 
   room.roomConfig.playerIDsInRoom = room.roomConfig.playerIDsInRoom.filter(
-    (id) => id !== playerID
+    (id) => id !== playerID,
   );
 
   // extra precaution to make sure playerID isn't added to array more than once
   if (
-    room.roomConfig.gameStarted &&
+    gameHasStarted &&
     game?.playerIDsThatLeftMidgame &&
     game.playerIDsThatLeftMidgame.includes(playerID) === false
   ) {
     game.playerIDsThatLeftMidgame.push(playerID);
   }
 
-  const playerIDsThatLeftMidgame =
-    room.roomConfig.gameStarted && game ? game.playerIDsThatLeftMidgame : [];
+  const playerIDsThatLeftMidgame = game?.playerIDsThatLeftMidgame ?? [];
 
   const playerIDsPresentlyInRoom = Object.keys(room.players).filter(
     (playerID) =>
       playerIDsThatLeftMidgame.includes(playerID) === false &&
-      room.players[playerID]?.botDifficulty === undefined
+      room.players[playerID]?.botDifficulty === undefined,
   );
 
   // assign a new host (if available) if the host left

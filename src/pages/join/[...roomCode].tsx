@@ -28,7 +28,6 @@ import {
   type IRoomPlayersMetadata,
 } from "../../pages/api/socket";
 import { type IRoomConfig } from "../create";
-import classes from "~/components/JoinRoom/JoinRoom.module.css";
 import { Label } from "~/components/ui/label";
 import { Input } from "~/components/ui/input";
 import Head from "next/head";
@@ -83,7 +82,7 @@ function JoinRoom() {
     },
     {
       enabled: Boolean(roomCode && typeof roomCode === "string"),
-    }
+    },
   );
 
   const [room, setRoom] = useState<Room | null>(null);
@@ -103,7 +102,7 @@ function JoinRoom() {
   }, [roomResult]);
 
   const { data: authenticatedUsers } = api.users.getUsersFromIDList.useQuery(
-    Object.keys(playerMetadata)
+    Object.keys(playerMetadata),
   );
 
   useEffect(() => {
@@ -151,7 +150,7 @@ function JoinRoom() {
           if (response === "gameStarted") {
             push(`/game/${room.code}`);
           }
-        }
+        },
       );
 
       setConnectedToRoom(true);
@@ -331,7 +330,7 @@ function JoinRoom() {
                       setShowUsernamePromptModal(false);
                       setConnectedToRoom(true);
                     }
-                  }
+                  },
                 )
               }
             />
@@ -378,7 +377,7 @@ function JoinRoom() {
                 }}
                 className="baseVertFlex gap-4"
               >
-                <fieldset className="baseVertFlex mt-4 gap-4 rounded-md  border-2 border-white bg-green-800 p-4">
+                <fieldset className="baseVertFlex mt-4 gap-4 rounded-md border-2 border-white bg-green-800 p-4">
                   <legend className="baseFlex gap-2 pl-4 pr-4 text-left text-lg">
                     Room settings
                     <IoSettingsSharp size={"1.25rem"} />
@@ -417,7 +416,7 @@ function JoinRoom() {
                     extraPadding={false}
                     onClickFunction={() => {
                       navigator.clipboard.writeText(
-                        `${process.env.NEXT_PUBLIC_DOMAIN_URL}/join/${roomConfig.code}`
+                        `${process.env.NEXT_PUBLIC_DOMAIN_URL}/join/${roomConfig.code}`,
                       );
                       setShowCheckmark(true);
                       setTimeout(() => setShowCheckmark(false), 1000);
@@ -427,8 +426,8 @@ function JoinRoom() {
                 <fieldset className="rounded-md border-2 border-white bg-green-800 p-4">
                   <legend className="baseFlex gap-2 pl-4 pr-4 text-left text-lg">
                     Players
-                    <div className="tracking-widest">{`(${roomConfig.playersInRoom}/${roomConfig.maxPlayers})`}</div>
-                    <FaUsers size={"1.25rem"} />
+                    <div className="tracking-tighter">{`( ${roomConfig.playersInRoom} / ${roomConfig.maxPlayers} )`}</div>
+                    <FaUsers size={"1.25rem"} className="ml-1" />
                   </legend>
                   <div className="baseVertFlex gap-6 p-2">
                     <div
@@ -455,7 +454,7 @@ function JoinRoom() {
                             friendData?.friendIDs?.indexOf(playerID) === -1 &&
                             authenticatedUsers
                               ? authenticatedUsers.findIndex(
-                                  (player) => player.id === playerID
+                                  (player) => player.id === playerID,
                                 ) !== -1
                               : false
                           }
@@ -519,7 +518,7 @@ function JoinRoom() {
                     </span>{" "}
                     to start the game
                   </p>
-                  <div className={classes.loadingDots}>
+                  <div className="loadingDots">
                     <div></div>
                     <div></div>
                     <div></div>
@@ -568,7 +567,7 @@ function RoomIsFull() {
 
   return (
     <div className="baseVertFlex min-h-[100dvh] py-16">
-      <div className="baseVertFlex w-10/12 gap-4 rounded-md border-2 border-lightGreen bg-green-800 p-4 text-lightGreen md:w-[500px]  md:p-8">
+      <div className="baseVertFlex w-10/12 gap-4 rounded-md border-2 border-lightGreen bg-green-800 p-4 text-lightGreen md:w-[500px] md:p-8">
         <div className="baseFlex gap-2">
           <IoWarningOutline className="h-8 w-8" />
           <h1 className="text-2xl font-semibold">Room is full</h1>

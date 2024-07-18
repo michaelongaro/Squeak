@@ -6,9 +6,9 @@ import { IoClose } from "react-icons/io5";
 import { AiOutlineInfoCircle } from "react-icons/ai";
 import { HiExternalLink } from "react-icons/hi";
 import useOnClickOutside from "../../hooks/useOnClickOutside";
-import { IoMdHeart } from "react-icons/io";
 import labeledPlayerContainer from "../../../public/tutorial/labeledPlayerContainer.png";
 import boardPlacementExample from "../../../public/tutorial/boardPlacementExample.png";
+import { GiClubs, GiHearts, GiSpades } from "react-icons/gi";
 import squeakStackPlacementExample from "../../../public/tutorial/squeakStackPlacementExample.png";
 
 interface ITutorialModal {
@@ -129,9 +129,9 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
           >
             The goal of each round is to accrue as many points as possible and
             empty your Squeak deck, which reveals your Squeak button. When
-            pressed, it ends the round and adds ten extra points to your total.
-            You may delay pressing the Squeak button if you think you can still
-            get more points.
+            pressed, it ends the current round and adds ten extra points to your
+            total. You may delay pressing the Squeak button indefinitely if you
+            think you can still get more points.
           </p>
         </fieldset>
 
@@ -169,15 +169,15 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
                   </span>{" "}
                   than the previous card (ex. A
                   <span className="inline-flex font-semibold underline underline-offset-2">
-                    <IoMdHeart size="0.8rem" />
+                    <GiClubs size="0.7rem" className="ml-0.5" />
                   </span>{" "}
                   , 2
                   <span className="inline-flex font-semibold underline underline-offset-2">
-                    <IoMdHeart size="0.8rem" />
+                    <GiClubs size="0.7rem" className="ml-0.5" />
                   </span>{" "}
                   , 3
                   <span className="inline-flex font-semibold underline underline-offset-2">
-                    <IoMdHeart size="0.8rem" />
+                    <GiClubs size="0.7rem" className="mx-0.5" />
                   </span>
                   ). Each card placed is worth one point.
                 </p>
@@ -209,11 +209,21 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
                   <span className="font-semibold underline underline-offset-2">
                     one rank lower
                   </span>{" "}
-                  than the previous card, similar to Solitaire (ex. Jack of
-                  Spades, 10 of Hearts, 9 of Clubs). Only the last card in your
-                  squeak pile is able to be played on the board, however you can
-                  move a group of cards between piles as long as the stacking
-                  rules are followed.
+                  than the previous card, similar to Solitaire (ex. J
+                  <span className="inline-flex font-semibold underline underline-offset-2">
+                    <GiSpades size="0.7rem" className="ml-0.5" />
+                  </span>{" "}
+                  , 10
+                  <span className="inline-flex font-semibold underline underline-offset-2">
+                    <GiHearts size="0.7rem" className="ml-0.5" />
+                  </span>{" "}
+                  , 9
+                  <span className="inline-flex font-semibold underline underline-offset-2">
+                    <GiClubs size="0.7rem" className="mx-0.5" />
+                  </span>
+                  ). Only the last card in your squeak pile is able to be played
+                  on the board, however you can move a group of cards between
+                  piles as long as the stacking rules are followed.
                 </p>
                 <Image
                   src={squeakStackPlacementExample}

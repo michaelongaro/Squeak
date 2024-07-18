@@ -19,7 +19,7 @@ export function voteReceivedHandler(
   socket: Socket,
   gameData: IGameData,
   miscRoomData: IMiscRoomData,
-  roomData: IRoomData
+  roomData: IRoomData,
 ) {
   // should probably change emit name to "castVote" since it is done by the client
   socket.on(
@@ -42,7 +42,7 @@ export function voteReceivedHandler(
         roomData,
         voteType,
         voteDirection,
-      })
+      }),
   );
 }
 
@@ -105,7 +105,7 @@ export function voteReceived({
   // if all players have voted
   if (miscRoomDataObj.currentVotes.length === Object.keys(players).length) {
     const agreeVotes = miscRoomDataObj.currentVotes.filter(
-      (vote) => vote === "agree"
+      (vote) => vote === "agree",
     ).length;
 
     // if the vote passed (100% of players voted yes)
@@ -123,8 +123,11 @@ export function voteReceived({
 
           if (!player) return;
 
-          player.deck = rotateDeckByOneCard(player.deck);
+          // merge all cards in hand back into deck + clear hand
+          player.deck.push(...player.hand);
           player.hand = [];
+
+          player.deck = rotateDeckByOneCard(player.deck);
         });
         io.in(roomCode).emit("decksWereRotated", gameData[roomCode]);
       } else if (miscRoomDataObj.voteType === "finishRound") {

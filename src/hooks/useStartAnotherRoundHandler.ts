@@ -8,6 +8,7 @@ function useStartAnotherRoundHandler() {
   const userID = useUserIDContext();
 
   const {
+    roomConfig,
     gameData,
     playerMetadata,
     setGameData,
@@ -18,7 +19,6 @@ function useStartAnotherRoundHandler() {
   const [dataFromBackend, setDataFromBackend] = useState<{
     roomCode: string;
     gameData: IGameMetadata;
-    playerIDToStartNextRound: string;
   } | null>(null);
 
   useEffect(() => {
@@ -42,7 +42,8 @@ function useStartAnotherRoundHandler() {
       setTimeout(() => {
         setShowShufflingCountdown(true);
 
-        if (dataFromBackend.playerIDToStartNextRound === userID) {
+        // only want one "startGame" event to be emitted
+        if (roomConfig.hostUserID === userID) {
           socket.emit("startGame", {
             roomCode: dataFromBackend.roomCode,
             firstRound: false,
@@ -56,6 +57,7 @@ function useStartAnotherRoundHandler() {
     setShowShufflingCountdown,
     setGameData,
     playerMetadata,
+    roomConfig,
     gameData,
     userID,
   ]);
