@@ -15,6 +15,7 @@ import useCardDropDenied from "../../hooks/useCardDropDenied";
 import { adjustCoordinatesByRotation } from "../../utils/adjustCoordinatesByRotation";
 import { type StaticImageData } from "next/image";
 import { cardAssets } from "../../utils/cardAssetPaths";
+import useInitialCardDrawForSqueakStack from "~/hooks/useInitialCardDrawForSqueakStack";
 
 interface ICardComponent {
   value?: string;
@@ -319,6 +320,13 @@ function Card({
   });
 
   useCardDrawFromSqueakDeck({
+    value,
+    suit,
+    ownerID,
+    moveCard,
+  });
+
+  useInitialCardDrawForSqueakStack({
     value,
     suit,
     ownerID,

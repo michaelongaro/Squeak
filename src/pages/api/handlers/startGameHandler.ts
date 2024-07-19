@@ -6,7 +6,7 @@ import {
   type IPlayerCardsMetadata,
 } from "../socket";
 import { prisma } from "~/server/db";
-import { drawFromSqueakDeck } from "../helpers/drawFromSqueakDeck";
+import { drawInitialSqueakStackCardFromDeck } from "../helpers/drawInitialSqueakStackCardFromDeck";
 import { botMoveHandler } from "./botMoveHandler";
 import generateDeckAndSqueakCards from "../../../utils/generateDeckAndSqueakCards";
 
@@ -70,7 +70,7 @@ export function startGameHandler(
 
             setTimeout(
               () => {
-                drawFromSqueakDeck({
+                drawInitialSqueakStackCardFromDeck({
                   indexToDrawTo: 0,
                   playerID,
                   roomCode,
@@ -83,7 +83,7 @@ export function startGameHandler(
 
             setTimeout(
               () => {
-                drawFromSqueakDeck({
+                drawInitialSqueakStackCardFromDeck({
                   indexToDrawTo: 1,
                   playerID,
                   roomCode,
@@ -96,7 +96,7 @@ export function startGameHandler(
 
             setTimeout(
               () => {
-                drawFromSqueakDeck({
+                drawInitialSqueakStackCardFromDeck({
                   indexToDrawTo: 2,
                   playerID,
                   roomCode,
@@ -109,7 +109,7 @@ export function startGameHandler(
 
             setTimeout(
               () => {
-                drawFromSqueakDeck({
+                drawInitialSqueakStackCardFromDeck({
                   indexToDrawTo: 3,
                   playerID,
                   roomCode,
