@@ -22,7 +22,7 @@ export function drawFromSqueakDeck({
   if (!board || !players || !player) return;
 
   const card = player.squeakDeck.pop();
-  // shouldn't this 1000% be pop()?
+
   if (card) {
     player.squeakHand?.[indexToDrawTo]?.push(card);
 
