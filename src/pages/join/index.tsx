@@ -169,41 +169,42 @@ function JoinRoom() {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.15 }}
-      className="baseVertFlex relative min-h-[100dvh] py-16"
+      className="baseVertFlex relative min-h-[100dvh] pb-16 tablet:pt-16"
     >
       <Head>
         <title>Join | Squeak</title>
       </Head>
 
       <div className="baseVertFlex relative gap-4">
-        <div className="absolute left-4 top-0 sm:left-0">
+        <div className="baseFlex sticky left-0 top-0 z-[105] w-screen !justify-start gap-4 border-b-2 border-white bg-green-800 p-2 shadow-lg tablet:relative tablet:w-full tablet:bg-inherit tablet:shadow-none">
           <Button
             variant={"secondary"}
             icon={
               connectedToRoom ? (
-                <BiArrowBack size={"1.5rem"} />
+                <BiArrowBack size={"1.25rem"} />
               ) : (
-                <IoHome size={"1.5rem"} />
+                <IoHome size={"1.25rem"} />
               )
             }
             className="h-10 w-10"
             onClick={() => leaveRoom()}
           />
+
+          <div
+            style={{
+              color: "hsl(120deg 100% 86%)",
+              filter: "drop-shadow(2px 3px 2px rgba(0, 0, 0, 0.2))",
+            }}
+            className="text-xl font-medium"
+          >
+            {`${
+              connectedToRoom
+                ? `${Object.values(playerMetadata)[0]?.username}'s room`
+                : "Join room"
+            }`}
+          </div>
         </div>
 
-        <div
-          style={{
-            color: "hsl(120deg 100% 86%)",
-            filter: "drop-shadow(2px 3px 2px rgba(0, 0, 0, 0.2))",
-          }}
-          className="text-xl font-medium"
-        >
-          {`${
-            connectedToRoom
-              ? `${Object.values(playerMetadata)[0]?.username}'s room`
-              : "Join room"
-          }`}
-        </div>
         <div
           style={{
             color: "hsl(120deg 100% 86%)",

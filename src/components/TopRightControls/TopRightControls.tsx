@@ -150,13 +150,13 @@ function TopRightControls() {
         onOpenChange={(isOpen) => setShowDrawer(isOpen)}
       >
         <div
-          className={`absolute right-2 h-8 w-8 ${
-            !asPath.includes("/game") ? "top-4 rotate-90" : "top-0.5"
+          className={`baseFlex fixed right-2 !z-[105] h-8 w-8 ${
+            !asPath.includes("/game") ? "top-3" : "top-0.5"
           }`}
         >
           <DrawerTrigger onClick={() => setShowDrawer(true)}>
-            <HiEllipsisHorizontal
-              size={"2rem"}
+            <IoSettingsSharp
+              size={"1.25rem"}
               style={{
                 color: "hsl(120deg 100% 86%)",
               }}

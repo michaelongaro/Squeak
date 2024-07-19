@@ -228,7 +228,7 @@ function JoinRoom() {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.15 }}
-      className="baseVertFlex relative min-h-[100dvh] py-16"
+      className="baseVertFlex relative min-h-[100dvh] pb-16 tablet:pt-16"
     >
       <Head>
         <title>Join | Squeak</title>
@@ -346,27 +346,27 @@ function JoinRoom() {
               transition={{ duration: 0.15 }}
               className="baseVertFlex relative gap-4"
             >
-              <div className="absolute left-4 top-0 sm:left-0">
+              <div className="baseFlex sticky left-0 top-0 z-[105] w-screen !justify-start gap-4 border-b-2 border-white bg-green-800 p-2 shadow-lg tablet:relative tablet:w-full tablet:bg-inherit tablet:shadow-none">
                 <Button
                   variant={"secondary"}
-                  icon={<BiArrowBack size={"1.5rem"} />}
+                  icon={<BiArrowBack size={"1.25rem"} />}
                   className="h-10 w-10"
                   onClick={() => leaveRoom()}
                 />
-              </div>
 
-              <div
-                style={{
-                  color: "hsl(120deg 100% 86%)",
-                  filter: "drop-shadow(2px 3px 2px rgba(0, 0, 0, 0.2))",
-                }}
-                className="mt-1.5 text-xl font-medium"
-              >
-                {`${
-                  connectedToRoom
-                    ? `${Object.values(playerMetadata)[0]?.username}'s room`
-                    : "Join room"
-                }`}
+                <div
+                  style={{
+                    color: "hsl(120deg 100% 86%)",
+                    filter: "drop-shadow(2px 3px 2px rgba(0, 0, 0, 0.2))",
+                  }}
+                  className="text-xl font-medium"
+                >
+                  {`${
+                    connectedToRoom
+                      ? `${Object.values(playerMetadata)[0]?.username}'s room`
+                      : "Join room"
+                  }`}
+                </div>
               </div>
 
               <div
@@ -398,15 +398,16 @@ function JoinRoom() {
                   <SecondaryButton
                     icon={
                       showCheckmark ? (
-                        <FiCheck size={"1.5rem"} />
+                        <FiCheck size={"1.25rem"} />
                       ) : (
-                        <MdCopyAll size={"1.5rem"} />
+                        <MdCopyAll size={"1.25rem"} />
                       )
                     }
                     innerText={
                       showCheckmark ? "Invite link copied" : "Copy invite link"
                     }
                     style={{
+                      fontSize: "0.875rem",
                       width: "14rem",
                       placeItems: "center",
                       justifyItems: "center",
@@ -417,7 +418,7 @@ function JoinRoom() {
                         `${process.env.NEXT_PUBLIC_DOMAIN_URL}/join/${roomConfig.code}`,
                       );
                       setShowCheckmark(true);
-                      setTimeout(() => setShowCheckmark(false), 1000);
+                      setTimeout(() => setShowCheckmark(false), 1500);
                     }}
                   />
                 </fieldset>
@@ -431,7 +432,7 @@ function JoinRoom() {
                     <div
                       className={`sm:baseVertFlex grid grid-cols-2 ${
                         roomConfig.playersInRoom > 2
-                          ? "grid-rows-2"
+                          ? "auto-rows-auto"
                           : "grid-rows-1"
                       } !items-start !justify-start gap-8 sm:flex sm:!flex-row`}
                     >

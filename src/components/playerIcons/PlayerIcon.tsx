@@ -73,7 +73,7 @@ function PlayerIcon({
             ...style,
             color: "hsl(120deg 100% 86%)",
           }}
-          className="baseVertFlex gap-2"
+          className="baseVertFlex shrink-0 gap-2"
         >
           <div
             style={{
@@ -319,13 +319,9 @@ function PlayerIcon({
           </div>
           {username ? username : null}
 
-          {/* difficulty toggle button that rotates through easy medium and hard */}
+          {/* difficulty toggle button that rotates through easy, medium, and hard */}
           {playerMetadata?.botDifficulty && (
-            <div
-              className={`baseVertFlex relative w-16 ${
-                roomHostIsRendering ? "mb-8 gap-1" : "gap-1"
-              }`}
-            >
+            <div className="baseVertFlex relative w-16 gap-1">
               {/* <p className="text-sm italic underline">Difficulty</p> */}
               <div className="baseFlex w-full gap-2">
                 <div className="h-2 w-full rounded-md bg-lightGreen transition-all"></div>
@@ -351,12 +347,9 @@ function PlayerIcon({
                   extraPadding={false}
                   style={{
                     padding: "0.75rem 0.25rem",
-                    position: "absolute",
-                    top: "50%",
-                    left: "50%",
-                    transform: "translate(-50%, -50%)",
                     minWidth: "fit-content",
-                    marginTop: "2rem",
+                    height: "1rem",
+                    marginTop: "0.5rem",
                     fontSize: "0.875rem",
                   }}
                   onClickFunction={() => {
