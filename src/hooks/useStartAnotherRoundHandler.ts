@@ -35,9 +35,7 @@ function useStartAnotherRoundHandler() {
 
       setGameData(dataFromBackend.gameData);
 
-      setTimeout(() => {
-        setShowScoreboard(false);
-      }, 2000);
+      setShowScoreboard(false);
 
       setTimeout(() => {
         setShowShufflingCountdown(true);
@@ -49,7 +47,7 @@ function useStartAnotherRoundHandler() {
             firstRound: false,
           });
         }
-      }, 2200);
+      }, 200); // waiting for scoreboard modal to close
     }
   }, [
     dataFromBackend,
