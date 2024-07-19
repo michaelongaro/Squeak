@@ -33,14 +33,14 @@ function AnimatedCard({
       ?.getBoundingClientRect();
 
     const animatedCard = document.getElementById(
-      `scoreboardAnimatedCard${index}${playerID}`
+      `scoreboardAnimatedCard${index}${playerID}`,
     );
 
     if (!animatedCardContainer || !animatedCard) return;
 
     const middleOfContainer = Math.floor(animatedCardContainer.width / 2) - 25;
 
-    const finalY = Math.floor(animatedCardContainer.height * 0.55) - index;
+    const finalY = Math.floor(animatedCardContainer.height * 0.25) - index;
 
     // Calculate delay and duration based on totalCardsPlayed
     const totalAnimationTime = 4000; // Total time (ms) for all cards to be played
@@ -50,7 +50,7 @@ function AnimatedCard({
     anime({
       targets: `#scoreboardAnimatedCard${index}${playerID}`,
 
-      top: [`0px`, `${finalY}px`],
+      top: [`${animatedCardContainer.height * -1}px`, `${finalY}px`],
       left: [`${middleOfContainer}px`, `${middleOfContainer}px`],
       rotateX: ["25deg", `25deg`],
       rotateZ: ["50deg", "50deg"],

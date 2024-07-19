@@ -14,7 +14,7 @@ function AnimatedCardContainer({ cards, playerID }: IAnimatedCardContainer) {
         perspective: "450px",
         transformStyle: "preserve-3d",
       }}
-      className="absolute left-0 top-0 z-[2] h-full w-full"
+      className="z-[2] h-[115px] w-full tablet:h-[165px]"
     >
       {cards.map((card, index) => (
         <AnimatedCard

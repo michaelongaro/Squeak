@@ -115,15 +115,6 @@ function Scoreboard() {
     }, 6000);
 
     setTimeout(() => {
-      console.log(
-        "shooting confetti",
-        "is mobile?",
-        viewportLabel.includes("mobile"),
-      );
-
-      // as a hack, could avoid call to viewportLabel and just directly get it right here from
-      // window.innerWidth and window.innerHeight but feels so bad
-
       setShowConfettiPoppers(true);
 
       if (audioContext && masterVolumeGainNode) {
@@ -294,10 +285,10 @@ function Scoreboard() {
             backgroundColor: "hsl(120deg 100% 18%)",
             borderColor: "hsl(120deg 100% 86%)",
           }}
-          className="h-[95%] w-[95%] rounded-lg border-2 p-4 shadow-md tablet:h-[75%] tablet:w-[75%]"
+          className="w-[95%] rounded-lg border-2 p-4 shadow-md tablet:h-[75%] tablet:w-[75%]"
         >
           {scoreboardMetadata?.playerRoundDetails && currentPlayerStats && (
-            <div className="baseVertFlex h-full !justify-between gap-2 tablet:gap-8">
+            <div className="baseVertFlex h-full gap-2 mobileLarge:gap-4 tablet:gap-8">
               <div className="text-xl font-semibold">Scoreboard</div>
 
               {/* player totals */}
@@ -325,6 +316,9 @@ function Scoreboard() {
                     layout={"position"}
                     style={{
                       gridTemplateColumns: "50px auto 50px",
+                      order: showNewRankings
+                        ? player.newRanking
+                        : player.oldRanking,
                     }}
                     className="grid w-full max-w-xl place-items-center"
                   >
@@ -416,7 +410,7 @@ function Scoreboard() {
                 ))}
               </div>
 
-              <div className="baseFlex h-full max-h-80 w-full max-w-xl">
+              <div className="baseFlex h-full max-h-72 w-full max-w-xl">
                 <div
                   key={currentPlayerStats.playerID}
                   className="baseVertFlex h-full w-full shadow-md"
@@ -446,7 +440,7 @@ function Scoreboard() {
                         playerColorVariants[currentPlayerStats.playerID]
                           ?.textColor ?? "black",
                     }}
-                    className="relative z-[1] h-full w-full overflow-hidden"
+                    className="baseVertFlex relative z-[1] h-full w-full overflow-hidden"
                   >
                     <div
                       style={{
@@ -454,9 +448,9 @@ function Scoreboard() {
                           playerColorVariants[currentPlayerStats.playerID]
                             ?.pointsBackgroundColor ?? "white",
                       }}
-                      className="baseVertFlex absolute left-0 top-0 z-[3] w-full bg-black bg-opacity-30 p-2"
+                      className="baseVertFlex z-[3] w-full bg-black bg-opacity-30 p-2"
                     >
-                      <div className="align-center flex w-full justify-between px-8">
+                      <div className="align-center flex w-full justify-between px-8 leading-5">
                         Cards played
                         <div className="baseFlex">
                           <div
@@ -479,7 +473,8 @@ function Scoreboard() {
                           />
                         </div>
                       </div>
-                      <div className="align-center flex w-full justify-between px-8">
+
+                      <div className="align-center flex w-full justify-between px-8 leading-5">
                         Squeak
                         <div className="baseFlex">
                           <div
@@ -506,7 +501,8 @@ function Scoreboard() {
                           />
                         </div>
                       </div>
-                      <div className="align-center flex w-full justify-between px-8 text-lg">
+
+                      <div className="align-center mt-1 flex w-full justify-between px-8 text-lg font-medium">
                         Total
                         <AnimatedNumber
                           value={
@@ -656,6 +652,61 @@ function Scoreboard() {
                   alt={"right celebratory confetti cannon"}
                 />
               </div>
+
+              <div
+                style={{
+                  opacity: showHostActionButton ? 1 : 0,
+                  pointerEvents: showHostActionButton ? "auto" : "none",
+                }}
+                className="baseFlex gap-2"
+              >
+                {userID === roomConfig.hostUserID ? (
+                  <Button
+                    innerText={
+                      scoreboardMetadata.gameWinnerID !== null
+                        ? "Return to room"
+                        : "Start next round"
+                    }
+                    innerTextWhenLoading={
+                      scoreboardMetadata.gameWinnerID !== null
+                        ? "Returning to room"
+                        : "Starting next round"
+                    }
+                    onClickFunction={() => {
+                      setPlayerIDWhoSqueaked(null);
+
+                      if (userID === roomConfig.hostUserID) {
+                        socket.emit("resetGame", {
+                          roomCode: roomConfig.code,
+                          gameIsFinished:
+                            scoreboardMetadata.gameWinnerID !== null,
+                        });
+                      }
+                    }}
+                    showLoadingSpinnerOnClick={true}
+                    className="gap-2"
+                  />
+                ) : (
+                  <div className="baseFlex !items-baseline gap-1">
+                    <p>
+                      waiting for{" "}
+                      <span className="font-semibold">
+                        {roomConfig.hostUsername}
+                      </span>{" "}
+                      to
+                      {scoreboardMetadata.gameWinnerID
+                        ? " return to room"
+                        : " start next round"}
+                    </p>
+                    <div className="loadingDots">
+                      <div></div>
+                      <div></div>
+                      <div></div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
               {/* <div
                 style={{
                   opacity: showCountdownTimer ? 1 : 0,
@@ -706,10 +757,10 @@ function Scoreboard() {
         className="h-[95%] w-[95%] rounded-lg border-2 p-4 shadow-md tablet:h-[85%] tablet:w-[85%] desktop:h-[75%] desktop:w-[75%]"
       >
         {scoreboardMetadata?.playerRoundDetails && (
-          <div className="baseVertFlex h-full gap-2 desktop:gap-12">
+          <div className="baseVertFlex h-full gap-2 desktop:gap-8">
             <div className="text-2xl font-semibold">Scoreboard</div>
 
-            <div className="baseFlex h-full w-full gap-4">
+            <div className="baseFlex h-full max-h-[400px] w-full gap-4">
               {Object.values(scoreboardMetadata.playerRoundDetails).map(
                 (player) => (
                   <div
@@ -723,7 +774,7 @@ function Scoreboard() {
                           playerColorVariants[player.playerID]?.baseColor ??
                           "white",
                       }}
-                      className="baseVertFlex h-36 w-full gap-2 rounded-t-md pt-2 font-semibold"
+                      className="baseVertFlex w-full gap-2 rounded-t-md pb-2 pt-3 font-semibold"
                     >
                       <PlayerIcon
                         avatarPath={
@@ -757,7 +808,7 @@ function Scoreboard() {
                           playerColorVariants[player.playerID]?.textColor ??
                           "black",
                       }}
-                      className="relative z-[1] h-full w-full overflow-hidden"
+                      className="baseVertFlex relative z-[1] h-full w-full overflow-hidden"
                     >
                       <div
                         style={{
@@ -765,9 +816,9 @@ function Scoreboard() {
                             playerColorVariants[player.playerID]
                               ?.pointsBackgroundColor ?? "white",
                         }}
-                        className="baseVertFlex absolute left-0 top-0 z-[3] w-full bg-black bg-opacity-30 p-2"
+                        className="baseVertFlex z-[3] w-full bg-black bg-opacity-30 p-2"
                       >
-                        <div className="align-center flex w-full justify-between px-4 text-lg desktop:px-8">
+                        <div className="align-center flex w-full justify-between px-4 text-lg leading-6 desktop:px-8">
                           Cards played
                           <div className="baseFlex">
                             <div
@@ -790,8 +841,8 @@ function Scoreboard() {
                             />
                           </div>
                         </div>
-                        {/* make this red/green text */}
-                        <div className="align-center flex w-full justify-between px-4 text-lg desktop:px-8">
+
+                        <div className="align-center flex w-full justify-between px-4 text-lg leading-6 desktop:px-8">
                           Squeak
                           <div className="baseFlex">
                             <div
@@ -814,7 +865,8 @@ function Scoreboard() {
                             />
                           </div>
                         </div>
-                        <div className="align-center flex w-full justify-between px-4 text-xl desktop:px-8">
+
+                        <div className="align-center mt-1 flex w-full justify-between px-4 text-xl font-medium desktop:px-8">
                           Total
                           <AnimatedNumber
                             value={
