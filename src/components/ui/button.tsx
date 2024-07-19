@@ -22,13 +22,14 @@ const buttonVariants = cva(
         // ideally wanted a link variant but wasn't conducive to how we set up the button variants below..
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
+        text: "text-primary",
         drawer:
           "text-darkGreen border-darkGreen w-full !rounded-none h-full absolute top-0 left-0",
       },
       size: {
         default: "h-10 px-4 py-2",
-        sm: "h-9 rounded-md px-3",
-        lg: "h-11 rounded-md px-8",
+        sm: "h-9 px-3",
+        lg: "h-11 px-8",
         icon: "h-10 w-10",
       },
     },
@@ -36,7 +37,7 @@ const buttonVariants = cva(
       variant: "default",
       size: "default",
     },
-  }
+  },
 );
 
 export interface ButtonProps
@@ -80,7 +81,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       showCheckmark,
       ...props
     },
-    ref
+    ref,
   ) => {
     const Comp = asChild ? Slot : "button";
 
@@ -100,6 +101,40 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           ? 0.35
           : 0.25
         : 1;
+
+    if (variant === "text") {
+      return (
+        <div
+          onMouseEnter={() => setBrightness(0.75)}
+          onMouseLeave={() => setBrightness(1)}
+          onPointerDown={() => {
+            setBrightness(0.65);
+          }}
+          onPointerUp={() => {
+            setBrightness(1);
+          }}
+          onPointerLeave={() => {
+            setBrightness(1);
+          }}
+          className="baseFlex"
+        >
+          <Comp
+            style={{
+              color: "hsl(120deg, 100%, 86%)",
+              filter: `brightness(${brightness})`,
+            }}
+            className={`${cn(
+              `${buttonVariants({ variant, size, className })} relative`,
+            )} `}
+            ref={ref}
+            {...props}
+          >
+            {innerText}
+            {icon}
+          </Comp>
+        </div>
+      );
+    }
 
     if (variant === "drawer") {
       return (
@@ -133,10 +168,10 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           )}
 
           {showArrow && (
-            <IoIosArrowForward size={"1rem"} className="absolute right-4 " />
+            <IoIosArrowForward size={"1rem"} className="absolute right-4" />
           )}
           {showCheckmark && (
-            <AiOutlineCheck size={"1rem"} className="absolute right-4 " />
+            <AiOutlineCheck size={"1rem"} className="absolute right-4" />
           )}
         </div>
       );
@@ -174,11 +209,8 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
               filter: `brightness(${brightness})`,
             }}
             className={`${cn(
-              `${buttonVariants({ variant, size, className })} relative`
-            )}
-          
-
-          `}
+              `${buttonVariants({ variant, size, className })} relative`,
+            )} `}
             ref={ref}
             {...props}
           >
@@ -224,7 +256,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
               filter: `brightness(${brightness})`,
             }}
             className={`${cn(
-              `${buttonVariants({ variant, size, className })} relative`
+              `${buttonVariants({ variant, size, className })} relative`,
             )}`}
             ref={ref}
             {...props}
@@ -254,7 +286,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
             {showCardSuitAccents && (
               <>
                 <GiClubs
-                  size={"1rem"}
+                  size={"0.9rem"}
                   style={{
                     position: "absolute",
                     color: "hsl(120deg 100% 18%)",
@@ -265,7 +297,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
                   }}
                 />
                 <GiDiamonds
-                  size={"1rem"}
+                  size={"0.9rem"}
                   style={{
                     position: "absolute",
                     color: "hsl(120deg 100% 18%)",
@@ -276,7 +308,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
                   }}
                 />
                 <GiHearts
-                  size={"1rem"}
+                  size={"0.9rem"}
                   style={{
                     position: "absolute",
                     color: "hsl(120deg 100% 18%)",
@@ -287,7 +319,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
                   }}
                 />
                 <GiSpades
-                  size={"1rem"}
+                  size={"0.9rem"}
                   style={{
                     position: "absolute",
                     color: "hsl(120deg 100% 18%)",
@@ -375,7 +407,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         {...props}
       />
     );
-  }
+  },
 );
 Button.displayName = "Button";
 

@@ -110,7 +110,7 @@ function SecondaryButton({
       {extraPadding && (
         <>
           <GiClubs
-            size={"1rem"}
+            size={"0.9rem"}
             style={{
               position: "absolute",
               color: "hsl(120deg 100% 18%)",
@@ -121,7 +121,7 @@ function SecondaryButton({
             }}
           />
           <GiDiamonds
-            size={"1rem"}
+            size={"0.9rem"}
             style={{
               position: "absolute",
               color: "hsl(120deg 100% 18%)",
@@ -132,7 +132,7 @@ function SecondaryButton({
             }}
           />
           <GiHearts
-            size={"1rem"}
+            size={"0.9rem"}
             style={{
               position: "absolute",
               color: "hsl(120deg 100% 18%)",
@@ -143,7 +143,7 @@ function SecondaryButton({
             }}
           />
           <GiSpades
-            size={"1rem"}
+            size={"0.9rem"}
             style={{
               position: "absolute",
               color: "hsl(120deg 100% 18%)",
