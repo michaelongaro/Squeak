@@ -331,6 +331,28 @@ legend {
   }
 }
 
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+    transform: scale(0.95) translateY(10px);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(0.95) translateY(-5px);
+  }
+}
+
+.animateFadeInOut {
+  animation: fadeInOut 1s ease-in-out forwards;
+  color: hsl(120deg 100% 86%);
+}
+
 @keyframes dotPulse {
   0% {
     transform: scale(0.5);

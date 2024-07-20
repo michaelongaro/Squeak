@@ -236,7 +236,7 @@ function useCardDropApproved({
       if (playerID === userID) {
         setProposedCardBoxShadow({
           id: endID,
-          boxShadowValue: `0px 0px 4px 3px rgba(29, 232, 7, 1)`,
+          boxShadowValue: `0px 0px 4px 3px hsl(120, 100%, 86%)`,
         });
       }
     }
