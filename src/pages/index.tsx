@@ -39,8 +39,6 @@ function MainOptions() {
 
   usePostSignUpRegistration();
 
-  console.log(viewportLabel);
-
   return (
     <motion.div
       key={"mainOptions"}
