@@ -6,7 +6,7 @@
    version="1.1"
    id="svg8"
    inkscape:version="1.2 (dc2aedaf03, 2022-05-15)"
-   sodipodi:docname="squeakLogoBackup.svg"
+   sodipodi:docname="squeakLogo.svg"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -147,6 +147,176 @@
        height="260.79999"
        x="-82.400002"
        y="-130.39999" />
+    <pattern
+       patternUnits="userSpaceOnUse"
+       width="337.34936"
+       height="392.47447"
+       patternTransform="translate(6.1876468e-7,31.898221)"
+       id="pattern499">
+      <g
+         id="g1292"
+         transform="matrix(3.7795276,0,0,3.7795276,-64.812877,-82.574712)">
+        <g
+           id="g893"
+           transform="matrix(0.26458333,0,0,0.26458333,50.100532,66.72959)">
+          <symbol
+             id="D8"
+             viewBox="-500 -500 1000 1000"
+             preserveAspectRatio="xMinYMid">
+            <path
+               d="m -1,-50 a 205,205 0 1 1 2,0 h -2 a 255,255 0 1 0 2,0 z"
+               stroke="#ff0000"
+               stroke-width="80"
+               stroke-linecap="square"
+               stroke-miterlimit="1.5"
+               fill="none"
+               id="path833" />
+          </symbol>
+          <symbol
+             id="D"
+             viewBox="-600 -600 1200 1200"
+             preserveAspectRatio="xMinYMid">
+            <path
+               d="M -400,0 C -350,0 0,-450 0,-500 0,-450 350,0 400,0 350,0 0,450 0,500 0,450 -350,0 -400,0 Z"
+               fill="#ff0000"
+               id="path836" />
+          </symbol>
+          <rect
+             width="239"
+             height="335"
+             x="-87.865799"
+             y="-126.82198"
+             rx="12"
+             ry="12"
+             fill="#ffffff"
+             stroke="#000000"
+             id="rect839"
+             transform="rotate(-21.044013)" />
+          <use
+             xlink:href="#D"
+             height="70"
+             width="70"
+             x="-87.500999"
+             y="-35"
+             id="use841"
+             transform="rotate(-21.044013,93.687651,-105.49789)" />
+          <use
+             xlink:href="#D"
+             height="70"
+             width="70"
+             x="17.500999"
+             y="-35"
+             id="use843"
+             transform="rotate(-21.044013,93.687651,-105.49789)" />
+          <use
+             xlink:href="#D8"
+             height="32"
+             width="32"
+             x="-114.4"
+             y="-156"
+             id="use845"
+             transform="rotate(-21.044013,93.687651,-105.49789)" />
+          <use
+             xlink:href="#D"
+             height="26.768999"
+             width="26.768999"
+             x="-111.784"
+             y="-119"
+             id="use847"
+             transform="rotate(-21.044013,93.687651,-105.49789)" />
+          <use
+             xlink:href="#D"
+             height="70"
+             width="70"
+             x="-87.500999"
+             y="-135.50101"
+             id="use849"
+             transform="rotate(-21.044013,93.687651,-105.49789)" />
+          <use
+             xlink:href="#D"
+             height="70"
+             width="70"
+             x="17.500999"
+             y="-135.50101"
+             id="use851"
+             transform="rotate(-21.044013,93.687651,-105.49789)" />
+          <use
+             xlink:href="#D"
+             height="70"
+             width="70"
+             x="-35"
+             y="-85.25"
+             id="use853"
+             transform="rotate(-21.044013,93.687651,-105.49789)" />
+          <g
+             transform="rotate(158.95599,19.594794,17.401202)"
+             id="g865">
+            <use
+               xlink:href="#D8"
+               height="32"
+               width="32"
+               x="-114.4"
+               y="-156"
+               id="use855" />
+            <use
+               xlink:href="#D"
+               height="26.768999"
+               width="26.768999"
+               x="-111.784"
+               y="-119"
+               id="use857" />
+            <use
+               xlink:href="#D"
+               height="70"
+               width="70"
+               x="-87.500999"
+               y="-135.50101"
+               id="use859" />
+            <use
+               xlink:href="#D"
+               height="70"
+               width="70"
+               x="17.500999"
+               y="-135.50101"
+               id="use861" />
+            <use
+               xlink:href="#D"
+               height="70"
+               width="70"
+               x="-35"
+               y="-85.25"
+               id="use863" />
+          </g>
+        </g>
+      </g>
+    </pattern>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath1532">
+      <rect
+         style="fill:#000000;stroke-width:2.75309;stroke-linejoin:round;paint-order:stroke fill markers"
+         id="rect1534"
+         width="318.19803"
+         height="338.40106"
+         x="-1.0101383"
+         y="3.0304282"
+         rx="8.5909081"
+         ry="8.8938046" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath1557">
+      <rect
+         style="fill:#000000;stroke-width:3.77953;stroke-linejoin:round;paint-order:stroke fill markers"
+         id="rect1559"
+         width="283.85287"
+         height="368.70566"
+         x="-106.70437"
+         y="-243.52045"
+         rx="12"
+         ry="12"
+         transform="rotate(-24.103344)" />
+    </clipPath>
   </defs>
   <sodipodi:namedview
      id="base"
@@ -156,10 +326,10 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.9899495"
-     inkscape:cx="348.50263"
-     inkscape:cy="211.12188"
+     inkscape:cx="452.54834"
+     inkscape:cy="301.02546"
      inkscape:document-units="mm"
-     inkscape:current-layer="layer5"
+     inkscape:current-layer="g1349"
      inkscape:document-rotation="0"
      showgrid="false"
      inkscape:object-nodes="false"
@@ -173,7 +343,7 @@
      inkscape:window-width="1920"
      inkscape:window-height="1009"
      inkscape:window-x="1912"
-     inkscape:window-y="44"
+     inkscape:window-y="-8"
      inkscape:window-maximized="1"
      inkscape:showpageshadow="2"
      inkscape:pagecheckerboard="0"
@@ -193,142 +363,15 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1">
-    <g
-       id="g1292"
-       transform="translate(-17.148407,-13.408155)">
-      <g
-         id="g893"
-         transform="matrix(0.26458333,0,0,0.26458333,50.100532,66.72959)">
-        <symbol
-           id="D8"
-           viewBox="-500 -500 1000 1000"
-           preserveAspectRatio="xMinYMid">
-          <path
-             d="m -1,-50 a 205,205 0 1 1 2,0 h -2 a 255,255 0 1 0 2,0 z"
-             stroke="#ff0000"
-             stroke-width="80"
-             stroke-linecap="square"
-             stroke-miterlimit="1.5"
-             fill="none"
-             id="path833" />
-        </symbol>
-        <symbol
-           id="D"
-           viewBox="-600 -600 1200 1200"
-           preserveAspectRatio="xMinYMid">
-          <path
-             d="M -400,0 C -350,0 0,-450 0,-500 0,-450 350,0 400,0 350,0 0,450 0,500 0,450 -350,0 -400,0 Z"
-             fill="#ff0000"
-             id="path836" />
-        </symbol>
-        <rect
-           width="239"
-           height="335"
-           x="-87.865799"
-           y="-126.82198"
-           rx="12"
-           ry="12"
-           fill="#ffffff"
-           stroke="#000000"
-           id="rect839"
-           transform="rotate(-21.044013)" />
-        <use
-           xlink:href="#D"
-           height="70"
-           width="70"
-           x="-87.500999"
-           y="-35"
-           id="use841"
-           transform="rotate(-21.044013,93.687651,-105.49789)" />
-        <use
-           xlink:href="#D"
-           height="70"
-           width="70"
-           x="17.500999"
-           y="-35"
-           id="use843"
-           transform="rotate(-21.044013,93.687651,-105.49789)" />
-        <use
-           xlink:href="#D8"
-           height="32"
-           width="32"
-           x="-114.4"
-           y="-156"
-           id="use845"
-           transform="rotate(-21.044013,93.687651,-105.49789)" />
-        <use
-           xlink:href="#D"
-           height="26.768999"
-           width="26.768999"
-           x="-111.784"
-           y="-119"
-           id="use847"
-           transform="rotate(-21.044013,93.687651,-105.49789)" />
-        <use
-           xlink:href="#D"
-           height="70"
-           width="70"
-           x="-87.500999"
-           y="-135.50101"
-           id="use849"
-           transform="rotate(-21.044013,93.687651,-105.49789)" />
-        <use
-           xlink:href="#D"
-           height="70"
-           width="70"
-           x="17.500999"
-           y="-135.50101"
-           id="use851"
-           transform="rotate(-21.044013,93.687651,-105.49789)" />
-        <use
-           xlink:href="#D"
-           height="70"
-           width="70"
-           x="-35"
-           y="-85.25"
-           id="use853"
-           transform="rotate(-21.044013,93.687651,-105.49789)" />
-        <g
-           transform="rotate(158.95599,19.594794,17.401202)"
-           id="g865">
-          <use
-             xlink:href="#D8"
-             height="32"
-             width="32"
-             x="-114.4"
-             y="-156"
-             id="use855" />
-          <use
-             xlink:href="#D"
-             height="26.768999"
-             width="26.768999"
-             x="-111.784"
-             y="-119"
-             id="use857" />
-          <use
-             xlink:href="#D"
-             height="70"
-             width="70"
-             x="-87.500999"
-             y="-135.50101"
-             id="use859" />
-          <use
-             xlink:href="#D"
-             height="70"
-             width="70"
-             x="17.500999"
-             y="-135.50101"
-             id="use861" />
-          <use
-             xlink:href="#D"
-             height="70"
-             width="70"
-             x="-35"
-             y="-85.25"
-             id="use863" />
-        </g>
-      </g>
-    </g>
+    <rect
+       style="stroke:none;fill:url(#pattern499)"
+       width="337.34936"
+       height="392.47447"
+       x="6.1876468e-07"
+       y="31.898221"
+       id="rect521"
+       transform="scale(0.26458333)"
+       clip-path="url(#clipPath1532)" />
     <g
        id="g1335"
        transform="translate(-24.149099,-21.298305)">
@@ -605,7 +648,8 @@
        transform="rotate(24.103344,341.1361,139.54485)">
       <g
          id="g1260"
-         transform="matrix(0.26458333,0,0,0.26458333,123.47852,152.87817)">
+         transform="matrix(0.26458333,0,0,0.26458333,122.54536,150.95328)"
+         clip-path="url(#clipPath1557)">
         <symbol
            id="HA"
            viewBox="-500 -500 1000 1000"
@@ -628,16 +672,19 @@
              fill="#ff0000"
              id="path1224" />
         </symbol>
-        <rect
-           width="239"
-           height="335"
-           x="-119.5"
-           y="-167.5"
-           rx="12"
-           ry="12"
-           fill="#ffffff"
-           stroke="#000000"
-           id="rect1227" />
+        <g
+           id="g1537">
+          <rect
+             width="239"
+             height="335"
+             x="-119.5"
+             y="-167.5"
+             rx="12"
+             ry="12"
+             fill="#ffffff"
+             stroke="#000000"
+             id="rect1227" />
+        </g>
         <use
            xlink:href="#H"
            height="70"
@@ -687,17 +734,7 @@
     <g
        inkscape:groupmode="layer"
        id="layer5"
-       inkscape:label="hiddenWhiteBoxLayer">
-      <rect
-         style="opacity:0.998;fill:#166434;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:2.23906;stroke-opacity:1;paint-order:stroke markers fill"
-         id="rect392"
-         width="159.12798"
-         height="49.892857"
-         x="11.717262"
-         y="66.523811"
-         rx="3.3086014"
-         ry="3.5820513" />
-    </g>
+       inkscape:label="hiddenWhiteBoxLayer" />
     <path
        id="rect1374"
        style="opacity:0.998;fill:#005c00;fill-opacity:1;fill-rule:evenodd;stroke:#b8ffb8;stroke-width:2.24044;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke markers fill"
