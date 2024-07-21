@@ -36,20 +36,19 @@ function AudioLevelSlider({ forMobile }: IAudioLevelSlider) {
     <div
       data-vaul-no-drag="" // TODO: I don't think this actually works atm
       style={{
-        borderColor: "hsl(120deg 100% 86%)",
+        borderColor: forMobile ? "" : "hsl(120deg 100% 86%)",
         color: "hsl(120deg 100% 86%)",
         backgroundColor: "hsl(120deg 100% 18%)",
       }}
       onPointerEnter={() => setHovered(true)}
       onPointerLeave={() => setHovered(false)}
-      className={`baseFlex !justify-start 
-      ${hovered || forMobile ? "w-full" : "w-[40px] md:w-full"}
-      ${hovered || forMobile ? "h-full" : "h-[40px] md:h-full"}
-      ${
+      className={`baseFlex !justify-start ${hovered || forMobile ? "w-full" : "w-[40px] md:w-full"} ${hovered || forMobile ? "h-full" : "h-[40px] md:h-full"} ${
         hovered || forMobile ? "gap-2" : "gap-0"
       } rounded-md border-2 p-2 transition-all`}
     >
-      {(hovered || forMobile) && <div className="w-4">{values[0]}</div>}
+      {(hovered || forMobile) && (
+        <div className="min-w-6 text-center">{values[0]}</div>
+      )}
 
       <div
         style={{
