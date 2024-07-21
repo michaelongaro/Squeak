@@ -150,8 +150,8 @@ function TopRightControls() {
         onOpenChange={(isOpen) => setShowDrawer(isOpen)}
       >
         <div
-          className={`baseFlex fixed right-2 !z-[105] h-8 w-8 ${
-            !asPath.includes("/game") ? "top-3" : "top-0.5"
+          className={`baseFlex fixed right-2 !z-[150] h-8 w-8 ${
+            !asPath.includes("/game") ? "top-3" : "top-1.5"
           }`}
         >
           <DrawerTrigger onClick={() => setShowDrawer(true)}>
@@ -547,6 +547,7 @@ function VotingModal({
                       height={"3rem"}
                       style={{
                         fontSize: "0.85rem",
+                        whiteSpace: "nowrap",
                       }}
                       onClickFunction={() => {
                         setShowVotingOptionButtons(false);
@@ -574,13 +575,16 @@ function VotingModal({
                   </div>
                 </>
               ) : (
-                <>
+                <div className="baseFlex w-full gap-2">
                   <SecondaryButton
-                    icon={<IoIosCheckmark size={"1.5rem"} />}
+                    icon={<IoIosCheckmark size={"2rem"} />}
                     extraPadding={false}
-                    innerText="Accept"
-                    width={"100%"}
-                    height={"3rem"}
+                    innerText="Yes"
+                    width={"50%"}
+                    height={"2rem"}
+                    style={{
+                      gap: "0.25rem",
+                    }}
                     onClickFunction={() => {
                       setShowVotingOptionButtons(false);
                       toast.dismiss();
@@ -595,11 +599,11 @@ function VotingModal({
                   />
 
                   <SecondaryButton
-                    icon={<IoClose size={"1.5rem"} />}
+                    icon={<IoClose size={"1.25rem"} />}
                     extraPadding={false}
-                    innerText="Decline"
-                    width={"100%"}
-                    height={"3rem"}
+                    innerText="No"
+                    width={"50%"}
+                    height={"2rem"}
                     onClickFunction={() => {
                       setShowVotingOptionButtons(false);
                       toast.dismiss();
@@ -612,7 +616,7 @@ function VotingModal({
                       });
                     }}
                   />
-                </>
+                </div>
               )}
             </motion.div>
           )}
@@ -1796,12 +1800,12 @@ function WhilePlayingDrawer({
   return (
     <div className="baseVertFlex w-full">
       <div className="baseVertFlex w-full !items-start gap-2 border-darkGreen px-2 py-4">
-        <Label className="pl-1">Volume</Label>
+        <Label className="pl-1 text-base">Volume</Label>
         <AudioLevelSlider forMobile />
       </div>
 
       <div className="baseVertFlex w-full !items-start gap-2 border-t-[1px] border-darkGreen px-2 py-4">
-        <Label className="pl-1">Voting</Label>
+        <Label className="pl-1 text-base">Voting</Label>
         <VotingModal
           showVotingOptionButtons={showVotingOptionButtons}
           setShowVotingOptionButtons={setShowVotingOptionButtons}
@@ -1822,24 +1826,24 @@ function WhilePlayingDrawer({
             />
           </AlertDialogTrigger>
           <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>
+            <AlertDialogHeader className="baseFlex w-full">
+              <AlertDialogTitle className="w-48">
                 Are you sure you want to leave the game?
               </AlertDialogTitle>
             </AlertDialogHeader>
-            <AlertDialogFooter className="baseVertFlex gap-4">
+            <AlertDialogFooter className="baseFlex mt-4 !flex-row gap-8">
               <AlertDialogCancel asChild>
                 <Button
                   variant={"secondary"}
                   innerText={"Cancel"}
-                  className="w-24"
+                  className="m-0 w-24"
                 />
               </AlertDialogCancel>
               <AlertDialogAction asChild>
                 <Button
                   variant={"destructive"}
                   innerText={"Confirm"}
-                  className="w-24"
+                  className="m-0 w-24"
                   onClick={() => {
                     setShowDrawer(false);
                     leaveRoom();
