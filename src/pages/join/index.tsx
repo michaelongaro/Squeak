@@ -176,7 +176,7 @@ function JoinRoom() {
       </Head>
 
       <div className="baseVertFlex relative gap-4">
-        <div className="baseFlex sticky left-0 top-0 z-[105] w-screen !justify-start gap-4 border-b-2 border-white bg-green-800 p-2 shadow-lg tablet:relative tablet:w-full tablet:bg-inherit tablet:shadow-none">
+        <div className="baseFlex to-green-850 sticky left-0 top-0 z-[105] w-screen !justify-start gap-4 border-b-2 border-white bg-gradient-to-br from-green-800 p-2 shadow-lg tablet:relative tablet:w-full tablet:bg-none tablet:shadow-none">
           <Button
             variant={"secondary"}
             icon={
@@ -209,7 +209,7 @@ function JoinRoom() {
           style={{
             color: "hsl(120deg 100% 86%)",
           }}
-          className="baseVertFlex mt-4 gap-8 rounded-md border-2 border-white bg-green-800 p-4"
+          className="baseVertFlex to-green-850 mt-4 gap-8 rounded-md border-2 border-white bg-gradient-to-br from-green-800 p-4"
         >
           <div className="baseVertFlex !items-start gap-4">
             <div className="baseFlex w-full !justify-between gap-5">
@@ -365,7 +365,7 @@ function JoinRoom() {
                 style={{
                   color: "hsl(120deg 100% 86%)",
                 }}
-                className="pointer-events-none absolute right-10 rounded-md border-2 border-white bg-green-800 px-4 py-2 shadow-md"
+                className="to-green-850 pointer-events-none absolute right-10 rounded-md border-2 border-white bg-gradient-to-br from-green-800 px-4 py-2 shadow-md"
               >
                 {roomError}
               </motion.div>

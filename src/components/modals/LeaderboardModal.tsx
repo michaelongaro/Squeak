@@ -63,7 +63,7 @@ function LeaderboardModal({ setShowModal }: ILeaderboardModal) {
         className="baseVertFlex max-h-[90vh] w-[93vw] !justify-start overflow-y-auto rounded-md border-2 border-white shadow-md lg:w-auto"
       >
         {/* combine these classes with above? */}
-        <div className="baseVertFlex relative w-full !justify-start gap-8 rounded-md bg-green-800 p-4 tablet:p-8">
+        <div className="baseVertFlex to-green-850 relative w-full !justify-start gap-8 rounded-md bg-gradient-to-br from-green-800 p-4 tablet:p-8">
           <div
             style={{
               color: "hsl(120deg 100% 86%)",

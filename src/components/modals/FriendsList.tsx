@@ -53,13 +53,13 @@ function FriendsList({ setShowFriendsListModal }: IFriendsList) {
   } = useRoomContext();
 
   const { data: friends } = api.users.getUsersFromIDList.useQuery(
-    friendData?.friendIDs ?? []
+    friendData?.friendIDs ?? [],
   );
   const { data: friendInviteIDs } = api.users.getUsersFromIDList.useQuery(
-    friendData?.friendInviteIDs ?? []
+    friendData?.friendInviteIDs ?? [],
   );
   const { data: roomInviteIDs } = api.users.getUsersFromIDList.useQuery(
-    friendData?.roomInviteIDs ?? []
+    friendData?.roomInviteIDs ?? [],
   );
 
   const [openPopoverID, setOpenPopoverID] = useState("");
@@ -86,7 +86,7 @@ function FriendsList({ setShowFriendsListModal }: IFriendsList) {
       exit={{ opacity: 0, scale: 0.95 }}
       transition={{ duration: 0.15 }}
       ref={modalRef}
-      className="baseVertFlex absolute right-0 top-16 w-[370px] !items-start gap-2 rounded-md border-2 border-white bg-green-800 p-4"
+      className="baseVertFlex to-green-850 absolute right-0 top-16 w-[370px] !items-start gap-2 rounded-md border-2 border-white bg-gradient-to-br from-green-800 p-4"
     >
       <div className="baseVertFlex max-h-48 w-full !items-start gap-2">
         <div
@@ -131,7 +131,7 @@ function FriendsList({ setShowFriendsListModal }: IFriendsList) {
                     borderColor={friend.color}
                     size={"3rem"}
                   />
-                  <div className="baseVertFlex !items-start ">
+                  <div className="baseVertFlex !items-start">
                     {friend.username}
                     <div className="text-sm opacity-80">friend invite</div>
                   </div>
@@ -195,7 +195,7 @@ function FriendsList({ setShowFriendsListModal }: IFriendsList) {
             >
               <div className="baseFlex gap-2 pl-2">
                 <TbDoorEnter size={"2rem"} />
-                <div className="baseVertFlex !items-start ">
+                <div className="baseVertFlex !items-start">
                   {friend.username}
                   <div className="text-sm opacity-80">room invite</div>
                 </div>
@@ -277,7 +277,7 @@ function FriendsList({ setShowFriendsListModal }: IFriendsList) {
             style={{
               color: "hsl(120deg 100% 86%)",
             }}
-            className="baseFlex gap-2 "
+            className="baseFlex gap-2"
           >
             Friends
             {friends !== undefined && (
@@ -298,12 +298,12 @@ function FriendsList({ setShowFriendsListModal }: IFriendsList) {
             //       ? "7rem"
             //       : "3rem",
             // }}
-            className="flex w-full flex-col items-start justify-start gap-4 overflow-auto p-2 "
+            className="flex w-full flex-col items-start justify-start gap-4 overflow-auto p-2"
           >
             {friends
               .sort(
                 ({ online: onlineA = false }, { online: onlineB = false }) =>
-                  Number(onlineB) - Number(onlineA)
+                  Number(onlineB) - Number(onlineA),
               )
               .map((friend, index) => (
                 <div

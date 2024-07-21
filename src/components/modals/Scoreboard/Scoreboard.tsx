@@ -282,10 +282,9 @@ function Scoreboard() {
           transition={{ duration: 0.15, delay: 0.35 }}
           style={{
             color: "hsl(120deg 100% 86%)",
-            backgroundColor: "hsl(120deg 100% 18%)",
             borderColor: "hsl(120deg 100% 86%)",
           }}
-          className="w-[95%] rounded-lg border-2 p-4 shadow-md tablet:h-[75%] tablet:w-[75%]"
+          className="to-green-850 w-[95%] rounded-lg border-2 bg-gradient-to-br from-green-800 p-4 shadow-md tablet:h-[75%] tablet:w-[75%]"
         >
           {scoreboardMetadata?.playerRoundDetails && currentPlayerStats && (
             <div className="baseVertFlex h-full gap-2 mobileLarge:gap-4 tablet:gap-8">
@@ -751,10 +750,9 @@ function Scoreboard() {
         transition={{ duration: 0.15, delay: 0.35 }}
         style={{
           color: "hsl(120deg 100% 86%)",
-          backgroundColor: "hsl(120deg 100% 18%)",
           borderColor: "hsl(120deg 100% 86%)",
         }}
-        className="h-[95%] w-[95%] rounded-lg border-2 p-4 shadow-md tablet:h-[85%] tablet:w-[85%] desktop:h-[75%] desktop:w-[75%]"
+        className="to-green-850 h-[95%] w-[95%] rounded-lg border-2 bg-gradient-to-br from-green-800 p-4 shadow-md tablet:h-[85%] tablet:w-[85%] desktop:h-[75%] desktop:w-[75%]"
       >
         {scoreboardMetadata?.playerRoundDetails && (
           <div className="baseVertFlex h-full gap-2 desktop:gap-8">

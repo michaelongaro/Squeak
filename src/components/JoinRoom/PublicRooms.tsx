@@ -75,7 +75,7 @@ function PublicRooms() {
   }
 
   return (
-    <fieldset className="mt-8 w-[360px] rounded-md border-2 border-white bg-green-800 p-2 sm:w-full sm:p-4">
+    <fieldset className="to-green-850 mt-8 w-[360px] rounded-md border-2 border-white bg-gradient-to-br from-green-800 p-2 sm:w-full sm:p-4">
       <legend
         style={{
           color: "hsl(120deg 100% 86%)",

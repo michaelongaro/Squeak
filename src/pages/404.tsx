@@ -12,7 +12,7 @@ function Custom404() {
         style={{
           color: "hsl(120, 100%, 86%)",
         }}
-        className="baseVertFlex rounded-md border-2 border-white bg-green-800 p-8 shadow-lg"
+        className="baseVertFlex to-green-850 rounded-md border-2 border-white bg-gradient-to-br from-green-800 p-8 shadow-lg"
       >
         <BiErrorAlt size={"3rem"} />
 

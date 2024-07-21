@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+
 const config = {
   darkMode: ["class"],
   content: [
@@ -25,6 +26,7 @@ const config = {
       colors: {
         lightGreen: "hsl(120deg, 100%, 86%)",
         darkGreen: "hsl(120deg, 100%, 18%)",
+        "green-850": "hsl(143, 61%, 21%)",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         mobileDrawerInput: "hsl(var(--mobile-drawer-input))",
