@@ -2,17 +2,17 @@
   display: flex;
   flex-direction: column;
   overflow: hidden !important;
-  /* this should already be always hidden? I think the buzzer will set it to visible for a second as is */
   justify-content: center;
   align-items: center;
   width: 100%;
   height: 100%;
   max-width: 100%;
   row-gap: 0.5rem;
-  padding: 1rem;
-  margin-top: 2rem;
-  /* for the ellipsis button to open controls <Drawer /> */
   gap: 0.5rem;
+  padding: 1rem;
+  padding-top: 3rem;
+  /* ^ for the mini voting container results and space to render settings cog
+     for <Drawer /> */
 }
 
 .currentPlayerCards,
