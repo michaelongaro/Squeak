@@ -112,9 +112,16 @@ function JoinRoom() {
       setRoomConfig(roomConfig);
     }
 
-    function handleNavigateToPlayScreen(initGameData: IGameMetadata) {
+    function handleNavigateToPlayScreen({
+      gameData,
+      roomConfig,
+    }: {
+      gameData: IGameMetadata;
+      roomConfig: IRoomConfig;
+    }) {
       push(`/game/${roomConfig.code}`);
-      setGameData(initGameData);
+      setGameData(gameData);
+      setRoomConfig(roomConfig);
     }
 
     socket.on("playerMetadataUpdated", handlePlayerMetadataUpdated);

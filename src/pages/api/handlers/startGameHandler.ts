@@ -32,9 +32,10 @@ export function startGameHandler(
       roomCode: string;
       firstRound: boolean;
     }) => {
+      const room = roomData[roomCode];
       const players = roomData[roomCode]?.players;
 
-      if (!players) return;
+      if (!room || !players) return;
 
       if (firstRound) {
         const board = Array.from({ length: 4 }, () =>
@@ -57,6 +58,8 @@ export function startGameHandler(
           currentRound: 1,
           playerIDsThatLeftMidgame: [],
         };
+
+        room.roomConfig.gameStarted = true;
       }
 
       const currentRoomPlayers = roomData[roomCode]?.players;
@@ -171,7 +174,10 @@ export function startGameHandler(
       ); // roughly the time it takes for the cards to be dealt to the players on client side
 
       if (firstRound && prisma) {
-        io.in(roomCode).emit("navigateToPlayScreen", gameData[roomCode]);
+        io.in(roomCode).emit("navigateToPlayScreen", {
+          gameData: gameData[roomCode],
+          roomConfig: roomData[roomCode]?.roomConfig,
+        });
 
         await prisma.room.update({
           where: {
