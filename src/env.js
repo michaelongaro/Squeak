@@ -12,7 +12,7 @@ export const env = createEnv({
       .url()
       .refine(
         (str) => !str.includes("YOUR_MYSQL_URL_HERE"),
-        "You forgot to change the default URL"
+        "You forgot to change the default URL",
       ),
     NODE_ENV: z
       .enum(["development", "test", "production"])
@@ -26,6 +26,7 @@ export const env = createEnv({
    * `NEXT_PUBLIC_`.
    */
   client: {
+    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string(),
     NEXT_PUBLIC_DOMAIN_URL: z.string().url(),
   },
 
@@ -37,6 +38,8 @@ export const env = createEnv({
     DATABASE_URL: process.env.DATABASE_URL,
     NODE_ENV: process.env.NODE_ENV,
     CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY,
+    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY:
+      process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
     NEXT_PUBLIC_DOMAIN_URL: process.env.NEXT_PUBLIC_DOMAIN_URL,
   },
   /**
