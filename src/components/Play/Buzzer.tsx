@@ -81,7 +81,7 @@ function Buzzer({ playerID, roomCode, interactive }: IBuzzer) {
         animation:
           hoveringOnButton || !interactive ? "none" : "pulse 3s infinite",
       }}
-      className="relative z-[150] h-[30px] w-[52px] rounded-[50%] tablet:h-[35px] tablet:w-[57px] desktop:h-[40px] desktop:w-[65px]"
+      className="relative z-[100] h-[30px] w-[52px] rounded-[50%] tablet:h-[35px] tablet:w-[57px] desktop:h-[40px] desktop:w-[65px]"
       onPointerEnter={() => {
         if (interactive) setHoveringOnButton(true);
       }}
@@ -122,7 +122,11 @@ function Buzzer({ playerID, roomCode, interactive }: IBuzzer) {
           src={baseplate.src}
           alt="baseplate for buzzer"
           style={{
-            opacity: viewportLabel.includes("mobile") ? "0" : "1",
+            // fyi: I think this is just to hide other player's buzzers from spilling over onto edge of viewport on mobile
+            opacity:
+              playerID !== userID && viewportLabel.includes("mobile")
+                ? "0"
+                : "1",
           }}
           className="h-[32px] w-[52px] tablet:h-[35px] tablet:w-[57px] desktop:h-[40px] desktop:w-[75px]"
         />
@@ -132,9 +136,13 @@ function Buzzer({ playerID, roomCode, interactive }: IBuzzer) {
       <div className="absolute left-[6px] top-[-3px] z-[140] h-[28px] w-[40px] tablet:left-[9px] tablet:top-[-3px] tablet:h-[30px] tablet:w-[40px] desktop:left-[7px] desktop:top-[-5px] desktop:h-[35px] desktop:w-[50px]">
         <img
           style={{
-            opacity: viewportLabel.includes("mobile") ? "0" : "1",
-            top: pointerDownOnButton ? "8px" : "0px",
-            transform: pointerDownOnButton ? "rotateX(60deg)" : "rotateX(0deg)",
+            // fyi: I think this is just to hide other player's buzzers from spilling over onto edge of viewport on mobile
+            opacity:
+              playerID !== userID && viewportLabel.includes("mobile")
+                ? "0"
+                : "1",
+            top: pointerDownOnButton ? "6px" : "0px",
+            transform: pointerDownOnButton ? "rotateX(50deg)" : "rotateX(0deg)",
           }}
           draggable={false}
           src={squeakBuzzer.src}
