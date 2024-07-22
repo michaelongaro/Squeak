@@ -9,17 +9,36 @@ import usePlayerLeftRoom from "~/hooks/usePlayerLeftRoom";
 import useAttachUnloadEventListener from "~/hooks/useAttachUnloadEventListener";
 import useRejoinRoom from "~/hooks/useRejoinRoom";
 import Head from "next/head";
+import { useRouter } from "next/router";
 
 const montserrat = Montserrat({
   weight: "variable",
   subsets: ["latin"],
 });
 
+function isIOS() {
+  // @ts-expect-error - TS currently doesn't know about the MSStream global
+  return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+}
+
 interface GeneralLayout {
   children: ReactNode;
 }
 
 function GeneralLayout({ children }: GeneralLayout) {
+  const { asPath } = useRouter();
+
+  // prevents iOS overscrolling on the /game page for better UX while playing
+  useEffect(() => {
+    if (asPath.includes("game") && isIOS()) {
+      document.documentElement.style.overscrollBehavior = "none";
+      document.body.style.overflowY = "scroll";
+    } else {
+      document.documentElement.style.overscrollBehavior = "auto";
+      document.body.style.overflowY = "auto";
+    }
+  }, [asPath]);
+
   useEffect(() => {
     // prefetching/caching card assets to prevent any flickering of the assets
     // the very first time a player plays a round
@@ -47,12 +66,11 @@ function GeneralLayout({ children }: GeneralLayout) {
           content="Welcome to Squeak! A fun, fast-paced multiplayer rendition of solitaire.
                    Games can be played with 2-4 players, lasting around 20 minutes."
         />
-        {/* TODO: make sure this doesn't introduce any weird ui bugs, was put in here to prevent
-            the safari auto zoom in on input focus */}
+        {/* makes it so page can't be overscrolled (which is the default iOS scrolling implemenation) */}
         <meta
           name="viewport"
-          content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no"
-        />
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, height=device-height"
+        ></meta>
         <link rel="icon" href="/favicon.ico" />
         <link rel="canonical" href="https://playsqueak.com" />
         <meta property="og:title" content="Squeak"></meta>
