@@ -630,6 +630,15 @@ function Card({
                   showCardBack && !forceShowCardFront
                     ? `hue-rotate(${hueRotation}deg)`
                     : "none",
+                // TODO: investigate if some kind of scaling effect like this could ever work,
+                // not a top priority right now but rough boilerplate is below
+                // transform:
+                //   userID === ownerID &&
+                //   (inMovingSqueakStack ||
+                //     cardOffsetPosition.x !== 0 ||
+                //     cardOffsetPosition.y !== 0)
+                //     ? "scale(1.05)"
+                //     : "scale(1)",
               }}
               className="cardDimensions pointer-events-none select-none rounded-[0.15rem]"
               src={
