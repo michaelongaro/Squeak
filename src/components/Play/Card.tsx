@@ -617,7 +617,7 @@ function Card({
               // TODO: should probably have _all_ styles be directly tied to state, instead of manually
               // setting the .style properties above in moveCard()
             }}
-            className={`baseFlex relative h-full w-full select-none !items-start ${
+            className={`baseFlex relative h-full w-full select-none !items-start will-change-transform ${
               draggable && "cursor-grab hover:active:cursor-grabbing"
             }`}
           >
@@ -640,7 +640,7 @@ function Card({
                 //     ? "scale(1.05)"
                 //     : "scale(1)",
               }}
-              className="cardDimensions pointer-events-none select-none rounded-[0.15rem]"
+              className="cardDimensions pointer-events-none select-none rounded-[0.15rem] will-change-transform"
               src={
                 showCardBack && !forceShowCardFront
                   ? (cardAssets["cardBack"] as StaticImageData).src
