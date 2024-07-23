@@ -44,7 +44,7 @@ function BoardCell({ card, rowIdx, colIdx }: IBoardCell) {
           proposedCardBoxShadow?.boxShadowValue ===
             "0px 0px 4px 3px hsl(120, 100%, 86%)" && (
             <motion.div
-              key={`board${rowIdx}${colIdx}AnimatedPlusOneIndicator`}
+              key={`board${rowIdx}${colIdx}AnimatedPlusOneIndicator-${proposedCardBoxShadow?.boxShadowValue}`}
               initial={{ opacity: 0, scale: 0.95, translateY: 10 }}
               animate={{ opacity: 1, scale: 1, translateY: 0 }}
               exit={{ opacity: 0, scale: 0.95, translateY: -5 }}
