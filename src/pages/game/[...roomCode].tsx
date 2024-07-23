@@ -34,6 +34,7 @@ function Play() {
     roomConfig,
     gameData,
     playerMetadata,
+    queuedCards,
     setGameData,
     showScoreboard,
     setShowShufflingCountdown,
@@ -166,6 +167,30 @@ function Play() {
     playerMetadata,
   ]);
 
+  // 15s interval to periodically check if client is out of sync with server
+  // and if so, emit a syncClientWithServer event to the client
+  useEffect(() => {
+    if (showShufflingCountdown || showScoreboard) return;
+
+    const interval = setInterval(() => {
+      socket.emit("checkClientSyncWithServer", {
+        roomCode: roomConfig.code,
+        playerID: userID,
+        clientGameData: gameData,
+        clientQueuedCards: queuedCards,
+      });
+    }, 15000);
+
+    return () => clearInterval(interval);
+  }, [
+    roomConfig.code,
+    showShufflingCountdown,
+    showScoreboard,
+    userID,
+    gameData,
+    queuedCards,
+  ]);
+
   if (showRoomNotFoundModal) {
     return <RoomNotFound />;
   }
@@ -249,7 +274,7 @@ function RoomNotFound() {
 
   return (
     <div className="baseVertFlex min-h-[100dvh] py-16">
-      <div className="baseVertFlex to-green-850 w-10/12 gap-4 rounded-md border-2 border-lightGreen bg-gradient-to-br from-green-800 p-4 text-lightGreen md:w-[500px] md:p-8">
+      <div className="baseVertFlex w-10/12 gap-4 rounded-md border-2 border-lightGreen bg-gradient-to-br from-green-800 to-green-850 p-4 text-lightGreen md:w-[500px] md:p-8">
         <div className="baseFlex gap-2">
           <IoWarningOutline className="h-8 w-8" />
           <h1 className="text-2xl font-semibold">Room not found</h1>
@@ -275,7 +300,7 @@ function RoomIsFull() {
 
   return (
     <div className="baseVertFlex min-h-[100dvh] py-16">
-      <div className="baseVertFlex to-green-850 w-10/12 gap-4 rounded-md border-2 border-lightGreen bg-gradient-to-br from-green-800 p-4 text-lightGreen md:w-[500px] md:p-8">
+      <div className="baseVertFlex w-10/12 gap-4 rounded-md border-2 border-lightGreen bg-gradient-to-br from-green-800 to-green-850 p-4 text-lightGreen md:w-[500px] md:p-8">
         <div className="baseFlex gap-2">
           <IoWarningOutline className="h-8 w-8" />
           <h1 className="text-2xl font-semibold">Room is full</h1>
@@ -301,7 +326,7 @@ function GameAlreadyStarted() {
 
   return (
     <div className="baseVertFlex min-h-[100dvh] py-16">
-      <div className="baseVertFlex to-green-850 w-10/12 gap-4 rounded-md border-2 border-lightGreen bg-gradient-to-br from-green-800 p-4 text-lightGreen md:w-[500px] md:p-8">
+      <div className="baseVertFlex w-10/12 gap-4 rounded-md border-2 border-lightGreen bg-gradient-to-br from-green-800 to-green-850 p-4 text-lightGreen md:w-[500px] md:p-8">
         <div className="baseFlex gap-2">
           <IoWarningOutline className="h-8 w-8" />
           <h1 className="text-2xl font-semibold">Game in progress</h1>

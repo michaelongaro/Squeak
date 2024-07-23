@@ -4,6 +4,8 @@ import { useRoomContext } from "../context/RoomContext";
 import { type ICardDropProposal } from "../pages/api/socket";
 import { type IMoveCard } from "../components/Play/Card";
 
+// is there any better approach than a partial here? don't like having to do huge
+// guard clause at the start if it's not necessary
 interface ICardDropAccepted extends Partial<ICardDropProposal> {
   startingCardMetadata: {
     originSqueakStackIdx?: number; // if undefined -> origin is hand
@@ -46,6 +48,7 @@ function useCardDropApproved({
     successfulMoveBuffer,
     otherPlayerCardMoveBuffer,
     setGameData,
+    setQueuedCards,
     setProposedCardBoxShadow,
     squeakStackDragAlterations,
     setOtherPlayerSqueakStacksBeingDragged,
@@ -73,7 +76,8 @@ function useCardDropApproved({
         startingCardMetadata,
         endID,
         squeakEndCoords,
-        updatedGameData,
+        boardEndLocation,
+        updatedPlayerCards,
         playerID,
       } = dataFromBackend;
 
@@ -81,11 +85,22 @@ function useCardDropApproved({
       if (
         !card ||
         !ownerID ||
+        !playerID ||
+        updatedPlayerCards === undefined ||
         card.value !== value ||
         card.suit !== suit ||
         playerID !== ownerID
       )
         return;
+
+      // add card to queued cards
+      setQueuedCards((prevQueuedCards) => ({
+        ...prevQueuedCards,
+        [`${ownerID}-${value}${suit}`]: {
+          value,
+          suit,
+        },
+      }));
 
       // setting ctx state for smaller viewports to know which card
       // should be made visible during it's programmatic move that's about to happen
@@ -223,8 +238,31 @@ function useCardDropApproved({
             },
           });
 
-          if (playerID && updatedGameData) {
-            setGameData(updatedGameData);
+          if (playerID) {
+            setGameData((prevGameData) => {
+              const newBoard = structuredClone(prevGameData.board);
+
+              if (boardEndLocation) {
+                const { row, col } = boardEndLocation;
+                newBoard[row]![col] = card;
+              }
+
+              return {
+                ...prevGameData,
+                board: newBoard,
+                players: {
+                  ...prevGameData.players,
+                  [playerID]: updatedPlayerCards,
+                },
+              };
+            });
+
+            // remove card from queued cards
+            setQueuedCards((prevQueuedCards) => {
+              const newQueuedCards = { ...prevQueuedCards };
+              delete newQueuedCards[`${ownerID}-${value}${suit}`];
+              return newQueuedCards;
+            });
           }
 
           if (playerID === userID) {
@@ -258,6 +296,7 @@ function useCardDropApproved({
     userID,
     smallerViewportCardBeingMoved,
     setSmallerViewportCardBeingMoved,
+    setQueuedCards,
   ]);
 }
 

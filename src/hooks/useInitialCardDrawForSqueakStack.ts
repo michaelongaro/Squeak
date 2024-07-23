@@ -46,7 +46,7 @@ function useInitialCardDrawForSqueakStack({
     if (dataFromBackend !== null) {
       setDataFromBackend(null);
 
-      const { playerID, indexToDrawTo, newCard, updatedGameData } =
+      const { playerID, indexToDrawTo, newCard, updatedPlayerCards } =
         dataFromBackend;
 
       if (
@@ -71,7 +71,13 @@ function useInitialCardDrawForSqueakStack({
           flip: true,
           rotate: false,
           callbackFunction: () => {
-            setGameData(updatedGameData);
+            setGameData((prevGameData) => ({
+              ...prevGameData,
+              players: {
+                ...prevGameData.players,
+                [playerID]: updatedPlayerCards,
+              },
+            }));
           },
         });
       }

@@ -49,7 +49,7 @@ export function squeakToBoard({
       cell,
       card.value,
       card.suit,
-      boardEndLocation !== undefined
+      boardEndLocation !== undefined,
     )
   ) {
     if (miscRoomDataObj) {
@@ -83,7 +83,8 @@ export function squeakToBoard({
         lengthOfStack: 1,
       },
       endID: `cell${row}${col}`,
-      updatedGameData: gameData[roomCode],
+      boardEndLocation,
+      updatedPlayerCards: player,
     });
 
     if (card.value === "K") {

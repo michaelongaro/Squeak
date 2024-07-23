@@ -44,7 +44,7 @@ export function deckToSqueak({
     playerID
   ]!.squeakHand[squeakEndLocation]!.findIndex(
     (squeakCard) =>
-      squeakCard.value === card.value && squeakCard.suit === card.suit
+      squeakCard.value === card.value && squeakCard.suit === card.suit,
   );
 
   const squeakStackLength =
@@ -62,7 +62,7 @@ export function deckToSqueak({
       offsetHeight: indexWithinSqueakStack * (20 - squeakStackLength),
     },
     endID: `${playerID}squeakStack${squeakEndLocation}0`,
-    updatedGameData: gameData[roomCode],
+    updatedPlayerCards: player,
     playerID,
   });
 }

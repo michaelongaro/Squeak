@@ -93,6 +93,6 @@ export function drawFromDeck({
   io.in(roomCode).emit("playerDrawnFromDeck", {
     cardBeingAnimated,
     playerID,
-    updatedGameData: gameData[roomCode],
+    updatedPlayerCards: playerCards,
   });
 }

@@ -24,10 +24,10 @@ function useCardDrawFromDeck({
   rotation,
   moveCard,
 }: IUseCardDrawFromDeck) {
-  const { setGameData } = useRoomContext();
+  const { setGameData, setQueuedCards } = useRoomContext();
 
   const [dataFromBackend, setDataFromBackend] = useState<IDrawFromDeck | null>(
-    null
+    null,
   );
 
   useEffect(() => {
@@ -45,15 +45,26 @@ function useCardDrawFromDeck({
       const {
         cardBeingAnimated, // whatever card will be showing as top card of player's hand
         playerID,
-        updatedGameData,
+        updatedPlayerCards,
       } = dataFromBackend;
 
       if (
+        suit === undefined ||
+        value === undefined ||
         ownerID !== playerID ||
         cardBeingAnimated?.value !== value ||
         cardBeingAnimated?.suit !== suit
       )
         return;
+
+      // add card to queued cards
+      setQueuedCards((prevQueuedCards) => ({
+        ...prevQueuedCards,
+        [`${ownerID}-${value}${suit}`]: {
+          value,
+          suit,
+        },
+      }));
 
       const endID = `${ownerID}hand`;
 
@@ -67,12 +78,34 @@ function useCardDrawFromDeck({
           flip: true,
           rotate: false,
           callbackFunction: () => {
-            setGameData(updatedGameData);
+            setGameData((prevGameData) => ({
+              ...prevGameData,
+              players: {
+                ...prevGameData.players,
+                [playerID]: updatedPlayerCards,
+              },
+            }));
+
+            // remove card from queued cards
+            setQueuedCards((prevQueuedCards) => {
+              const newQueuedCards = { ...prevQueuedCards };
+              delete newQueuedCards[`${ownerID}-${value}${suit}`];
+              return newQueuedCards;
+            });
           },
         });
       }
     }
-  }, [dataFromBackend, moveCard, setGameData, rotation, suit, ownerID, value]);
+  }, [
+    dataFromBackend,
+    moveCard,
+    setGameData,
+    rotation,
+    suit,
+    ownerID,
+    value,
+    setQueuedCards,
+  ]);
 }
 
 export default useCardDrawFromDeck;

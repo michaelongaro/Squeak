@@ -22,7 +22,7 @@ function useCardDrawFromSqueakDeck({
   ownerID,
   moveCard,
 }: IUseCardDrawFromSqueakDeck) {
-  const { setGameData } = useRoomContext();
+  const { setGameData, setQueuedCards } = useRoomContext();
 
   const [dataFromBackend, setDataFromBackend] =
     useState<IDrawFromSqueakDeck | null>(null);
@@ -43,15 +43,26 @@ function useCardDrawFromSqueakDeck({
     if (dataFromBackend !== null) {
       setDataFromBackend(null);
 
-      const { playerID, indexToDrawTo, newCard, updatedGameData } =
+      const { playerID, indexToDrawTo, newCard, updatedPlayerCards } =
         dataFromBackend;
 
       if (
+        suit === undefined ||
+        value === undefined ||
         playerID !== ownerID ||
         newCard?.suit !== suit ||
         newCard?.value !== value
       )
         return;
+
+      // add card to queued cards
+      setQueuedCards((prevQueuedCards) => ({
+        ...prevQueuedCards,
+        [`${ownerID}-${value}${suit}`]: {
+          value,
+          suit,
+        },
+      }));
 
       const endID = `${playerID}squeakHand${indexToDrawTo}`;
 
@@ -68,12 +79,33 @@ function useCardDrawFromSqueakDeck({
           flip: true,
           rotate: false,
           callbackFunction: () => {
-            setGameData(updatedGameData);
+            setGameData((prevGameData) => ({
+              ...prevGameData,
+              players: {
+                ...prevGameData.players,
+                [playerID]: updatedPlayerCards,
+              },
+            }));
+
+            // remove card from queued cards
+            setQueuedCards((prevQueuedCards) => {
+              const newQueuedCards = { ...prevQueuedCards };
+              delete newQueuedCards[`${ownerID}-${value}${suit}`];
+              return newQueuedCards;
+            });
           },
         });
       }
     }
-  }, [dataFromBackend, moveCard, ownerID, setGameData, suit, value]);
+  }, [
+    dataFromBackend,
+    moveCard,
+    ownerID,
+    setGameData,
+    suit,
+    value,
+    setQueuedCards,
+  ]);
 }
 
 export default useCardDrawFromSqueakDeck;

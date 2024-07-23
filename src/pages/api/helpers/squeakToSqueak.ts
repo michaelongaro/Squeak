@@ -30,7 +30,7 @@ export function squeakToSqueak({
   const endSqueakStack = player?.squeakHand[squeakEndLocation];
 
   const indexOfCardInStartStack = startSqueakStack?.findIndex(
-    (c) => c.value === card.value && c.suit === card.suit
+    (c) => c.value === card.value && c.suit === card.suit,
   );
 
   if (
@@ -67,7 +67,7 @@ export function squeakToSqueak({
     playerID
   ]!.squeakHand[squeakEndLocation]!.findIndex(
     (squeakCard) =>
-      squeakCard.value === card.value && squeakCard.suit === card.suit
+      squeakCard.value === card.value && squeakCard.suit === card.suit,
   );
 
   const squeakStackLength =
@@ -88,6 +88,6 @@ export function squeakToSqueak({
       offsetHeight: indexWithinSqueakStack * (20 - squeakStackLength),
     },
     endID: `${playerID}squeakStack${squeakEndLocation}0`,
-    updatedGameData: gameData[roomCode],
+    updatedPlayerCards: player,
   });
 }

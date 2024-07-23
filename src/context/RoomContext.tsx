@@ -44,6 +44,13 @@ export interface IInitSqueakStackCardBeingDealt {
   indexToDealTo: number;
 }
 
+export interface IQueuedCard {
+  [key: string]: {
+    value: string;
+    suit: string;
+  };
+}
+
 interface IRoomContext {
   viewportLabel: "mobile" | "mobileLarge" | "tablet" | "desktop";
   audioContext: AudioContext | null;
@@ -60,6 +67,13 @@ interface IRoomContext {
   setFriendData: React.Dispatch<
     React.SetStateAction<IFriendsMetadata | undefined>
   >;
+
+  // used for interval that checks if client is up to date with server state.
+  // makes sure to include cards that are currently being animated, but not yet
+  // in local gameData object.
+  queuedCards: IQueuedCard;
+  setQueuedCards: React.Dispatch<React.SetStateAction<IQueuedCard>>;
+
   hoveredCell: [number, number] | null;
   setHoveredCell: React.Dispatch<React.SetStateAction<[number, number] | null>>;
   hoveredSqueakStack: number | null;
@@ -218,6 +232,8 @@ export function RoomProvider(props: { children: React.ReactNode }) {
 
   // safe, because we are only ever accessing/mutating gameData when it is defined
   const [gameData, setGameData] = useState<IGameMetadata>({} as IGameMetadata);
+
+  const [queuedCards, setQueuedCards] = useState<IQueuedCard>({});
 
   const [friendData, setFriendData] = useState<IFriendsMetadata | undefined>();
 
@@ -431,6 +447,8 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     setPlayerMetadata,
     gameData,
     setGameData,
+    queuedCards,
+    setQueuedCards,
     friendData,
     setFriendData,
     hoveredCell,
