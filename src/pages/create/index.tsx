@@ -95,8 +95,8 @@ function CreateRoom() {
   const [focusedInInput, setFocusedInInput] = useState<boolean>(false);
   const [usernameIsProfane, setUsernameIsProfane] = useState<boolean>(false);
 
-  // needs !connectedToRoom for when player inherits ownership of room after host leaves,
-  // otherwise they would be overwriting the current room config
+  // needs !connectedToRoom for when player inherits ownership of room after prev
+  // host leaves, otherwise this effect would be overwriting the current room config
   useEffect(() => {
     if (!configAndMetadataInitialized && userID && !connectedToRoom) {
       setRoomConfig({
@@ -233,7 +233,6 @@ function CreateRoom() {
             }
             className="h-10 w-10"
             onClick={() => {
-              setConfigAndMetadataInitialized(false);
               leaveRoom();
             }}
           />

@@ -32,6 +32,8 @@ function JoinRoom() {
   const userID = useUserIDContext();
   const { push } = useRouter();
 
+  const ctx = api.useUtils();
+
   const {
     playerMetadata,
     setPlayerMetadata,
@@ -49,22 +51,23 @@ function JoinRoom() {
   });
 
   const [roomCode, setRoomCode] = useState<string>("");
-  const [submittedRoomCode, setSubmittedRoomCode] = useState<string>("");
+
   const [focusedInInput, setFocusedInInput] = useState<boolean>(false);
   const [usernameIsProfane, setUsernameIsProfane] = useState<boolean>(false);
 
   const [roomError, setRoomError] = useState<string | null>(null);
   const [showAnimation, setShowAnimation] = useState<boolean>(false);
 
-  const { data: queriedRoom } = api.rooms.findRoomByCode.useQuery(
-    {
-      roomCode: submittedRoomCode,
-    },
-    {
-      enabled: submittedRoomCode !== "",
-      refetchOnWindowFocus: false,
-    },
-  );
+  const { data: queriedRoom, refetch: searchForRoom } =
+    api.rooms.findRoomByCode.useQuery(
+      {
+        roomCode,
+      },
+      {
+        enabled: false,
+        refetchOnWindowFocus: false,
+      },
+    );
 
   const { data: roomInviteIDs } = api.users.getUsersFromIDList.useQuery(
     friendData?.roomInviteIDs ?? [],
@@ -123,7 +126,6 @@ function JoinRoom() {
   useEffect(() => {
     if (queriedRoom && typeof queriedRoom !== "string" && !connectedToRoom) {
       setRoomConfig(queriedRoom);
-      setSubmittedRoomCode("");
       joinRoom();
 
       setRoomError(null);
@@ -176,16 +178,10 @@ function JoinRoom() {
       </Head>
 
       <div className="baseVertFlex relative gap-4">
-        <div className="baseFlex to-green-850 sticky left-0 top-0 z-[105] w-screen !justify-start gap-4 border-b-2 border-white bg-gradient-to-br from-green-800 p-2 shadow-lg tablet:relative tablet:w-full tablet:bg-none tablet:shadow-none">
+        <div className="baseFlex sticky left-0 top-0 z-[105] w-screen !justify-start gap-4 border-b-2 border-white bg-gradient-to-br from-green-800 to-green-850 p-2 shadow-lg tablet:relative tablet:w-full tablet:bg-none tablet:shadow-none">
           <Button
             variant={"secondary"}
-            icon={
-              connectedToRoom ? (
-                <BiArrowBack size={"1.25rem"} />
-              ) : (
-                <IoHome size={"1.25rem"} />
-              )
-            }
+            icon={<IoHome size={"1.25rem"} />}
             className="h-10 w-10"
             onClick={() => leaveRoom()}
           />
@@ -197,11 +193,7 @@ function JoinRoom() {
             }}
             className="text-xl font-medium"
           >
-            {`${
-              connectedToRoom
-                ? `${Object.values(playerMetadata)[0]?.username}'s room`
-                : "Join room"
-            }`}
+            Join room
           </div>
         </div>
 
@@ -209,7 +201,7 @@ function JoinRoom() {
           style={{
             color: "hsl(120deg 100% 86%)",
           }}
-          className="baseVertFlex to-green-850 mt-4 gap-8 rounded-md border-2 border-white bg-gradient-to-br from-green-800 p-4"
+          className="baseVertFlex mt-4 gap-8 rounded-md border-2 border-white bg-gradient-to-br from-green-800 to-green-850 p-4"
         >
           <div className="baseVertFlex !items-start gap-4">
             <div className="baseFlex w-full !justify-between gap-5">
@@ -337,6 +329,8 @@ function JoinRoom() {
             setShowAnimation(false);
             setTimeout(() => {
               setRoomError(null);
+              ctx.rooms.findRoomByCode.reset(); // clearing trpc cache so that the error message
+              // can be shown again if the user tries to join the same room
             }, 1000);
           }}
         >
@@ -350,7 +344,7 @@ function JoinRoom() {
             }
             width={"12rem"}
             height={"3rem"}
-            onClickFunction={() => setSubmittedRoomCode(roomCode)}
+            onClickFunction={() => searchForRoom()}
             showLoadingSpinnerOnClick={true}
           />
 
@@ -365,7 +359,7 @@ function JoinRoom() {
                 style={{
                   color: "hsl(120deg 100% 86%)",
                 }}
-                className="to-green-850 pointer-events-none absolute right-10 rounded-md border-2 border-white bg-gradient-to-br from-green-800 px-4 py-2 shadow-md"
+                className="pointer-events-none absolute right-10 rounded-md border-2 border-white bg-gradient-to-br from-green-800 to-green-850 px-4 py-2 shadow-md"
               >
                 {roomError}
               </motion.div>

@@ -34,34 +34,41 @@ function useLeaveRoom({ routeToNavigateTo }: IUseLeaveRoom) {
   function leaveRoom() {
     push(routeToNavigateTo);
 
-    setRoomConfig({
-      pointsToWin: 100,
-      maxPlayers: 2,
-      playersInRoom: 1,
-      playerIDsInRoom: [userID],
-      isPublic: true,
-      code: "",
-      hostUsername: "",
-      hostUserID: "",
-      gameStarted: false,
-    });
+    setTimeout(() => {
+      setRoomConfig({
+        pointsToWin: 100,
+        maxPlayers: 2,
+        playersInRoom: 1,
+        playerIDsInRoom: [userID],
+        isPublic: true,
+        code: "",
+        hostUsername: "",
+        hostUserID: "",
+        gameStarted: false,
+      });
 
-    if (userID !== "") {
-      setPlayerMetadata({
-        [userID]: {
-          username: user?.username ?? "",
-          avatarPath: user?.avatarPath ?? "/avatars/rabbit.svg",
-          color: user?.color ?? "hsl(352deg, 69%, 61%)",
-          deckHueRotation: user?.deckHueRotation ?? 232,
-        } as IRoomPlayer,
-      } as IRoomPlayersMetadata);
-    }
+      if (userID !== "") {
+        setPlayerMetadata({
+          [userID]: {
+            username: user?.username ?? "",
+            avatarPath: user?.avatarPath ?? "/avatars/rabbit.svg",
+            color: user?.color ?? "hsl(352deg, 69%, 61%)",
+            deckHueRotation: user?.deckHueRotation ?? 232,
+          } as IRoomPlayer,
+        } as IRoomPlayersMetadata);
+      }
+    }, 100); // delay to allow the route to change before resetting the room config
+    // w/o this there was slight flickering when the room was reset before the route changed
 
     setGameData({} as IGameMetadata);
     setServerGameData({} as IGameMetadata);
 
     if (connectedToRoom) {
-      setConnectedToRoom(false);
+      setTimeout(() => {
+        setConnectedToRoom(false);
+      }, 100);
+      // delay as a hack since the dynamicInitializationFlow effect was running in /join/[code]
+      // when leaving a room..
 
       socket.emit("leaveRoom", {
         playerID: userID,
