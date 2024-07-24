@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import React, { useRef } from "react";
-import { SignOutButton } from "@clerk/nextjs";
+import { useAuth } from "@clerk/nextjs";
 import useOnClickOutside from "../../../hooks/useOnClickOutside";
 import Settings from "./Settings";
 import Stats from "./Stats";
@@ -35,6 +35,7 @@ function UserSettingsAndStatsModal({
   setShowModal,
 }: IUserSettingsAndStatsModalProps) {
   const userID = useUserIDContext();
+  const { signOut } = useAuth();
 
   const {
     playerMetadata,
@@ -218,14 +219,16 @@ function UserSettingsAndStatsModal({
         {!showSettings && <Stats />}
 
         <div className="baseFlex w-full gap-16 rounded-b-md bg-green-900 pb-4 pl-12 pr-12 pt-4">
-          <SignOutButton>
-            <SecondaryButton
-              innerText="Log out"
-              extraPadding={false}
-              width={"10rem"}
-              height={"3rem"}
-            />
-          </SignOutButton>
+          <SecondaryButton
+            innerText="Log out"
+            extraPadding={false}
+            width={"10rem"}
+            height={"3rem"}
+            onClickFunction={() => {
+              setShowModal(false);
+              signOut();
+            }}
+          />
           {showSettings && (
             <PrimaryButton
               innerText="Save"

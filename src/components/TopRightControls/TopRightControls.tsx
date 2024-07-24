@@ -666,6 +666,8 @@ interface IMainDrawer {
 }
 
 function MainDrawer({ status, setShowDrawer }: IMainDrawer) {
+  const { signOut } = useAuth();
+
   const [renderedView, setRenderedView] = useState<allViewLabels | undefined>();
 
   const [localPlayerMetadata, setLocalPlayerMetadata] =
@@ -748,14 +750,16 @@ function MainDrawer({ status, setShowDrawer }: IMainDrawer) {
 
             {status === "authenticated" && (
               <div className="baseFlex w-full px-2 pt-4">
-                <SignOutButton>
-                  <SecondaryButton
-                    innerText="Log out"
-                    extraPadding={false}
-                    width={"8rem"}
-                    height={"2.5rem"}
-                  />
-                </SignOutButton>
+                <SecondaryButton
+                  innerText="Log out"
+                  extraPadding={false}
+                  width={"8rem"}
+                  height={"2.5rem"}
+                  onClickFunction={() => {
+                    setShowDrawer(false);
+                    signOut();
+                  }}
+                />
               </div>
             )}
 
