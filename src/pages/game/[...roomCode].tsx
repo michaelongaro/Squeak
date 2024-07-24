@@ -181,7 +181,6 @@ function Play() {
     if (showShufflingCountdown || showScoreboard || intervalRef.current) return;
 
     intervalRef.current = setInterval(() => {
-      console.log("fired interval check");
       socket.emit("checkClientSyncWithServer", {
         roomCode: roomConfig.code,
         playerID: userID,
@@ -191,7 +190,6 @@ function Play() {
 
     return () => {
       if (intervalRef.current) {
-        console.log("clearing interval 1");
         clearInterval(intervalRef.current);
         intervalRef.current = null;
       }
