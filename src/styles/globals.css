@@ -297,19 +297,19 @@ legend {
   }
 
   20% {
-    transform: translate(-30px);
-  }
-
-  40% {
-    transform: translate(30px);
-  }
-
-  60% {
     transform: translate(-15px);
   }
 
+  40% {
+    transform: translate(15px);
+  }
+
+  60% {
+    transform: translate(-8px);
+  }
+
   80% {
-    transform: translate(8px);
+    transform: translate(4px);
   }
 
   100% {
