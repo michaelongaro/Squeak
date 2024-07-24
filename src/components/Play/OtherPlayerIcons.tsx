@@ -1,13 +1,17 @@
 import { useState, useLayoutEffect, useRef } from "react";
-import { useUserIDContext } from "../../context/UserIDContext";
-import { useRoomContext } from "../../context/RoomContext";
 import PlayerIcon from "../playerIcons/PlayerIcon";
 import { AnimatePresence, motion } from "framer-motion";
+import { useMainStore } from "~/stores/MainStore";
+import useGetUserID from "~/hooks/useGetUserID";
 
 function OtherPlayerIcons() {
-  const userID = useUserIDContext();
+  const userID = useGetUserID();
 
-  const { gameData, playerMetadata, viewportLabel } = useRoomContext();
+  const { gameData, playerMetadata, viewportLabel } = useMainStore((state) => ({
+    gameData: state.gameData,
+    playerMetadata: state.playerMetadata,
+    viewportLabel: state.viewportLabel,
+  }));
 
   // don't need leftPlayerIconRef since it is flows left-to-right already
   // and doesn't need any offset positioning wise.

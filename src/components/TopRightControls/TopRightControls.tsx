@@ -58,10 +58,11 @@ import { Input } from "~/components/ui/input";
 import { IoStatsChart } from "react-icons/io5";
 import PlayerCustomizationPreview from "../playerIcons/PlayerCustomizationPreview";
 import PlayerCustomizationPicker from "../playerIcons/PlayerCustomizationPicker";
-import { useUserIDContext } from "~/context/UserIDContext";
 import Filter from "bad-words";
 import PlayerIcon from "../playerIcons/PlayerIcon";
 import { type User } from "@prisma/client";
+import { useMainStore } from "~/stores/MainStore";
+import useGetUserID from "~/hooks/useGetUserID";
 
 const filter = new Filter();
 
@@ -91,7 +92,18 @@ function TopRightControls() {
     showVotingOptionButtons,
     setShowVotingOptionButtons,
     viewportLabel,
-  } = useRoomContext();
+  } = useMainStore((state) => ({
+    showSettingsModal: state.showSettingsModal,
+    setShowSettingsModal: state.setShowSettingsModal,
+    newInviteNotification: state.newInviteNotification,
+    voteType: state.voteType,
+    votingIsLockedOut: state.votingIsLockedOut,
+    showVotingModal: state.showVotingModal,
+    setShowVotingModal: state.setShowVotingModal,
+    showVotingOptionButtons: state.showVotingOptionButtons,
+    setShowVotingOptionButtons: state.setShowVotingOptionButtons,
+    viewportLabel: state.viewportLabel,
+  }));
 
   const leaveRoom = useLeaveRoom({
     routeToNavigateTo: "/",
@@ -347,8 +359,8 @@ export default TopRightControls;
 
 interface IVotingModal {
   showVotingOptionButtons: boolean;
-  setShowVotingOptionButtons: React.Dispatch<React.SetStateAction<boolean>>;
-  setShowDrawer?: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowVotingOptionButtons: (show: boolean) => void;
+  setShowDrawer?: (show: boolean) => void;
   forMobile?: boolean;
   forDrawer?: boolean;
 }
@@ -367,7 +379,14 @@ function VotingModal({
     voteType,
     votingIsLockedOut,
     votingLockoutStartTimestamp,
-  } = useRoomContext();
+  } = useMainStore((state) => ({
+    roomConfig: state.roomConfig,
+    playerMetadata: state.playerMetadata,
+    currentVotes: state.currentVotes,
+    voteType: state.voteType,
+    votingIsLockedOut: state.votingIsLockedOut,
+    votingLockoutStartTimestamp: state.votingLockoutStartTimestamp,
+  }));
 
   const rotateDecksButtonRef = useRef<HTMLDivElement | null>(null);
   const finishRoundButtonRef = useRef<HTMLDivElement | null>(null);
@@ -629,7 +648,7 @@ function VotingModal({
 interface IVotingModalToast {
   isVisible: boolean;
   showVotingOptionButtons: boolean;
-  setShowVotingOptionButtons: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowVotingOptionButtons: (show: boolean) => void;
 }
 
 // needed to extract this to custom component because the exit animations weren't working on the toast
@@ -900,13 +919,19 @@ function DrawerSettings({
   setLocalPlayerSettings,
   setRenderedView,
 }: IDrawerSettings) {
-  const userID = useUserIDContext();
+  const userID = useGetUserID();
+
   const {
     playerMetadata,
     setPlayerMetadata,
     connectedToRoom,
     setMirrorPlayerContainer,
-  } = useRoomContext();
+  } = useMainStore((state) => ({
+    playerMetadata: state.playerMetadata,
+    setPlayerMetadata: state.setPlayerMetadata,
+    connectedToRoom: state.connectedToRoom,
+    setMirrorPlayerContainer: state.setMirrorPlayerContainer,
+  }));
 
   const utils = api.useUtils();
   const { data: user } = api.users.getUserByID.useQuery(userID);
@@ -1212,7 +1237,7 @@ interface IDrawerStatistics {
 }
 
 function DrawerStatistics({ setRenderedView }: IDrawerStatistics) {
-  const userID = useUserIDContext();
+  const userID = useGetUserID();
 
   const { data: userStats } = api.stats.getStatsByID.useQuery(userID);
 
@@ -1286,7 +1311,7 @@ function DrawerFriendsList({
   setFriendBeingViewed,
   setShowDrawer,
 }: IDrawerFriendsList) {
-  const userID = useUserIDContext();
+  const userID = useGetUserID();
   const { push } = useRouter();
 
   const {
@@ -1297,7 +1322,15 @@ function DrawerFriendsList({
     setNewInviteNotification,
     roomConfig,
     setConnectedToRoom,
-  } = useRoomContext();
+  } = useMainStore((state) => ({
+    playerMetadata: state.playerMetadata,
+    connectedToRoom: state.connectedToRoom,
+    friendData: state.friendData,
+    newInviteNotification: state.newInviteNotification,
+    setNewInviteNotification: state.setNewInviteNotification,
+    roomConfig: state.roomConfig,
+    setConnectedToRoom: state.setConnectedToRoom,
+  }));
 
   const { data: friends } = api.users.getUsersFromIDList.useQuery(
     friendData?.friendIDs ?? [],
@@ -1593,14 +1626,19 @@ function FriendActions({
   setRenderedView,
   setShowDrawer,
 }: IFriendActions) {
-  const userID = useUserIDContext();
+  const userID = useGetUserID();
   const { push } = useRouter();
 
   const [sendInviteInnerText, setSendInviteInnerText] = useState("Send invite");
   const [buttonIsActive, setButtonIsActive] = useState(false);
 
   const { playerMetadata, connectedToRoom, roomConfig, setConnectedToRoom } =
-    useRoomContext();
+    useMainStore((state) => ({
+      playerMetadata: state.playerMetadata,
+      connectedToRoom: state.connectedToRoom,
+      roomConfig: state.roomConfig,
+      setConnectedToRoom: state.setConnectedToRoom,
+    }));
 
   return (
     <>
@@ -1785,10 +1823,10 @@ function FriendActions({
 }
 
 interface IWhilePlayingDrawer {
-  setShowDrawer: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowDrawer: (show: boolean) => void;
   leaveRoom: () => void;
   showVotingOptionButtons: boolean;
-  setShowVotingOptionButtons: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowVotingOptionButtons: (show: boolean) => void;
 }
 
 function WhilePlayingDrawer({

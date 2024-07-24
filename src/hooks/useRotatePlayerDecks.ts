@@ -1,13 +1,16 @@
 import { useState, useEffect } from "react";
 import { socket } from "~/pages/_app";
-import { useRoomContext } from "../context/RoomContext";
 import { type IGameMetadata } from "./../pages/api/socket";
+import { useMainStore } from "~/stores/MainStore";
 
 function useRotatePlayerDecks() {
-  const { setGameData, setDecksAreBeingRotated } = useRoomContext();
+  const { setGameData, setDecksAreBeingRotated } = useMainStore((state) => ({
+    setGameData: state.setGameData,
+    setDecksAreBeingRotated: state.setDecksAreBeingRotated,
+  }));
 
   const [dataFromBackend, setDataFromBackend] = useState<IGameMetadata | null>(
-    null
+    null,
   );
 
   useEffect(() => {

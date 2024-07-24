@@ -1,7 +1,5 @@
 import { useState, useEffect, type PointerEvent } from "react";
 import { socket } from "~/pages/_app";
-import { useUserIDContext } from "../../context/UserIDContext";
-import { useRoomContext } from "../../context/RoomContext";
 import Card from "./Card";
 import { FaRedoAlt } from "react-icons/fa";
 
@@ -12,6 +10,8 @@ import PlayerIcon from "../playerIcons/PlayerIcon";
 import useResponsiveCardDimensions from "../../hooks/useResponsiveCardDimensions";
 import { AnimatePresence } from "framer-motion";
 import Buzzer from "./Buzzer";
+import { useMainStore } from "~/stores/MainStore";
+import useGetUserID from "~/hooks/useGetUserID";
 interface IPlayerCardContainer {
   cardContainerClass: string | undefined;
 }
@@ -24,7 +24,7 @@ const cardClassMap = {
 };
 
 function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
-  const userID = useUserIDContext();
+  const userID = useGetUserID();
 
   const {
     mirrorPlayerContainer,
@@ -47,7 +47,29 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
     squeakStackDragAlterations,
     hoveredCell,
     setHoveredCell,
-  } = useRoomContext();
+  } = useMainStore((state) => ({
+    mirrorPlayerContainer: state.mirrorPlayerContainer,
+    roomConfig: state.roomConfig,
+    playerMetadata: state.playerMetadata,
+    gameData: state.gameData,
+    holdingASqueakCard: state.holdingASqueakCard,
+    hoveredSqueakStack: state.hoveredSqueakStack,
+    holdingADeckCard: state.holdingADeckCard,
+    proposedCardBoxShadow: state.proposedCardBoxShadow,
+    decksAreBeingRotated: state.decksAreBeingRotated,
+    setDecksAreBeingRotated: state.setDecksAreBeingRotated,
+    originIndexForHeldSqueakCard: state.originIndexForHeldSqueakCard,
+    setHoldingADeckCard: state.setHoldingADeckCard,
+    cardBeingMovedProgramatically: state.cardBeingMovedProgramatically,
+    squeakDeckBeingMovedProgramatically:
+      state.squeakDeckBeingMovedProgramatically,
+    setOriginIndexForHeldSqueakCard: state.setOriginIndexForHeldSqueakCard,
+    setHoldingASqueakCard: state.setHoldingASqueakCard,
+    setHoveredSqueakStack: state.setHoveredSqueakStack,
+    squeakStackDragAlterations: state.squeakStackDragAlterations,
+    hoveredCell: state.hoveredCell,
+    setHoveredCell: state.setHoveredCell,
+  }));
 
   const [hoveringOverDeck, setHoveringOverDeck] = useState(false);
   const [pointerDownOnDeck, setPointerDownOnDeck] = useState(false);
@@ -73,7 +95,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
   function getDynamicTopValue(
     squeakStackIdx: number,
     squeakStackLength: number,
-    cardIdx: number
+    cardIdx: number,
   ) {
     const draggedData = squeakStackDragAlterations[userID];
 
@@ -228,7 +250,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                         top: getDynamicTopValue(
                           squeakStackIdx,
                           cards.length,
-                          cardIdx
+                          cardIdx,
                         ),
                         transition: "top 0.25s ease-in-out",
                       }}
@@ -264,7 +286,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                   ))}
                 </div>
               </div>
-            )
+            ),
           )}
 
           <div
@@ -361,7 +383,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                         rotation={0}
                       />
                     </div>
-                  )
+                  ),
               )}
             </>
           </div>

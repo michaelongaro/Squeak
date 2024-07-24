@@ -8,8 +8,6 @@ import {
   type IRoomPlayersMetadata,
   type IRoomPlayer,
 } from "../../../pages/api/socket";
-import { useUserIDContext } from "../../../context/UserIDContext";
-import { useRoomContext } from "../../../context/RoomContext";
 import { api } from "~/utils/api";
 import { motion } from "framer-motion";
 import SecondaryButton from "../../Buttons/SecondaryButton";
@@ -20,6 +18,8 @@ import {
   IoSave,
 } from "react-icons/io5";
 import PrimaryButton from "../../Buttons/PrimaryButton";
+import { useMainStore } from "~/stores/MainStore";
+import useGetUserID from "~/hooks/useGetUserID";
 
 export interface ILocalPlayerSettings {
   prefersSimpleCardAssets: boolean;
@@ -34,14 +34,19 @@ interface IUserSettingsAndStatsModalProps {
 function UserSettingsAndStatsModal({
   setShowModal,
 }: IUserSettingsAndStatsModalProps) {
-  const userID = useUserIDContext();
+  const userID = useGetUserID();
 
   const {
     playerMetadata,
     setPlayerMetadata,
     connectedToRoom,
     setMirrorPlayerContainer,
-  } = useRoomContext();
+  } = useMainStore((state) => ({
+    playerMetadata: state.playerMetadata,
+    setPlayerMetadata: state.setPlayerMetadata,
+    connectedToRoom: state.connectedToRoom,
+    setMirrorPlayerContainer: state.setMirrorPlayerContainer,
+  }));
 
   const utils = api.useUtils();
   const { data: user } = api.users.getUserByID.useQuery(userID);

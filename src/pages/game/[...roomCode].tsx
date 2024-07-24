@@ -8,8 +8,6 @@ import ShufflingCountdownModal from "~/components/modals/ShufflingCountdownModal
 import useStartAnotherRoundHandler from "../../hooks/useStartAnotherRoundHandler";
 import useReturnToRoomHandler from "../../hooks/useReturnToRoomHandler";
 import { AnimatePresence, motion } from "framer-motion";
-import { useUserIDContext } from "../../context/UserIDContext";
-import { useRoomContext } from "../../context/RoomContext";
 import useResetDeckFromCardDraw from "../../hooks/useResetDeckFromCardDraw";
 import useScoreboardData from "../../hooks/useScoreboardData";
 import OtherPlayerIcons from "~/components/Play/OtherPlayerIcons";
@@ -22,10 +20,12 @@ import { useRouter } from "next/router";
 import { IoHome, IoWarningOutline } from "react-icons/io5";
 import { useAuth } from "@clerk/nextjs";
 import { api } from "~/utils/api";
+import { useMainStore } from "~/stores/MainStore";
+import useGetUserID from "~/hooks/useGetUserID";
 
 function Play() {
   const { isLoaded } = useAuth();
-  const userID = useUserIDContext();
+  const userID = useGetUserID();
   const { query } = useRouter();
 
   const roomCode = query?.roomCode?.[0];
@@ -45,7 +45,22 @@ function Play() {
     connectedToRoom,
     setConnectedToRoom,
     viewportLabel,
-  } = useRoomContext();
+  } = useMainStore((state) => ({
+    roomConfig: state.roomConfig,
+    gameData: state.gameData,
+    playerMetadata: state.playerMetadata,
+    queuedCards: state.queuedCards,
+    setGameData: state.setGameData,
+    showScoreboard: state.showScoreboard,
+    setShowShufflingCountdown: state.setShowShufflingCountdown,
+    showShufflingCountdown: state.showShufflingCountdown,
+    voteType: state.voteType,
+    showVotingModal: state.showVotingModal,
+    setShowVotingModal: state.setShowVotingModal,
+    connectedToRoom: state.connectedToRoom,
+    setConnectedToRoom: state.setConnectedToRoom,
+    viewportLabel: state.viewportLabel,
+  }));
 
   const { data: roomResult } = api.rooms.findRoomByCode.useQuery(
     {
@@ -187,8 +202,8 @@ function Play() {
     showShufflingCountdown,
     showScoreboard,
     userID,
-    gameData,
-    queuedCards,
+    gameData, // are these safe as deps?
+    queuedCards, // are these safe as deps?
   ]);
 
   if (showRoomNotFoundModal) {

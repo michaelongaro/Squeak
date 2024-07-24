@@ -1,13 +1,16 @@
 import { useState, useEffect } from "react";
 import { socket } from "~/pages/_app";
-import { useRoomContext } from "../context/RoomContext";
 import { type IDrawFromDeck } from "../pages/api/socket";
+import { useMainStore } from "~/stores/MainStore";
 
 function useResetDeckFromCardDraw() {
-  const { setGameData } = useRoomContext();
+  const { gameData, setGameData } = useMainStore((state) => ({
+    gameData: state.gameData,
+    setGameData: state.setGameData,
+  }));
 
   const [dataFromBackend, setDataFromBackend] = useState<IDrawFromDeck | null>(
-    null
+    null,
   );
 
   useEffect(() => {
@@ -22,11 +25,21 @@ function useResetDeckFromCardDraw() {
     if (dataFromBackend !== null) {
       setDataFromBackend(null);
 
-      const { resetDeck, updatedGameData } = dataFromBackend;
+      const { playerID, resetDeck, updatedPlayerCards } = dataFromBackend;
 
-      if (resetDeck) setGameData(updatedGameData);
+      if (resetDeck) {
+        const newGameData = {
+          ...gameData,
+          players: {
+            ...gameData.players,
+            [playerID]: updatedPlayerCards,
+          },
+        };
+
+        setGameData(newGameData);
+      }
     }
-  }, [dataFromBackend, setGameData]);
+  }, [dataFromBackend, gameData, setGameData]);
 }
 
 export default useResetDeckFromCardDraw;

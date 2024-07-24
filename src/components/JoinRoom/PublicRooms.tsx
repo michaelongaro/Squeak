@@ -1,7 +1,5 @@
 import { useState } from "react";
 import { socket } from "~/pages/_app";
-import { useUserIDContext } from "../../context/UserIDContext";
-import { useRoomContext } from "../../context/RoomContext";
 import { api } from "~/utils/api";
 import { HiOutlineRefresh } from "react-icons/hi";
 import Filter from "bad-words";
@@ -10,11 +8,13 @@ import { FaUsers } from "react-icons/fa";
 import { BiArrowBack } from "react-icons/bi";
 import { type IRoomConfig } from "~/pages/create";
 import { useRouter } from "next/router";
+import { useMainStore } from "~/stores/MainStore";
+import useGetUserID from "~/hooks/useGetUserID";
 
 const filter = new Filter();
 
 function PublicRooms() {
-  const userID = useUserIDContext();
+  const userID = useGetUserID();
   const { push } = useRouter();
 
   const {
@@ -23,7 +23,13 @@ function PublicRooms() {
     setRoomConfig,
     friendData,
     viewportLabel,
-  } = useRoomContext();
+  } = useMainStore((state) => ({
+    playerMetadata: state.playerMetadata,
+    setConnectedToRoom: state.setConnectedToRoom,
+    setRoomConfig: state.setRoomConfig,
+    friendData: state.friendData,
+    viewportLabel: state.viewportLabel,
+  }));
 
   const { data: roomInviteIDs } = api.users.getUsersFromIDList.useQuery(
     friendData?.roomInviteIDs ?? [],
@@ -75,7 +81,7 @@ function PublicRooms() {
   }
 
   return (
-    <fieldset className="to-green-850 mt-8 w-[360px] rounded-md border-2 border-white bg-gradient-to-br from-green-800 p-2 sm:w-full sm:p-4">
+    <fieldset className="mt-8 w-[360px] rounded-md border-2 border-white bg-gradient-to-br from-green-800 to-green-850 p-2 sm:w-full sm:p-4">
       <legend
         style={{
           color: "hsl(120deg 100% 86%)",

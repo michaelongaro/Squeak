@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import { socket } from "~/pages/_app";
-import { useRoomContext } from "../context/RoomContext";
 import { type IGameMetadata } from "../pages/api/socket";
-import { useUserIDContext } from "../context/UserIDContext";
+import { useMainStore } from "~/stores/MainStore";
+import useGetUserID from "~/hooks/useGetUserID";
 
 function useStartAnotherRoundHandler() {
-  const userID = useUserIDContext();
+  const userID = useGetUserID();
 
   const {
     roomConfig,
@@ -14,7 +14,14 @@ function useStartAnotherRoundHandler() {
     setGameData,
     setShowScoreboard,
     setShowShufflingCountdown,
-  } = useRoomContext();
+  } = useMainStore((state) => ({
+    roomConfig: state.roomConfig,
+    gameData: state.gameData,
+    playerMetadata: state.playerMetadata,
+    setGameData: state.setGameData,
+    setShowScoreboard: state.setShowScoreboard,
+    setShowShufflingCountdown: state.setShowShufflingCountdown,
+  }));
 
   const [dataFromBackend, setDataFromBackend] = useState<{
     roomCode: string;

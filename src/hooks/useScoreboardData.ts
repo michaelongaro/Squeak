@@ -1,15 +1,15 @@
 import { useState, useEffect } from "react";
 import { socket } from "~/pages/_app";
-import { useUserIDContext } from "../context/UserIDContext";
-import { useRoomContext } from "../context/RoomContext";
 import { type IScoreboardMetadata } from "../pages/api/handlers/roundOverHandler";
+import { useMainStore } from "~/stores/MainStore";
+import useGetUserID from "~/hooks/useGetUserID";
 
 interface IScoreboardMetadataWithSqueakSound extends IScoreboardMetadata {
   playSqueakSound: boolean;
 }
 
 function useScoreboardData() {
-  const userID = useUserIDContext();
+  const userID = useGetUserID();
 
   const {
     audioContext,
@@ -20,7 +20,16 @@ function useScoreboardData() {
     setScoreboardMetadata,
     setShowScoreboard,
     setPlayerIDWhoSqueaked,
-  } = useRoomContext();
+  } = useMainStore((state) => ({
+    audioContext: state.audioContext,
+    masterVolumeGainNode: state.masterVolumeGainNode,
+    squeakButtonPressBuffer: state.squeakButtonPressBuffer,
+    roomConfig: state.roomConfig,
+    setGameData: state.setGameData,
+    setScoreboardMetadata: state.setScoreboardMetadata,
+    setShowScoreboard: state.setShowScoreboard,
+    setPlayerIDWhoSqueaked: state.setPlayerIDWhoSqueaked,
+  }));
 
   const [dataFromBackend, setDataFromBackend] =
     useState<IScoreboardMetadataWithSqueakSound | null>(null);

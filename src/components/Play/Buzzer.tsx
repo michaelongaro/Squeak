@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { socket } from "~/pages/_app";
 import { motion } from "framer-motion";
-import { useUserIDContext } from "../../context/UserIDContext";
-import { useRoomContext } from "../../context/RoomContext";
 import baseplate from "../../../public/buzzer/baseplate.png";
 import squeakBuzzer from "../../../public/buzzer/buzzerButton.png";
+import { useMainStore } from "~/stores/MainStore";
+import useGetUserID from "~/hooks/useGetUserID";
 interface IBuzzer {
   playerID: string;
   roomCode: string;
@@ -12,7 +12,7 @@ interface IBuzzer {
 }
 
 function Buzzer({ playerID, roomCode, interactive }: IBuzzer) {
-  const userID = useUserIDContext();
+  const userID = useGetUserID();
 
   const {
     audioContext,
@@ -22,7 +22,15 @@ function Buzzer({ playerID, roomCode, interactive }: IBuzzer) {
     playerMetadata,
     playerIDWhoSqueaked,
     viewportLabel,
-  } = useRoomContext();
+  } = useMainStore((state) => ({
+    audioContext: state.audioContext,
+    masterVolumeGainNode: state.masterVolumeGainNode,
+    squeakButtonPressBuffer: state.squeakButtonPressBuffer,
+    currentVolume: state.currentVolume,
+    playerMetadata: state.playerMetadata,
+    playerIDWhoSqueaked: state.playerIDWhoSqueaked,
+    viewportLabel: state.viewportLabel,
+  }));
 
   const [hoveringOnButton, setHoveringOnButton] = useState<boolean>(false);
   const [pointerDownOnButton, setPointerDownOnButton] =

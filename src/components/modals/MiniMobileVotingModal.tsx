@@ -1,9 +1,13 @@
 import { motion } from "framer-motion";
-import { useRoomContext } from "~/context/RoomContext";
+import { useMainStore } from "~/stores/MainStore";
 
 function MiniMobileVotingModal() {
   const { playerMetadata, currentVotes, showVotingOptionButtons } =
-    useRoomContext();
+    useMainStore((state) => ({
+      playerMetadata: state.playerMetadata,
+      currentVotes: state.currentVotes,
+      showVotingOptionButtons: state.showVotingOptionButtons,
+    }));
 
   return (
     <motion.div

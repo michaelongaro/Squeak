@@ -3,8 +3,6 @@ import { socket } from "~/pages/_app";
 import { api } from "~/utils/api";
 import { FiMail } from "react-icons/fi";
 import { FaUserFriends } from "react-icons/fa";
-import { useUserIDContext } from "../../context/UserIDContext";
-import { useRoomContext } from "../../context/RoomContext";
 import PlayerIcon from "../playerIcons/PlayerIcon";
 import { motion } from "framer-motion";
 import SecondaryButton from "../Buttons/SecondaryButton";
@@ -26,6 +24,8 @@ import {
 } from "~/components/ui/popover";
 import { Button } from "~/components/ui/button";
 import { useRouter } from "next/router";
+import { useMainStore } from "~/stores/MainStore";
+import useGetUserID from "~/hooks/useGetUserID";
 
 const customButtonStyles = {
   height: "2rem",
@@ -39,7 +39,7 @@ interface IFriendsList {
 }
 
 function FriendsList({ setShowFriendsListModal }: IFriendsList) {
-  const userID = useUserIDContext();
+  const userID = useGetUserID();
   const { push } = useRouter();
 
   const {
@@ -50,7 +50,15 @@ function FriendsList({ setShowFriendsListModal }: IFriendsList) {
     setNewInviteNotification,
     roomConfig,
     setConnectedToRoom,
-  } = useRoomContext();
+  } = useMainStore((state) => ({
+    playerMetadata: state.playerMetadata,
+    connectedToRoom: state.connectedToRoom,
+    friendData: state.friendData,
+    newInviteNotification: state.newInviteNotification,
+    setNewInviteNotification: state.setNewInviteNotification,
+    roomConfig: state.roomConfig,
+    setConnectedToRoom: state.setConnectedToRoom,
+  }));
 
   const { data: friends } = api.users.getUsersFromIDList.useQuery(
     friendData?.friendIDs ?? [],
@@ -86,7 +94,7 @@ function FriendsList({ setShowFriendsListModal }: IFriendsList) {
       exit={{ opacity: 0, scale: 0.95 }}
       transition={{ duration: 0.15 }}
       ref={modalRef}
-      className="baseVertFlex to-green-850 absolute right-0 top-16 w-[370px] !items-start gap-2 rounded-md border-2 border-white bg-gradient-to-br from-green-800 p-4"
+      className="baseVertFlex absolute right-0 top-16 w-[370px] !items-start gap-2 rounded-md border-2 border-white bg-gradient-to-br from-green-800 to-green-850 p-4"
     >
       <div className="baseVertFlex max-h-48 w-full !items-start gap-2">
         <div

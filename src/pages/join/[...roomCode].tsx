@@ -18,9 +18,7 @@ import PlayerCustomizationPopover from "~/components/popovers/PlayerCustomizatio
 import { Button } from "~/components/ui/button";
 import { socket } from "~/pages/_app";
 import { api } from "~/utils/api";
-import { useRoomContext } from "../../context/RoomContext";
 import Filter from "bad-words";
-import { useUserIDContext } from "../../context/UserIDContext";
 import useLeaveRoom from "../../hooks/useLeaveRoom";
 import {
   type IGameMetadata,
@@ -30,11 +28,13 @@ import { type IRoomConfig } from "../create";
 import { Label } from "~/components/ui/label";
 import { Input } from "~/components/ui/input";
 import Head from "next/head";
+import { useMainStore } from "~/stores/MainStore";
+import useGetUserID from "~/hooks/useGetUserID";
 const filter = new Filter();
 
 function JoinRoom() {
   const { isLoaded, isSignedIn } = useAuth();
-  const userID = useUserIDContext();
+  const userID = useGetUserID();
   const { push, query } = useRouter();
 
   const roomCode = query?.roomCode?.[0];
@@ -49,7 +49,17 @@ function JoinRoom() {
     setConnectedToRoom,
     friendData,
     viewportLabel,
-  } = useRoomContext();
+  } = useMainStore((state) => ({
+    playerMetadata: state.playerMetadata,
+    setPlayerMetadata: state.setPlayerMetadata,
+    roomConfig: state.roomConfig,
+    setRoomConfig: state.setRoomConfig,
+    setGameData: state.setGameData,
+    connectedToRoom: state.connectedToRoom,
+    setConnectedToRoom: state.setConnectedToRoom,
+    friendData: state.friendData,
+    viewportLabel: state.viewportLabel,
+  }));
 
   const leaveRoom = useLeaveRoom({
     routeToNavigateTo: "/join",
@@ -249,7 +259,7 @@ function JoinRoom() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.15 }}
-            className="baseVertFlex to-green-850 w-10/12 gap-4 rounded-md border-2 border-lightGreen bg-gradient-to-br from-green-800 p-4 text-lightGreen md:w-[500px]"
+            className="baseVertFlex w-10/12 gap-4 rounded-md border-2 border-lightGreen bg-gradient-to-br from-green-800 to-green-850 p-4 text-lightGreen md:w-[500px]"
           >
             <div className="baseVertFlex gap-4">
               <p className="font-semibold">Enter a username to join the room</p>
@@ -353,7 +363,7 @@ function JoinRoom() {
               transition={{ duration: 0.15 }}
               className="baseVertFlex relative gap-4"
             >
-              <div className="baseFlex to-green-850 sticky left-0 top-0 z-[105] w-screen !justify-start gap-4 border-b-2 border-white bg-gradient-to-br from-green-800 p-2 shadow-lg tablet:relative tablet:w-full tablet:bg-none tablet:shadow-none">
+              <div className="baseFlex sticky left-0 top-0 z-[105] w-screen !justify-start gap-4 border-b-2 border-white bg-gradient-to-br from-green-800 to-green-850 p-2 shadow-lg tablet:relative tablet:w-full tablet:bg-none tablet:shadow-none">
                 <Button
                   variant={"secondary"}
                   icon={<BiArrowBack size={"1.25rem"} />}
@@ -382,7 +392,7 @@ function JoinRoom() {
                 }}
                 className="baseVertFlex gap-4"
               >
-                <fieldset className="baseVertFlex to-green-850 mt-4 gap-4 rounded-md border-2 border-white bg-gradient-to-br from-green-800 p-4">
+                <fieldset className="baseVertFlex mt-4 gap-4 rounded-md border-2 border-white bg-gradient-to-br from-green-800 to-green-850 p-4">
                   <legend className="baseFlex gap-2 pl-4 pr-4 text-left text-lg">
                     <IoSettingsSharp size={"1.25rem"} />
                     Room settings
@@ -429,7 +439,7 @@ function JoinRoom() {
                     }}
                   />
                 </fieldset>
-                <fieldset className="to-green-850 rounded-md border-2 border-white bg-gradient-to-br from-green-800 p-4">
+                <fieldset className="rounded-md border-2 border-white bg-gradient-to-br from-green-800 to-green-850 p-4">
                   <legend className="baseFlex gap-2 pl-4 pr-4 text-left text-lg">
                     <FaUsers size={"1.25rem"} className="ml-1" />
                     Players
@@ -545,7 +555,7 @@ function RoomNotFound() {
 
   return (
     <div className="baseVertFlex min-h-[100dvh] py-16">
-      <div className="baseVertFlex to-green-850 w-10/12 gap-4 rounded-md border-2 border-lightGreen bg-gradient-to-br from-green-800 p-4 text-lightGreen md:w-[500px] md:p-8">
+      <div className="baseVertFlex w-10/12 gap-4 rounded-md border-2 border-lightGreen bg-gradient-to-br from-green-800 to-green-850 p-4 text-lightGreen md:w-[500px] md:p-8">
         <div className="baseFlex gap-2">
           <IoWarningOutline className="h-7 w-7" />
           <h1 className="text-2xl font-semibold">Room not found</h1>
@@ -573,7 +583,7 @@ function RoomIsFull() {
 
   return (
     <div className="baseVertFlex min-h-[100dvh] py-16">
-      <div className="baseVertFlex to-green-850 w-10/12 gap-4 rounded-md border-2 border-lightGreen bg-gradient-to-br from-green-800 p-4 text-lightGreen md:w-[500px] md:p-8">
+      <div className="baseVertFlex w-10/12 gap-4 rounded-md border-2 border-lightGreen bg-gradient-to-br from-green-800 to-green-850 p-4 text-lightGreen md:w-[500px] md:p-8">
         <div className="baseFlex gap-2">
           <IoWarningOutline className="h-8 w-8" />
           <h1 className="text-2xl font-semibold">Room is full</h1>
@@ -599,7 +609,7 @@ function GameAlreadyStarted() {
 
   return (
     <div className="baseVertFlex min-h-[100dvh] py-16">
-      <div className="baseVertFlex to-green-850 w-10/12 gap-4 rounded-md border-2 border-lightGreen bg-gradient-to-br from-green-800 p-4 text-lightGreen md:w-[500px] md:p-8">
+      <div className="baseVertFlex w-10/12 gap-4 rounded-md border-2 border-lightGreen bg-gradient-to-br from-green-800 to-green-850 p-4 text-lightGreen md:w-[500px] md:p-8">
         <div className="baseFlex gap-2">
           <IoWarningOutline className="h-8 w-8" />
           <h1 className="text-2xl font-semibold">Game in progress</h1>

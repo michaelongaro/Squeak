@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@clerk/nextjs";
-import { useUserIDContext } from "../context/UserIDContext";
 import { api } from "~/utils/api";
+import useGetUserID from "~/hooks/useGetUserID";
 
 function useInitializeUserStats() {
   const { isSignedIn } = useAuth();
 
-  const userID = useUserIDContext();
+  const userID = useGetUserID();
 
   // also hook to query to see if user exists in db already
   const { data: currentUserStats } = api.stats.getStatsByID.useQuery(userID);

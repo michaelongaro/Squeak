@@ -1,8 +1,8 @@
 import { Fragment } from "react";
-import { useRoomContext } from "../../context/RoomContext";
 import useTrackHoverOverBoardCells from "../../hooks/useTrackHoverOverBoardCells";
 import BoardCell from "./BoardCell";
 import classes from "./Play.module.css";
+import { useMainStore } from "~/stores/MainStore";
 
 export interface IGetBoxShadowStyles {
   id: string;
@@ -18,7 +18,13 @@ function Board() {
     holdingASqueakCard,
     proposedCardBoxShadow,
     hoveredCell,
-  } = useRoomContext();
+  } = useMainStore((state) => ({
+    gameData: state.gameData,
+    holdingADeckCard: state.holdingADeckCard,
+    holdingASqueakCard: state.holdingASqueakCard,
+    proposedCardBoxShadow: state.proposedCardBoxShadow,
+    hoveredCell: state.hoveredCell,
+  }));
 
   useTrackHoverOverBoardCells();
 

@@ -1,8 +1,13 @@
 import { useState, useEffect } from "react";
-import { useRoomContext } from "../context/RoomContext";
+import { useMainStore } from "~/stores/MainStore";
 
 function useInitializeLocalStorageValues() {
-  const { setCurrentVolume, setPrefersSimpleCardAssets } = useRoomContext();
+  const { setCurrentVolume, setPrefersSimpleCardAssets } = useMainStore(
+    (state) => ({
+      setCurrentVolume: state.setCurrentVolume,
+      setPrefersSimpleCardAssets: state.setPrefersSimpleCardAssets,
+    }),
+  );
 
   const [initialized, setInitialized] = useState(false);
 
@@ -13,7 +18,7 @@ function useInitializeLocalStorageValues() {
 
     const storedVolume = localStorage.getItem("squeakVolume");
     const prefersSimpleCardAssets = localStorage.getItem(
-      "squeakPrefersSimpleCardAssets"
+      "squeakPrefersSimpleCardAssets",
     );
 
     if (storedVolume) {
@@ -25,7 +30,7 @@ function useInitializeLocalStorageValues() {
 
     if (prefersSimpleCardAssets) {
       setPrefersSimpleCardAssets(
-        prefersSimpleCardAssets === "true" ? true : false
+        prefersSimpleCardAssets === "true" ? true : false,
       );
     } else {
       localStorage.setItem("squeakPrefersSimpleCardAssets", "false");

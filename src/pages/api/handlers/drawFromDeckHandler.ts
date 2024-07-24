@@ -50,7 +50,8 @@ export function drawFromDeck({
 
     io.in(roomCode).emit("playerDrawnFromDeck", {
       resetDeck: true,
-      updatedGameData: gameData[roomCode],
+      playerID,
+      updatedPlayerCards: playerCards,
     });
     return;
   }

@@ -14,8 +14,6 @@ import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { socket } from "~/pages/_app";
 import { api } from "~/utils/api";
-import { useRoomContext } from "../../context/RoomContext";
-import { useUserIDContext } from "../../context/UserIDContext";
 import useLeaveRoom from "../../hooks/useLeaveRoom";
 import {
   type IRoomPlayersMetadata,
@@ -24,12 +22,14 @@ import {
 import { useRouter } from "next/router";
 import { type IRoomConfig } from "~/pages/create";
 import Head from "next/head";
+import { useMainStore } from "~/stores/MainStore";
+import useGetUserID from "~/hooks/useGetUserID";
 
 const filter = new Filter();
 
 function JoinRoom() {
   const { isSignedIn } = useAuth();
-  const userID = useUserIDContext();
+  const userID = useGetUserID();
   const { push } = useRouter();
 
   const {
@@ -42,7 +42,17 @@ function JoinRoom() {
     setConnectedToRoom,
     friendData,
     viewportLabel,
-  } = useRoomContext();
+  } = useMainStore((state) => ({
+    playerMetadata: state.playerMetadata,
+    setPlayerMetadata: state.setPlayerMetadata,
+    roomConfig: state.roomConfig,
+    setRoomConfig: state.setRoomConfig,
+    setGameData: state.setGameData,
+    connectedToRoom: state.connectedToRoom,
+    setConnectedToRoom: state.setConnectedToRoom,
+    friendData: state.friendData,
+    viewportLabel: state.viewportLabel,
+  }));
 
   const leaveRoom = useLeaveRoom({
     routeToNavigateTo: "/",
@@ -176,7 +186,7 @@ function JoinRoom() {
       </Head>
 
       <div className="baseVertFlex relative gap-4">
-        <div className="baseFlex to-green-850 sticky left-0 top-0 z-[105] w-screen !justify-start gap-4 border-b-2 border-white bg-gradient-to-br from-green-800 p-2 shadow-lg tablet:relative tablet:w-full tablet:bg-none tablet:shadow-none">
+        <div className="baseFlex sticky left-0 top-0 z-[105] w-screen !justify-start gap-4 border-b-2 border-white bg-gradient-to-br from-green-800 to-green-850 p-2 shadow-lg tablet:relative tablet:w-full tablet:bg-none tablet:shadow-none">
           <Button
             variant={"secondary"}
             icon={
@@ -209,7 +219,7 @@ function JoinRoom() {
           style={{
             color: "hsl(120deg 100% 86%)",
           }}
-          className="baseVertFlex to-green-850 mt-4 gap-8 rounded-md border-2 border-white bg-gradient-to-br from-green-800 p-4"
+          className="baseVertFlex mt-4 gap-8 rounded-md border-2 border-white bg-gradient-to-br from-green-800 to-green-850 p-4"
         >
           <div className="baseVertFlex !items-start gap-4">
             <div className="baseFlex w-full !justify-between gap-5">
@@ -365,7 +375,7 @@ function JoinRoom() {
                 style={{
                   color: "hsl(120deg 100% 86%)",
                 }}
-                className="to-green-850 pointer-events-none absolute right-10 rounded-md border-2 border-white bg-gradient-to-br from-green-800 px-4 py-2 shadow-md"
+                className="pointer-events-none absolute right-10 rounded-md border-2 border-white bg-gradient-to-br from-green-800 to-green-850 px-4 py-2 shadow-md"
               >
                 {roomError}
               </motion.div>

@@ -1,6 +1,4 @@
 import { useEffect, useState } from "react";
-import { useRoomContext } from "../../context/RoomContext";
-import { useUserIDContext } from "../../context/UserIDContext";
 import { socket } from "~/pages/_app";
 import {
   type IRoomPlayer,
@@ -13,6 +11,8 @@ import { hslToDeckHueRotations } from "../../utils/hslToDeckHueRotations";
 import Card from "../Play/Card";
 import { type ILocalPlayerSettings } from "../modals/SettingsAndStats/UserSettingsAndStatsModal";
 import PlayerIcon from "./PlayerIcon";
+import { useMainStore } from "~/stores/MainStore";
+import useGetUserID from "~/hooks/useGetUserID";
 
 interface IPlayerCustomizationPicker {
   type: "avatar" | "back" | "front";
@@ -33,7 +33,7 @@ function PlayerCustomizationPicker({
   setLocalPlayerSettings,
   forDrawer,
 }: IPlayerCustomizationPicker) {
-  const userID = useUserIDContext();
+  const userID = useGetUserID();
 
   const {
     playerMetadata: storePlayerMetadata,
@@ -42,7 +42,16 @@ function PlayerCustomizationPicker({
     roomConfig,
     prefersSimpleCardAssets,
     setPrefersSimpleCardAssets,
-  } = useRoomContext();
+  } = useMainStore((state) => ({
+    playerMetadata: state.playerMetadata,
+    setPlayerMetadata: state.setPlayerMetadata,
+    connectedToRoom: state.connectedToRoom,
+    roomConfig: state.roomConfig,
+    prefersSimpleCardAssets: state.prefersSimpleCardAssets,
+    setPrefersSimpleCardAssets: state.setPrefersSimpleCardAssets,
+  }));
+
+  console.log("renderedPicker");
 
   // dynamic values depending on if parent is being used in <Settings /> or not
   const playerMetadata = localPlayerMetadata ?? storePlayerMetadata;
@@ -65,11 +74,11 @@ function PlayerCustomizationPicker({
     if (!userMetadata) return;
 
     const deckIndex = deckHueRotations.findIndex(
-      (hueRotation) => hueRotation === userMetadata.deckHueRotation
+      (hueRotation) => hueRotation === userMetadata.deckHueRotation,
     );
 
     const avatarIndex = avatarPaths.findIndex(
-      (avatarPath) => avatarPath === userMetadata.avatarPath
+      (avatarPath) => avatarPath === userMetadata.avatarPath,
     );
 
     setUserAvatarIndex(avatarIndex);
@@ -78,13 +87,13 @@ function PlayerCustomizationPicker({
 
   function isTooltipOptionAvailable(
     type: "avatar" | "back",
-    index: number
+    index: number,
   ): boolean {
     if (type === "avatar") {
       return (
         index !== userAvatarIndex &&
         Object.values(playerMetadata).every(
-          (metadata) => metadata.avatarPath !== avatarPaths[index]
+          (metadata) => metadata.avatarPath !== avatarPaths[index],
         )
       );
     }
@@ -92,7 +101,7 @@ function PlayerCustomizationPicker({
     return (
       index !== userDeckIndex &&
       Object.values(playerMetadata).every(
-        (metadata) => metadata.deckHueRotation !== deckHueRotations[index]
+        (metadata) => metadata.deckHueRotation !== deckHueRotations[index],
       )
     );
   }
@@ -114,7 +123,7 @@ function PlayerCustomizationPicker({
   }
 
   function calculateOutlineCardFront(
-    tooltipValue: "normal" | "simple"
+    tooltipValue: "normal" | "simple",
   ): string {
     if (
       (prefersSimpleCardAssets && tooltipValue === "simple") ||
@@ -129,13 +138,13 @@ function PlayerCustomizationPicker({
 
   function getMetadataOfPlayerByAttribute(
     attribute: string,
-    type: "avatar" | "back"
+    type: "avatar" | "back",
   ): string {
     if (type === "avatar") {
       const playersMetadata = Object.values(playerMetadata);
 
       const playerWithAttribute = playersMetadata.find(
-        (metadata) => metadata.avatarPath === attribute
+        (metadata) => metadata.avatarPath === attribute,
       );
 
       if (!playerWithAttribute) return "";
@@ -145,7 +154,7 @@ function PlayerCustomizationPicker({
       const playersMetadata = Object.values(playerMetadata);
 
       const playerWithAttribute = playersMetadata.find(
-        (metadata) => metadata.color === attribute
+        (metadata) => metadata.color === attribute,
       );
 
       if (!playerWithAttribute) return "";
@@ -217,7 +226,7 @@ function PlayerCustomizationPicker({
               style={{
                 backgroundColor: getMetadataOfPlayerByAttribute(
                   avatarPath,
-                  "avatar"
+                  "avatar",
                 ),
               }}
               className="absolute bottom-[-0.75rem] right-[-0.75rem] h-4 w-4 rounded-[50%]"
@@ -377,16 +386,13 @@ function PlayerCustomizationPicker({
     <>
       {userID && (
         <div
-          className={`
-              ${
-                type === "avatar"
-                  ? "h-[18rem] w-[18rem] grid-cols-3 grid-rows-3 md:h-[20rem] md:w-[20rem]"
-                  : type === "back"
-                  ? "h-[22rem] w-[22rem] grid-cols-3 grid-rows-3 md:h-[18rem] md:w-[25rem] md:grid-cols-4 md:grid-rows-2"
-                  : "h-[10rem] w-[15rem] grid-cols-2 grid-rows-1"
-              }
-              ${forDrawer ? "bg-zinc-200" : "white"}
-              grid place-items-center rounded-md p-4 transition-all`}
+          className={` ${
+            type === "avatar"
+              ? "h-[18rem] w-[18rem] grid-cols-3 grid-rows-3 md:h-[20rem] md:w-[20rem]"
+              : type === "back"
+                ? "h-[22rem] w-[22rem] grid-cols-3 grid-rows-3 md:h-[18rem] md:w-[25rem] md:grid-cols-4 md:grid-rows-2"
+                : "h-[10rem] w-[15rem] grid-cols-2 grid-rows-1"
+          } ${forDrawer ? "bg-zinc-200" : "white"} grid place-items-center rounded-md p-4 transition-all`}
         >
           {renderTooltip()}
         </div>

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { socket } from "~/pages/_app";
-import { useRoomContext } from "../context/RoomContext";
+import { useMainStore } from "~/stores/MainStore";
 
 interface IVoteHasBeenCast {
   voteType: "rotateDecks" | "finishRound";
@@ -17,7 +17,15 @@ function useVoteReceived() {
     setVotingLockoutStartTimestamp,
     passiveVoteResolutionTimerId,
     setPassiveVoteResolutionTimerId,
-  } = useRoomContext();
+  } = useMainStore((state) => ({
+    currentVotes: state.currentVotes,
+    setCurrentVotes: state.setCurrentVotes,
+    setVoteType: state.setVoteType,
+    setVotingIsLockedOut: state.setVotingIsLockedOut,
+    setVotingLockoutStartTimestamp: state.setVotingLockoutStartTimestamp,
+    passiveVoteResolutionTimerId: state.passiveVoteResolutionTimerId,
+    setPassiveVoteResolutionTimerId: state.setPassiveVoteResolutionTimerId,
+  }));
 
   const [dataFromBackend, setDataFromBackend] =
     useState<IVoteHasBeenCast | null>(null);
@@ -53,7 +61,7 @@ function useVoteReceived() {
             setTimeout(() => {
               setVotingIsLockedOut(false);
             }, 30000);
-          }, 30000)
+          }, 30000),
         );
       }
 

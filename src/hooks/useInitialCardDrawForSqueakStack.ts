@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { socket } from "~/pages/_app";
-import { useRoomContext } from "../context/RoomContext";
 import { type IDrawFromSqueakDeck } from "../pages/api/socket";
 import { type IMoveCard } from "../components/Play/Card";
+import { useMainStore } from "~/stores/MainStore";
 
 interface IUseInitialCardDrawForSqueakStack {
   value?: string;
@@ -22,7 +22,9 @@ function useInitialCardDrawForSqueakStack({
   ownerID,
   moveCard,
 }: IUseInitialCardDrawForSqueakStack) {
-  const { setGameData } = useRoomContext();
+  const { setGameData } = useMainStore((state) => ({
+    setGameData: state.setGameData,
+  }));
 
   const [dataFromBackend, setDataFromBackend] =
     useState<IDrawFromSqueakDeck | null>(null);
@@ -71,13 +73,17 @@ function useInitialCardDrawForSqueakStack({
           flip: true,
           rotate: false,
           callbackFunction: () => {
-            setGameData((prevGameData) => ({
+            const prevGameData = useMainStore.getState().gameData;
+
+            const newGameData = {
               ...prevGameData,
               players: {
                 ...prevGameData.players,
                 [playerID]: updatedPlayerCards,
               },
-            }));
+            };
+
+            setGameData(newGameData);
           },
         });
       }

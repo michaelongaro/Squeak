@@ -1,8 +1,6 @@
 import { useState, type CSSProperties } from "react";
 import { socket } from "~/pages/_app";
 import { motion } from "framer-motion";
-import { useUserIDContext } from "../../context/UserIDContext";
-import { useRoomContext } from "../../context/RoomContext";
 import SecondaryButton from "../Buttons/SecondaryButton";
 import DangerButton from "../Buttons/DangerButton";
 import { type IRoomPlayer } from "../../pages/api/socket";
@@ -22,6 +20,8 @@ import {
 } from "~/components/ui/popover";
 import { Drawer, DrawerTrigger, DrawerContent } from "~/components/ui/drawer";
 import { FiMail } from "react-icons/fi";
+import { useMainStore } from "~/stores/MainStore";
+import useGetUserID from "~/hooks/useGetUserID";
 
 interface IPlayerIcon {
   avatarPath?: string;
@@ -52,9 +52,12 @@ function PlayerIcon({
   style,
   transparentBackground,
 }: IPlayerIcon) {
-  const userID = useUserIDContext();
+  const userID = useGetUserID();
 
-  const { roomConfig, viewportLabel } = useRoomContext();
+  const { roomConfig, viewportLabel } = useMainStore((state) => ({
+    roomConfig: state.roomConfig,
+    viewportLabel: state.viewportLabel,
+  }));
 
   const [friendInviteSent, setFriendInviteSent] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -186,7 +189,7 @@ function PlayerIcon({
                         </TooltipTrigger>
                         <TooltipContent
                           side={"bottom"}
-                          className="to-green-850 border-2 border-lightGreen bg-gradient-to-br from-green-800 text-lightGreen"
+                          className="border-2 border-lightGreen bg-gradient-to-br from-green-800 to-green-850 text-lightGreen"
                         >
                           <p>Send friend invite</p>
                         </TooltipContent>

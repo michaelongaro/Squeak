@@ -1,7 +1,7 @@
-import { useRoomContext } from "../../context/RoomContext";
 import Card from "./Card";
 import { AnimatePresence, motion } from "framer-motion";
 import { type ICard } from "../../utils/generateDeckAndSqueakCards";
+import { useMainStore } from "~/stores/MainStore";
 
 interface IBoardCell {
   card: ICard | null;
@@ -17,7 +17,9 @@ export interface IGetBoxShadowStyles {
 }
 
 function BoardCell({ card, rowIdx, colIdx }: IBoardCell) {
-  const { proposedCardBoxShadow } = useRoomContext();
+  const { proposedCardBoxShadow } = useMainStore((state) => ({
+    proposedCardBoxShadow: state.proposedCardBoxShadow,
+  }));
 
   return (
     <AnimatePresence>

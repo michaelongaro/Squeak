@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useRoomContext } from "../context/RoomContext";
+import { useMainStore } from "~/stores/MainStore";
 
 interface IBoundingRect {
   left: number;
@@ -11,7 +11,12 @@ interface IBoundingRect {
 
 function useTrackHoverOverBoardCells() {
   const { holdingADeckCard, holdingASqueakCard, hoveredCell, setHoveredCell } =
-    useRoomContext();
+    useMainStore((state) => ({
+      holdingADeckCard: state.holdingADeckCard,
+      holdingASqueakCard: state.holdingASqueakCard,
+      hoveredCell: state.hoveredCell,
+      setHoveredCell: state.setHoveredCell,
+    }));
 
   const [boardCellBoundingRects, setBoardCellBoundingRects] = useState<
     IBoundingRect[]

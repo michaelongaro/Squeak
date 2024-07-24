@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { socket } from "~/pages/_app";
-import { useRoomContext } from "../context/RoomContext";
 import { type IDrawFromSqueakDeck } from "../pages/api/socket";
 import { type IMoveCard } from "../components/Play/Card";
+import { useMainStore } from "~/stores/MainStore";
 
 interface IUseCardDrawFromSqueakDeck {
   value?: string;
@@ -22,7 +22,10 @@ function useCardDrawFromSqueakDeck({
   ownerID,
   moveCard,
 }: IUseCardDrawFromSqueakDeck) {
-  const { setGameData, setQueuedCards } = useRoomContext();
+  const { setGameData, setQueuedCards } = useMainStore((state) => ({
+    setGameData: state.setGameData,
+    setQueuedCards: state.setQueuedCards,
+  }));
 
   const [dataFromBackend, setDataFromBackend] =
     useState<IDrawFromSqueakDeck | null>(null);
@@ -56,13 +59,17 @@ function useCardDrawFromSqueakDeck({
         return;
 
       // add card to queued cards
-      setQueuedCards((prevQueuedCards) => ({
+      const prevQueuedCards = useMainStore.getState().queuedCards;
+
+      const newQueuedCards = {
         ...prevQueuedCards,
         [`${ownerID}-${value}${suit}`]: {
           value,
           suit,
         },
-      }));
+      };
+
+      setQueuedCards(newQueuedCards);
 
       const endID = `${playerID}squeakHand${indexToDrawTo}`;
 
@@ -79,20 +86,24 @@ function useCardDrawFromSqueakDeck({
           flip: true,
           rotate: false,
           callbackFunction: () => {
-            setGameData((prevGameData) => ({
+            const prevGameData = useMainStore.getState().gameData;
+
+            const newGameData = {
               ...prevGameData,
               players: {
                 ...prevGameData.players,
                 [playerID]: updatedPlayerCards,
               },
-            }));
+            };
+
+            setGameData(newGameData);
 
             // remove card from queued cards
-            setQueuedCards((prevQueuedCards) => {
-              const newQueuedCards = { ...prevQueuedCards };
-              delete newQueuedCards[`${ownerID}-${value}${suit}`];
-              return newQueuedCards;
-            });
+            const prevQueuedCards = useMainStore.getState().queuedCards;
+
+            const newQueuedCards = { ...prevQueuedCards };
+            delete newQueuedCards[`${ownerID}-${value}${suit}`];
+            setQueuedCards(newQueuedCards);
           },
         });
       }

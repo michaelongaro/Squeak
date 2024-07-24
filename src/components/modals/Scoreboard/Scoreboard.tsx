@@ -5,13 +5,13 @@ import AnimatedNumber from "react-awesome-animated-number";
 import confetti from "canvas-confetti";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
-import { useRoomContext } from "../../../context/RoomContext";
 import PlayerIcon from "../../playerIcons/PlayerIcon";
 import { FaTrophy } from "react-icons/fa6";
 import confettiPopper from "../../../../public/scoreboard/confettiPopper.svg";
-import { useUserIDContext } from "../../../context/UserIDContext";
 import { type IPlayerRoundDetails } from "../../../pages/api/handlers/roundOverHandler";
 import { Button } from "~/components/ui/button";
+import { useMainStore } from "~/stores/MainStore";
+import useGetUserID from "~/hooks/useGetUserID";
 
 interface IRanking {
   [key: number]: string;
@@ -34,7 +34,7 @@ interface IPlayerColorVariants {
 }
 
 function Scoreboard() {
-  const userID = useUserIDContext();
+  const userID = useGetUserID();
 
   const {
     audioContext,
@@ -46,7 +46,17 @@ function Scoreboard() {
     scoreboardMetadata,
     viewportLabel,
     setPlayerIDWhoSqueaked,
-  } = useRoomContext();
+  } = useMainStore((state) => ({
+    audioContext: state.audioContext,
+    masterVolumeGainNode: state.masterVolumeGainNode,
+    confettiPopBuffer: state.confettiPopBuffer,
+    playerMetadata: state.playerMetadata,
+    currentVolume: state.currentVolume,
+    roomConfig: state.roomConfig,
+    scoreboardMetadata: state.scoreboardMetadata,
+    viewportLabel: state.viewportLabel,
+    setPlayerIDWhoSqueaked: state.setPlayerIDWhoSqueaked,
+  }));
 
   const [initalizedTimers, setInitalizedTimers] = useState(false);
 
@@ -284,7 +294,7 @@ function Scoreboard() {
             color: "hsl(120deg 100% 86%)",
             borderColor: "hsl(120deg 100% 86%)",
           }}
-          className="to-green-850 w-[95%] rounded-lg border-2 bg-gradient-to-br from-green-800 p-4 shadow-md tablet:h-[75%] tablet:w-[75%]"
+          className="w-[95%] rounded-lg border-2 bg-gradient-to-br from-green-800 to-green-850 p-4 shadow-md tablet:h-[75%] tablet:w-[75%]"
         >
           {scoreboardMetadata?.playerRoundDetails && currentPlayerStats && (
             <div className="baseVertFlex h-full gap-2 mobileLarge:gap-4 tablet:gap-8">
@@ -752,7 +762,7 @@ function Scoreboard() {
           color: "hsl(120deg 100% 86%)",
           borderColor: "hsl(120deg 100% 86%)",
         }}
-        className="to-green-850 h-[95%] w-[95%] rounded-lg border-2 bg-gradient-to-br from-green-800 p-4 shadow-md tablet:h-[85%] tablet:w-[85%] desktop:h-[75%] desktop:w-[75%]"
+        className="h-[95%] w-[95%] rounded-lg border-2 bg-gradient-to-br from-green-800 to-green-850 p-4 shadow-md tablet:h-[85%] tablet:w-[85%] desktop:h-[75%] desktop:w-[75%]"
       >
         {scoreboardMetadata?.playerRoundDetails && (
           <div className="baseVertFlex h-full gap-2 desktop:gap-8">

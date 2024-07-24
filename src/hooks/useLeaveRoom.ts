@@ -1,14 +1,14 @@
 import { socket } from "~/pages/_app";
 import { api } from "~/utils/api";
 import { useAuth } from "@clerk/nextjs";
-import { useUserIDContext } from "../context/UserIDContext";
-import { useRoomContext } from "../context/RoomContext";
 import {
   type IGameMetadata,
   type IRoomPlayer,
   type IRoomPlayersMetadata,
 } from "../pages/api/socket";
 import { useRouter } from "next/router";
+import { useMainStore } from "~/stores/MainStore";
+import useGetUserID from "~/hooks/useGetUserID";
 
 interface IUseLeaveRoom {
   routeToNavigateTo: string;
@@ -16,7 +16,7 @@ interface IUseLeaveRoom {
 
 function useLeaveRoom({ routeToNavigateTo }: IUseLeaveRoom) {
   const { isSignedIn } = useAuth();
-  const userID = useUserIDContext();
+  const userID = useGetUserID();
   const { push } = useRouter();
 
   const { data: user } = api.users.getUserByID.useQuery(userID);
@@ -28,7 +28,14 @@ function useLeaveRoom({ routeToNavigateTo }: IUseLeaveRoom) {
     setGameData,
     connectedToRoom,
     setConnectedToRoom,
-  } = useRoomContext();
+  } = useMainStore((state) => ({
+    roomConfig: state.roomConfig,
+    setRoomConfig: state.setRoomConfig,
+    setPlayerMetadata: state.setPlayerMetadata,
+    setGameData: state.setGameData,
+    connectedToRoom: state.connectedToRoom,
+    setConnectedToRoom: state.setConnectedToRoom,
+  }));
 
   function leaveRoom() {
     push(routeToNavigateTo);

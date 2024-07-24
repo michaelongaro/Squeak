@@ -2,7 +2,6 @@ import { useState } from "react";
 import { api } from "~/utils/api";
 import { SignInButton, SignUpButton, useAuth } from "@clerk/nextjs";
 import { AnimatePresence, motion } from "framer-motion";
-import { useUserIDContext } from "~/context/UserIDContext";
 import SecondaryButton from "~/components/Buttons/SecondaryButton";
 import TutorialModal from "~/components/modals/TutorialModal";
 import { TbDoorEnter } from "react-icons/tb";
@@ -18,17 +17,20 @@ import { useRouter } from "next/router";
 import useReceiveFriendData from "~/hooks/useReceiveFriendData";
 import useInitializeUserStats from "~/hooks/useInitializeUserStats";
 import usePostSignUpRegistration from "~/hooks/usePostSignUpRegistration";
-import { useRoomContext } from "~/context/RoomContext";
+import { useMainStore } from "~/stores/MainStore";
+import useGetUserID from "~/hooks/useGetUserID";
 
 function MainOptions() {
   const { isSignedIn } = useAuth();
-  const userID = useUserIDContext();
+  const userID = useGetUserID();
   const { asPath, push } = useRouter();
 
   // probably want to remove the default "refetch on page focus" behavior
   const { data: user } = api.users.getUserByID.useQuery(userID);
 
-  const { viewportLabel } = useRoomContext();
+  const { viewportLabel } = useMainStore((state) => ({
+    viewportLabel: state.viewportLabel,
+  }));
 
   const [hoveringOnAboutMe, setHoveringOnAboutMe] = useState(false);
   const [showTutorialModal, setShowTutorialModal] = useState(false);
@@ -49,7 +51,7 @@ function MainOptions() {
       className="baseFlex relative min-h-[100dvh] py-4"
     >
       {isSignedIn !== undefined && (
-        <div className="baseVertFlex to-green-850 w-[17.5rem] rounded-md border-2 border-white bg-gradient-to-br from-green-800 py-4 shadow-lg lg:w-[22.25rem] mobileLarge:p-4 desktop:p-8">
+        <div className="baseVertFlex w-[17.5rem] rounded-md border-2 border-white bg-gradient-to-br from-green-800 to-green-850 py-4 shadow-lg lg:w-[22.25rem] mobileLarge:p-4 desktop:p-8">
           <Image
             src={logo}
             alt="Squeak logo"

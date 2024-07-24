@@ -6,7 +6,7 @@ import Radio from "../Buttons/Radio";
 import PlayerIcon from "../playerIcons/PlayerIcon";
 import SecondaryButton from "../Buttons/SecondaryButton";
 import { IoClose, IoStatsChart } from "react-icons/io5";
-import { useRoomContext } from "~/context/RoomContext";
+import { useMainStore } from "~/stores/MainStore";
 
 interface ILeaderboardModal {
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -28,7 +28,9 @@ const orderValues = [
 function LeaderboardModal({ setShowModal }: ILeaderboardModal) {
   const { data: leaderboardStats } = api.users.getLeaderboardStats.useQuery();
 
-  const { viewportLabel } = useRoomContext();
+  const { viewportLabel } = useMainStore((state) => ({
+    viewportLabel: state.viewportLabel,
+  }));
 
   const [currentlySelectedIndex, setCurrentlySelectedIndex] =
     useState<number>(0);
@@ -63,7 +65,7 @@ function LeaderboardModal({ setShowModal }: ILeaderboardModal) {
         className="baseVertFlex max-h-[90vh] w-[93vw] !justify-start overflow-y-auto rounded-md border-2 border-white shadow-md lg:w-auto"
       >
         {/* combine these classes with above? */}
-        <div className="baseVertFlex to-green-850 relative w-full !justify-start gap-8 rounded-md bg-gradient-to-br from-green-800 p-4 tablet:p-8">
+        <div className="baseVertFlex relative w-full !justify-start gap-8 rounded-md bg-gradient-to-br from-green-800 to-green-850 p-4 tablet:p-8">
           <div
             style={{
               color: "hsl(120deg 100% 86%)",

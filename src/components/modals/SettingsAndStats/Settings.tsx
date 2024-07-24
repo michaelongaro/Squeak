@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useUserIDContext } from "../../../context/UserIDContext";
 import {
   type IRoomPlayersMetadata,
   type IRoomPlayer,
@@ -11,6 +10,7 @@ import { Switch } from "~/components/ui/switch";
 import { Label } from "~/components/ui/label";
 import { Input } from "~/components/ui/input";
 import PlayerCustomizationPopover from "~/components/popovers/PlayerCustomizationPopover";
+import useGetUserID from "~/hooks/useGetUserID";
 
 const filter = new Filter();
 
@@ -35,7 +35,7 @@ function Settings({
   usernameIsProfane,
   setUsernameIsProfane,
 }: ISettings) {
-  const userID = useUserIDContext();
+  const userID = useGetUserID();
 
   const [focusedInInput, setFocusedInInput] = useState<boolean>(false);
 
@@ -44,7 +44,7 @@ function Settings({
       style={{
         color: "hsl(120deg 100% 86%)",
       }}
-      className="baseVertFlex to-green-850 w-[700px] gap-8 bg-gradient-to-br from-green-800 p-8"
+      className="baseVertFlex w-[700px] gap-8 bg-gradient-to-br from-green-800 to-green-850 p-8"
     >
       <div className="baseFlex gap-2">
         <Label htmlFor="username">Username</Label>

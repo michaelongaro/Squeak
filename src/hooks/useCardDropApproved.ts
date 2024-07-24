@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { socket } from "~/pages/_app";
-import { useRoomContext } from "../context/RoomContext";
 import { type ICardDropProposal } from "../pages/api/socket";
 import { type IMoveCard } from "../components/Play/Card";
+import { useMainStore } from "~/stores/MainStore";
 
 // is there any better approach than a partial here? don't like having to do huge
 // guard clause at the start if it's not necessary
@@ -54,7 +54,20 @@ function useCardDropApproved({
     setOtherPlayerSqueakStacksBeingDragged,
     smallerViewportCardBeingMoved,
     setSmallerViewportCardBeingMoved,
-  } = useRoomContext();
+  } = useMainStore((state) => ({
+    audioContext: state.audioContext,
+    masterVolumeGainNode: state.masterVolumeGainNode,
+    successfulMoveBuffer: state.successfulMoveBuffer,
+    otherPlayerCardMoveBuffer: state.otherPlayerCardMoveBuffer,
+    setGameData: state.setGameData,
+    setQueuedCards: state.setQueuedCards,
+    setProposedCardBoxShadow: state.setProposedCardBoxShadow,
+    squeakStackDragAlterations: state.squeakStackDragAlterations,
+    setOtherPlayerSqueakStacksBeingDragged:
+      state.setOtherPlayerSqueakStacksBeingDragged,
+    smallerViewportCardBeingMoved: state.smallerViewportCardBeingMoved,
+    setSmallerViewportCardBeingMoved: state.setSmallerViewportCardBeingMoved,
+  }));
 
   const [dataFromBackend, setDataFromBackend] =
     useState<ICardDropAccepted | null>(null);
@@ -94,13 +107,17 @@ function useCardDropApproved({
         return;
 
       // add card to queued cards
-      setQueuedCards((prevQueuedCards) => ({
+      const prevQueuedCards = useMainStore.getState().queuedCards;
+
+      const newQueuedCards = {
         ...prevQueuedCards,
         [`${ownerID}-${value}${suit}`]: {
           value,
           suit,
         },
-      }));
+      };
+
+      setQueuedCards(newQueuedCards);
 
       // setting ctx state for smaller viewports to know which card
       // should be made visible during it's programmatic move that's about to happen
@@ -239,30 +256,32 @@ function useCardDropApproved({
           });
 
           if (playerID) {
-            setGameData((prevGameData) => {
-              const newBoard = structuredClone(prevGameData.board);
+            const prevGameData = useMainStore.getState().gameData;
 
-              if (boardEndLocation) {
-                const { row, col } = boardEndLocation;
-                newBoard[row]![col] = card;
-              }
+            const newBoard = structuredClone(prevGameData.board);
 
-              return {
-                ...prevGameData,
-                board: newBoard,
-                players: {
-                  ...prevGameData.players,
-                  [playerID]: updatedPlayerCards,
-                },
-              };
-            });
+            if (boardEndLocation) {
+              const { row, col } = boardEndLocation;
+              newBoard[row]![col] = card;
+            }
+
+            const newGameData = {
+              ...prevGameData,
+              board: newBoard,
+              players: {
+                ...prevGameData.players,
+                [playerID]: updatedPlayerCards,
+              },
+            };
+
+            setGameData(newGameData);
 
             // remove card from queued cards
-            setQueuedCards((prevQueuedCards) => {
-              const newQueuedCards = { ...prevQueuedCards };
-              delete newQueuedCards[`${ownerID}-${value}${suit}`];
-              return newQueuedCards;
-            });
+            const prevQueuedCards = useMainStore.getState().queuedCards;
+
+            const newQueuedCards = { ...prevQueuedCards };
+            delete newQueuedCards[`${ownerID}-${value}${suit}`];
+            setQueuedCards(newQueuedCards);
           }
 
           if (playerID === userID) {

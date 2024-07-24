@@ -3,8 +3,6 @@ import { useAuth } from "@clerk/nextjs";
 import cryptoRandomString from "crypto-random-string";
 import { api } from "~/utils/api";
 import { socket } from "~/pages/_app";
-import { useUserIDContext } from "../../context/UserIDContext";
-import { useRoomContext } from "../../context/RoomContext";
 import {
   type IRoomPlayersMetadata,
   type IGameMetadata,
@@ -31,6 +29,8 @@ import { Label } from "~/components/ui/label";
 import { Button } from "~/components/ui/button";
 import Head from "next/head";
 import { useRouter } from "next/router";
+import { useMainStore } from "~/stores/MainStore";
+import useGetUserID from "~/hooks/useGetUserID";
 
 const filter = new Filter();
 
@@ -66,7 +66,7 @@ function CreateRoom() {
   const { isSignedIn } = useAuth();
   const { push } = useRouter();
 
-  const userID = useUserIDContext();
+  const userID = useGetUserID();
 
   const {
     roomConfig,
@@ -78,7 +78,17 @@ function CreateRoom() {
     friendData,
     setGameData,
     viewportLabel,
-  } = useRoomContext();
+  } = useMainStore((state) => ({
+    roomConfig: state.roomConfig,
+    setRoomConfig: state.setRoomConfig,
+    playerMetadata: state.playerMetadata,
+    setPlayerMetadata: state.setPlayerMetadata,
+    connectedToRoom: state.connectedToRoom,
+    setConnectedToRoom: state.setConnectedToRoom,
+    friendData: state.friendData,
+    setGameData: state.setGameData,
+    viewportLabel: state.viewportLabel,
+  }));
 
   const leaveRoom = useLeaveRoom({
     routeToNavigateTo: connectedToRoom ? "/create" : "/",
@@ -98,22 +108,22 @@ function CreateRoom() {
   // otherwise they would be overwriting the current room config
   useEffect(() => {
     if (!configAndMetadataInitialized && userID && !connectedToRoom) {
+      setConfigAndMetadataInitialized(true);
+
+      const prevRoomConfig = useMainStore.getState().roomConfig;
       setRoomConfig({
-        ...roomConfig,
+        ...prevRoomConfig,
         code: cryptoRandomString({ length: 6 }),
         playerIDsInRoom: [userID],
         hostUsername: playerMetadata[userID]?.username || "",
         hostUserID: userID,
       });
-
-      setConfigAndMetadataInitialized(true);
     }
   }, [
     configAndMetadataInitialized,
     userID,
     connectedToRoom,
     playerMetadata,
-    roomConfig,
     setRoomConfig,
   ]);
 
@@ -218,7 +228,7 @@ function CreateRoom() {
       </Head>
 
       <div className="baseVertFlex relative gap-4">
-        <div className="baseFlex to-green-850 sticky left-0 top-0 z-[105] w-screen !justify-start gap-4 border-b-2 border-white bg-gradient-to-br from-green-800 p-2 shadow-lg tablet:relative tablet:w-full tablet:bg-none tablet:shadow-none">
+        <div className="baseFlex sticky left-0 top-0 z-[105] w-screen !justify-start gap-4 border-b-2 border-white bg-gradient-to-br from-green-800 to-green-850 p-2 shadow-lg tablet:relative tablet:w-full tablet:bg-none tablet:shadow-none">
           <Button
             variant={"secondary"}
             icon={
@@ -251,7 +261,7 @@ function CreateRoom() {
         </div>
 
         {!connectedToRoom && (
-          <div className="baseVertFlex to-green-850 mt-4 gap-4 rounded-md border-2 border-white bg-gradient-to-br from-green-800 p-4">
+          <div className="baseVertFlex mt-4 gap-4 rounded-md border-2 border-white bg-gradient-to-br from-green-800 to-green-850 p-4">
             <div className="baseFlex gap-2">
               <Label
                 style={{
@@ -361,7 +371,7 @@ function CreateRoom() {
           </div>
         )}
 
-        <fieldset className="to-green-850 mt-4 w-[350px] rounded-md border-2 border-white bg-gradient-to-br from-green-800 p-2 sm:min-w-[450px] sm:p-4">
+        <fieldset className="mt-4 w-[350px] rounded-md border-2 border-white bg-gradient-to-br from-green-800 to-green-850 p-2 sm:min-w-[450px] sm:p-4">
           <legend
             style={{
               color: "hsl(120deg 100% 86%)",
@@ -473,7 +483,7 @@ function CreateRoom() {
             }}
             className="baseVertFlex gap-4"
           >
-            <fieldset className="to-green-850 min-w-[14rem] rounded-md border-2 border-white bg-gradient-to-br from-green-800 p-4">
+            <fieldset className="min-w-[14rem] rounded-md border-2 border-white bg-gradient-to-br from-green-800 to-green-850 p-4">
               <legend className="baseFlex gap-2 pl-4 pr-4 text-left text-lg">
                 <FaUsers size={"1.25rem"} className="ml-1" />
                 Players

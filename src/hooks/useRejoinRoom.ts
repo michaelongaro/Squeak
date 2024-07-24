@@ -1,20 +1,25 @@
 import { useState, useEffect } from "react";
 import { socket } from "~/pages/_app";
-import { useUserIDContext } from "../context/UserIDContext";
-import { useRoomContext } from "../context/RoomContext";
 import { type IRejoinData } from "./../pages/api/socket";
+import { useMainStore } from "~/stores/MainStore";
+import useGetUserID from "~/hooks/useGetUserID";
 
 // this hook has auth hook in it but I think it was just from a copy paste
 // from another hook to get a boilerplate
 
 function useRejoinRoom() {
-  const userID = useUserIDContext();
+  const userID = useGetUserID();
 
   const { setRoomConfig, setPlayerMetadata, setGameData, connectedToRoom } =
-    useRoomContext();
+    useMainStore((state) => ({
+      setRoomConfig: state.setRoomConfig,
+      setPlayerMetadata: state.setPlayerMetadata,
+      setGameData: state.setGameData,
+      connectedToRoom: state.connectedToRoom,
+    }));
 
   const [dataFromBackend, setDataFromBackend] = useState<IRejoinData | null>(
-    null
+    null,
   );
 
   useEffect(() => {

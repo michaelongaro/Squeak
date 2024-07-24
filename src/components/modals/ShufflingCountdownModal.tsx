@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
-import { useUserIDContext } from "../../context/UserIDContext";
-import { useRoomContext } from "../../context/RoomContext";
 import Card from "../Play/Card";
 import AnimatedNumber from "react-awesome-animated-number";
 import { motion } from "framer-motion";
+import { useMainStore } from "~/stores/MainStore";
+import useGetUserID from "~/hooks/useGetUserID";
 
 function ShufflingCountdownModal() {
-  const userID = useUserIDContext();
+  const userID = useGetUserID();
 
   const {
     gameData,
@@ -14,7 +14,13 @@ function ShufflingCountdownModal() {
     playerMetadata,
     setShowShufflingCountdown,
     showShufflingCountdown,
-  } = useRoomContext();
+  } = useMainStore((state) => ({
+    gameData: state.gameData,
+    roomConfig: state.roomConfig,
+    playerMetadata: state.playerMetadata,
+    setShowShufflingCountdown: state.setShowShufflingCountdown,
+    showShufflingCountdown: state.showShufflingCountdown,
+  }));
 
   const [timersInitiated, setTimersInitiated] = useState<boolean>(false);
   const [countdownTimerValue, setCountdownTimerValue] = useState<number>(5);

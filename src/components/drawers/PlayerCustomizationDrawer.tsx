@@ -8,15 +8,17 @@ import {
   DrawerPortal,
   DrawerTrigger,
 } from "~/components/ui/drawer";
-import { useRoomContext } from "~/context/RoomContext";
 import PlayerCustomizationPicker from "../playerIcons/PlayerCustomizationPicker";
 import PlayerCustomizationPreview from "../playerIcons/PlayerCustomizationPreview";
 import { IoIosArrowForward } from "react-icons/io";
+import { useMainStore } from "~/stores/MainStore";
 
 const viewLabels = ["avatar", "front", "back"] as const;
 
 function PlayerCustomizationDrawer() {
-  const { playerMetadata } = useRoomContext();
+  const { playerMetadata } = useMainStore((state) => ({
+    playerMetadata: state.playerMetadata,
+  }));
 
   const [renderedView, setRenderedView] = useState<
     "avatar" | "front" | "back"
@@ -132,8 +134,8 @@ function PlayerCustomizationDrawer() {
                     {renderedView === "avatar"
                       ? "Avatar"
                       : renderedView === "front"
-                      ? "Card front"
-                      : "Card back"}
+                        ? "Card front"
+                        : "Card back"}
                   </p>
                   <PlayerCustomizationPicker type={renderedView} forDrawer />
                 </motion.div>

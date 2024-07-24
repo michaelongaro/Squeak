@@ -1,6 +1,4 @@
 import { useState, useEffect } from "react";
-import { useUserIDContext } from "../../context/UserIDContext";
-import { useRoomContext } from "../../context/RoomContext";
 import useResponsiveCardDimensions from "../../hooks/useResponsiveCardDimensions";
 import Card from "./Card";
 import { FaRedoAlt } from "react-icons/fa";
@@ -10,6 +8,8 @@ import Buzzer from "./Buzzer";
 import Image from "next/image";
 import disconnectIcon from "../../../public/disconnect/disconnect.svg";
 import { AnimatePresence } from "framer-motion";
+import { useMainStore } from "~/stores/MainStore";
+import useGetUserID from "~/hooks/useGetUserID";
 
 interface IOtherPlayersCardContainers {
   orderedClassNames: (string | undefined)[];
@@ -33,7 +33,7 @@ const rotationOrder = [180, 90, 270];
 function OtherPlayersCardContainers({
   orderedClassNames,
 }: IOtherPlayersCardContainers) {
-  const userID = useUserIDContext();
+  const userID = useGetUserID();
 
   const {
     playerMetadata,
@@ -46,7 +46,19 @@ function OtherPlayersCardContainers({
     squeakStackDragAlterations,
     smallerViewportCardBeingMoved,
     viewportLabel,
-  } = useRoomContext();
+  } = useMainStore((state) => ({
+    playerMetadata: state.playerMetadata,
+    gameData: state.gameData,
+    decksAreBeingRotated: state.decksAreBeingRotated,
+    setDecksAreBeingRotated: state.setDecksAreBeingRotated,
+    squeakDeckBeingMovedProgramatically:
+      state.squeakDeckBeingMovedProgramatically,
+    cardBeingMovedProgramatically: state.cardBeingMovedProgramatically,
+    roomConfig: state.roomConfig,
+    squeakStackDragAlterations: state.squeakStackDragAlterations,
+    smallerViewportCardBeingMoved: state.smallerViewportCardBeingMoved,
+    viewportLabel: state.viewportLabel,
+  }));
 
   const otherPlayerIDs = Object.keys(gameData.players).filter(
     (playerID) => playerID !== userID,

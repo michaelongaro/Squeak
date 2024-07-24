@@ -10,6 +10,7 @@ import useAttachUnloadEventListener from "~/hooks/useAttachUnloadEventListener";
 import useRejoinRoom from "~/hooks/useRejoinRoom";
 import Head from "next/head";
 import { useRouter } from "next/router";
+import useInitializeStoreLogic from "~/hooks/useInitializeStoreLogic";
 
 const montserrat = Montserrat({
   weight: "variable",
@@ -50,6 +51,7 @@ function GeneralLayout({ children }: GeneralLayout) {
     }, 2500);
   }, []);
 
+  useInitializeStoreLogic();
   useInitializeLocalStorageValues();
   usePlayerLeftRoom();
   useRejoinRoom();

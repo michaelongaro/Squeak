@@ -1,8 +1,8 @@
 import anime from "animejs";
 import React, { useEffect, useState } from "react";
-import { useRoomContext } from "../../../context/RoomContext";
 import { type ICard } from "../../../utils/generateDeckAndSqueakCards";
 import Card from "../../Play/Card";
+import { useMainStore } from "~/stores/MainStore";
 
 interface IAnimatedCard {
   card: ICard;
@@ -20,7 +20,10 @@ function AnimatedCard({
   playerID,
   totalCardsPlayed,
 }: IAnimatedCard) {
-  const { playerMetadata } = useRoomContext();
+  const { playerMetadata } = useMainStore((state) => ({
+    playerMetadata: state.playerMetadata,
+  }));
+
   const [animationStarted, setAnimationStarted] = useState(false); // not sure if necessary
 
   useEffect(() => {
