@@ -63,16 +63,15 @@ interface IRoomContext {
   setPlayerMetadata: React.Dispatch<React.SetStateAction<IRoomPlayersMetadata>>;
   gameData: IGameMetadata;
   setGameData: React.Dispatch<React.SetStateAction<IGameMetadata>>;
+
+  // used for client-server validation on whether client is up to date with server state
+  serverGameData: IGameMetadata;
+  setServerGameData: React.Dispatch<React.SetStateAction<IGameMetadata>>;
+
   friendData: IFriendsMetadata | undefined;
   setFriendData: React.Dispatch<
     React.SetStateAction<IFriendsMetadata | undefined>
   >;
-
-  // used for interval that checks if client is up to date with server state.
-  // makes sure to include cards that are currently being animated, but not yet
-  // in local gameData object.
-  queuedCards: IQueuedCard;
-  setQueuedCards: React.Dispatch<React.SetStateAction<IQueuedCard>>;
 
   hoveredCell: [number, number] | null;
   setHoveredCell: React.Dispatch<React.SetStateAction<[number, number] | null>>;
@@ -233,7 +232,10 @@ export function RoomProvider(props: { children: React.ReactNode }) {
   // safe, because we are only ever accessing/mutating gameData when it is defined
   const [gameData, setGameData] = useState<IGameMetadata>({} as IGameMetadata);
 
-  const [queuedCards, setQueuedCards] = useState<IQueuedCard>({});
+  // used for client-server validation on whether client is up to date with server state
+  const [serverGameData, setServerGameData] = useState<IGameMetadata>(
+    {} as IGameMetadata,
+  );
 
   const [friendData, setFriendData] = useState<IFriendsMetadata | undefined>();
 
@@ -447,8 +449,8 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     setPlayerMetadata,
     gameData,
     setGameData,
-    queuedCards,
-    setQueuedCards,
+    serverGameData,
+    setServerGameData,
     friendData,
     setFriendData,
     hoveredCell,

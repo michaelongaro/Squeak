@@ -76,6 +76,7 @@ function CreateRoom() {
     connectedToRoom,
     setConnectedToRoom,
     friendData,
+    setServerGameData,
     setGameData,
     viewportLabel,
   } = useRoomContext();
@@ -135,6 +136,7 @@ function CreateRoom() {
     }) {
       push(`/game/${roomConfig.code}`);
       setGameData(gameData);
+      setServerGameData(gameData);
       setRoomConfig(roomConfig);
     }
 
@@ -150,6 +152,7 @@ function CreateRoom() {
   }, [
     setConnectedToRoom,
     setGameData,
+    setServerGameData,
     setPlayerMetadata,
     setRoomConfig,
     push,
@@ -218,7 +221,7 @@ function CreateRoom() {
       </Head>
 
       <div className="baseVertFlex relative gap-4">
-        <div className="baseFlex to-green-850 sticky left-0 top-0 z-[105] w-screen !justify-start gap-4 border-b-2 border-white bg-gradient-to-br from-green-800 p-2 shadow-lg tablet:relative tablet:w-full tablet:bg-none tablet:shadow-none">
+        <div className="baseFlex sticky left-0 top-0 z-[105] w-screen !justify-start gap-4 border-b-2 border-white bg-gradient-to-br from-green-800 to-green-850 p-2 shadow-lg tablet:relative tablet:w-full tablet:bg-none tablet:shadow-none">
           <Button
             variant={"secondary"}
             icon={
@@ -251,7 +254,7 @@ function CreateRoom() {
         </div>
 
         {!connectedToRoom && (
-          <div className="baseVertFlex to-green-850 mt-4 gap-4 rounded-md border-2 border-white bg-gradient-to-br from-green-800 p-4">
+          <div className="baseVertFlex mt-4 gap-4 rounded-md border-2 border-white bg-gradient-to-br from-green-800 to-green-850 p-4">
             <div className="baseFlex gap-2">
               <Label
                 style={{
@@ -361,7 +364,7 @@ function CreateRoom() {
           </div>
         )}
 
-        <fieldset className="to-green-850 mt-4 w-[350px] rounded-md border-2 border-white bg-gradient-to-br from-green-800 p-2 sm:min-w-[450px] sm:p-4">
+        <fieldset className="mt-4 w-[350px] rounded-md border-2 border-white bg-gradient-to-br from-green-800 to-green-850 p-2 sm:min-w-[450px] sm:p-4">
           <legend
             style={{
               color: "hsl(120deg 100% 86%)",
@@ -473,7 +476,7 @@ function CreateRoom() {
             }}
             className="baseVertFlex gap-4"
           >
-            <fieldset className="to-green-850 min-w-[14rem] rounded-md border-2 border-white bg-gradient-to-br from-green-800 p-4">
+            <fieldset className="min-w-[14rem] rounded-md border-2 border-white bg-gradient-to-br from-green-800 to-green-850 p-4">
               <legend className="baseFlex gap-2 pl-4 pr-4 text-left text-lg">
                 <FaUsers size={"1.25rem"} className="ml-1" />
                 Players

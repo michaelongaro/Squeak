@@ -24,7 +24,7 @@ function useCardDrawFromDeck({
   rotation,
   moveCard,
 }: IUseCardDrawFromDeck) {
-  const { setGameData, setQueuedCards } = useRoomContext();
+  const { setGameData, setServerGameData } = useRoomContext();
 
   const [dataFromBackend, setDataFromBackend] = useState<IDrawFromDeck | null>(
     null,
@@ -57,12 +57,11 @@ function useCardDrawFromDeck({
       )
         return;
 
-      // add card to queued cards
-      setQueuedCards((prevQueuedCards) => ({
-        ...prevQueuedCards,
-        [`${ownerID}-${value}${suit}`]: {
-          value,
-          suit,
+      setServerGameData((prevServerGameData) => ({
+        ...prevServerGameData,
+        players: {
+          ...prevServerGameData.players,
+          [playerID]: updatedPlayerCards,
         },
       }));
 
@@ -85,13 +84,6 @@ function useCardDrawFromDeck({
                 [playerID]: updatedPlayerCards,
               },
             }));
-
-            // remove card from queued cards
-            setQueuedCards((prevQueuedCards) => {
-              const newQueuedCards = { ...prevQueuedCards };
-              delete newQueuedCards[`${ownerID}-${value}${suit}`];
-              return newQueuedCards;
-            });
           },
         });
       }
@@ -104,7 +96,7 @@ function useCardDrawFromDeck({
     suit,
     ownerID,
     value,
-    setQueuedCards,
+    setServerGameData,
   ]);
 }
 

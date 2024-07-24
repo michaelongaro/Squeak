@@ -14,6 +14,7 @@ function useStartAnotherRoundHandler() {
     setGameData,
     setShowScoreboard,
     setShowShufflingCountdown,
+    setServerGameData,
   } = useRoomContext();
 
   const [dataFromBackend, setDataFromBackend] = useState<{
@@ -34,6 +35,7 @@ function useStartAnotherRoundHandler() {
       setDataFromBackend(null);
 
       setGameData(dataFromBackend.gameData);
+      setServerGameData(dataFromBackend.gameData);
 
       setShowScoreboard(false);
 
@@ -58,6 +60,7 @@ function useStartAnotherRoundHandler() {
     roomConfig,
     gameData,
     userID,
+    setServerGameData,
   ]);
 }
 

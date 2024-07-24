@@ -9,8 +9,13 @@ function useReturnToRoomHandler() {
   const userID = useUserIDContext();
   const { push } = useRouter();
 
-  const { roomConfig, setRoomConfig, setPlayerMetadata, setGameData } =
-    useRoomContext();
+  const {
+    roomConfig,
+    setRoomConfig,
+    setPlayerMetadata,
+    setGameData,
+    setServerGameData,
+  } = useRoomContext();
 
   const [dataFromBackend, setDataFromBackend] =
     useState<IMoveBackToLobby | null>(null);
@@ -32,6 +37,7 @@ function useReturnToRoomHandler() {
       setRoomConfig(newRoomConfig);
       setPlayerMetadata(players);
       setGameData(gameData);
+      setServerGameData(gameData);
 
       if (userID === newRoomConfig.hostUserID) {
         push("/create");
@@ -46,6 +52,7 @@ function useReturnToRoomHandler() {
     userID,
     setGameData,
     setPlayerMetadata,
+    setServerGameData,
     setRoomConfig,
   ]);
 }

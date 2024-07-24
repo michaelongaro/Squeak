@@ -48,12 +48,12 @@ function useCardDropApproved({
     successfulMoveBuffer,
     otherPlayerCardMoveBuffer,
     setGameData,
-    setQueuedCards,
     setProposedCardBoxShadow,
     squeakStackDragAlterations,
     setOtherPlayerSqueakStacksBeingDragged,
     smallerViewportCardBeingMoved,
     setSmallerViewportCardBeingMoved,
+    setServerGameData,
   } = useRoomContext();
 
   const [dataFromBackend, setDataFromBackend] =
@@ -93,14 +93,23 @@ function useCardDropApproved({
       )
         return;
 
-      // add card to queued cards
-      setQueuedCards((prevQueuedCards) => ({
-        ...prevQueuedCards,
-        [`${ownerID}-${value}${suit}`]: {
-          value,
-          suit,
-        },
-      }));
+      setServerGameData((prevServerGameData) => {
+        const newBoard = structuredClone(prevServerGameData.board);
+
+        if (boardEndLocation) {
+          const { row, col } = boardEndLocation;
+          newBoard[row]![col] = card;
+        }
+
+        return {
+          ...prevServerGameData,
+          board: newBoard,
+          players: {
+            ...prevServerGameData.players,
+            [playerID]: updatedPlayerCards,
+          },
+        };
+      });
 
       // setting ctx state for smaller viewports to know which card
       // should be made visible during it's programmatic move that's about to happen
@@ -256,13 +265,6 @@ function useCardDropApproved({
                 },
               };
             });
-
-            // remove card from queued cards
-            setQueuedCards((prevQueuedCards) => {
-              const newQueuedCards = { ...prevQueuedCards };
-              delete newQueuedCards[`${ownerID}-${value}${suit}`];
-              return newQueuedCards;
-            });
           }
 
           if (playerID === userID) {
@@ -296,7 +298,7 @@ function useCardDropApproved({
     userID,
     smallerViewportCardBeingMoved,
     setSmallerViewportCardBeingMoved,
-    setQueuedCards,
+    setServerGameData,
   ]);
 }
 

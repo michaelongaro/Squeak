@@ -27,6 +27,7 @@ function useLeaveRoom({ routeToNavigateTo }: IUseLeaveRoom) {
     setPlayerMetadata,
     setGameData,
     connectedToRoom,
+    setServerGameData,
     setConnectedToRoom,
   } = useRoomContext();
 
@@ -57,6 +58,7 @@ function useLeaveRoom({ routeToNavigateTo }: IUseLeaveRoom) {
     }
 
     setGameData({} as IGameMetadata);
+    setServerGameData({} as IGameMetadata);
 
     if (connectedToRoom) {
       setConnectedToRoom(false);

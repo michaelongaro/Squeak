@@ -22,7 +22,7 @@ function useCardDrawFromSqueakDeck({
   ownerID,
   moveCard,
 }: IUseCardDrawFromSqueakDeck) {
-  const { setGameData, setQueuedCards } = useRoomContext();
+  const { setGameData, setServerGameData } = useRoomContext();
 
   const [dataFromBackend, setDataFromBackend] =
     useState<IDrawFromSqueakDeck | null>(null);
@@ -55,12 +55,11 @@ function useCardDrawFromSqueakDeck({
       )
         return;
 
-      // add card to queued cards
-      setQueuedCards((prevQueuedCards) => ({
-        ...prevQueuedCards,
-        [`${ownerID}-${value}${suit}`]: {
-          value,
-          suit,
+      setServerGameData((prevServerGameData) => ({
+        ...prevServerGameData,
+        players: {
+          ...prevServerGameData.players,
+          [playerID]: updatedPlayerCards,
         },
       }));
 
@@ -86,13 +85,6 @@ function useCardDrawFromSqueakDeck({
                 [playerID]: updatedPlayerCards,
               },
             }));
-
-            // remove card from queued cards
-            setQueuedCards((prevQueuedCards) => {
-              const newQueuedCards = { ...prevQueuedCards };
-              delete newQueuedCards[`${ownerID}-${value}${suit}`];
-              return newQueuedCards;
-            });
           },
         });
       }
@@ -104,7 +96,7 @@ function useCardDrawFromSqueakDeck({
     setGameData,
     suit,
     value,
-    setQueuedCards,
+    setServerGameData,
   ]);
 }
 

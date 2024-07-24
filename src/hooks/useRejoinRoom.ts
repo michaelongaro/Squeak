@@ -10,11 +10,16 @@ import { type IRejoinData } from "./../pages/api/socket";
 function useRejoinRoom() {
   const userID = useUserIDContext();
 
-  const { setRoomConfig, setPlayerMetadata, setGameData, connectedToRoom } =
-    useRoomContext();
+  const {
+    setRoomConfig,
+    setPlayerMetadata,
+    setGameData,
+    connectedToRoom,
+    setServerGameData,
+  } = useRoomContext();
 
   const [dataFromBackend, setDataFromBackend] = useState<IRejoinData | null>(
-    null
+    null,
   );
 
   useEffect(() => {
@@ -43,8 +48,16 @@ function useRejoinRoom() {
       setRoomConfig(roomConfig);
       setPlayerMetadata(players);
       setGameData(gameData);
+      setServerGameData(gameData);
     }
-  }, [dataFromBackend, setGameData, setPlayerMetadata, setRoomConfig, userID]);
+  }, [
+    dataFromBackend,
+    setGameData,
+    setPlayerMetadata,
+    setRoomConfig,
+    userID,
+    setServerGameData,
+  ]);
 }
 
 export default useRejoinRoom;

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { socket } from "~/pages/_app";
 import Board from "~/components/Play/Board";
 import PlayerCardContainer from "~/components/Play/PlayerCardContainer";
@@ -34,7 +34,7 @@ function Play() {
     roomConfig,
     gameData,
     playerMetadata,
-    queuedCards,
+    serverGameData,
     setGameData,
     showScoreboard,
     setShowShufflingCountdown,
@@ -84,6 +84,14 @@ function Play() {
   const [showRoomIsFullModal, setShowRoomIsFullModal] = useState(false);
   const [showGameAlreadyStartedModal, setShowGameAlreadyStartedModal] =
     useState(false);
+
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  const serverGameDataRef = useRef(serverGameData);
+
+  useEffect(() => {
+    serverGameDataRef.current = serverGameData;
+  }, [serverGameData]);
 
   useStartAnotherRoundHandler();
   useReturnToRoomHandler();
@@ -170,26 +178,25 @@ function Play() {
   // 15s interval to periodically check if client is out of sync with server
   // and if so, emit a syncClientWithServer event to the client
   useEffect(() => {
-    if (showShufflingCountdown || showScoreboard) return;
+    if (showShufflingCountdown || showScoreboard || intervalRef.current) return;
 
-    const interval = setInterval(() => {
+    intervalRef.current = setInterval(() => {
+      console.log("fired interval check");
       socket.emit("checkClientSyncWithServer", {
         roomCode: roomConfig.code,
         playerID: userID,
-        clientGameData: gameData,
-        clientQueuedCards: queuedCards,
+        clientGameData: serverGameDataRef.current,
       });
     }, 15000);
 
-    return () => clearInterval(interval);
-  }, [
-    roomConfig.code,
-    showShufflingCountdown,
-    showScoreboard,
-    userID,
-    gameData,
-    queuedCards,
-  ]);
+    return () => {
+      if (intervalRef.current) {
+        console.log("clearing interval 1");
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    };
+  }, [roomConfig.code, showShufflingCountdown, showScoreboard, userID]);
 
   if (showRoomNotFoundModal) {
     return <RoomNotFound />;
