@@ -49,9 +49,10 @@ export function drawFromDeck({
     playerCards.hand = [];
 
     io.in(roomCode).emit("playerDrawnFromDeck", {
+      timestamp: Date.now(),
       resetDeck: true,
       playerID,
-      updatedPlayerCards: playerCards,
+      gameData: gameData[roomCode],
     });
     return;
   }
@@ -92,8 +93,9 @@ export function drawFromDeck({
   }
 
   io.in(roomCode).emit("playerDrawnFromDeck", {
+    timestamp: Date.now(),
     cardBeingAnimated,
     playerID,
-    updatedPlayerCards: playerCards,
+    gameData: gameData[roomCode],
   });
 }

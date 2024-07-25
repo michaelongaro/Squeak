@@ -3,6 +3,7 @@ import { socket } from "~/pages/_app";
 import { useRoomContext } from "../context/RoomContext";
 import { type ICardDropProposal } from "../pages/api/socket";
 import { type IMoveCard } from "../components/Play/Card";
+import { findInsertionIndex } from "~/utils/findInsertionIndex";
 
 // is there any better approach than a partial here? don't like having to do huge
 // guard clause at the start if it's not necessary
@@ -54,6 +55,8 @@ function useCardDropApproved({
     smallerViewportCardBeingMoved,
     setSmallerViewportCardBeingMoved,
     setServerGameData,
+    gameDataUpdatesQueue,
+    setGameDataUpdatesQueue,
   } = useRoomContext();
 
   const [dataFromBackend, setDataFromBackend] =
@@ -72,12 +75,13 @@ function useCardDropApproved({
       setDataFromBackend(null);
 
       const {
+        timestamp,
         card,
         startingCardMetadata,
         endID,
         squeakEndCoords,
         boardEndLocation,
-        updatedPlayerCards,
+        gameData,
         playerID,
       } = dataFromBackend;
 
@@ -86,29 +90,37 @@ function useCardDropApproved({
         !card ||
         !ownerID ||
         !playerID ||
-        updatedPlayerCards === undefined ||
+        timestamp === undefined ||
+        gameData === undefined ||
         card.value !== value ||
         card.suit !== suit ||
         playerID !== ownerID
       )
         return;
 
-      setServerGameData((prevServerGameData) => {
-        const newBoard = structuredClone(prevServerGameData.board);
+      // setServerGameData((prevServerGameData) => {
+      //   const newBoard = structuredClone(prevServerGameData.board);
 
-        if (boardEndLocation) {
-          const { row, col } = boardEndLocation;
-          newBoard[row]![col] = card;
-        }
+      //   if (boardEndLocation) {
+      //     const { row, col } = boardEndLocation;
+      //     newBoard[row]![col] = card;
+      //   }
 
-        return {
-          ...prevServerGameData,
-          board: newBoard,
-          players: {
-            ...prevServerGameData.players,
-            [playerID]: updatedPlayerCards,
-          },
-        };
+      //   return {
+      //     ...prevServerGameData,
+      //     board: newBoard,
+      //     players: {
+      //       ...prevServerGameData.players,
+      //       [playerID]: updatedPlayerCards,
+      //     },
+      //   };
+      // });
+
+      const index = findInsertionIndex(gameDataUpdatesQueue, timestamp);
+      setGameDataUpdatesQueue((prevQueue) => {
+        const newQueue = [...prevQueue];
+        newQueue.splice(index, 0, [timestamp, gameData]);
+        return newQueue;
       });
 
       // setting ctx state for smaller viewports to know which card
@@ -248,22 +260,33 @@ function useCardDropApproved({
           });
 
           if (playerID) {
-            setGameData((prevGameData) => {
-              const newBoard = structuredClone(prevGameData.board);
+            // setGameData((prevGameData) => {
+            //   const newBoard = structuredClone(prevGameData.board);
 
-              if (boardEndLocation) {
-                const { row, col } = boardEndLocation;
-                newBoard[row]![col] = card;
-              }
+            //   if (boardEndLocation) {
+            //     const { row, col } = boardEndLocation;
+            //     newBoard[row]![col] = card;
+            //   }
 
-              return {
-                ...prevGameData,
-                board: newBoard,
-                players: {
-                  ...prevGameData.players,
-                  [playerID]: updatedPlayerCards,
-                },
-              };
+            //   return {
+            //     ...prevGameData,
+            //     board: newBoard,
+            //     players: {
+            //       ...prevGameData.players,
+            //       [playerID]: updatedPlayerCards,
+            //     },
+            //   };
+            // });
+
+            setGameDataUpdatesQueue((prevQueue) => {
+              // process the first game state in the queue
+              const [_, gameData] = prevQueue[0]!;
+              setGameData(gameData);
+
+              // remove the first game state from the queue
+              const newQueue = [...prevQueue];
+              newQueue.shift();
+              return newQueue;
             });
           }
 
@@ -299,6 +322,8 @@ function useCardDropApproved({
     smallerViewportCardBeingMoved,
     setSmallerViewportCardBeingMoved,
     setServerGameData,
+    gameDataUpdatesQueue,
+    setGameDataUpdatesQueue,
   ]);
 }
 

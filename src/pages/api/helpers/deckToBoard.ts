@@ -66,6 +66,7 @@ export function deckToBoard({
     gameData[roomCode]!.board[row]![col] = card;
 
     io.in(roomCode).emit("cardDropApproved", {
+      timestamp: Date.now(),
       playerID,
       card,
       startingCardMetadata: {
@@ -75,14 +76,17 @@ export function deckToBoard({
       },
       endID: `cell${row}${col}`,
       boardEndLocation,
-      updatedPlayerCards: player,
+      gameData: gameData[roomCode],
     });
 
     if (card.value === "K") {
       setTimeout(() => {
         gameData[roomCode]!.board[row]![col] = null;
 
-        io.in(roomCode).emit("syncClientWithServer", gameData[roomCode]);
+        io.in(roomCode).emit("syncClientWithServer", {
+          timeStamp: Date.now(),
+          gameData: gameData[roomCode],
+        });
       }, 700);
     }
 

@@ -120,30 +120,33 @@ export interface IModifyFriendData {
 }
 
 export interface ICardDropProposal {
+  timestamp: number;
   card: ICard;
   deckStart?: boolean;
   squeakStartLocation?: number;
   boardEndLocation?: { row: number; col: number };
   squeakEndLocation?: number;
-  updatedPlayerCards: IPlayer;
+  gameData: IGameMetadata;
   playerID: string;
   roomCode: string;
 }
 
 export interface IDrawFromSqueakDeck {
+  timestamp: number;
   roomCode: string;
   indexToDrawTo: number;
   playerID: string;
   newCard?: ICard;
-  updatedPlayerCards: IPlayer;
+  gameData: IGameMetadata;
 }
 
 export interface IDrawFromDeck {
+  timestamp: number;
   cardBeingAnimated: ICard | null; // this will be the (up to) third top card from deck being drawn
   resetDeck?: boolean;
   playerID: string;
   roomCode: string;
-  updatedPlayerCards: IPlayer;
+  gameData: IGameMetadata;
 }
 
 export interface IRoundOver {

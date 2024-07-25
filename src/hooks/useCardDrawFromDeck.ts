@@ -3,6 +3,7 @@ import { socket } from "~/pages/_app";
 import { useRoomContext } from "../context/RoomContext";
 import { type IDrawFromDeck } from "../pages/api/socket";
 import { type IMoveCard } from "../components/Play/Card";
+import { findInsertionIndex } from "~/utils/findInsertionIndex";
 
 interface IUseCardDrawFromDeck {
   value?: string;
@@ -24,7 +25,12 @@ function useCardDrawFromDeck({
   rotation,
   moveCard,
 }: IUseCardDrawFromDeck) {
-  const { setGameData, setServerGameData } = useRoomContext();
+  const {
+    gameDataUpdatesQueue,
+    setGameDataUpdatesQueue,
+    setGameData,
+    setServerGameData,
+  } = useRoomContext();
 
   const [dataFromBackend, setDataFromBackend] = useState<IDrawFromDeck | null>(
     null,
@@ -43,9 +49,10 @@ function useCardDrawFromDeck({
       setDataFromBackend(null);
 
       const {
+        timestamp,
         cardBeingAnimated, // whatever card will be showing as top card of player's hand
         playerID,
-        updatedPlayerCards,
+        gameData,
       } = dataFromBackend;
 
       if (
@@ -57,13 +64,20 @@ function useCardDrawFromDeck({
       )
         return;
 
-      setServerGameData((prevServerGameData) => ({
-        ...prevServerGameData,
-        players: {
-          ...prevServerGameData.players,
-          [playerID]: updatedPlayerCards,
-        },
-      }));
+      // setServerGameData((prevServerGameData) => ({
+      //   ...prevServerGameData,
+      //   players: {
+      //     ...prevServerGameData.players,
+      //     [playerID]: updatedPlayerCards,
+      //   },
+      // }));
+
+      const index = findInsertionIndex(gameDataUpdatesQueue, timestamp);
+      setGameDataUpdatesQueue((prevQueue) => {
+        const newQueue = [...prevQueue];
+        newQueue.splice(index, 0, [timestamp, gameData]);
+        return newQueue;
+      });
 
       const endID = `${ownerID}hand`;
 
@@ -77,13 +91,24 @@ function useCardDrawFromDeck({
           flip: true,
           rotate: false,
           callbackFunction: () => {
-            setGameData((prevGameData) => ({
-              ...prevGameData,
-              players: {
-                ...prevGameData.players,
-                [playerID]: updatedPlayerCards,
-              },
-            }));
+            // setGameData((prevGameData) => ({
+            //   ...prevGameData,
+            //   players: {
+            //     ...prevGameData.players,
+            //     [playerID]: updatedPlayerCards,
+            //   },
+            // }));
+
+            setGameDataUpdatesQueue((prevQueue) => {
+              // process the first game state in the queue
+              const [_, gameData] = prevQueue[0]!;
+              setGameData(gameData);
+
+              // remove the first game state from the queue
+              const newQueue = [...prevQueue];
+              newQueue.shift();
+              return newQueue;
+            });
           },
         });
       }
@@ -97,6 +122,8 @@ function useCardDrawFromDeck({
     ownerID,
     value,
     setServerGameData,
+    gameDataUpdatesQueue,
+    setGameDataUpdatesQueue,
   ]);
 }
 

@@ -51,6 +51,8 @@ export interface IQueuedCard {
   };
 }
 
+export type gameDataUpdatesQueue = [number, IGameMetadata][];
+
 interface IRoomContext {
   viewportLabel: "mobile" | "mobileLarge" | "tablet" | "desktop";
   audioContext: AudioContext | null;
@@ -67,6 +69,11 @@ interface IRoomContext {
   // used for client-server validation on whether client is up to date with server state
   serverGameData: IGameMetadata;
   setServerGameData: React.Dispatch<React.SetStateAction<IGameMetadata>>;
+
+  gameDataUpdatesQueue: gameDataUpdatesQueue;
+  setGameDataUpdatesQueue: React.Dispatch<
+    React.SetStateAction<gameDataUpdatesQueue>
+  >;
 
   friendData: IFriendsMetadata | undefined;
   setFriendData: React.Dispatch<
@@ -231,6 +238,9 @@ export function RoomProvider(props: { children: React.ReactNode }) {
 
   // safe, because we are only ever accessing/mutating gameData when it is defined
   const [gameData, setGameData] = useState<IGameMetadata>({} as IGameMetadata);
+
+  const [gameDataUpdatesQueue, setGameDataUpdatesQueue] =
+    useState<gameDataUpdatesQueue>([]);
 
   // used for client-server validation on whether client is up to date with server state
   const [serverGameData, setServerGameData] = useState<IGameMetadata>(
@@ -432,6 +442,18 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     setMirrorPlayerContainer(false);
   }, [userID, user, playerMetadata, isLoaded, isSignedIn]);
 
+  useEffect(() => {
+    if (!connectedToRoom) {
+      setGameDataUpdatesQueue([]);
+      setHoldingADeckCard(false);
+      setHoldingASqueakCard(false);
+      setOriginIndexForHeldSqueakCard(null);
+      setCardBeingMovedProgramatically({});
+      setSqueakDeckBeingMovedProgramatically({});
+      setOtherPlayerSqueakStacksBeingDragged({});
+    }
+  }, [connectedToRoom]);
+
   const context: IRoomContext = {
     viewportLabel,
     audioContext,
@@ -449,6 +471,8 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     setPlayerMetadata,
     gameData,
     setGameData,
+    gameDataUpdatesQueue,
+    setGameDataUpdatesQueue,
     serverGameData,
     setServerGameData,
     friendData,

@@ -27,10 +27,11 @@ export function drawFromSqueakDeck({
     player.squeakHand?.[indexToDrawTo]?.push(card);
 
     io.in(roomCode).emit("cardDrawnFromSqueakDeck", {
+      timestamp: Date.now(),
       playerID,
       indexToDrawTo,
       newCard: card,
-      updatedPlayerCards: player,
+      gameData: gameData[roomCode],
     });
   }
 }

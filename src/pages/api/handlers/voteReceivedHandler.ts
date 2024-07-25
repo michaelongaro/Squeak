@@ -129,7 +129,10 @@ export function voteReceived({
 
           player.deck = rotateDeckByOneCard(player.deck);
         });
-        io.in(roomCode).emit("decksWereRotated", gameData[roomCode]);
+        io.in(roomCode).emit("decksWereRotated", {
+          timestamp: Date.now(),
+          gameData: gameData[roomCode],
+        });
       } else if (miscRoomDataObj.voteType === "finishRound") {
         generateAndEmitScoreboard({
           io,

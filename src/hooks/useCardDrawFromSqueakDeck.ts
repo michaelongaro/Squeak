@@ -3,6 +3,7 @@ import { socket } from "~/pages/_app";
 import { useRoomContext } from "../context/RoomContext";
 import { type IDrawFromSqueakDeck } from "../pages/api/socket";
 import { type IMoveCard } from "../components/Play/Card";
+import { findInsertionIndex } from "~/utils/findInsertionIndex";
 
 interface IUseCardDrawFromSqueakDeck {
   value?: string;
@@ -22,7 +23,12 @@ function useCardDrawFromSqueakDeck({
   ownerID,
   moveCard,
 }: IUseCardDrawFromSqueakDeck) {
-  const { setGameData, setServerGameData } = useRoomContext();
+  const {
+    gameDataUpdatesQueue,
+    setGameDataUpdatesQueue,
+    setGameData,
+    setServerGameData,
+  } = useRoomContext();
 
   const [dataFromBackend, setDataFromBackend] =
     useState<IDrawFromSqueakDeck | null>(null);
@@ -43,7 +49,7 @@ function useCardDrawFromSqueakDeck({
     if (dataFromBackend !== null) {
       setDataFromBackend(null);
 
-      const { playerID, indexToDrawTo, newCard, updatedPlayerCards } =
+      const { timestamp, playerID, indexToDrawTo, newCard, gameData } =
         dataFromBackend;
 
       if (
@@ -55,13 +61,20 @@ function useCardDrawFromSqueakDeck({
       )
         return;
 
-      setServerGameData((prevServerGameData) => ({
-        ...prevServerGameData,
-        players: {
-          ...prevServerGameData.players,
-          [playerID]: updatedPlayerCards,
-        },
-      }));
+      // setServerGameData((prevServerGameData) => ({
+      //   ...prevServerGameData,
+      //   players: {
+      //     ...prevServerGameData.players,
+      //     [playerID]: updatedPlayerCards,
+      //   },
+      // }));
+
+      const index = findInsertionIndex(gameDataUpdatesQueue, timestamp);
+      setGameDataUpdatesQueue((prevQueue) => {
+        const newQueue = [...prevQueue];
+        newQueue.splice(index, 0, [timestamp, gameData]);
+        return newQueue;
+      });
 
       const endID = `${playerID}squeakHand${indexToDrawTo}`;
 
@@ -78,13 +91,24 @@ function useCardDrawFromSqueakDeck({
           flip: true,
           rotate: false,
           callbackFunction: () => {
-            setGameData((prevGameData) => ({
-              ...prevGameData,
-              players: {
-                ...prevGameData.players,
-                [playerID]: updatedPlayerCards,
-              },
-            }));
+            // setGameData((prevGameData) => ({
+            //   ...prevGameData,
+            //   players: {
+            //     ...prevGameData.players,
+            //     [playerID]: updatedPlayerCards,
+            //   },
+            // }));
+
+            setGameDataUpdatesQueue((prevQueue) => {
+              // process the first game state in the queue
+              const [_, gameData] = prevQueue[0]!;
+              setGameData(gameData);
+
+              // remove the first game state from the queue
+              const newQueue = [...prevQueue];
+              newQueue.shift();
+              return newQueue;
+            });
           },
         });
       }
@@ -97,6 +121,8 @@ function useCardDrawFromSqueakDeck({
     suit,
     value,
     setServerGameData,
+    gameDataUpdatesQueue,
+    setGameDataUpdatesQueue,
   ]);
 }
 
