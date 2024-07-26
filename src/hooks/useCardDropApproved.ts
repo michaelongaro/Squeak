@@ -53,6 +53,7 @@ function useCardDropApproved({
     setOtherPlayerSqueakStacksBeingDragged,
     smallerViewportCardBeingMoved,
     setSmallerViewportCardBeingMoved,
+    viewportLabel,
   } = useRoomContext();
 
   const [dataFromBackend, setDataFromBackend] =
@@ -197,14 +198,15 @@ function useCardDropApproved({
 
       // offsets to account for rotation being around the center of the card
       // (I couldn't figure out how to natively solve this with transform-origin tricks)
-      // TODO: will have to change this dynamically if using smaller card sizes on smaller viewports
+      const scaledOffset = getScaledOffset(viewportLabel);
+
       if (endID.includes("cell")) {
         if (rotation === 90) {
-          endX -= 10;
-          endY += 10;
+          endX -= scaledOffset;
+          endY += scaledOffset;
         } else if (rotation === 270) {
-          endX -= 10;
-          endY += 10;
+          endX -= scaledOffset;
+          endY += scaledOffset;
         }
       }
 
@@ -263,7 +265,34 @@ function useCardDropApproved({
     userID,
     smallerViewportCardBeingMoved,
     setSmallerViewportCardBeingMoved,
+    viewportLabel,
   ]);
 }
 
 export default useCardDropApproved;
+
+function getScaledOffset(
+  viewportLabel: "mobile" | "mobileLarge" | "tablet" | "desktop",
+) {
+  switch (viewportLabel) {
+    case "mobile":
+      return 7;
+    case "mobileLarge":
+      return 8;
+    case "tablet":
+      return 9;
+    case "desktop":
+    default:
+      return 10;
+
+    //   case 'mobile':
+    //   return 7.46; // Scaled offset for mobile
+    // case 'mobileLarge':
+    //   return 8.05; // Scaled offset for mobileLarge
+    // case 'tablet':
+    //   return 8.51; // Scaled offset for tablet
+    // case 'desktop':
+    // default:
+    //   return 10; // Original offset for desktop
+  }
+}
