@@ -55,7 +55,7 @@ export function squeakToSqueak({
         gameData,
         io,
       });
-    }, 350);
+    }, 350); // TODO: test whether this is really wanted
   }
 
   // moving all child cards below the card being moved to the new stack
@@ -88,6 +88,6 @@ export function squeakToSqueak({
       offsetHeight: indexWithinSqueakStack * (20 - squeakStackLength),
     },
     endID: `${playerID}squeakStack${squeakEndLocation}0`,
-    updatedPlayerCards: player,
+    gameData: gameData[roomCode],
   });
 }

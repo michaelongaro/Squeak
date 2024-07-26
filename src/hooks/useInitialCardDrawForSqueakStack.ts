@@ -16,15 +16,14 @@ interface IUseInitialCardDrawForSqueakStack {
   }: IMoveCard) => void;
 }
 
-function useInitialCardDrawForSqueakStack({
-  value,
-  suit,
-  ownerID,
-  moveCard,
-}: IUseInitialCardDrawForSqueakStack) {
-  const { setGameData } = useMainStore((state) => ({
-    setGameData: state.setGameData,
-  }));
+function useInitialCardDrawForSqueakStack() {
+  const { setGameData, queuedCardMoves, setQueuedCardMoves } = useMainStore(
+    (state) => ({
+      setGameData: state.setGameData,
+      queuedCardMoves: state.queuedCardMoves,
+      setQueuedCardMoves: state.setQueuedCardMoves,
+    }),
+  );
 
   const [dataFromBackend, setDataFromBackend] =
     useState<IDrawFromSqueakDeck | null>(null);
@@ -48,15 +47,16 @@ function useInitialCardDrawForSqueakStack({
     if (dataFromBackend !== null) {
       setDataFromBackend(null);
 
-      const { playerID, indexToDrawTo, newCard, updatedPlayerCards } =
-        dataFromBackend;
+      const { playerID, indexToDrawTo, newCard, gameData } = dataFromBackend;
 
-      if (
-        playerID !== ownerID ||
-        newCard?.suit !== suit ||
-        newCard?.value !== value
-      )
-        return;
+      if (!newCard) return;
+
+      // if (
+      //   playerID !== ownerID ||
+      //   newCard?.suit !== suit ||
+      //   newCard?.value !== value
+      // )
+      //   return;
 
       const endID = `${playerID}squeakHand${indexToDrawTo}`;
 
@@ -64,31 +64,44 @@ function useInitialCardDrawForSqueakStack({
         .getElementById(endID)
         ?.getBoundingClientRect();
 
-      if (endLocation) {
-        const endX = endLocation.x;
-        const endY = endLocation.y;
+      const cardID = `${playerID}${newCard.value}${newCard.suit}`;
 
-        moveCard({
-          newPosition: { x: endX, y: endY },
+      if (endLocation) {
+        // queue card to be moved
+        const newQueuedCardMoves = { ...queuedCardMoves };
+
+        newQueuedCardMoves[cardID] = {
+          newPosition: { x: endLocation.x, y: endLocation.y },
           flip: true,
           rotate: false,
           callbackFunction: () => {
-            const prevGameData = useMainStore.getState().gameData;
-
-            const newGameData = {
-              ...prevGameData,
-              players: {
-                ...prevGameData.players,
-                [playerID]: updatedPlayerCards,
-              },
-            };
-
-            setGameData(newGameData);
+            setGameData(gameData);
           },
-        });
+        };
+
+        setQueuedCardMoves(newQueuedCardMoves);
+
+        // moveCard({
+        //   newPosition: { x: endX, y: endY },
+        //   flip: true,
+        //   rotate: false,
+        //   callbackFunction: () => {
+        //     const prevGameData = useMainStore.getState().gameData;
+
+        //     const newGameData = {
+        //       ...prevGameData,
+        //       players: {
+        //         ...prevGameData.players,
+        //         [playerID]: updatedPlayerCards,
+        //       },
+        //     };
+
+        //     setGameData(newGameData);
+        //   },
+        // });
       }
     }
-  }, [dataFromBackend, moveCard, ownerID, setGameData, suit, value]);
+  }, [dataFromBackend, setGameData, queuedCardMoves, setQueuedCardMoves]);
 }
 
 export default useInitialCardDrawForSqueakStack;

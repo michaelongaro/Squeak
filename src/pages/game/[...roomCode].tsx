@@ -22,6 +22,10 @@ import { useAuth } from "@clerk/nextjs";
 import { api } from "~/utils/api";
 import { useMainStore } from "~/stores/MainStore";
 import useGetUserID from "~/hooks/useGetUserID";
+import useCardDrawFromDeck from "~/hooks/useCardDrawFromDeck";
+import useCardDrawFromSqueakDeck from "~/hooks/useCardDrawFromSqueakDeck";
+import useInitialCardDrawForSqueakStack from "~/hooks/useInitialCardDrawForSqueakStack";
+import useCardDropApproved from "~/hooks/useCardDropApproved";
 
 function Play() {
   const { isLoaded } = useAuth();
@@ -34,7 +38,6 @@ function Play() {
     roomConfig,
     gameData,
     playerMetadata,
-    queuedCards,
     setGameData,
     showScoreboard,
     setShowShufflingCountdown,
@@ -49,7 +52,6 @@ function Play() {
     roomConfig: state.roomConfig,
     gameData: state.gameData,
     playerMetadata: state.playerMetadata,
-    queuedCards: state.queuedCards,
     setGameData: state.setGameData,
     showScoreboard: state.showScoreboard,
     setShowShufflingCountdown: state.setShowShufflingCountdown,
@@ -105,6 +107,11 @@ function Play() {
   useResetDeckFromCardDraw();
   useScoreboardData();
   useSyncClientWithServer();
+
+  useInitialCardDrawForSqueakStack();
+  useCardDrawFromDeck();
+  useCardDrawFromSqueakDeck();
+  useCardDropApproved();
 
   const dynamicallyHandleInitializationFlow = useCallback(() => {
     // player was a part of the room already, rejoining.
@@ -182,30 +189,6 @@ function Play() {
     playerMetadata,
   ]);
 
-  // 15s interval to periodically check if client is out of sync with server
-  // and if so, emit a syncClientWithServer event to the client
-  useEffect(() => {
-    if (showShufflingCountdown || showScoreboard) return;
-
-    const interval = setInterval(() => {
-      socket.emit("checkClientSyncWithServer", {
-        roomCode: roomConfig.code,
-        playerID: userID,
-        clientGameData: gameData,
-        clientQueuedCards: queuedCards,
-      });
-    }, 15000);
-
-    return () => clearInterval(interval);
-  }, [
-    roomConfig.code,
-    showShufflingCountdown,
-    showScoreboard,
-    userID,
-    gameData, // are these safe as deps?
-    queuedCards, // are these safe as deps?
-  ]);
-
   if (showRoomNotFoundModal) {
     return <RoomNotFound />;
   }
@@ -218,6 +201,8 @@ function Play() {
     return <GameAlreadyStarted />;
   }
 
+  // hmm is this a performance issue? Constantly calling
+  // Object.keys might not be the best idea, just use a useMemo perchance?
   if (Object.keys(gameData).length === 0) return null;
 
   return (

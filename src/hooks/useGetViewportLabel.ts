@@ -8,6 +8,9 @@ function useGetViewportLabel() {
   const useIsomorphicLayoutEffect =
     typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
+  // TODO: do khue's design where it doesn't render app at all until
+  // viewportLabel is not null. Obv default the value to null in this case
+
   useIsomorphicLayoutEffect(() => {
     function handleResize() {
       let viewportLabel: "mobile" | "mobileLarge" | "tablet" | "desktop" =

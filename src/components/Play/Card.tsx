@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import React from "react";
 import Draggable, {
   type DraggableData,
@@ -78,6 +78,8 @@ function Card({
     prefersSimpleCardAssets,
     setHoldingADeckCard,
     setHoldingASqueakCard,
+    queuedCardMoves,
+    setQueuedCardMoves,
   } = useMainStore((state) => ({
     roomConfig: state.roomConfig,
     gameData: state.gameData,
@@ -101,6 +103,8 @@ function Card({
     prefersSimpleCardAssets: state.prefersSimpleCardAssets,
     setHoldingADeckCard: state.setHoldingADeckCard,
     setHoldingASqueakCard: state.setHoldingASqueakCard,
+    queuedCardMoves: state.queuedCardMoves,
+    setQueuedCardMoves: state.setQueuedCardMoves,
   }));
 
   const [cardOffsetPosition, setCardOffsetPosition] = useState({ x: 0, y: 0 });
@@ -333,37 +337,17 @@ function Card({
     ],
   );
 
-  // hooks to handle socket emits from server
-  useCardDrawFromDeck({
-    value,
-    suit,
-    ownerID,
-    rotation,
-    moveCard,
-  });
+  useEffect(() => {
+    const cardID = `${ownerID}${value}${suit}`;
 
-  useCardDrawFromSqueakDeck({
-    value,
-    suit,
-    ownerID,
-    moveCard,
-  });
+    if (queuedCardMoves[cardID]) {
+      moveCard(queuedCardMoves[cardID]);
 
-  useInitialCardDrawForSqueakStack({
-    value,
-    suit,
-    ownerID,
-    moveCard,
-  });
-
-  useCardDropApproved({
-    value,
-    suit,
-    userID,
-    ownerID,
-    rotation,
-    moveCard,
-  });
+      const newQueuedCardMoves = { ...queuedCardMoves };
+      delete newQueuedCardMoves[cardID];
+      setQueuedCardMoves(newQueuedCardMoves);
+    }
+  }, [queuedCardMoves, value, suit, ownerID, moveCard, setQueuedCardMoves]);
 
   useCardDropDenied({
     value,
@@ -534,6 +518,9 @@ function Card({
     }
   }
 
+  // TODO: pretty sure these four can be extracted out of this component below
+  // in this file, and just have parameters passed in so they don't get recreated
+  // on rerenders
   function getAnimationStyles() {
     let animation = "none";
 

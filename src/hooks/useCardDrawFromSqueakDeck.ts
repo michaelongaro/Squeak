@@ -16,16 +16,14 @@ interface IUseCardDrawFromSqueakDeck {
   }: IMoveCard) => void;
 }
 
-function useCardDrawFromSqueakDeck({
-  value,
-  suit,
-  ownerID,
-  moveCard,
-}: IUseCardDrawFromSqueakDeck) {
-  const { setGameData, setQueuedCards } = useMainStore((state) => ({
-    setGameData: state.setGameData,
-    setQueuedCards: state.setQueuedCards,
-  }));
+function useCardDrawFromSqueakDeck() {
+  const { setGameData, queuedCardMoves, setQueuedCardMoves } = useMainStore(
+    (state) => ({
+      setGameData: state.setGameData,
+      queuedCardMoves: state.queuedCardMoves,
+      setQueuedCardMoves: state.setQueuedCardMoves,
+    }),
+  );
 
   const [dataFromBackend, setDataFromBackend] =
     useState<IDrawFromSqueakDeck | null>(null);
@@ -46,30 +44,18 @@ function useCardDrawFromSqueakDeck({
     if (dataFromBackend !== null) {
       setDataFromBackend(null);
 
-      const { playerID, indexToDrawTo, newCard, updatedPlayerCards } =
-        dataFromBackend;
+      const { playerID, indexToDrawTo, newCard, gameData } = dataFromBackend;
 
-      if (
-        suit === undefined ||
-        value === undefined ||
-        playerID !== ownerID ||
-        newCard?.suit !== suit ||
-        newCard?.value !== value
-      )
-        return;
+      if (!newCard) return;
 
-      // add card to queued cards
-      const prevQueuedCards = useMainStore.getState().queuedCards;
-
-      const newQueuedCards = {
-        ...prevQueuedCards,
-        [`${ownerID}-${value}${suit}`]: {
-          value,
-          suit,
-        },
-      };
-
-      setQueuedCards(newQueuedCards);
+      // if (
+      //   suit === undefined ||
+      //   value === undefined ||
+      //   playerID !== ownerID ||
+      //   newCard?.suit !== suit ||
+      //   newCard?.value !== value
+      // )
+      //   return;
 
       const endID = `${playerID}squeakHand${indexToDrawTo}`;
 
@@ -77,46 +63,51 @@ function useCardDrawFromSqueakDeck({
         .getElementById(endID)
         ?.getBoundingClientRect();
 
-      if (endLocation) {
-        const endX = endLocation.x;
-        const endY = endLocation.y;
+      const cardID = `${playerID}${newCard.value}${newCard.suit}`;
 
-        moveCard({
-          newPosition: { x: endX, y: endY },
+      if (endLocation) {
+        // queue card to be moved
+        const newQueuedCardMoves = { ...queuedCardMoves };
+
+        newQueuedCardMoves[cardID] = {
+          newPosition: { x: endLocation.x, y: endLocation.y },
           flip: true,
           rotate: false,
           callbackFunction: () => {
-            const prevGameData = useMainStore.getState().gameData;
-
-            const newGameData = {
-              ...prevGameData,
-              players: {
-                ...prevGameData.players,
-                [playerID]: updatedPlayerCards,
-              },
-            };
-
-            setGameData(newGameData);
-
-            // remove card from queued cards
-            const prevQueuedCards = useMainStore.getState().queuedCards;
-
-            const newQueuedCards = { ...prevQueuedCards };
-            delete newQueuedCards[`${ownerID}-${value}${suit}`];
-            setQueuedCards(newQueuedCards);
+            setGameData(gameData);
           },
-        });
+        };
+
+        setQueuedCardMoves(newQueuedCardMoves);
+
+        // moveCard({
+        //   newPosition: { x: endX, y: endY },
+        //   flip: true,
+        //   rotate: false,
+        //   callbackFunction: () => {
+        //     const prevGameData = useMainStore.getState().gameData;
+
+        //     const newGameData = {
+        //       ...prevGameData,
+        //       players: {
+        //         ...prevGameData.players,
+        //         [playerID]: updatedPlayerCards,
+        //       },
+        //     };
+
+        //     setGameData(newGameData);
+
+        //     // remove card from queued cards
+        //     const prevQueuedCards = useMainStore.getState().queuedCards;
+
+        //     const newQueuedCards = { ...prevQueuedCards };
+        //     delete newQueuedCards[`${ownerID}-${value}${suit}`];
+        //     setQueuedCards(newQueuedCards);
+        //   },
+        // });
       }
     }
-  }, [
-    dataFromBackend,
-    moveCard,
-    ownerID,
-    setGameData,
-    suit,
-    value,
-    setQueuedCards,
-  ]);
+  }, [dataFromBackend, setGameData, queuedCardMoves, setQueuedCardMoves]);
 }
 
 export default useCardDrawFromSqueakDeck;

@@ -43,10 +43,13 @@ export interface IInitSqueakStackCardBeingDealt {
   indexToDealTo: number;
 }
 
-export interface IQueuedCard {
+export interface IQueuedCardMove {
+  // the key here is the id of whatever <Card> component is being moved
   [key: string]: {
-    value: string;
-    suit: string;
+    newPosition: { x: number; y: number };
+    flip: boolean;
+    rotate: boolean;
+    callbackFunction?: () => void; // does this need to be optional?
   };
 }
 
@@ -77,8 +80,8 @@ interface StoreState {
   setGameData: (data: IGameMetadata) => void;
   friendData: IFriendsMetadata | undefined;
   setFriendData: (data: IFriendsMetadata | undefined) => void;
-  queuedCards: IQueuedCard;
-  setQueuedCards: (cards: IQueuedCard) => void;
+  queuedCardMoves: IQueuedCardMove;
+  setQueuedCardMoves: (cards: IQueuedCardMove) => void;
   hoveredCell: [number, number] | null;
   setHoveredCell: (cell: [number, number] | null) => void;
   hoveredSqueakStack: number | null;
@@ -163,96 +166,52 @@ const initialRoomConfig: IRoomConfig = {
   gameStarted: false,
 };
 
-const initialState: StoreState = {
-  viewportLabel: "desktop",
-  audioContext: null,
-  setAudioContext: () => {},
-  masterVolumeGainNode: null,
-  setMasterVolumeGainNode: () => {},
-  successfulMoveBuffer: null,
-  setSuccessfulMoveBuffer: () => {},
-  notAllowedMoveBuffer: null,
-  setNotAllowedMoveBuffer: () => {},
-  otherPlayerCardMoveBuffer: null,
-  setOtherPlayerCardMoveBuffer: () => {},
-  squeakButtonPressBuffer: null,
-  setSqueakButtonPressBuffer: () => {},
-  confettiPopBuffer: null,
-  setConfettiPopBuffer: () => {},
-  showSettingsModal: false,
-  setShowSettingsModal: () => {},
-  roomConfig: initialRoomConfig,
-  setRoomConfig: () => {},
-  playerMetadata: {} as IRoomPlayersMetadata,
-  setPlayerMetadata: () => {},
-  gameData: {} as IGameMetadata,
-  setGameData: () => {},
-  friendData: undefined,
-  setFriendData: () => {},
-  queuedCards: {},
-  setQueuedCards: () => {},
-  hoveredCell: null,
-  setHoveredCell: () => {},
-  hoveredSqueakStack: null,
-  setHoveredSqueakStack: () => {},
-  holdingADeckCard: false,
-  setHoldingADeckCard: () => {},
-  holdingASqueakCard: false,
-  setHoldingASqueakCard: () => {},
-  originIndexForHeldSqueakCard: null,
-  setOriginIndexForHeldSqueakCard: () => {},
-  heldSqueakStackLocation: null,
-  setHeldSqueakStackLocation: () => {},
-  proposedCardBoxShadow: null,
-  setProposedCardBoxShadow: () => {},
-  decksAreBeingRotated: false,
-  setDecksAreBeingRotated: () => {},
-  playerIDWhoSqueaked: null,
-  setPlayerIDWhoSqueaked: () => {},
-  showScoreboard: false,
-  setShowScoreboard: () => {},
-  showShufflingCountdown: false,
-  setShowShufflingCountdown: () => {},
-  connectedToRoom: false,
-  setConnectedToRoom: () => {},
-  currentVolume: null,
-  setCurrentVolume: () => {},
-  prefersSimpleCardAssets: null,
-  setPrefersSimpleCardAssets: () => {},
-  cardBeingMovedProgramatically: {},
-  setCardBeingMovedProgramatically: () => {},
-  newInviteNotification: false,
-  setNewInviteNotification: () => {},
-  mirrorPlayerContainer: false,
-  setMirrorPlayerContainer: () => {},
-  scoreboardMetadata: null,
-  setScoreboardMetadata: () => {},
-  squeakDeckBeingMovedProgramatically: {},
-  setSqueakDeckBeingMovedProgramatically: () => {},
-  squeakStackDragAlterations: {},
-  setOtherPlayerSqueakStacksBeingDragged: () => {},
-  smallerViewportCardBeingMoved: {},
-  setSmallerViewportCardBeingMoved: () => {},
-  currentVotes: [],
-  setCurrentVotes: () => {},
-  voteType: null,
-  setVoteType: () => {},
-  votingIsLockedOut: false,
-  setVotingIsLockedOut: () => {},
-  showVotingModal: false,
-  setShowVotingModal: () => {},
-  passiveVoteResolutionTimerId: undefined,
-  setPassiveVoteResolutionTimerId: () => {},
-  votingLockoutStartTimestamp: null,
-  setVotingLockoutStartTimestamp: () => {},
-  showVotingOptionButtons: true,
-  setShowVotingOptionButtons: () => {},
-};
-
 export const useMainStore = create<StoreState>()(
   devtools(
     (set) => ({
-      ...initialState,
+      viewportLabel: "desktop",
+      audioContext: null,
+      masterVolumeGainNode: null,
+      successfulMoveBuffer: null,
+      notAllowedMoveBuffer: null,
+      otherPlayerCardMoveBuffer: null,
+      squeakButtonPressBuffer: null,
+      confettiPopBuffer: null,
+      showSettingsModal: false,
+      roomConfig: initialRoomConfig,
+      playerMetadata: {} as IRoomPlayersMetadata,
+      gameData: {} as IGameMetadata,
+      friendData: undefined,
+      queuedCardMoves: {},
+      hoveredCell: null,
+      hoveredSqueakStack: null,
+      holdingADeckCard: false,
+      holdingASqueakCard: false,
+      originIndexForHeldSqueakCard: null,
+      heldSqueakStackLocation: null,
+      proposedCardBoxShadow: null,
+      decksAreBeingRotated: false,
+      playerIDWhoSqueaked: null,
+      showScoreboard: false,
+      showShufflingCountdown: false,
+      connectedToRoom: false,
+      currentVolume: null,
+      prefersSimpleCardAssets: null,
+      cardBeingMovedProgramatically: {},
+      newInviteNotification: false,
+      mirrorPlayerContainer: false,
+      scoreboardMetadata: null,
+      squeakDeckBeingMovedProgramatically: {},
+      squeakStackDragAlterations: {},
+      smallerViewportCardBeingMoved: {},
+      currentVotes: [],
+      voteType: null,
+      votingIsLockedOut: false,
+      showVotingModal: false,
+      passiveVoteResolutionTimerId: undefined,
+      votingLockoutStartTimestamp: null,
+      showVotingOptionButtons: true,
+
       setAudioContext: (context) => set({ audioContext: context }),
       setMasterVolumeGainNode: (node) => set({ masterVolumeGainNode: node }),
       setSuccessfulMoveBuffer: (buffer) =>
@@ -269,7 +228,7 @@ export const useMainStore = create<StoreState>()(
       setPlayerMetadata: (metadata) => set({ playerMetadata: metadata }),
       setGameData: (data) => set({ gameData: data }),
       setFriendData: (data) => set({ friendData: data }),
-      setQueuedCards: (cards) => set({ queuedCards: cards }),
+      setQueuedCardMoves: (cards) => set({ queuedCardMoves: cards }),
       setHoveredCell: (cell) => set({ hoveredCell: cell }),
       setHoveredSqueakStack: (stack) => set({ hoveredSqueakStack: stack }),
       setHoldingADeckCard: (holding) => set({ holdingADeckCard: holding }),

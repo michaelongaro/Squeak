@@ -75,7 +75,7 @@ export function deckToBoard({
       },
       endID: `cell${row}${col}`,
       boardEndLocation,
-      updatedPlayerCards: player,
+      gameData: gameData[roomCode],
     });
 
     if (card.value === "K") {

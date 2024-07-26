@@ -16,6 +16,11 @@ interface IUseCardDropDenied {
   }: IMoveCard) => void;
 }
 
+// TODO: unsure of if this could stay as a hook inside of <Card /> rather
+// than going through queue'd process
+
+// ^^ currently keeping it inside of <Card /> but keep an eye on it
+
 function useCardDropDenied({
   value,
   suit,

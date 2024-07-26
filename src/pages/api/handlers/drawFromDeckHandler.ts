@@ -51,7 +51,7 @@ export function drawFromDeck({
     io.in(roomCode).emit("playerDrawnFromDeck", {
       resetDeck: true,
       playerID,
-      updatedPlayerCards: playerCards,
+      gameData: gameData[roomCode],
     });
     return;
   }
@@ -94,6 +94,6 @@ export function drawFromDeck({
   io.in(roomCode).emit("playerDrawnFromDeck", {
     cardBeingAnimated,
     playerID,
-    updatedPlayerCards: playerCards,
+    gameData: gameData[roomCode],
   });
 }

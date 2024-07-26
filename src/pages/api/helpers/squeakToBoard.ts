@@ -68,7 +68,7 @@ export function squeakToBoard({
           gameData,
           io,
         });
-      }, 350);
+      }, 350); // TODO: test whether this is really wanted
     }
 
     // not sure how to properly mutate the board without this
@@ -84,7 +84,7 @@ export function squeakToBoard({
       },
       endID: `cell${row}${col}`,
       boardEndLocation,
-      updatedPlayerCards: player,
+      gameData: gameData[roomCode],
     });
 
     if (card.value === "K") {
