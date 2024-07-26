@@ -47,7 +47,6 @@ function JoinRoom() {
     setGameData,
     connectedToRoom,
     setConnectedToRoom,
-    setServerGameData,
     friendData,
     viewportLabel,
   } = useRoomContext();
@@ -122,7 +121,6 @@ function JoinRoom() {
     }) {
       push(`/game/${roomConfig.code}`);
       setGameData(gameData);
-      setServerGameData(gameData);
       setRoomConfig(roomConfig);
     }
 
@@ -140,7 +138,6 @@ function JoinRoom() {
     setGameData,
     setPlayerMetadata,
     setRoomConfig,
-    setServerGameData,
     push,
     roomConfig.code,
   ]);

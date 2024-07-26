@@ -4,7 +4,7 @@ import { useRoomContext } from "../context/RoomContext";
 import { type IDrawFromDeck } from "../pages/api/socket";
 
 function useResetDeckFromCardDraw() {
-  const { gameData, setGameData, setServerGameData } = useRoomContext();
+  const { gameData, setGameData } = useRoomContext();
 
   const [dataFromBackend, setDataFromBackend] = useState<IDrawFromDeck | null>(
     null,
@@ -22,27 +22,13 @@ function useResetDeckFromCardDraw() {
     if (dataFromBackend !== null) {
       setDataFromBackend(null);
 
-      const { resetDeck, playerID, updatedPlayerCards } = dataFromBackend;
+      const { resetDeck, playerID, gameData } = dataFromBackend;
 
       if (resetDeck) {
-        setGameData((prevGameData) => ({
-          ...prevGameData,
-          players: {
-            ...prevGameData.players,
-            [playerID]: updatedPlayerCards,
-          },
-        }));
-
-        setServerGameData((prevServerGameData) => ({
-          ...prevServerGameData,
-          players: {
-            ...prevServerGameData.players,
-            [playerID]: updatedPlayerCards,
-          },
-        }));
+        setGameData(gameData);
       }
     }
-  }, [dataFromBackend, gameData, setGameData, setServerGameData]);
+  }, [dataFromBackend, gameData, setGameData]);
 }
 
 export default useResetDeckFromCardDraw;

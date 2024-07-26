@@ -53,7 +53,6 @@ function useCardDropApproved({
     setOtherPlayerSqueakStacksBeingDragged,
     smallerViewportCardBeingMoved,
     setSmallerViewportCardBeingMoved,
-    setServerGameData,
   } = useRoomContext();
 
   const [dataFromBackend, setDataFromBackend] =
@@ -77,7 +76,7 @@ function useCardDropApproved({
         endID,
         squeakEndCoords,
         boardEndLocation,
-        updatedPlayerCards,
+        gameData,
         playerID,
       } = dataFromBackend;
 
@@ -86,30 +85,12 @@ function useCardDropApproved({
         !card ||
         !ownerID ||
         !playerID ||
-        updatedPlayerCards === undefined ||
+        gameData === undefined ||
         card.value !== value ||
         card.suit !== suit ||
         playerID !== ownerID
       )
         return;
-
-      setServerGameData((prevServerGameData) => {
-        const newBoard = structuredClone(prevServerGameData.board);
-
-        if (boardEndLocation) {
-          const { row, col } = boardEndLocation;
-          newBoard[row]![col] = card;
-        }
-
-        return {
-          ...prevServerGameData,
-          board: newBoard,
-          players: {
-            ...prevServerGameData.players,
-            [playerID]: updatedPlayerCards,
-          },
-        };
-      });
 
       // setting ctx state for smaller viewports to know which card
       // should be made visible during it's programmatic move that's about to happen
@@ -248,23 +229,7 @@ function useCardDropApproved({
           });
 
           if (playerID) {
-            setGameData((prevGameData) => {
-              const newBoard = structuredClone(prevGameData.board);
-
-              if (boardEndLocation) {
-                const { row, col } = boardEndLocation;
-                newBoard[row]![col] = card;
-              }
-
-              return {
-                ...prevGameData,
-                board: newBoard,
-                players: {
-                  ...prevGameData.players,
-                  [playerID]: updatedPlayerCards,
-                },
-              };
-            });
+            setGameData(gameData);
           }
 
           if (playerID === userID) {
@@ -298,7 +263,6 @@ function useCardDropApproved({
     userID,
     smallerViewportCardBeingMoved,
     setSmallerViewportCardBeingMoved,
-    setServerGameData,
   ]);
 }
 

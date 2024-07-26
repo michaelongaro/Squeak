@@ -22,7 +22,7 @@ function useInitialCardDrawForSqueakStack({
   ownerID,
   moveCard,
 }: IUseInitialCardDrawForSqueakStack) {
-  const { setGameData, setServerGameData } = useRoomContext();
+  const { setGameData } = useRoomContext();
 
   const [dataFromBackend, setDataFromBackend] =
     useState<IDrawFromSqueakDeck | null>(null);
@@ -46,8 +46,7 @@ function useInitialCardDrawForSqueakStack({
     if (dataFromBackend !== null) {
       setDataFromBackend(null);
 
-      const { playerID, indexToDrawTo, newCard, updatedPlayerCards } =
-        dataFromBackend;
+      const { playerID, indexToDrawTo, newCard, gameData } = dataFromBackend;
 
       if (
         playerID !== ownerID ||
@@ -55,14 +54,6 @@ function useInitialCardDrawForSqueakStack({
         newCard?.value !== value
       )
         return;
-
-      setServerGameData((prevServerGameData) => ({
-        ...prevServerGameData,
-        players: {
-          ...prevServerGameData.players,
-          [playerID]: updatedPlayerCards,
-        },
-      }));
 
       const endID = `${playerID}squeakHand${indexToDrawTo}`;
 
@@ -79,26 +70,12 @@ function useInitialCardDrawForSqueakStack({
           flip: true,
           rotate: false,
           callbackFunction: () => {
-            setGameData((prevGameData) => ({
-              ...prevGameData,
-              players: {
-                ...prevGameData.players,
-                [playerID]: updatedPlayerCards,
-              },
-            }));
+            setGameData(gameData);
           },
         });
       }
     }
-  }, [
-    dataFromBackend,
-    moveCard,
-    ownerID,
-    setGameData,
-    suit,
-    value,
-    setServerGameData,
-  ]);
+  }, [dataFromBackend, moveCard, ownerID, setGameData, suit, value]);
 }
 
 export default useInitialCardDrawForSqueakStack;

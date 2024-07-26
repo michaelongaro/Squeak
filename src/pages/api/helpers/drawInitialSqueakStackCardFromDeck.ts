@@ -30,7 +30,7 @@ export function drawInitialSqueakStackCardFromDeck({
       playerID,
       indexToDrawTo,
       newCard: card,
-      updatedPlayerCards: player,
+      gameData: gameData[roomCode],
     });
   }
 }

@@ -64,10 +64,6 @@ interface IRoomContext {
   gameData: IGameMetadata;
   setGameData: React.Dispatch<React.SetStateAction<IGameMetadata>>;
 
-  // used for client-server validation on whether client is up to date with server state
-  serverGameData: IGameMetadata;
-  setServerGameData: React.Dispatch<React.SetStateAction<IGameMetadata>>;
-
   friendData: IFriendsMetadata | undefined;
   setFriendData: React.Dispatch<
     React.SetStateAction<IFriendsMetadata | undefined>
@@ -231,11 +227,6 @@ export function RoomProvider(props: { children: React.ReactNode }) {
 
   // safe, because we are only ever accessing/mutating gameData when it is defined
   const [gameData, setGameData] = useState<IGameMetadata>({} as IGameMetadata);
-
-  // used for client-server validation on whether client is up to date with server state
-  const [serverGameData, setServerGameData] = useState<IGameMetadata>(
-    {} as IGameMetadata,
-  );
 
   const [friendData, setFriendData] = useState<IFriendsMetadata | undefined>();
 
@@ -449,8 +440,6 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     setPlayerMetadata,
     gameData,
     setGameData,
-    serverGameData,
-    setServerGameData,
     friendData,
     setFriendData,
     hoveredCell,

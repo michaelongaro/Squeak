@@ -19,7 +19,6 @@ import { updatePlayerMetadataHandler } from "./handlers/updatePlayerMetadataHand
 import { voteReceivedHandler } from "./handlers/voteReceivedHandler";
 import { rejoinRoomHandler } from "./handlers/rejoinRoomHandler";
 import { oldRoomCleanupCron } from "~/pages/api/handlers/oldRoomCleanupCron";
-import { validateClientServerSyncHandler } from "~/pages/api/handlers/validateClientServerSync";
 
 // TODO: is there a better way to type these?
 export interface IFriendsData {
@@ -125,7 +124,7 @@ export interface ICardDropProposal {
   squeakStartLocation?: number;
   boardEndLocation?: { row: number; col: number };
   squeakEndLocation?: number;
-  updatedPlayerCards: IPlayer;
+  gameData: IGameMetadata;
   playerID: string;
   roomCode: string;
 }
@@ -135,7 +134,7 @@ export interface IDrawFromSqueakDeck {
   indexToDrawTo: number;
   playerID: string;
   newCard?: ICard;
-  updatedPlayerCards: IPlayer;
+  gameData: IGameMetadata;
 }
 
 export interface IDrawFromDeck {
@@ -143,7 +142,7 @@ export interface IDrawFromDeck {
   resetDeck?: boolean;
   playerID: string;
   roomCode: string;
-  updatedPlayerCards: IPlayer;
+  gameData: IGameMetadata;
 }
 
 export interface IRoundOver {
@@ -240,8 +239,6 @@ export default function SocketHandler(req, res) {
     voteReceivedHandler(io, socket, gameData, miscRoomData, roomData);
 
     rejoinRoomHandler(io, socket, gameData, roomData);
-
-    validateClientServerSyncHandler(io, socket, gameData);
 
     oldRoomCleanupCron(io, socket, gameData, roomData, miscRoomData);
 

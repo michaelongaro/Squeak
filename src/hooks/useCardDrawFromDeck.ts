@@ -24,7 +24,7 @@ function useCardDrawFromDeck({
   rotation,
   moveCard,
 }: IUseCardDrawFromDeck) {
-  const { setGameData, setServerGameData } = useRoomContext();
+  const { setGameData } = useRoomContext();
 
   const [dataFromBackend, setDataFromBackend] = useState<IDrawFromDeck | null>(
     null,
@@ -45,7 +45,7 @@ function useCardDrawFromDeck({
       const {
         cardBeingAnimated, // whatever card will be showing as top card of player's hand
         playerID,
-        updatedPlayerCards,
+        gameData,
       } = dataFromBackend;
 
       if (
@@ -56,14 +56,6 @@ function useCardDrawFromDeck({
         cardBeingAnimated?.suit !== suit
       )
         return;
-
-      setServerGameData((prevServerGameData) => ({
-        ...prevServerGameData,
-        players: {
-          ...prevServerGameData.players,
-          [playerID]: updatedPlayerCards,
-        },
-      }));
 
       const endID = `${ownerID}hand`;
 
@@ -77,27 +69,12 @@ function useCardDrawFromDeck({
           flip: true,
           rotate: false,
           callbackFunction: () => {
-            setGameData((prevGameData) => ({
-              ...prevGameData,
-              players: {
-                ...prevGameData.players,
-                [playerID]: updatedPlayerCards,
-              },
-            }));
+            setGameData(gameData);
           },
         });
       }
     }
-  }, [
-    dataFromBackend,
-    moveCard,
-    setGameData,
-    rotation,
-    suit,
-    ownerID,
-    value,
-    setServerGameData,
-  ]);
+  }, [dataFromBackend, moveCard, setGameData, rotation, suit, ownerID, value]);
 }
 
 export default useCardDrawFromDeck;

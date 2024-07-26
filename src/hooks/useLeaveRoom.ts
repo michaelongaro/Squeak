@@ -27,7 +27,6 @@ function useLeaveRoom({ routeToNavigateTo }: IUseLeaveRoom) {
     setPlayerMetadata,
     setGameData,
     connectedToRoom,
-    setServerGameData,
     setConnectedToRoom,
   } = useRoomContext();
 
@@ -61,7 +60,6 @@ function useLeaveRoom({ routeToNavigateTo }: IUseLeaveRoom) {
     // w/o this there was slight flickering when the room was reset before the route changed
 
     setGameData({} as IGameMetadata);
-    setServerGameData({} as IGameMetadata);
 
     if (connectedToRoom) {
       setTimeout(() => {

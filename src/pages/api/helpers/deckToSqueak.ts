@@ -62,7 +62,7 @@ export function deckToSqueak({
       offsetHeight: indexWithinSqueakStack * (20 - squeakStackLength),
     },
     endID: `${playerID}squeakStack${squeakEndLocation}0`,
-    updatedPlayerCards: player,
+    gameData: gameData[roomCode],
     playerID,
   });
 }

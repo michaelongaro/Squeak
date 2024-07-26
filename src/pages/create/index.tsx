@@ -76,7 +76,6 @@ function CreateRoom() {
     connectedToRoom,
     setConnectedToRoom,
     friendData,
-    setServerGameData,
     setGameData,
     viewportLabel,
   } = useRoomContext();
@@ -136,7 +135,6 @@ function CreateRoom() {
     }) {
       push(`/game/${roomConfig.code}`);
       setGameData(gameData);
-      setServerGameData(gameData);
       setRoomConfig(roomConfig);
     }
 
@@ -152,7 +150,6 @@ function CreateRoom() {
   }, [
     setConnectedToRoom,
     setGameData,
-    setServerGameData,
     setPlayerMetadata,
     setRoomConfig,
     push,

@@ -10,13 +10,8 @@ function usePlayerLeftRoom() {
   const userID = useUserIDContext();
   const { push } = useRouter();
 
-  const {
-    setRoomConfig,
-    setPlayerMetadata,
-    setGameData,
-    connectedToRoom,
-    setServerGameData,
-  } = useRoomContext();
+  const { setRoomConfig, setPlayerMetadata, setGameData, connectedToRoom } =
+    useRoomContext();
 
   const leaveRoom = useLeaveRoom({
     routeToNavigateTo: "/",
@@ -60,7 +55,6 @@ function usePlayerLeftRoom() {
         setRoomConfig(roomConfig);
         setPlayerMetadata(players);
         setGameData(gameData);
-        setServerGameData(gameData);
       }
 
       if (newHostID === userID && !roomConfig.gameStarted) {
@@ -73,7 +67,6 @@ function usePlayerLeftRoom() {
     setPlayerMetadata,
     setRoomConfig,
     push,
-    setServerGameData,
     userID,
     leaveRoom,
   ]);

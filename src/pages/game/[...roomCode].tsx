@@ -34,7 +34,6 @@ function Play() {
     roomConfig,
     gameData,
     playerMetadata,
-    serverGameData,
     setGameData,
     showScoreboard,
     setShowShufflingCountdown,
@@ -84,14 +83,6 @@ function Play() {
   const [showRoomIsFullModal, setShowRoomIsFullModal] = useState(false);
   const [showGameAlreadyStartedModal, setShowGameAlreadyStartedModal] =
     useState(false);
-
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
-
-  const serverGameDataRef = useRef(serverGameData);
-
-  useEffect(() => {
-    serverGameDataRef.current = serverGameData;
-  }, [serverGameData]);
 
   useStartAnotherRoundHandler();
   useReturnToRoomHandler();
@@ -174,27 +165,6 @@ function Play() {
     userID,
     playerMetadata,
   ]);
-
-  // 15s interval to periodically check if client is out of sync with server
-  // and if so, emit a syncClientWithServer event to the client
-  useEffect(() => {
-    if (showShufflingCountdown || showScoreboard || intervalRef.current) return;
-
-    intervalRef.current = setInterval(() => {
-      socket.emit("checkClientSyncWithServer", {
-        roomCode: roomConfig.code,
-        playerID: userID,
-        clientGameData: serverGameDataRef.current,
-      });
-    }, 15000);
-
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-      }
-    };
-  }, [roomConfig.code, showShufflingCountdown, showScoreboard, userID]);
 
   if (showRoomNotFoundModal) {
     return <RoomNotFound />;

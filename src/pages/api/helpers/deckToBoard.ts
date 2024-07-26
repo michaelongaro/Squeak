@@ -75,6 +75,7 @@ export function deckToBoard({
       },
       endID: `cell${row}${col}`,
       boardEndLocation,
+      gameData: gameData[roomCode],
       updatedPlayerCards: player,
     });
 

@@ -84,7 +84,7 @@ export function squeakToBoard({
       },
       endID: `cell${row}${col}`,
       boardEndLocation,
-      updatedPlayerCards: player,
+      gameData: gameData[roomCode],
     });
 
     if (card.value === "K") {

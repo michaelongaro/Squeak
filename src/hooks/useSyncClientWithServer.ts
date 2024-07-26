@@ -4,7 +4,7 @@ import { type IGameMetadata } from "../pages/api/socket";
 import { useRoomContext } from "../context/RoomContext";
 
 function useSyncClientWithServer() {
-  const { setGameData, setServerGameData } = useRoomContext();
+  const { setGameData } = useRoomContext();
 
   const [dataFromBackend, setDataFromBackend] = useState<IGameMetadata | null>(
     null,
@@ -23,9 +23,8 @@ function useSyncClientWithServer() {
       setDataFromBackend(null);
 
       setGameData(dataFromBackend);
-      setServerGameData(dataFromBackend);
     }
-  }, [dataFromBackend, setGameData, setServerGameData]);
+  }, [dataFromBackend, setGameData]);
 }
 
 export default useSyncClientWithServer;
