@@ -109,8 +109,10 @@ function Card({
 
         cardRef.current.style.transition = "none";
         cardRef.current.style.zIndex = "100";
+        cardRef.current.style.willChange = "auto";
         imageRef.current.style.transition = "none";
         imageRef.current.style.zIndex = "100";
+        imageRef.current.style.willChange = "auto";
 
         if ((origin === "hand" || origin === "squeakHand") && ownerID) {
           setCardBeingMovedProgramatically({
@@ -156,6 +158,9 @@ function Card({
           [ownerID]: true,
         });
       }
+
+      cardRef.current.style.willChange = "transform, filter";
+      imageRef.current.style.willChange = "transform, filter";
 
       cardRef.current.style.transition = "all 325ms ease-in-out, filter 163ms";
       imageRef.current.style.transition = "transform 163ms ease-in";
@@ -617,7 +622,7 @@ function Card({
               // TODO: should probably have _all_ styles be directly tied to state, instead of manually
               // setting the .style properties above in moveCard()
             }}
-            className={`baseFlex relative h-full w-full select-none !items-start will-change-transform ${
+            className={`baseFlex relative h-full w-full select-none !items-start ${
               draggable && "cursor-grab hover:active:cursor-grabbing"
             }`}
           >
@@ -640,7 +645,7 @@ function Card({
                 //     ? "scale(1.05)"
                 //     : "scale(1)",
               }}
-              className="cardDimensions pointer-events-none select-none rounded-[0.15rem] will-change-transform"
+              className="cardDimensions pointer-events-none select-none rounded-[0.15rem]"
               src={
                 showCardBack && !forceShowCardFront
                   ? (cardAssets["cardBack"] as StaticImageData).src
