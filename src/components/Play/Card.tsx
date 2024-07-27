@@ -110,7 +110,7 @@ function Card({
         cardRef.current.style.transition = "none";
         cardRef.current.style.zIndex = "100";
         cardRef.current.style.willChange = "auto";
-        imageRef.current.style.transition = "none";
+
         imageRef.current.style.zIndex = "100";
         imageRef.current.style.willChange = "auto";
 
@@ -164,6 +164,7 @@ function Card({
 
       cardRef.current.style.transition = "all 325ms ease-in-out, filter 163ms";
       imageRef.current.style.transition = "transform 163ms ease-in";
+      imageRef.current.style.transform = "scale(1)";
 
       const currentImageTransform = imageRef.current.style.transform;
 
@@ -635,15 +636,16 @@ function Card({
                   showCardBack && !forceShowCardFront
                     ? `hue-rotate(${hueRotation}deg)`
                     : "none",
-                // TODO: investigate if some kind of scaling effect like this could ever work,
-                // not a top priority right now but rough boilerplate is below
-                // transform:
-                //   userID === ownerID &&
-                //   (inMovingSqueakStack ||
-                //     cardOffsetPosition.x !== 0 ||
-                //     cardOffsetPosition.y !== 0)
-                //     ? "scale(1.05)"
-                //     : "scale(1)",
+                transform:
+                  userID === ownerID &&
+                  origin !== "deck" &&
+                  origin !== "squeakDeck" &&
+                  (inMovingSqueakStack ||
+                    cardOffsetPosition.x !== 0 ||
+                    cardOffsetPosition.y !== 0)
+                    ? "scale(1.05)"
+                    : "scale(1)",
+                transition: "transform 325ms ease-in-out",
               }}
               className="cardDimensions pointer-events-none select-none rounded-[0.15rem]"
               src={
