@@ -545,9 +545,10 @@ function Card({
         cardOffsetPosition.y !== 0 ||
         inMovingSqueakStack)
     ) {
-      filterStyles = `drop-shadow(8px 8px 4px rgba(0, 0, 0, ${
-        inMovingSqueakStack ? 0.1 : 0.25
-      }))`;
+      // filterStyles = `drop-shadow(8px 8px 4px rgba(0, 0, 0, ${
+      //   inMovingSqueakStack ? 0.1 : 0.25
+      // }))`;
+      filterStyles = "url(#drop-shadow)";
     }
 
     return filterStyles;
@@ -610,7 +611,7 @@ function Card({
               width: width,
               height: height,
               animation: getAnimationStyles(),
-              filter: getFilterStyles(),
+              filter: "url(#drop-shadow)",
               transition: getTransitionStyles(),
               zIndex:
                 inMovingSqueakStack ||
@@ -627,6 +628,25 @@ function Card({
               draggable && "cursor-grab hover:active:cursor-grabbing"
             }`}
           >
+            <svg width="0" height="0">
+              <filter id="drop-shadow">
+                <feGaussianBlur in="SourceAlpha" stdDeviation="3" />
+                <feOffset dx="2" dy="2" result="offsetblur" />
+                <feFlood
+                  floodColor="rgba(0,0,0,0.3)"
+                  floodOpacity={getFilterStyles() === "none" ? 0 : "1"}
+                  style={{
+                    transition: "floodOpacity 500ms ease-in-out",
+                  }}
+                />
+                <feComposite in2="offsetblur" operator="in" />
+                <feMerge>
+                  <feMergeNode />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+            </svg>
+
             <img
               ref={imageRef}
               style={{
