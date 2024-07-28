@@ -60,24 +60,26 @@ function OtherPlayersCardContainers({
   ]);
 
   useEffect(() => {
-    function handleResize() {
-      const boardElement = document.getElementById("board");
+    const boardElement = document.getElementById("board");
+    if (!boardElement) return;
 
-      if (!boardElement) return;
+    const updateOffsets = () => {
+      const { top, left } = boardElement.getBoundingClientRect();
+      setTopOffsetsFromBoard([top, left, left]);
+    };
 
-      setTimeout(() => {
-        const { top, left } = boardElement.getBoundingClientRect();
+    const mutationObserver = new MutationObserver(updateOffsets);
+    const resizeObserver = new ResizeObserver(updateOffsets);
 
-        // left and right values should be the same
-        setTopOffsetsFromBoard([top, left, left]);
-      }, 50); // waiting for board to fully render, ideally shouldn't need this..
-    }
+    mutationObserver.observe(boardElement, { childList: true, subtree: true });
+    resizeObserver.observe(boardElement);
 
-    handleResize();
+    updateOffsets();
 
-    window.addEventListener("resize", handleResize);
-
-    return () => window.removeEventListener("resize", handleResize);
+    return () => {
+      mutationObserver.disconnect();
+      resizeObserver.disconnect();
+    };
   }, []);
 
   const cardDimensions = useResponsiveCardDimensions();
