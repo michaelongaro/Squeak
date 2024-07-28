@@ -276,23 +276,13 @@ function getScaledOffset(
 ) {
   switch (viewportLabel) {
     case "mobile":
-      return 7;
+      return 7.46;
     case "mobileLarge":
-      return 8;
+      return 8.05;
     case "tablet":
-      return 9;
+      return 8.51;
     case "desktop":
     default:
       return 10;
-
-    //   case 'mobile':
-    //   return 7.46; // Scaled offset for mobile
-    // case 'mobileLarge':
-    //   return 8.05; // Scaled offset for mobileLarge
-    // case 'tablet':
-    //   return 8.51; // Scaled offset for tablet
-    // case 'desktop':
-    // default:
-    //   return 10; // Original offset for desktop
   }
 }
