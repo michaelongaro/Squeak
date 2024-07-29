@@ -4,6 +4,7 @@ import * as React from "react";
 import { useState } from "react";
 import { AiOutlineCheck } from "react-icons/ai";
 import { GiClubs, GiDiamonds, GiHearts, GiSpades } from "react-icons/gi";
+import { FaLock } from "react-icons/fa";
 
 import { IoIosArrowForward } from "react-icons/io";
 import { cn } from "~/lib/utils";
@@ -162,8 +163,9 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           />
 
           {isDisabled && (
-            <p className="absolute right-16 w-32 text-sm text-darkGreen/70">
-              Only available for logged in users*
+            <p className="baseFlex absolute right-16 w-32 gap-2 text-sm text-darkGreen/70">
+              Log in to access
+              <FaLock />
             </p>
           )}
 

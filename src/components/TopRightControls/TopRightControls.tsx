@@ -211,7 +211,7 @@ function TopRightControls() {
             icon={<IoSettingsSharp size={"1.5rem"} />}
             extraPadding={false}
             disabled={!isSignedIn}
-            hoverTooltipText={"Only available for logged in users"}
+            hoverTooltipText={"Log in to access"}
             hoverTooltipTextPosition={"left"}
             onClickFunction={() => {
               if (isSignedIn) {
@@ -306,7 +306,7 @@ function TopRightControls() {
             icon={<FaUserFriends size={"1.5rem"} />}
             extraPadding={false}
             disabled={!isSignedIn}
-            hoverTooltipText={"Only available for logged in users"}
+            hoverTooltipText={"Log in to access"}
             hoverTooltipTextPosition={"left"}
             onClickFunction={() => setShowFriendsList(!showFriendsList)}
           />
