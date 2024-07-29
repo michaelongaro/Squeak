@@ -142,6 +142,7 @@ function Card({
 
               card.style.transition = "none";
               card.style.zIndex = "100";
+              card.style.pointerEvents = "auto";
               card.style.willChange = "auto";
 
               image.style.zIndex = "100";
@@ -151,6 +152,7 @@ function Card({
         } else {
           cardRef.current.style.transition = "none";
           cardRef.current.style.zIndex = "100";
+          cardRef.current.style.pointerEvents = "auto";
           cardRef.current.style.willChange = "auto";
 
           imageRef.current.style.zIndex = "100";
@@ -239,6 +241,7 @@ function Card({
             image.style.willChange = "transform, filter";
 
             card.style.transition = "all 325ms ease-out, filter 163ms";
+            card.style.pointerEvents = "none";
             image.style.transition = "transform 163ms ease-out";
             image.style.transform = "scale(1)";
           }
@@ -248,6 +251,7 @@ function Card({
         imageRef.current.style.willChange = "transform, filter";
 
         cardRef.current.style.transition = "all 325ms ease-out, filter 163ms";
+        cardRef.current.style.pointerEvents = "none";
         imageRef.current.style.transition = "transform 163ms ease-out";
         imageRef.current.style.transform = "scale(1)";
       }
