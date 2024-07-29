@@ -159,11 +159,11 @@ function Card({
         });
       }
 
-      cardRef.current.style.willChange = "transform, filter";
+      cardRef.current.style.willChange = "transform";
       imageRef.current.style.willChange = "transform, filter";
 
-      cardRef.current.style.transition = "all 325ms ease-in-out, filter 163ms";
-      imageRef.current.style.transition = "transform 163ms ease-in";
+      cardRef.current.style.transition = "all 325ms ease-out, filter 163ms";
+      imageRef.current.style.transition = "transform 163ms ease-out";
       imageRef.current.style.transform = "scale(1)";
 
       const currentImageTransform = imageRef.current.style.transform;
@@ -517,43 +517,6 @@ function Card({
     }
   }
 
-  function getAnimationStyles() {
-    let animation = "none";
-
-    if (
-      ownerID !== userID &&
-      (cardOffsetPosition.x !== 0 ||
-        cardOffsetPosition.y !== 0 ||
-        inMovingSqueakStack)
-    ) {
-      if (origin === "hand" || origin === "squeakHand") {
-        animation = "regularCardDropShadow 100ms ease-in-out";
-      }
-    }
-
-    return animation;
-  }
-
-  function getFilterStyles() {
-    let filterStyles = "none";
-
-    if (
-      ownerID === userID &&
-      origin !== "deck" &&
-      origin !== "squeakDeck" &&
-      (cardOffsetPosition.x !== 0 ||
-        cardOffsetPosition.y !== 0 ||
-        inMovingSqueakStack)
-    ) {
-      // filterStyles = `drop-shadow(8px 8px 4px rgba(0, 0, 0, ${
-      //   inMovingSqueakStack ? 0.1 : 0.25
-      // }))`;
-      filterStyles = "url(#drop-shadow)";
-    }
-
-    return filterStyles;
-  }
-
   function getTransitionStyles() {
     let transitionStyles = "";
 
@@ -567,8 +530,7 @@ function Card({
           heldSqueakStackLocation?.[ownerID || ""]?.location.y ===
             cardOffsetPosition.y))
     ) {
-      transitionStyles =
-        "transform 325ms ease-in-out, filter 100ms ease-in-out";
+      transitionStyles = "transform 325ms ease-out";
     } else if (ownerID === userID) {
       transitionStyles = "filter 163ms ease-in-out";
     } else {
@@ -610,43 +572,20 @@ function Card({
             style={{
               width: width,
               height: height,
-              animation: getAnimationStyles(),
-              filter: "url(#drop-shadow)",
               transition: getTransitionStyles(),
               zIndex:
                 inMovingSqueakStack ||
                 cardOffsetPosition.x !== 0 ||
                 cardOffsetPosition.y !== 0
-                  ? 163
+                  ? 150
                   : origin === "deck"
                     ? 50
                     : 100, // makes sure child cards stay on top whenever moving
-              // TODO: should probably have _all_ styles be directly tied to state, instead of manually
-              // setting the .style properties above in moveCard()
             }}
             className={`baseFlex relative h-full w-full select-none !items-start ${
               draggable && "cursor-grab hover:active:cursor-grabbing"
             }`}
           >
-            <svg width="0" height="0">
-              <filter id="drop-shadow">
-                <feGaussianBlur in="SourceAlpha" stdDeviation="3" />
-                <feOffset dx="2" dy="2" result="offsetblur" />
-                <feFlood
-                  floodColor="rgba(0,0,0,0.3)"
-                  floodOpacity={getFilterStyles() === "none" ? 0 : "1"}
-                  style={{
-                    transition: "floodOpacity 500ms ease-in-out",
-                  }}
-                />
-                <feComposite in2="offsetblur" operator="in" />
-                <feMerge>
-                  <feMergeNode />
-                  <feMergeNode in="SourceGraphic" />
-                </feMerge>
-              </filter>
-            </svg>
-
             <img
               ref={imageRef}
               style={{
@@ -665,7 +604,7 @@ function Card({
                     cardOffsetPosition.y !== 0)
                     ? "scale(1.05)"
                     : "scale(1)",
-                transition: "transform 325ms ease-in-out",
+                transition: "transform 325ms ease-out",
               }}
               className="cardDimensions pointer-events-none select-none rounded-[0.15rem]"
               src={
