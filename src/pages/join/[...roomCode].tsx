@@ -439,7 +439,7 @@ function JoinRoom() {
                     <div
                       className={`sm:baseVertFlex grid grid-cols-2 ${
                         roomConfig.playersInRoom > 2
-                          ? "auto-rows-auto"
+                          ? "grid-rows-2"
                           : "grid-rows-1"
                       } !items-start !justify-start gap-8 sm:flex sm:!flex-row`}
                     >
