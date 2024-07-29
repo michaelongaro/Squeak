@@ -107,12 +107,55 @@ function Card({
       function animationEndHandler() {
         if (!cardRef.current || !imageRef.current) return;
 
-        cardRef.current.style.transition = "none";
-        cardRef.current.style.zIndex = "100";
-        cardRef.current.style.willChange = "auto";
+        const squeakStackContainerIndex =
+          origin === "squeakHand" && squeakStackLocation?.[0] !== undefined
+            ? squeakStackLocation[0]
+            : null;
 
-        imageRef.current.style.zIndex = "100";
-        imageRef.current.style.willChange = "auto";
+        const squeakStackContainerID =
+          squeakStackContainerIndex !== null
+            ? `${ownerID}squeakHand${squeakStackContainerIndex}`
+            : null;
+
+        if (squeakStackContainerID) {
+          const squeakStackContainer = document.getElementById(
+            squeakStackContainerID,
+          );
+
+          if (squeakStackContainer) {
+            // loop through all of the cards including/below the one being moved
+            for (
+              let i = squeakStackLocation![1];
+              i < squeakStackContainer.children.length;
+              i++
+            ) {
+              const cardContainer = squeakStackContainer.children[
+                i
+              ] as HTMLDivElement;
+
+              // then the first child of cardContainer is the "cardRef" equivalent,
+              // and the first child of the "cardRef" is the "imageRef" equivalent,
+              // so we access these elements and apply the same styles as we do in the
+              // moveCard function
+              const card = cardContainer.children[0] as HTMLDivElement;
+              const image = card.children[0] as HTMLImageElement;
+
+              card.style.transition = "none";
+              card.style.zIndex = "100";
+              card.style.willChange = "auto";
+
+              image.style.zIndex = "100";
+              image.style.willChange = "auto";
+            }
+          }
+        } else {
+          cardRef.current.style.transition = "none";
+          cardRef.current.style.zIndex = "100";
+          cardRef.current.style.willChange = "auto";
+
+          imageRef.current.style.zIndex = "100";
+          imageRef.current.style.willChange = "auto";
+        }
 
         if ((origin === "hand" || origin === "squeakHand") && ownerID) {
           setCardBeingMovedProgramatically({
@@ -159,12 +202,55 @@ function Card({
         });
       }
 
-      cardRef.current.style.willChange = "transform";
-      imageRef.current.style.willChange = "transform, filter";
+      const squeakStackContainerIndex =
+        origin === "squeakHand" && squeakStackLocation?.[0] !== undefined
+          ? squeakStackLocation[0]
+          : null;
 
-      cardRef.current.style.transition = "all 325ms ease-out, filter 163ms";
-      imageRef.current.style.transition = "transform 163ms ease-out";
-      imageRef.current.style.transform = "scale(1)";
+      const squeakStackContainerID =
+        squeakStackContainerIndex !== null
+          ? `${ownerID}squeakHand${squeakStackContainerIndex}`
+          : null;
+
+      if (squeakStackContainerID) {
+        const squeakStackContainer = document.getElementById(
+          squeakStackContainerID,
+        );
+
+        if (squeakStackContainer) {
+          // loop through all of the cards including/below the one being moved
+          for (
+            let i = squeakStackLocation![1];
+            i < squeakStackContainer.children.length;
+            i++
+          ) {
+            const cardContainer = squeakStackContainer.children[
+              i
+            ] as HTMLDivElement;
+
+            // then the first child of cardContainer is the "cardRef" equivalent,
+            // and the first child of the "cardRef" is the "imageRef" equivalent,
+            // so we access these elements and apply the same styles as we do in the
+            // moveCard function
+            const card = cardContainer.children[0] as HTMLDivElement;
+            const image = card.children[0] as HTMLImageElement;
+
+            card.style.willChange = "transform";
+            image.style.willChange = "transform, filter";
+
+            card.style.transition = "all 325ms ease-out, filter 163ms";
+            image.style.transition = "transform 163ms ease-out";
+            image.style.transform = "scale(1)";
+          }
+        }
+      } else {
+        cardRef.current.style.willChange = "transform";
+        imageRef.current.style.willChange = "transform, filter";
+
+        cardRef.current.style.transition = "all 325ms ease-out, filter 163ms";
+        imageRef.current.style.transition = "transform 163ms ease-out";
+        imageRef.current.style.transform = "scale(1)";
+      }
 
       const currentImageTransform = imageRef.current.style.transform;
 
