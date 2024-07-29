@@ -79,7 +79,7 @@ function PlayerCustomizationPreview({
                 : "text-lightGreen"
             }`}
           >
-            Back
+            {forDrawer ? "Card back" : "Back"}
           </p>
         )}
       </>
@@ -110,7 +110,7 @@ function PlayerCustomizationPreview({
               : "text-lightGreen"
           }`}
         >
-          Front
+          {forDrawer ? "Card front" : "Front"}
         </p>
       )}
     </>
