@@ -269,6 +269,10 @@ function CreateRoom() {
                   onChange={(e) => {
                     setUsernameIsProfane(filter.isProfane(e.target.value));
 
+                    if (!isSignedIn) {
+                      localStorage.setItem("squeakUsername", e.target.value);
+                    }
+
                     setPlayerMetadata({
                       ...playerMetadata,
                       [userID]: {

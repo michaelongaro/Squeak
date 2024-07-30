@@ -47,9 +47,11 @@ function useLeaveRoom({ routeToNavigateTo }: IUseLeaveRoom) {
       });
 
       if (userID !== "") {
+        const localStorageUsername = localStorage.getItem("squeakUsername");
+
         setPlayerMetadata({
           [userID]: {
-            username: user?.username ?? "",
+            username: user?.username ?? localStorageUsername ?? "",
             avatarPath: user?.avatarPath ?? "/avatars/rabbit.svg",
             color: user?.color ?? "hsl(352deg, 69%, 61%)",
             deckHueRotation: user?.deckHueRotation ?? 232,

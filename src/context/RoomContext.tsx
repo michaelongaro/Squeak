@@ -409,10 +409,12 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     )
       return;
 
+    const localStorageUsername = localStorage.getItem("squeakUsername");
+
     setPlayerMetadata((prev) => ({
       ...prev,
       [userID]: {
-        username: "",
+        username: localStorageUsername ?? "",
         avatarPath: "/avatars/rabbit.svg",
         color: "hsl(352deg, 69%, 61%)",
         deckHueRotation: 232,
