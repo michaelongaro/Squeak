@@ -348,8 +348,11 @@ function Card({
       if (flip) {
         if (!cardRef.current) return;
 
+        // tiny X rotation is meant to add slight realism to card flip,
+        // entirely fine with reverting if the effect doesn't land well
+
         imageRef.current.style.transform =
-          currentImageTransform + " rotateY(90deg)";
+          currentImageTransform + " rotateX(3deg) rotateY(90deg)";
 
         setTimeout(() => {
           if (!imageRef.current) return;
@@ -357,8 +360,8 @@ function Card({
           setForceShowCardFront(true);
 
           imageRef.current.style.transform = currentImageTransform.replace(
-            "rotateY(90deg)",
-            "rotateY(0deg)",
+            "rotateX(3deg) rotateY(90deg)",
+            "rotateX(0deg) rotateY(0deg)",
           );
         }, 163);
       }
