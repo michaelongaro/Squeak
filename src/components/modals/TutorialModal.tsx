@@ -49,9 +49,9 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
         animate={{ scale: 1 }}
         exit={{ scale: 0.95 }}
         transition={{ duration: 0.15 }}
-        className="baseVertFlex to-green-850 relative h-[95%] w-[95%] !justify-start gap-8 overflow-y-scroll rounded-md rounded-t-md border-2 border-white bg-gradient-to-br from-green-800 shadow-lg tablet:max-h-[90dvh] tablet:w-auto"
+        className="baseVertFlex relative h-[95%] w-[95%] !justify-start gap-8 overflow-y-scroll rounded-md rounded-t-md border-2 border-white bg-gradient-to-br from-green-800 to-green-850 shadow-lg tablet:max-h-[90dvh] tablet:max-w-4xl"
       >
-        <div className="baseFlex to-green-850 sticky left-0 top-0 z-10 w-full border-b border-white bg-gradient-to-br from-green-800 py-4 shadow-lg">
+        <div className="baseFlex sticky left-0 top-0 z-10 w-full border-b border-white bg-gradient-to-br from-green-800 to-green-850 py-4 shadow-lg tablet:max-w-4xl">
           <div
             style={{
               color: "hsl(120deg 100% 86%)",
@@ -71,7 +71,7 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
           />
         </div>
 
-        <div className="baseVertFlex w-full !justify-start gap-8 p-4 md:p-8">
+        <div className="baseVertFlex w-full !justify-start gap-8 p-4 md:p-8 tablet:max-w-3xl">
           <fieldset className="rounded-md border-2 border-white p-4">
             <legend
               style={{
@@ -87,7 +87,7 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
                 style={{
                   color: "hsl(120deg 100% 86%)",
                 }}
-                className="w-auto p-4 pt-0 text-sm lg:w-[1000px] lg:text-base"
+                className="w-auto p-4 pt-0 text-sm lg:w-[725px] lg:text-base"
               >
                 <p>
                   Squeak is a multiplayer rendition of Solitaire, otherwise
@@ -140,7 +140,7 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
               style={{
                 color: "hsl(120deg 100% 86%)",
               }}
-              className="w-auto p-4 pt-0 text-sm lg:w-[1000px] lg:text-base"
+              className="w-auto p-4 pt-0 text-sm lg:w-[725px] lg:text-base"
             >
               The goal of each round is to accrue as many points as possible and
               empty your Squeak deck, which reveals your Squeak button. When
@@ -164,7 +164,7 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
               style={{
                 color: "hsl(120deg 100% 86%)",
               }}
-              className="baseVertFlex w-auto !justify-start gap-8 p-4 pt-0 text-sm sm:gap-4 lg:w-[1000px] lg:text-base"
+              className="baseVertFlex w-auto !justify-start gap-8 p-4 pt-0 text-sm sm:gap-4 lg:w-[725px] lg:text-base"
             >
               <div className="baseVertFlex w-full !items-start !justify-start gap-4 sm:!flex-row">
                 <div className="baseFlex size-[30px] rounded-full border-2 border-white sm:h-[35px] sm:w-[37px]">
@@ -278,7 +278,7 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
               style={{
                 color: "hsl(120deg 100% 86%)",
               }}
-              className="baseVertFlex w-auto list-disc !items-start gap-4 p-4 pl-8 pt-0 text-sm lg:w-[1000px] lg:text-base"
+              className="baseVertFlex w-auto list-disc !items-start gap-4 p-4 pl-8 pt-0 text-sm lg:w-[725px] lg:text-base"
             >
               <li>
                 Points are calculated after the end of each round. Each card a
@@ -309,12 +309,12 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
               style={{
                 color: "hsl(120deg 100% 86%)",
               }}
-              className="baseVertFlex w-auto list-disc !items-start gap-4 p-4 pl-8 pt-0 text-sm lg:w-[1000px] lg:text-base"
+              className="baseVertFlex w-auto list-disc !items-start gap-4 p-4 pl-8 pt-0 text-sm lg:w-[725px] lg:text-base"
             >
               <li>
                 If a player feels that no one has a valid move to make, they may
                 start a vote to rotate everyone&apos;s deck by one card. This
-                should hopefully allow for more valid moves to be made.
+                should increase the chance for more valid moves to be made.
               </li>
               <li>
                 Otherwise, if the decks have been rotated multiple times and it
@@ -322,7 +322,7 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
                 the round where it is. Note that nobody will receive the Squeak
                 bonus if this vote passes.
               </li>
-              <li>Votes require each player to agree in order to pass.</li>
+              <li>Votes require every player to agree in order to pass.</li>
             </ul>
           </fieldset>
         </div>
