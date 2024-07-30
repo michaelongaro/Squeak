@@ -117,69 +117,72 @@ function Scoreboard() {
     setTimeout(() => {
       setShowConfettiPoppers(true);
 
-      if (audioContext && masterVolumeGainNode) {
-        const confettiPopBufferSource = audioContext.createBufferSource();
-        confettiPopBufferSource.buffer = confettiPopBuffer;
+      setTimeout(() => {
+        if (audioContext && masterVolumeGainNode) {
+          const confettiPopBufferSource = audioContext.createBufferSource();
+          confettiPopBufferSource.buffer = confettiPopBuffer;
 
-        confettiPopBufferSource.connect(masterVolumeGainNode);
-        confettiPopBufferSource.start(0, 0.35);
-      }
+          confettiPopBufferSource.connect(masterVolumeGainNode);
+          confettiPopBufferSource.start(0, 0.35);
+        }
 
-      const leftConfettiCannonOffsets =
-        leftConfettiCannonRef.current?.getBoundingClientRect() ?? {
-          x: 0,
-          y: 0,
-        };
-      const rightConfettiCannonOffsets =
-        rightConfettiCannonRef.current?.getBoundingClientRect() ?? {
-          x: 0,
-          y: 0,
-        };
+        const leftConfettiCannonOffsets =
+          leftConfettiCannonRef.current?.getBoundingClientRect() ?? {
+            x: 0,
+            y: 0,
+          };
+        const rightConfettiCannonOffsets =
+          rightConfettiCannonRef.current?.getBoundingClientRect() ?? {
+            x: 0,
+            y: 0,
+          };
 
-      confetti(
-        Object.assign(
-          {},
-          {
-            origin: {
-              x: leftConfettiCannonOffsets.x / window.innerWidth,
-              y: leftConfettiCannonOffsets.y / window.innerHeight,
+        confetti(
+          Object.assign(
+            {},
+            {
+              origin: {
+                x: leftConfettiCannonOffsets.x / window.innerWidth,
+                y: leftConfettiCannonOffsets.y / window.innerHeight,
+              },
             },
-          },
-          {
-            spread: 26,
-            startVelocity: 35,
-            angle: viewportLabel.includes("mobile") ? 45 : 135,
-            zIndex: 200,
-          },
-          {
-            particleCount: 100,
-          },
-        ),
-      );
-
-      confetti(
-        Object.assign(
-          {},
-          {
-            origin: {
-              x: rightConfettiCannonOffsets.x / window.innerWidth,
-              y: rightConfettiCannonOffsets.y / window.innerHeight,
+            {
+              spread: viewportLabel.includes("mobile") ? 45 : 30,
+              startVelocity: 35,
+              angle: viewportLabel.includes("mobile") ? 45 : 135,
+              zIndex: 200,
             },
-          },
-          {
-            spread: 26,
-            startVelocity: 35,
-            angle: viewportLabel.includes("mobile") ? 135 : 45,
-            zIndex: 200,
-          },
-          {
-            particleCount: 100,
-          },
-        ),
-      );
+            {
+              particleCount: 100,
+            },
+          ),
+        );
+
+        confetti(
+          Object.assign(
+            {},
+            {
+              origin: {
+                x: rightConfettiCannonOffsets.x / window.innerWidth,
+                y: rightConfettiCannonOffsets.y / window.innerHeight,
+              },
+            },
+            {
+              spread: viewportLabel.includes("mobile") ? 45 : 30,
+              startVelocity: 35,
+              angle: viewportLabel.includes("mobile") ? 135 : 45,
+              zIndex: 200,
+            },
+            {
+              particleCount: 100,
+            },
+          ),
+        );
+      }, 300); // waiting for the motion.divs to be rendered with +100ms of delay
     }, 6500);
 
     setTimeout(() => {
+      setShowConfettiPoppers(false);
       setShowHostActionButton(true);
     }, 8500);
 
@@ -284,7 +287,7 @@ function Scoreboard() {
             color: "hsl(120deg 100% 86%)",
             borderColor: "hsl(120deg 100% 86%)",
           }}
-          className="to-green-850 w-[95%] rounded-lg border-2 bg-gradient-to-br from-green-800 p-4 shadow-md tablet:h-[75%] tablet:w-[75%]"
+          className="w-[95%] rounded-lg border-2 bg-gradient-to-br from-green-800 to-green-850 p-4 shadow-md tablet:h-[75%] tablet:w-[75%]"
         >
           {scoreboardMetadata?.playerRoundDetails && currentPlayerStats && (
             <div className="baseVertFlex h-full gap-2 mobileLarge:gap-4 tablet:gap-8">
@@ -424,7 +427,7 @@ function Scoreboard() {
                         playerColorVariants[currentPlayerStats.playerID]
                           ?.textColor ?? "black",
                     }}
-                    className="baseVertFlex h-18 w-full gap-2 rounded-t-md py-1 font-semibold"
+                    className="baseVertFlex h-18 w-full gap-2 rounded-t-md py-1 text-sm font-semibold"
                   >
                     Score breakdown
                   </div>
@@ -439,7 +442,7 @@ function Scoreboard() {
                         playerColorVariants[currentPlayerStats.playerID]
                           ?.textColor ?? "black",
                     }}
-                    className="baseVertFlex relative z-[1] h-full w-full overflow-hidden"
+                    className="baseFlex relative z-[1] h-full w-full overflow-hidden"
                   >
                     <div
                       style={{
@@ -447,9 +450,9 @@ function Scoreboard() {
                           playerColorVariants[currentPlayerStats.playerID]
                             ?.pointsBackgroundColor ?? "white",
                       }}
-                      className="baseVertFlex z-[3] w-full bg-black bg-opacity-30 p-2"
+                      className="baseVertFlex z-[3] min-h-[115px] w-full gap-2 bg-black bg-opacity-30 p-2"
                     >
-                      <div className="align-center flex w-full justify-between px-8 leading-5">
+                      <div className="align-center flex w-full justify-between gap-4 text-nowrap px-3 text-sm leading-5">
                         Cards played
                         <div className="baseFlex">
                           <div
@@ -468,12 +471,12 @@ function Scoreboard() {
                             }
                             duration={animateCardsPlayedValue ? 1000 : 0}
                             order={"asc"}
-                            size={16}
+                            size={14}
                           />
                         </div>
                       </div>
 
-                      <div className="align-center flex w-full justify-between px-8 leading-5">
+                      <div className="align-center flex w-full justify-between gap-4 px-3 text-sm leading-5">
                         Squeak
                         <div className="baseFlex">
                           <div
@@ -496,12 +499,12 @@ function Scoreboard() {
                                 ? "asc"
                                 : "desc"
                             }
-                            size={16}
+                            size={14}
                           />
                         </div>
                       </div>
 
-                      <div className="align-center mt-1 flex w-full justify-between px-8 text-lg font-medium">
+                      <div className="align-center mt-1 flex w-full justify-between gap-4 px-3 font-medium">
                         Total
                         <AnimatedNumber
                           value={
@@ -516,7 +519,10 @@ function Scoreboard() {
                               ? "asc"
                               : "desc"
                           }
-                          size={22}
+                          style={{
+                            marginTop: "0.3rem",
+                          }}
+                          size={16}
                         />
                       </div>
                     </div>
@@ -537,7 +543,7 @@ function Scoreboard() {
                         playerColorVariants[currentPlayerStats.playerID]
                           ?.textColor ?? "black",
                     }}
-                    className="grid w-full grid-cols-1 items-center justify-items-center gap-2 rounded-b-md p-2"
+                    className="grid w-full grid-cols-1 items-center justify-items-center gap-2 rounded-b-md p-2 text-sm"
                   >
                     <AnimatePresence mode={"wait"}>
                       {showNewRankings && (
@@ -582,22 +588,31 @@ function Scoreboard() {
                         scoreboardMetadata.roundWinnerID
                     ]?.baseColor ?? "black",
                 }}
-                className="baseFlex gap-4 rounded-md px-4 py-2 transition-all"
+                className="baseFlex relative w-full gap-4 rounded-md px-10 py-2 transition-all duration-300"
               >
-                {/* left confetti cannon */}
-                <Image
-                  ref={leftConfettiCannonRef}
-                  style={{
-                    opacity: showConfettiPoppers ? 1 : 0,
-                    transform: showConfettiPoppers
-                      ? "scale(1) rotate(225deg)"
-                      : "scale(0) rotate(225deg)",
-                    filter: "drop-shadow(rgba(0,0,0, 0.10) 0px 0px 0.5rem)",
-                  }}
-                  className="h-6 w-6 transition-all"
-                  src={confettiPopper}
-                  alt={"left celebratory confetti cannon"}
-                />
+                <AnimatePresence>
+                  {showConfettiPoppers && (
+                    <motion.div
+                      initial={{ opacity: 0, width: 0, scale: 0 }}
+                      animate={{ opacity: 1, width: "auto", scale: 1 }}
+                      exit={{ opacity: 0, width: 0, scale: 0 }}
+                      transition={{ duration: 0.2, ease: "easeInOut" }}
+                      className="baseFlex absolute left-2 top-4"
+                    >
+                      {/* left confetti cannon */}
+                      <Image
+                        ref={leftConfettiCannonRef}
+                        style={{
+                          filter:
+                            "drop-shadow(rgba(0,0,0, 0.10) 0px 0px 0.5rem)",
+                        }}
+                        className="h-6 w-6 rotate-[225deg] transition-all"
+                        src={confettiPopper}
+                        alt={"left celebratory confetti cannon"}
+                      />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
 
                 <div className="baseFlex gap-2">
                   <PlayerIcon
@@ -637,19 +652,28 @@ function Scoreboard() {
                 </div>
 
                 {/* right confetti cannon */}
-                <Image
-                  ref={rightConfettiCannonRef}
-                  style={{
-                    opacity: showConfettiPoppers ? 1 : 0,
-                    transform: showConfettiPoppers
-                      ? "scale(1) rotate(135deg)"
-                      : "scale(0) rotate(135deg)",
-                    filter: "drop-shadow(rgba(0,0,0, 0.10) 0px 0px 0.5rem)",
-                  }}
-                  className="h-6 w-6 transition-all"
-                  src={confettiPopper}
-                  alt={"right celebratory confetti cannon"}
-                />
+                <AnimatePresence>
+                  {showConfettiPoppers && (
+                    <motion.div
+                      initial={{ opacity: 0, width: 0, scale: 0 }}
+                      animate={{ opacity: 1, width: "auto", scale: 1 }}
+                      exit={{ opacity: 0, width: 0, scale: 0 }}
+                      transition={{ duration: 0.2, ease: "easeInOut" }}
+                      className="baseFlex absolute right-2 top-4"
+                    >
+                      <Image
+                        ref={rightConfettiCannonRef}
+                        style={{
+                          filter:
+                            "drop-shadow(rgba(0,0,0, 0.10) 0px 0px 0.5rem)",
+                        }}
+                        className="h-6 w-6 rotate-[135deg] transition-all"
+                        src={confettiPopper}
+                        alt={"right celebratory confetti cannon"}
+                      />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
 
               <div
@@ -657,7 +681,7 @@ function Scoreboard() {
                   opacity: showHostActionButton ? 1 : 0,
                   pointerEvents: showHostActionButton ? "auto" : "none",
                 }}
-                className="baseFlex gap-2"
+                className="baseFlex gap-2 transition-all"
               >
                 {userID === roomConfig.hostUserID ? (
                   <Button
@@ -752,7 +776,7 @@ function Scoreboard() {
           color: "hsl(120deg 100% 86%)",
           borderColor: "hsl(120deg 100% 86%)",
         }}
-        className="to-green-850 h-[95%] w-[95%] rounded-lg border-2 bg-gradient-to-br from-green-800 p-4 shadow-md tablet:h-[85%] tablet:w-[85%] desktop:h-[75%] desktop:w-[75%]"
+        className="h-[95%] w-[95%] rounded-lg border-2 bg-gradient-to-br from-green-800 to-green-850 p-4 shadow-md tablet:h-[85%] tablet:w-[85%] desktop:h-[75%] desktop:w-[75%]"
       >
         {scoreboardMetadata?.playerRoundDetails && (
           <div className="baseVertFlex h-full gap-2 desktop:gap-8">
@@ -944,22 +968,30 @@ function Scoreboard() {
                       scoreboardMetadata.roundWinnerID
                   ]?.baseColor ?? "black",
               }}
-              className="baseFlex gap-4 rounded-md px-4 py-2 transition-all desktop:p-4"
+              className="baseFlex relative gap-4 rounded-md px-16 py-3 transition-all duration-300"
             >
               {/* left confetti cannon */}
-              <Image
-                ref={leftConfettiCannonRef}
-                style={{
-                  opacity: showConfettiPoppers ? 1 : 0,
-                  transform: showConfettiPoppers
-                    ? "scale(1) rotate(135deg)"
-                    : "scale(0) rotate(135deg)",
-                  filter: "drop-shadow(rgba(0,0,0, 0.10) 0px 0px 0.5rem)",
-                }}
-                className="h-8 w-8 transition-all"
-                src={confettiPopper}
-                alt={"left celebratory confetti cannon"}
-              />
+              <AnimatePresence>
+                {showConfettiPoppers && (
+                  <motion.div
+                    initial={{ opacity: 0, width: 0, scale: 0 }}
+                    animate={{ opacity: 1, width: "auto", scale: 1 }}
+                    exit={{ opacity: 0, width: 0, scale: 0 }}
+                    transition={{ duration: 0.2, ease: "easeInOut" }}
+                    className="baseFlex absolute left-3 top-5"
+                  >
+                    <Image
+                      ref={leftConfettiCannonRef}
+                      style={{
+                        filter: "drop-shadow(rgba(0,0,0, 0.10) 0px 0px 0.5rem)",
+                      }}
+                      className="h-8 w-8 rotate-[135deg] transition-all"
+                      src={confettiPopper}
+                      alt={"left celebratory confetti cannon"}
+                    />
+                  </motion.div>
+                )}
+              </AnimatePresence>
 
               <PlayerIcon
                 avatarPath={
@@ -984,7 +1016,7 @@ function Scoreboard() {
                         scoreboardMetadata.roundWinnerID
                     ]?.textColor ?? "black",
                 }}
-                className="text-xl"
+                className="text-lg"
               >
                 {scoreboardMetadata.gameWinnerID
                   ? playerMetadata[scoreboardMetadata.gameWinnerID]?.username
@@ -995,19 +1027,27 @@ function Scoreboard() {
               </div>
 
               {/* right confetti cannon */}
-              <Image
-                ref={rightConfettiCannonRef}
-                style={{
-                  opacity: showConfettiPoppers ? 1 : 0,
-                  transform: showConfettiPoppers
-                    ? "scale(1) rotate(225deg)"
-                    : "scale(0) rotate(225deg)",
-                  filter: "drop-shadow(rgba(0,0,0, 0.10) 0px 0px 0.5rem)",
-                }}
-                className="h-8 w-8 transition-all"
-                src={confettiPopper}
-                alt={"right celebratory confetti cannon"}
-              />
+              <AnimatePresence>
+                {showConfettiPoppers && (
+                  <motion.div
+                    initial={{ opacity: 0, width: 0, scale: 0 }}
+                    animate={{ opacity: 1, width: "auto", scale: 1 }}
+                    exit={{ opacity: 0, width: 0, scale: 0 }}
+                    transition={{ duration: 0.2, ease: "easeInOut" }}
+                    className="baseFlex absolute right-3 top-5"
+                  >
+                    <Image
+                      ref={rightConfettiCannonRef}
+                      style={{
+                        filter: "drop-shadow(rgba(0,0,0, 0.10) 0px 0px 0.5rem)",
+                      }}
+                      className="h-8 w-8 rotate-[225deg] transition-all"
+                      src={confettiPopper}
+                      alt={"right celebratory confetti cannon"}
+                    />
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
 
             <div
@@ -1015,7 +1055,7 @@ function Scoreboard() {
                 opacity: showHostActionButton ? 1 : 0,
                 pointerEvents: showHostActionButton ? "auto" : "none",
               }}
-              className="baseFlex gap-2"
+              className="baseFlex gap-2 transition-all"
             >
               {userID === roomConfig.hostUserID ? (
                 <Button
