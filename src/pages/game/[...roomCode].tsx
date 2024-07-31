@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { socket } from "~/pages/_app";
 import Board from "~/components/Play/Board";
 import PlayerCardContainer from "~/components/Play/PlayerCardContainer";
@@ -14,12 +14,10 @@ import useResetDeckFromCardDraw from "../../hooks/useResetDeckFromCardDraw";
 import useScoreboardData from "../../hooks/useScoreboardData";
 import OtherPlayerIcons from "~/components/Play/OtherPlayerIcons";
 import classes from "~/components/Play/Play.module.css";
-import { Button } from "~/components/ui/button";
 import useSyncClientWithServer from "../../hooks/useSyncClientWithServer";
 import MiniMobileVotingModal from "~/components/modals/MiniMobileVotingModal";
 import { type Room } from "@prisma/client";
 import { useRouter } from "next/router";
-import { IoHome, IoWarningOutline } from "react-icons/io5";
 import { useAuth } from "@clerk/nextjs";
 import { api } from "~/utils/api";
 import UnableToJoinRoom from "~/components/Play/UnableToJoinRoom";
@@ -43,7 +41,6 @@ function Play() {
     showVotingModal,
     setShowVotingModal,
     connectedToRoom,
-    setConnectedToRoom,
     viewportLabel,
   } = useRoomContext();
 
@@ -98,10 +95,8 @@ function Play() {
         userID,
         code: room.code,
       });
-
-      setConnectedToRoom(true);
     }
-  }, [connectedToRoom, room, setConnectedToRoom, userID]);
+  }, [connectedToRoom, room, userID]);
 
   useEffect(() => {
     if (
@@ -132,7 +127,6 @@ function Play() {
     if (initialEffectRan) return;
 
     setInitialEffectRan(true);
-    setDynamicInitializationFlowStarted(true);
 
     if (Object.keys(gameData).length === 0) return;
 

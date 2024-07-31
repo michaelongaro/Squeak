@@ -10,7 +10,7 @@ import { type IRejoinData } from "./../pages/api/socket";
 function useRejoinRoom() {
   const userID = useUserIDContext();
 
-  const { setRoomConfig, setPlayerMetadata, setGameData, connectedToRoom } =
+  const { setRoomConfig, setPlayerMetadata, setGameData, setConnectedToRoom } =
     useRoomContext();
 
   const [dataFromBackend, setDataFromBackend] = useState<IRejoinData | null>(
@@ -18,14 +18,12 @@ function useRejoinRoom() {
   );
 
   useEffect(() => {
-    if (!connectedToRoom) return; // probably keeping but not sure yet
-
     socket.on("rejoinData", (data) => setDataFromBackend(data));
 
     return () => {
       socket.off("rejoinData", (data) => setDataFromBackend(data));
     };
-  }, [connectedToRoom]);
+  }, []);
 
   useEffect(() => {
     if (dataFromBackend !== null) {
@@ -38,13 +36,26 @@ function useRejoinRoom() {
         players,
       } = dataFromBackend;
 
+      // TODO/FYI: this is fine w/ your current setup since you are sending
+      // the whole game state on every action, but if you ever atomize the
+      // payload then you would probably want to either broadcast the modified
+      // playerIDsThatLeftMidgame state or something similar to similar effect
       if (userID !== userIDFromBackend) return;
 
       setRoomConfig(roomConfig);
       setPlayerMetadata(players);
       setGameData(gameData);
+
+      setConnectedToRoom(true);
     }
-  }, [dataFromBackend, setGameData, setPlayerMetadata, setRoomConfig, userID]);
+  }, [
+    dataFromBackend,
+    setGameData,
+    setPlayerMetadata,
+    setRoomConfig,
+    setConnectedToRoom,
+    userID,
+  ]);
 }
 
 export default useRejoinRoom;

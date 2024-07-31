@@ -15,7 +15,7 @@ export function rejoinRoomHandler(
   io: Server,
   socket: Socket,
   gameData: IGameData,
-  roomData: IRoomData
+  roomData: IRoomData,
 ) {
   socket.on(
     "rejoinRoom",
@@ -28,6 +28,12 @@ export function rejoinRoomHandler(
 
       socket.join(code);
 
+      if (game?.playerIDsThatLeftMidgame.includes(userID)) {
+        game.playerIDsThatLeftMidgame = game.playerIDsThatLeftMidgame.filter(
+          (id) => id !== userID,
+        );
+      }
+
       const rejoinData: IRejoinData = {
         userID,
         roomConfig: room.roomConfig,
@@ -38,6 +44,6 @@ export function rejoinRoomHandler(
       io.in(code).emit("rejoinData", rejoinData);
 
       callback?.(room.roomConfig.gameStarted ? "gameStarted" : undefined);
-    }
+    },
   );
 }

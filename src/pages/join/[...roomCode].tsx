@@ -7,8 +7,7 @@ import { BiArrowBack } from "react-icons/bi";
 import { FaUsers } from "react-icons/fa";
 import { TbDoorEnter } from "react-icons/tb";
 import { FiCheck } from "react-icons/fi";
-import { IoHome, IoSettingsSharp } from "react-icons/io5";
-import { IoWarningOutline } from "react-icons/io5";
+import { IoSettingsSharp } from "react-icons/io5";
 import { MdCopyAll } from "react-icons/md";
 import SecondaryButton from "~/components/Buttons/SecondaryButton";
 import PlayerCustomizationDrawer from "~/components/drawers/PlayerCustomizationDrawer";
@@ -160,7 +159,6 @@ function JoinRoom() {
         },
       );
 
-      setConnectedToRoom(true);
       setShowUsernamePromptModal(false);
     }
 
