@@ -170,7 +170,7 @@ export function startGameHandler(
             ); // TODO: still test out better variations with delay..
           }
         },
-        firstRound ? 8500 : 7000,
+        firstRound ? 7500 : 6000,
       ); // roughly the time it takes for the cards to be dealt to the players on client side
 
       if (firstRound && prisma) {
