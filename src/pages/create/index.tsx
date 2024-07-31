@@ -378,7 +378,7 @@ function CreateRoom() {
             className="grid grid-cols-2 grid-rows-4 items-center gap-y-4 p-1 sm:p-2"
           >
             <Label>Points to win:</Label>
-            <div className="baseFlex !justify-between gap-2 pl-4 pr-4">
+            <div className="baseFlex !justify-between gap-2 sm:px-4">
               <SecondaryButton
                 innerText={"-25"}
                 disabled={roomConfig.pointsToWin <= 25}
@@ -390,7 +390,9 @@ function CreateRoom() {
                 }
               />
 
-              <div className="text-lightGreen">{roomConfig.pointsToWin}</div>
+              <div className="w-7 text-center text-lightGreen">
+                {roomConfig.pointsToWin}
+              </div>
 
               <SecondaryButton
                 innerText={"+25"}
@@ -472,7 +474,7 @@ function CreateRoom() {
             }}
             className="baseVertFlex gap-4"
           >
-            <fieldset className="min-w-[14rem] rounded-md border-2 border-white bg-gradient-to-br from-green-800 to-green-850 p-4">
+            <fieldset className="w-[350px] rounded-md border-2 border-white bg-gradient-to-br from-green-800 to-green-850 p-4 sm:min-w-max">
               <legend className="baseFlex gap-2 pl-4 pr-4 text-left text-lg">
                 <FaUsers size={"1.25rem"} className="ml-1" />
                 Players

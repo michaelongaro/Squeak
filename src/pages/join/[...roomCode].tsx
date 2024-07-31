@@ -249,10 +249,12 @@ function JoinRoom() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.15 }}
-            className="baseVertFlex w-10/12 gap-4 rounded-md border-2 border-lightGreen bg-gradient-to-br from-green-800 to-green-850 p-4 text-lightGreen md:w-[500px]"
+            className="baseVertFlex w-11/12 gap-4 rounded-md border-2 border-lightGreen bg-gradient-to-br from-green-800 to-green-850 px-8 py-4 text-lightGreen md:w-[500px]"
           >
             <div className="baseVertFlex gap-4">
-              <p className="font-semibold">Enter a username to join the room</p>
+              <p className="text-nowrap font-semibold">
+                Enter a username to join the room
+              </p>
 
               <div className="baseFlex gap-2">
                 <Label
@@ -269,12 +271,36 @@ function JoinRoom() {
                     maxLength={16}
                     onFocus={() => setFocusedInInput(true)}
                     onBlur={() => setFocusedInInput(false)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        socket.emit(
+                          "joinRoom",
+                          {
+                            userID,
+                            code: room.code,
+                            playerMetadata: {
+                              ...playerMetadata[userID],
+                              username,
+                            },
+                          },
+                          (response?: "roomIsFull") => {
+                            if (response === "roomIsFull") {
+                              setShowRoomIsFullModal(true);
+                            } else {
+                              setShowUsernamePromptModal(false);
+                              setConnectedToRoom(true);
+                            }
+                          },
+                        );
+                      }
+                    }}
                     onChange={(e) => {
                       setUsernameIsProfane(filter.isProfane(e.target.value));
 
                       setUsername(e.target.value);
                     }}
                     value={username}
+                    className="w-48"
                   />
                   <div
                     style={{
@@ -288,16 +314,12 @@ function JoinRoom() {
                   <AnimatePresence>
                     {usernameIsProfane && (
                       <motion.div
-                        key={"createRoomProfanityWarning"}
+                        key={"joinRoomProfanityWarning"}
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.15 }}
-                        style={{
-                          right: "-255px",
-                          color: "hsl(120deg 100% 86%)",
-                        }}
-                        className="baseVertFlex absolute top-0 gap-2 rounded-md border-2 border-red-700 bg-green-700 pb-2 pl-1 pr-1 pt-2 shadow-md"
+                        className="baseVertFlex absolute -right-2 top-11 z-[200] whitespace-nowrap rounded-md border-2 border-red-700 bg-green-700 px-4 py-2 text-sm text-lightGreen shadow-md tablet:right-[-235px] tablet:top-0"
                       >
                         <div>Username not allowed,</div>
                         <div className="text-center">
@@ -316,7 +338,7 @@ function JoinRoom() {
               isDisabled={usernameIsProfane || username.length === 0}
               innerText={"Join room"}
               iconOnLeft
-              className="gap-2"
+              className="my-2 gap-2"
               onClickFunction={() =>
                 socket.emit(
                   "joinRoom",
