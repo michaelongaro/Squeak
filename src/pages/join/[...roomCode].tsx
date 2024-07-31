@@ -30,6 +30,8 @@ import { type IRoomConfig } from "../create";
 import { Label } from "~/components/ui/label";
 import { Input } from "~/components/ui/input";
 import Head from "next/head";
+import UnableToJoinRoom from "~/components/Play/UnableToJoinRoom";
+
 const filter = new Filter();
 
 function JoinRoom() {
@@ -216,16 +218,24 @@ function JoinRoom() {
     connectedToRoom,
   ]);
 
-  if (showRoomNotFoundModal) {
-    return <RoomNotFound />;
-  }
+  if (
+    showRoomNotFoundModal ||
+    showRoomIsFullModal ||
+    showGameAlreadyStartedModal
+  ) {
+    const headerText = showRoomNotFoundModal
+      ? "Room not found"
+      : showRoomIsFullModal
+        ? "Room is full"
+        : "Game in progress";
 
-  if (showRoomIsFullModal) {
-    return <RoomIsFull />;
-  }
+    const bodyText = showRoomNotFoundModal
+      ? "The room you are looking for does not exist."
+      : showRoomIsFullModal
+        ? "The room you are trying to join is full."
+        : "The room you are trying to join is has already started its game.";
 
-  if (showGameAlreadyStartedModal) {
-    return <GameAlreadyStarted />;
+    return <UnableToJoinRoom header={headerText} body={bodyText} />;
   }
 
   return (
@@ -562,83 +572,3 @@ function JoinRoom() {
 }
 
 export default JoinRoom;
-
-function RoomNotFound() {
-  const router = useRouter();
-
-  return (
-    <div className="baseVertFlex min-h-[100dvh] py-16">
-      <div className="baseVertFlex w-10/12 gap-4 rounded-md border-2 border-lightGreen bg-gradient-to-br from-green-800 to-green-850 p-4 text-lightGreen md:w-[500px] md:p-8">
-        <div className="baseFlex gap-2">
-          <IoWarningOutline className="h-7 w-7" />
-          <h1 className="text-2xl font-semibold">Room not found</h1>
-        </div>
-        <p className="text-center text-lg">
-          The room you are looking for does not exist.
-        </p>
-
-        <Button
-          icon={<IoHome size={"1.25rem"} />}
-          innerText={"Return home"}
-          iconOnLeft
-          onClickFunction={() => router.push("/")}
-          className="mt-4 gap-3"
-        />
-      </div>
-    </div>
-  );
-}
-
-// TODO: consolidate these into one modular component
-
-function RoomIsFull() {
-  const router = useRouter();
-
-  return (
-    <div className="baseVertFlex min-h-[100dvh] py-16">
-      <div className="baseVertFlex w-10/12 gap-4 rounded-md border-2 border-lightGreen bg-gradient-to-br from-green-800 to-green-850 p-4 text-lightGreen md:w-[500px] md:p-8">
-        <div className="baseFlex gap-2">
-          <IoWarningOutline className="h-8 w-8" />
-          <h1 className="text-2xl font-semibold">Room is full</h1>
-        </div>
-        <p className="text-center text-lg">
-          The room you are trying to join is full.
-        </p>
-
-        <Button
-          icon={<IoHome size={"1.25rem"} />}
-          innerText={"Return home"}
-          iconOnLeft
-          onClickFunction={() => router.push("/")}
-          className="mt-4 gap-3"
-        />
-      </div>
-    </div>
-  );
-}
-
-function GameAlreadyStarted() {
-  const router = useRouter();
-
-  return (
-    <div className="baseVertFlex min-h-[100dvh] py-16">
-      <div className="baseVertFlex w-10/12 gap-4 rounded-md border-2 border-lightGreen bg-gradient-to-br from-green-800 to-green-850 p-4 text-lightGreen md:w-[500px] md:p-8">
-        <div className="baseFlex gap-2">
-          <IoWarningOutline className="h-8 w-8" />
-          <h1 className="text-2xl font-semibold">Game in progress</h1>
-        </div>
-        <p className="text-center text-lg">
-          The room you are trying to join is has already started its game.
-        </p>
-
-        <Button
-          icon={<IoHome size={"1.25rem"} />}
-          innerText={"Return home"}
-          iconOnLeft
-          onClickFunction={() => router.push("/")}
-          className="mt-4 gap-3"
-        />
-      </div>
-    </div>
-  );
-}

@@ -22,6 +22,7 @@ import { useRouter } from "next/router";
 import { IoHome, IoWarningOutline } from "react-icons/io5";
 import { useAuth } from "@clerk/nextjs";
 import { api } from "~/utils/api";
+import UnableToJoinRoom from "~/components/Play/UnableToJoinRoom";
 
 function Play() {
   const { isLoaded } = useAuth();
@@ -166,16 +167,24 @@ function Play() {
     playerMetadata,
   ]);
 
-  if (showRoomNotFoundModal) {
-    return <RoomNotFound />;
-  }
+  if (
+    showRoomNotFoundModal ||
+    showRoomIsFullModal ||
+    showGameAlreadyStartedModal
+  ) {
+    const headerText = showRoomNotFoundModal
+      ? "Room not found"
+      : showRoomIsFullModal
+        ? "Room is full"
+        : "Game in progress";
 
-  if (showRoomIsFullModal) {
-    return <RoomIsFull />;
-  }
+    const bodyText = showRoomNotFoundModal
+      ? "The room you are looking for does not exist."
+      : showRoomIsFullModal
+        ? "The room you are trying to join is full."
+        : "The room you are trying to join is has already started its game.";
 
-  if (showGameAlreadyStartedModal) {
-    return <GameAlreadyStarted />;
+    return <UnableToJoinRoom header={headerText} body={bodyText} />;
   }
 
   if (Object.keys(gameData).length === 0) return null;
@@ -243,81 +252,3 @@ function Play() {
 }
 
 export default Play;
-
-function RoomNotFound() {
-  const router = useRouter();
-
-  return (
-    <div className="baseVertFlex min-h-[100dvh] py-16">
-      <div className="baseVertFlex w-10/12 gap-4 rounded-md border-2 border-lightGreen bg-gradient-to-br from-green-800 to-green-850 p-4 text-lightGreen md:w-[500px] md:p-8">
-        <div className="baseFlex gap-2">
-          <IoWarningOutline className="h-8 w-8" />
-          <h1 className="text-2xl font-semibold">Room not found</h1>
-        </div>
-        <p className="text-center text-lg">
-          The room you are looking for does not exist.
-        </p>
-
-        <Button
-          icon={<IoHome size={"1.25rem"} />}
-          innerText={"Return home"}
-          iconOnLeft
-          onClickFunction={() => router.push("/")}
-          className="mt-4 gap-3"
-        />
-      </div>
-    </div>
-  );
-}
-
-function RoomIsFull() {
-  const router = useRouter();
-
-  return (
-    <div className="baseVertFlex min-h-[100dvh] py-16">
-      <div className="baseVertFlex w-10/12 gap-4 rounded-md border-2 border-lightGreen bg-gradient-to-br from-green-800 to-green-850 p-4 text-lightGreen md:w-[500px] md:p-8">
-        <div className="baseFlex gap-2">
-          <IoWarningOutline className="h-8 w-8" />
-          <h1 className="text-2xl font-semibold">Room is full</h1>
-        </div>
-        <p className="text-center text-lg">
-          The room you are trying to join is full.
-        </p>
-
-        <Button
-          icon={<IoHome size={"1.25rem"} />}
-          innerText={"Return home"}
-          iconOnLeft
-          onClickFunction={() => router.push("/")}
-          className="mt-4 gap-3"
-        />
-      </div>
-    </div>
-  );
-}
-
-function GameAlreadyStarted() {
-  const router = useRouter();
-
-  return (
-    <div className="baseVertFlex min-h-[100dvh] py-16">
-      <div className="baseVertFlex w-10/12 gap-4 rounded-md border-2 border-lightGreen bg-gradient-to-br from-green-800 to-green-850 p-4 text-lightGreen md:w-[500px] md:p-8">
-        <div className="baseFlex gap-2">
-          <IoWarningOutline className="h-8 w-8" />
-          <h1 className="text-2xl font-semibold">Game in progress</h1>
-        </div>
-        <p className="text-center text-lg">
-          The room you are trying to join is has already started its game.
-        </p>
-
-        <Button
-          icon={<IoHome size={"1.25rem"} />}
-          innerText={"Return home"}
-          iconOnLeft
-          onClickFunction={() => router.push("/")}
-          className="mt-4 gap-3"
-        />
-      </div>
-    </div>
-  );
-}
