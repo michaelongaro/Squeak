@@ -28,7 +28,6 @@ import {
 import { type IRoomConfig } from "../create";
 import { Label } from "~/components/ui/label";
 import { Input } from "~/components/ui/input";
-import Head from "next/head";
 import UnableToJoinRoom from "~/components/Play/UnableToJoinRoom";
 
 const filter = new Filter();
@@ -245,10 +244,6 @@ function JoinRoom() {
       transition={{ duration: 0.15 }}
       className="baseVertFlex relative min-h-[100dvh] pb-16 tablet:pt-16"
     >
-      <Head>
-        <title>Join | Squeak</title>
-      </Head>
-
       <AnimatePresence mode={"wait"}>
         {showUsernamePromptModal && room && (
           <motion.div

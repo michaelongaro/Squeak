@@ -29,7 +29,6 @@ import PlayerCustomizationPreview from "~/components/playerIcons/PlayerCustomiza
 import PlayerCustomizationDrawer from "~/components/drawers/PlayerCustomizationDrawer";
 import { Label } from "~/components/ui/label";
 import { Button } from "~/components/ui/button";
-import Head from "next/head";
 import { useRouter } from "next/router";
 
 const filter = new Filter();
@@ -213,10 +212,6 @@ function CreateRoom() {
       transition={{ duration: 0.15 }}
       className="baseVertFlex relative min-h-[100dvh] pb-16 tablet:pt-16"
     >
-      <Head>
-        <title>Create | Squeak</title>
-      </Head>
-
       <div className="baseVertFlex relative gap-4">
         <div className="baseFlex sticky left-0 top-0 z-[105] w-screen !justify-start gap-4 border-b-2 border-white bg-gradient-to-br from-green-800 to-green-850 p-2 shadow-lg tablet:relative tablet:w-full tablet:bg-none tablet:shadow-none">
           <Button

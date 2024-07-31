@@ -21,6 +21,20 @@ function isIOS() {
   return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 }
 
+function getTitleMetadata(path: string) {
+  if (path === "/") {
+    return "Squeak";
+  } else if (path === "/create") {
+    return "Create | Squeak";
+  } else if (path.includes("/join")) {
+    return "Join | Squeak";
+  } else if (path.includes("/game")) {
+    return "Play | Squeak";
+  }
+
+  return "Squeak";
+}
+
 interface GeneralLayout {
   children: ReactNode;
 }
@@ -60,7 +74,7 @@ function GeneralLayout({ children }: GeneralLayout) {
       className={`${montserrat.className} baseVertFlex relative min-h-[100dvh] !justify-between`}
     >
       <Head>
-        <title>Squeak</title>
+        <title>{getTitleMetadata(asPath)}</title>
         <meta
           name="description"
           content="Welcome to Squeak! A fun, fast-paced multiplayer rendition of solitaire.

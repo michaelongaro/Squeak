@@ -1,9 +1,7 @@
 import { useAuth } from "@clerk/nextjs";
-import { type Room } from "@prisma/client";
 import Filter from "bad-words";
 import { AnimatePresence, motion } from "framer-motion";
 import { useCallback, useEffect, useState } from "react";
-import { BiArrowBack } from "react-icons/bi";
 import { IoHome } from "react-icons/io5";
 import PrimaryButton from "~/components/Buttons/PrimaryButton";
 import PublicRooms from "~/components/JoinRoom/PublicRooms";
@@ -23,7 +21,6 @@ import {
 } from "../../pages/api/socket";
 import { useRouter } from "next/router";
 import { type IRoomConfig } from "~/pages/create";
-import Head from "next/head";
 
 const filter = new Filter();
 
@@ -173,10 +170,6 @@ function JoinRoom() {
       transition={{ duration: 0.15 }}
       className="baseVertFlex relative min-h-[100dvh] pb-16 tablet:pt-16"
     >
-      <Head>
-        <title>Join | Squeak</title>
-      </Head>
-
       <div className="baseVertFlex relative gap-4">
         <div className="baseFlex sticky left-0 top-0 z-[105] w-screen !justify-start gap-4 border-b-2 border-white bg-gradient-to-br from-green-800 to-green-850 p-2 shadow-lg tablet:relative tablet:w-full tablet:bg-none tablet:shadow-none">
           <Button
