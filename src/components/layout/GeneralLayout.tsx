@@ -10,6 +10,7 @@ import useAttachUnloadEventListener from "~/hooks/useAttachUnloadEventListener";
 import useRejoinRoom from "~/hooks/useRejoinRoom";
 import Head from "next/head";
 import { useRouter } from "next/router";
+import useResetPlayerStateUponPageLoad from "~/hooks/useResetPlayerStateUponPageLoad";
 
 const montserrat = Montserrat({
   weight: "variable",
@@ -67,6 +68,7 @@ function GeneralLayout({ children }: GeneralLayout) {
   useInitializeLocalStorageValues();
   usePlayerLeftRoom();
   useRejoinRoom();
+  useResetPlayerStateUponPageLoad();
   // useAttachUnloadEventListener(); maybe reenable this later on if you can work around bugginess
 
   return (

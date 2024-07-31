@@ -64,6 +64,11 @@ interface IRoomContext {
   gameData: IGameMetadata;
   setGameData: React.Dispatch<React.SetStateAction<IGameMetadata>>;
 
+  resetPlayerStateUponPageLoad: boolean;
+  setResetPlayerStateUponPageLoad: React.Dispatch<
+    React.SetStateAction<boolean>
+  >;
+
   friendData: IFriendsMetadata | undefined;
   setFriendData: React.Dispatch<
     React.SetStateAction<IFriendsMetadata | undefined>
@@ -227,6 +232,9 @@ export function RoomProvider(props: { children: React.ReactNode }) {
 
   // safe, because we are only ever accessing/mutating gameData when it is defined
   const [gameData, setGameData] = useState<IGameMetadata>({} as IGameMetadata);
+
+  const [resetPlayerStateUponPageLoad, setResetPlayerStateUponPageLoad] =
+    useState<boolean>(false);
 
   const [friendData, setFriendData] = useState<IFriendsMetadata | undefined>();
 
@@ -442,6 +450,8 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     setPlayerMetadata,
     gameData,
     setGameData,
+    resetPlayerStateUponPageLoad,
+    setResetPlayerStateUponPageLoad,
     friendData,
     setFriendData,
     hoveredCell,
