@@ -7,6 +7,7 @@ import SecondaryButton from "../Buttons/SecondaryButton";
 import DangerButton from "../Buttons/DangerButton";
 import { type IRoomPlayer } from "../../pages/api/socket";
 import { AiOutlinePlus, AiOutlineClose } from "react-icons/ai";
+import { FaCrown } from "react-icons/fa6";
 import { FiCheck } from "react-icons/fi";
 import { Button } from "~/components/ui/button";
 import {
@@ -34,6 +35,7 @@ interface IPlayerIcon {
   onlineStatus?: boolean;
   playerMetadata?: IRoomPlayer;
   roomHostIsRendering?: boolean;
+  playerIsHost?: boolean;
   style?: CSSProperties;
   transparentBackground?: boolean;
 }
@@ -49,6 +51,7 @@ function PlayerIcon({
   onlineStatus,
   playerMetadata,
   roomHostIsRendering,
+  playerIsHost,
   style,
   transparentBackground,
 }: IPlayerIcon) {
@@ -186,7 +189,7 @@ function PlayerIcon({
                         </TooltipTrigger>
                         <TooltipContent
                           side={"bottom"}
-                          className="to-green-850 border-2 border-lightGreen bg-gradient-to-br from-green-800 text-lightGreen"
+                          className="border-2 border-lightGreen bg-gradient-to-br from-green-800 to-green-850 text-lightGreen"
                         >
                           <p>Send friend invite</p>
                         </TooltipContent>
@@ -317,7 +320,11 @@ function PlayerIcon({
               ></div>
             )}
           </div>
-          {username ? username : null}
+
+          <div className="baseFlex gap-2">
+            {playerIsHost && <FaCrown size={"0.9rem"} />}
+            {username ? username : null}
+          </div>
 
           {/* difficulty toggle button that rotates through easy, medium, and hard */}
           {playerMetadata?.botDifficulty && (

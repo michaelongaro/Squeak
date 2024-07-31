@@ -500,6 +500,7 @@ function CreateRoom() {
                       username={playerMetadata[playerID]?.username}
                       playerID={playerID}
                       size={"3rem"}
+                      playerIsHost={playerID === roomConfig.hostUserID}
                       showAddFriendButton={
                         userID !== playerID &&
                         friendData?.friendIDs?.indexOf(playerID) === -1 &&

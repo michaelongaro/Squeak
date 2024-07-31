@@ -477,6 +477,7 @@ function JoinRoom() {
                             "hsl(352deg, 69%, 61%)"
                           }
                           playerID={playerID}
+                          playerIsHost={playerID === roomConfig.hostUserID}
                           showAddFriendButton={
                             userID !== playerID &&
                             friendData?.friendIDs?.indexOf(playerID) === -1 &&
