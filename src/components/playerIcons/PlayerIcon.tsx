@@ -298,7 +298,7 @@ function PlayerIcon({
                                   roomCode: roomConfig.code,
                                   playerWasKicked: true,
                                 });
-                              }, 350);
+                              }, 175);
                             }}
                           />
                         </div>
