@@ -167,7 +167,7 @@ function JoinRoom() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.15 }}
+      transition={{ duration: 0.5 }}
       className="baseVertFlex relative min-h-[100dvh] pb-16 tablet:pt-16"
     >
       <div className="baseVertFlex relative gap-4">

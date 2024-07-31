@@ -45,11 +45,11 @@ function MainOptions() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.15 }}
+      transition={{ duration: 0.5 }}
       className="baseFlex relative min-h-[100dvh] py-4"
     >
       {isSignedIn !== undefined && (
-        <div className="baseVertFlex to-green-850 w-[17.5rem] rounded-md border-2 border-white bg-gradient-to-br from-green-800 py-4 shadow-lg lg:w-[22.25rem] mobileLarge:p-4 desktop:p-8">
+        <div className="baseVertFlex w-[17.5rem] rounded-md border-2 border-white bg-gradient-to-br from-green-800 to-green-850 py-4 shadow-lg lg:w-[22.25rem] mobileLarge:p-4 desktop:p-8">
           <Image
             src={logo}
             alt="Squeak logo"

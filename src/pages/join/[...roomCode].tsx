@@ -241,7 +241,7 @@ function JoinRoom() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.15 }}
+      transition={{ duration: 0.5 }}
       className="baseVertFlex relative min-h-[100dvh] pb-16 tablet:pt-16"
     >
       <AnimatePresence mode={"wait"}>
@@ -251,7 +251,7 @@ function JoinRoom() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.15 }}
+            transition={{ duration: 0.5 }}
             className="baseVertFlex w-11/12 gap-4 rounded-md border-2 border-lightGreen bg-gradient-to-br from-green-800 to-green-850 px-8 py-4 text-lightGreen md:w-[500px]"
           >
             <div className="baseVertFlex gap-4">
@@ -375,7 +375,7 @@ function JoinRoom() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.15 }}
+              transition={{ duration: 0.5 }}
               className="baseVertFlex relative gap-4"
             >
               <div className="baseFlex sticky left-0 top-0 z-[105] w-screen !justify-start gap-4 border-b-2 border-white bg-gradient-to-br from-green-800 to-green-850 p-2 shadow-lg tablet:relative tablet:w-full tablet:bg-none tablet:shadow-none">
