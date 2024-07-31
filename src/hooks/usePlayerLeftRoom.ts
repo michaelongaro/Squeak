@@ -45,7 +45,7 @@ function usePlayerLeftRoom() {
 
       // gets called if current user was kicked from room by host
       if (playerWhoLeftID === userID && playerWasKicked) {
-        leaveRoom();
+        leaveRoom(true);
 
         socket.emit("directlyLeaveRoom", roomConfig.code);
         return;

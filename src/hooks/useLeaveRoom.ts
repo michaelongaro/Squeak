@@ -30,7 +30,7 @@ function useLeaveRoom({ routeToNavigateTo }: IUseLeaveRoom) {
     setConnectedToRoom,
   } = useRoomContext();
 
-  function leaveRoom() {
+  function leaveRoom(playerWasKicked = false) {
     push(routeToNavigateTo);
 
     setTimeout(() => {
@@ -70,11 +70,16 @@ function useLeaveRoom({ routeToNavigateTo }: IUseLeaveRoom) {
       // delay as a hack since the dynamicInitializationFlow effect was running in /join/[code]
       // when leaving a room..
 
-      socket.emit("leaveRoom", {
-        playerID: userID,
-        roomCode: roomConfig.code,
-        playerWasKicked: false,
-      });
+      // Emit "leaveRoom" event only if the player is leaving voluntarily.
+      // If the player was kicked, the server will automatically emit
+      // a "playerHasLeftRoom" event.
+      if (!playerWasKicked) {
+        socket.emit("leaveRoom", {
+          playerID: userID,
+          roomCode: roomConfig.code,
+          playerWasKicked: false,
+        });
+      }
 
       if (isSignedIn) {
         socket.emit("modifyFriendData", {
