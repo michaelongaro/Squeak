@@ -16,7 +16,7 @@ import { startGameHandler } from "./handlers/startGameHandler";
 import { createRoomHandler } from "./handlers/createRoomHandler";
 import { joinRoomHandler } from "./handlers/joinRoomHandler";
 import { updatePlayerMetadataHandler } from "./handlers/updatePlayerMetadataHandler";
-import { voteReceivedHandler } from "./handlers/voteReceivedHandler";
+import { castVoteHandler } from "./handlers/castVoteHandler";
 import { rejoinRoomHandler } from "./handlers/rejoinRoomHandler";
 import { oldRoomCleanupCron } from "~/pages/api/handlers/oldRoomCleanupCron";
 
@@ -236,7 +236,7 @@ export default function SocketHandler(req, res) {
 
     leaveRoomHandler(io, socket, gameData, roomData, miscRoomData);
 
-    voteReceivedHandler(io, socket, gameData, miscRoomData, roomData);
+    castVoteHandler(io, socket, gameData, miscRoomData, roomData);
 
     rejoinRoomHandler(io, socket, gameData, roomData);
 

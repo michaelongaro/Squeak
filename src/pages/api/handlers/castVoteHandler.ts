@@ -3,9 +3,8 @@ import { type IRoomData, type IMiscRoomData, type IGameData } from "../socket";
 import { generateAndEmitScoreboard } from "./roundOverHandler";
 import { type ICard } from "~/utils/generateDeckAndSqueakCards";
 
-interface IDrawFromDeckBackendVersion {
+interface IVoteReceived {
   io: Server;
-  socket: Socket;
   roomCode: string;
   gameData: IGameData;
   miscRoomData: IMiscRoomData;
@@ -14,16 +13,15 @@ interface IDrawFromDeckBackendVersion {
   voteDirection: "for" | "against";
 }
 
-export function voteReceivedHandler(
+export function castVoteHandler(
   io: Server,
   socket: Socket,
   gameData: IGameData,
   miscRoomData: IMiscRoomData,
   roomData: IRoomData,
 ) {
-  // should probably change emit name to "castVote" since it is done by the client
   socket.on(
-    "voteReceived",
+    "castVote",
     ({
       roomCode,
       voteType,
@@ -35,7 +33,6 @@ export function voteReceivedHandler(
     }) =>
       voteReceived({
         io,
-        socket,
         roomCode,
         gameData,
         miscRoomData,
@@ -46,16 +43,15 @@ export function voteReceivedHandler(
   );
 }
 
-export function voteReceived({
+function voteReceived({
   io,
-  socket,
   roomCode,
   gameData,
   miscRoomData,
   roomData,
   voteType,
   voteDirection,
-}: IDrawFromDeckBackendVersion) {
+}: IVoteReceived) {
   const players = roomData[roomCode]?.players;
   const miscRoomDataObj = miscRoomData[roomCode];
 
@@ -84,7 +80,7 @@ export function voteReceived({
 
     // start countdown to reset voting metadata if timer runs out
     setTimeout(() => {
-      // technically players could have left room and room would be destroyed in objects,
+      // technically all the players could have left, and room's objects would be deleted,
       // so trying to set undefined fields would result in a runtime error.
       if (miscRoomDataObj === undefined) return;
 
@@ -93,7 +89,7 @@ export function voteReceived({
     }, 30000);
   }
 
-  // if not the first, then this is either the 2nd/3rd/4th vote
+  // if not the first vote, then this is a subsequent vote from a player
   else {
     if (voteDirection === "for") {
       miscRoomDataObj.currentVotes.push("agree");
@@ -109,10 +105,9 @@ export function voteReceived({
     ).length;
 
     // if the vote passed (100% of players voted yes)
-    // tidbit: technically could do majority wins, but that isn't how I
+    // fyi: technically could do majority wins, but that isn't how I
     // grew up playing the game.
     if (agreeVotes === Object.keys(players).length) {
-      // if the vote was to rotate decks
       if (miscRoomDataObj.voteType === "rotateDecks") {
         const players = gameData[roomCode]?.players;
 

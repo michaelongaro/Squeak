@@ -8,7 +8,7 @@ interface IVoteHasBeenCast {
   voteIsFinished: boolean;
 }
 
-function useVoteReceived() {
+function useVoteHasBeenCast() {
   const {
     currentVotes,
     setCurrentVotes,
@@ -53,7 +53,7 @@ function useVoteReceived() {
             setTimeout(() => {
               setVotingIsLockedOut(false);
             }, 30000);
-          }, 30000)
+          }, 30000),
         );
       }
 
@@ -75,7 +75,7 @@ function useVoteReceived() {
           setTimeout(() => {
             setVotingIsLockedOut(false);
           }, 30000);
-        }, 1500); // allowing leeway for vote verdict to be viewed
+        }, 2000); // allowing leeway for vote verdict to be viewed
       }
     }
   }, [
@@ -90,4 +90,4 @@ function useVoteReceived() {
   ]);
 }
 
-export default useVoteReceived;
+export default useVoteHasBeenCast;

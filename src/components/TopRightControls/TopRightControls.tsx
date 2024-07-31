@@ -37,7 +37,7 @@ import { MdSkipNext } from "react-icons/md";
 import { FaArrowsRotate } from "react-icons/fa6";
 import { IoIosCheckmark } from "react-icons/io";
 import { IoClose, IoSave } from "react-icons/io5";
-import useVoteReceived from "~/hooks/useVoteReceived";
+import useVoteHasBeenCast from "~/hooks/useVoteHasBeenCast";
 import toast from "react-hot-toast";
 import { HiExternalLink } from "react-icons/hi";
 import { HiEllipsisHorizontal } from "react-icons/hi2";
@@ -97,24 +97,13 @@ function TopRightControls() {
   const leaveRoom = useLeaveRoom({
     routeToNavigateTo: "/",
   });
-  useVoteReceived();
+  useVoteHasBeenCast();
 
   const [showFriendsList, setShowFriendsList] = useState<boolean>(false);
 
   const [voteWasStarted, setVoteWasStarted] = useState(false);
 
   const [showDrawer, setShowDrawer] = useState(false);
-
-  useEffect(() => {
-    if (voteWasStarted && !showVotingOptionButtons && voteType === null) {
-      setShowVotingOptionButtons(true);
-    }
-  }, [
-    voteWasStarted,
-    voteType,
-    showVotingOptionButtons,
-    setShowVotingOptionButtons,
-  ]);
 
   useEffect(() => {
     if (
@@ -141,8 +130,17 @@ function TopRightControls() {
     } else if (voteWasStarted && voteType === null) {
       setVoteWasStarted(false);
       setShowVotingModal(false);
+
+      setTimeout(() => {
+        setShowVotingOptionButtons(true);
+      }, 1000); // resetting this to true after the modal has finished animating out
     }
-  }, [voteWasStarted, voteType, setShowVotingModal]);
+  }, [
+    voteWasStarted,
+    voteType,
+    setShowVotingModal,
+    setShowVotingOptionButtons,
+  ]);
 
   if (viewportLabel.includes("mobile")) {
     return (
@@ -459,8 +457,7 @@ function VotingModal({
               key={"votingModalVoteCount"}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.15 }}
+              transition={{ duration: 0.3 }}
               className={`baseFlex w-full gap-4 ${
                 showVotingOptionButtons ? "px-4 pb-2 pt-4" : "p-4"
               }`}
@@ -477,7 +474,7 @@ function VotingModal({
                             : "#b91c1c"
                           : "#e2e2e2",
                     }}
-                    className={`h-4 w-full rounded-md ${
+                    className={`h-4 w-full rounded-full ${
                       currentVotes[idx] === undefined ? "animate-pulse" : ""
                     } transition-colors`}
                   ></div>
@@ -491,16 +488,34 @@ function VotingModal({
           {showVotingOptionButtons && (
             <motion.div
               key={"votingModalVoteButtons"}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{
-                opacity: { duration: 0.15 }, // TODO: fix this so that it smoothly shrinks down dimensions without jank
-                height: { duration: 0.15 }, // TODO: fix this so that it smoothly shrinks down dimensions without jank
+              initial={{
+                opacity: 1,
+                height: "auto",
+                paddingTop: "1rem",
+                paddingBottom: "1rem",
               }}
-              className="baseFlex w-full gap-4 p-4 tablet:!flex-col"
+              animate={{
+                opacity: 1,
+                height: "auto",
+                paddingTop: "1rem",
+                paddingBottom: "1rem",
+              }}
+              exit={{
+                opacity: 0,
+                height: 0,
+                paddingTop: 0,
+                paddingBottom: 0,
+              }}
+              transition={{
+                opacity: { duration: 0 },
+                height: { duration: 0.3 },
+                paddingTop: { duration: 0.3 },
+                paddingBottom: { duration: 0.3 },
+              }}
+              className="baseFlex w-full px-4"
             >
               {voteType === null ? (
-                <>
+                <div className="baseFlex w-full gap-4 tablet:!flex-col">
                   <div className="relative h-12 w-full">
                     <SecondaryButton
                       icon={<FaArrowsRotate size={"1rem"} />}
@@ -513,13 +528,15 @@ function VotingModal({
                         top: 0,
                         left: 0,
                         fontSize: "0.85rem",
+                        gap: "0.8rem",
                       }}
                       onClickFunction={() => {
                         setShowVotingOptionButtons(false);
+
                         toast.dismiss();
                         setShowDrawer?.(false);
 
-                        socket.emit("voteReceived", {
+                        socket.emit("castVote", {
                           roomCode: roomConfig.code,
                           voteType: "rotateDecks",
                           voteDirection: "for",
@@ -552,10 +569,11 @@ function VotingModal({
                       }}
                       onClickFunction={() => {
                         setShowVotingOptionButtons(false);
+
                         toast.dismiss();
                         setShowDrawer?.(false);
 
-                        socket.emit("voteReceived", {
+                        socket.emit("castVote", {
                           roomCode: roomConfig.code,
                           voteType: "finishRound",
                           voteDirection: "for",
@@ -574,7 +592,7 @@ function VotingModal({
                       ></motion.div>
                     )}
                   </div>
-                </>
+                </div>
               ) : (
                 <div className="baseFlex w-full gap-2">
                   <SecondaryButton
@@ -588,10 +606,11 @@ function VotingModal({
                     }}
                     onClickFunction={() => {
                       setShowVotingOptionButtons(false);
+
                       toast.dismiss();
                       setShowDrawer?.(false);
 
-                      socket.emit("voteReceived", {
+                      socket.emit("castVote", {
                         roomCode: roomConfig.code,
                         voteType,
                         voteDirection: "for",
@@ -607,10 +626,11 @@ function VotingModal({
                     height={"2rem"}
                     onClickFunction={() => {
                       setShowVotingOptionButtons(false);
+
                       toast.dismiss();
                       setShowDrawer?.(false);
 
-                      socket.emit("voteReceived", {
+                      socket.emit("castVote", {
                         roomCode: roomConfig.code,
                         voteType,
                         voteDirection: "against",
@@ -647,7 +667,10 @@ function VotingModalToast({
           initial={{ opacity: 0, translateY: "-100%" }}
           animate={{ opacity: 1, translateY: "0%" }}
           exit={{ opacity: 0, translateY: "-100%" }}
-          transition={{ duration: 0.15 }}
+          transition={{
+            opacity: { duration: 0.15 },
+            translateY: { duration: 0.35 },
+          }}
           className={`baseFlex pointer-events-auto h-full w-full max-w-96 rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5`}
         >
           <VotingModal

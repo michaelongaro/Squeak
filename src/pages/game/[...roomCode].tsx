@@ -229,7 +229,7 @@ function Play() {
       {!viewportLabel.includes("mobile") && <OtherPlayerIcons />}
 
       <AnimatePresence mode={"wait"}>
-        {voteType !== null && viewportLabel === "mobile" && (
+        {voteType !== null && viewportLabel.includes("mobile") && (
           <MiniMobileVotingModal />
         )}
       </AnimatePresence>
