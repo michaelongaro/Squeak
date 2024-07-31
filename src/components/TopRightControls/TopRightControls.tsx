@@ -62,6 +62,7 @@ import { useUserIDContext } from "~/context/UserIDContext";
 import Filter from "bad-words";
 import PlayerIcon from "../playerIcons/PlayerIcon";
 import { type User } from "@prisma/client";
+import Link from "next/link";
 
 const filter = new Filter();
 
@@ -763,17 +764,28 @@ function MainDrawer({ status, setShowDrawer }: IMainDrawer) {
               </div>
             )}
 
-            <div className="baseFlex gap-1.5 py-2 text-sm">
-              Made by
-              <a
-                href="https://michaelongaro.com"
-                target="_blank"
-                rel="noreferrer"
-                className="baseFlex !items-end gap-1 underline underline-offset-4"
-              >
-                Michael Ongaro
-                <HiExternalLink size={"1rem"} />
-              </a>
+            <div className="baseFlex w-full gap-4">
+              <div className="baseFlex mr-2 gap-1.5 py-2 text-sm">
+                Made by
+                <a
+                  href="https://michaelongaro.com"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="baseFlex !items-end gap-1 underline underline-offset-4"
+                >
+                  Michael Ongaro
+                  <HiExternalLink size={"1rem"} />
+                </a>
+              </div>
+              |
+              <Button variant={"link"} asChild>
+                <Link
+                  href="/privacy"
+                  className="font-normal !text-darkGreen underline"
+                >
+                  Privacy Policy
+                </Link>
+              </Button>
             </div>
           </motion.div>
         )}
