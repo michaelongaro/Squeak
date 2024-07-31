@@ -7,12 +7,10 @@ function usePostSignUpRegistration() {
   const { isSignedIn } = useAuth();
   const ctx = api.useUtils();
 
-  const { data: isUserRegistered } = api.users.isUserRegistered.useQuery(
-    user?.id ?? "",
-    {
+  const { data: isUserRegistered, isLoading: isLoadingQuery } =
+    api.users.isUserRegistered.useQuery(user?.id ?? "", {
       enabled: Boolean(user?.id && isSignedIn),
-    }
-  );
+    });
 
   const { mutate: addNewUser } = api.users.create.useMutation({
     onSuccess: () => {
@@ -21,13 +19,13 @@ function usePostSignUpRegistration() {
   });
 
   useEffect(() => {
-    if (!isSignedIn || isUserRegistered || !user) return;
+    if (isLoadingQuery || !isSignedIn || isUserRegistered || !user) return;
     addNewUser({
       userId: user.id,
       username: user.username ?? "New user",
       imageUrl: user.imageUrl,
     });
-  }, [isSignedIn, isUserRegistered, user, addNewUser]);
+  }, [isLoadingQuery, isSignedIn, isUserRegistered, user, addNewUser]);
 
   return null;
 }
