@@ -65,11 +65,11 @@ function PlayerCustomizationPicker({
     if (!userMetadata) return;
 
     const deckIndex = deckHueRotations.findIndex(
-      (hueRotation) => hueRotation === userMetadata.deckHueRotation
+      (hueRotation) => hueRotation === userMetadata.deckHueRotation,
     );
 
     const avatarIndex = avatarPaths.findIndex(
-      (avatarPath) => avatarPath === userMetadata.avatarPath
+      (avatarPath) => avatarPath === userMetadata.avatarPath,
     );
 
     setUserAvatarIndex(avatarIndex);
@@ -78,13 +78,13 @@ function PlayerCustomizationPicker({
 
   function isTooltipOptionAvailable(
     type: "avatar" | "back",
-    index: number
+    index: number,
   ): boolean {
     if (type === "avatar") {
       return (
         index !== userAvatarIndex &&
         Object.values(playerMetadata).every(
-          (metadata) => metadata.avatarPath !== avatarPaths[index]
+          (metadata) => metadata.avatarPath !== avatarPaths[index],
         )
       );
     }
@@ -92,7 +92,7 @@ function PlayerCustomizationPicker({
     return (
       index !== userDeckIndex &&
       Object.values(playerMetadata).every(
-        (metadata) => metadata.deckHueRotation !== deckHueRotations[index]
+        (metadata) => metadata.deckHueRotation !== deckHueRotations[index],
       )
     );
   }
@@ -114,7 +114,7 @@ function PlayerCustomizationPicker({
   }
 
   function calculateOutlineCardFront(
-    tooltipValue: "normal" | "simple"
+    tooltipValue: "normal" | "simple",
   ): string {
     if (
       (prefersSimpleCardAssets && tooltipValue === "simple") ||
@@ -129,13 +129,13 @@ function PlayerCustomizationPicker({
 
   function getMetadataOfPlayerByAttribute(
     attribute: string,
-    type: "avatar" | "back"
+    type: "avatar" | "back",
   ): string {
     if (type === "avatar") {
       const playersMetadata = Object.values(playerMetadata);
 
       const playerWithAttribute = playersMetadata.find(
-        (metadata) => metadata.avatarPath === attribute
+        (metadata) => metadata.avatarPath === attribute,
       );
 
       if (!playerWithAttribute) return "";
@@ -145,7 +145,7 @@ function PlayerCustomizationPicker({
       const playersMetadata = Object.values(playerMetadata);
 
       const playerWithAttribute = playersMetadata.find(
-        (metadata) => metadata.color === attribute
+        (metadata) => metadata.color === attribute,
       );
 
       if (!playerWithAttribute) return "";
@@ -177,7 +177,7 @@ function PlayerCustomizationPicker({
             ? "auto"
             : "none",
         }}
-        className="relative rounded-[50%] outline-offset-4 transition-all"
+        className="relative shrink-0 rounded-[50%] outline-offset-4 transition-all"
         onMouseEnter={() => setHoveredTooltip(["avatar", index])}
         onMouseLeave={() => setHoveredTooltip(null)}
         onClick={() => {
@@ -217,7 +217,7 @@ function PlayerCustomizationPicker({
               style={{
                 backgroundColor: getMetadataOfPlayerByAttribute(
                   avatarPath,
-                  "avatar"
+                  "avatar",
                 ),
               }}
               className="absolute bottom-[-0.75rem] right-[-0.75rem] h-4 w-4 rounded-[50%]"
@@ -238,7 +238,7 @@ function PlayerCustomizationPicker({
             ? "auto"
             : "none",
         }}
-        className="relative rounded-sm outline-offset-4 transition-all"
+        className="relative shrink-0 rounded-sm outline-offset-4 transition-all"
         onMouseEnter={() => setHoveredTooltip(["back", index])}
         onMouseLeave={() => setHoveredTooltip(null)}
         onClick={() => {
@@ -307,7 +307,7 @@ function PlayerCustomizationPicker({
           style={{
             outline: calculateOutlineCardFront("normal"),
           }}
-          className="relative rounded-sm outline-offset-4 transition-all"
+          className="relative shrink-0 rounded-sm outline-offset-4 transition-all"
           onMouseEnter={() => setHoveringOnFrontCardTooltip("normal")}
           onMouseLeave={() => setHoveringOnFrontCardTooltip(null)}
           onClick={() => {
@@ -377,16 +377,13 @@ function PlayerCustomizationPicker({
     <>
       {userID && (
         <div
-          className={`
-              ${
-                type === "avatar"
-                  ? "h-[18rem] w-[18rem] grid-cols-3 grid-rows-3 md:h-[20rem] md:w-[20rem]"
-                  : type === "back"
-                  ? "h-[22rem] w-[22rem] grid-cols-3 grid-rows-3 md:h-[18rem] md:w-[25rem] md:grid-cols-4 md:grid-rows-2"
-                  : "h-[10rem] w-[15rem] grid-cols-2 grid-rows-1"
-              }
-              ${forDrawer ? "bg-zinc-200" : "white"}
-              grid place-items-center rounded-md p-4 transition-all`}
+          className={` ${
+            type === "avatar"
+              ? "h-[18rem] w-[18rem] grid-cols-3 grid-rows-3 md:h-[20rem] md:w-[20rem]"
+              : type === "back"
+                ? "h-[22rem] w-[22rem] grid-cols-3 grid-rows-3 md:h-[18rem] md:w-[25rem] md:grid-cols-4 md:grid-rows-2"
+                : "h-[10rem] w-[15rem] grid-cols-2 grid-rows-1"
+          } ${forDrawer ? "bg-zinc-200" : "white"} grid place-items-center rounded-md p-4 transition-all`}
         >
           {renderTooltip()}
         </div>

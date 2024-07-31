@@ -76,7 +76,7 @@ function PlayerIcon({
             ...style,
             color: "hsl(120deg 100% 86%)",
           }}
-          className="baseVertFlex shrink-0 gap-2"
+          className="baseVertFlex shrink-0"
         >
           <div
             style={{
@@ -321,10 +321,12 @@ function PlayerIcon({
             )}
           </div>
 
-          <div className="baseFlex gap-2">
-            {playerIsHost && <FaCrown size={"0.9rem"} />}
-            {username ? username : null}
-          </div>
+          {username && (
+            <div className="baseFlex mt-2 gap-2">
+              {playerIsHost && <FaCrown size={"0.9rem"} />}
+              {username}
+            </div>
+          )}
 
           {/* difficulty toggle button that rotates through easy, medium, and hard */}
           {playerMetadata?.botDifficulty && (
