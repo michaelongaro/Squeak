@@ -73,7 +73,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
   function getDynamicTopValue(
     squeakStackIdx: number,
     squeakStackLength: number,
-    cardIdx: number
+    cardIdx: number,
   ) {
     const draggedData = squeakStackDragAlterations[userID];
 
@@ -175,7 +175,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
   return (
     <div
       id={"playerContainer"}
-      className={`${cardContainerClass}`}
+      className={`${cardContainerClass} bg-gradient-to-br from-green-800 to-green-850`}
       onPointerMove={(e) => pointerMoveHandler(e)}
     >
       {userID && (
@@ -228,7 +228,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                         top: getDynamicTopValue(
                           squeakStackIdx,
                           cards.length,
-                          cardIdx
+                          cardIdx,
                         ),
                         transition: "top 0.25s ease-in-out",
                       }}
@@ -264,7 +264,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                   ))}
                 </div>
               </div>
-            )
+            ),
           )}
 
           <div
@@ -361,7 +361,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                         rotation={0}
                       />
                     </div>
-                  )
+                  ),
               )}
             </>
           </div>

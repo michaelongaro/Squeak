@@ -15,7 +15,7 @@
 }
 
 /* you very well might have to programatically set the percentage back to 0% when
-    vote completes/timer runs out (inside of useVoteReceived hook) */
+    vote completes/timer runs out (inside of useVoteHasBeenCast hook) */
 @property --cooldown-percent {
   initial-value: 0%;
   inherits: false;

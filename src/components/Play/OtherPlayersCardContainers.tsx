@@ -125,7 +125,7 @@ function OtherPlayersCardContainers({
         {otherPlayerIDs.map((playerID, idx) => (
           <div
             key={playerID}
-            className={`${orderedClassNames[idx]} select-none`}
+            className={`${orderedClassNames[idx]} select-none bg-gradient-to-br from-green-800 to-green-850`}
           >
             <div
               id={`${playerID}container`}
@@ -134,7 +134,7 @@ function OtherPlayersCardContainers({
                   ? 0.25
                   : 1,
               }}
-              className={`${internalOrderedGridClassNames[idx]} relative block select-none`}
+              className={`${internalOrderedGridClassNames[idx]} relative block select-none bg-gradient-to-br from-green-800 to-green-850`}
             >
               <div
                 style={{
@@ -364,7 +364,10 @@ function OtherPlayersCardContainers({
   return (
     <>
       {otherPlayerIDs.map((playerID, idx) => (
-        <div key={playerID} className={`${orderedClassNames[idx]} select-none`}>
+        <div
+          key={playerID}
+          className={`${orderedClassNames[idx]} select-none bg-gradient-to-br from-green-800 to-green-850`}
+        >
           <div
             id={`${playerID}container`}
             style={{
