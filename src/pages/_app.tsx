@@ -28,14 +28,14 @@ function App({ Component, pageProps }: ComponentWithPageLayout) {
       appearance={{
         variables: {
           colorPrimary: "rgb(0, 92, 0)",
-          colorInputBackground: "rgb(255, 255, 255)",
+          colorInputBackground: "#f5f5f4",
           colorTextSecondary: "rgb(0, 41, 0)",
           fontFamily: "'Montserrat', sans-serif",
           borderRadius: "0.375rem",
           colorDanger: "rgb(220, 38, 38)",
-          colorSuccess: "rgb(184, 255, 184)",
+          colorSuccess: "rgb(0, 92, 0)",
           colorInputText: "rgb(0, 71, 0)",
-          colorBackground: "rgb(255, 255, 255)",
+          colorBackground: "#f5f5f4",
           colorText: "rgb(0, 71, 0)",
         },
       }}
