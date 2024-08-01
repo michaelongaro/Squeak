@@ -133,7 +133,7 @@ function Buzzer({ playerID, roomCode, interactive }: IBuzzer) {
       </div>
 
       {/* actual button container */}
-      <div className="absolute left-[6px] top-[-3px] z-[140] h-[28px] w-[40px] tablet:left-[9px] tablet:top-[-3px] tablet:h-[30px] tablet:w-[40px] desktop:left-[7px] desktop:top-[-5px] desktop:h-[35px] desktop:w-[50px]">
+      <div className="absolute left-[6px] top-[-3px] z-[140] h-[28px] w-[40px] tablet:left-[9px] tablet:top-[-3px] tablet:h-[30px] tablet:w-[40px] desktop:left-[7.5px] desktop:top-[-5px] desktop:h-[35px] desktop:w-[50px]">
         <img
           style={{
             // fyi: I think this is just to hide other player's buzzers from spilling over onto edge of viewport on mobile
@@ -143,6 +143,7 @@ function Buzzer({ playerID, roomCode, interactive }: IBuzzer) {
                 : "1",
             top: pointerDownOnButton ? "6px" : "0px",
             transform: pointerDownOnButton ? "rotateX(50deg)" : "rotateX(0deg)",
+            transitionTimingFunction: "ease-in-out",
           }}
           draggable={false}
           src={squeakBuzzer.src}
