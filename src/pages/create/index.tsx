@@ -213,7 +213,7 @@ function CreateRoom() {
       className="baseVertFlex relative min-h-[100dvh] pb-16 tablet:pt-16"
     >
       <div className="baseVertFlex relative gap-4">
-        <div className="baseFlex sticky left-0 top-0 z-[105] w-screen !justify-start gap-4 border-b-2 border-white bg-gradient-to-br from-green-800 to-green-850 bg-fixed p-2 shadow-lg tablet:relative tablet:w-full tablet:bg-none tablet:shadow-none">
+        <div className="baseFlex sticky left-0 top-0 z-[105] w-screen !justify-start gap-4 border-b-2 border-white bg-gradient-to-br from-green-800 to-green-850 p-2 shadow-lg tablet:relative tablet:w-full tablet:bg-none tablet:shadow-none">
           <Button
             variant={"secondary"}
             icon={
@@ -245,7 +245,7 @@ function CreateRoom() {
         </div>
 
         {!connectedToRoom && (
-          <div className="baseVertFlex mt-4 gap-4 rounded-md border-2 border-white bg-gradient-to-br from-green-800 to-green-850 bg-fixed p-4">
+          <div className="baseVertFlex mt-4 gap-4 rounded-md border-2 border-white bg-gradient-to-br from-green-800 to-green-850 p-4">
             <div className="baseFlex gap-2">
               <Label
                 style={{
@@ -355,7 +355,7 @@ function CreateRoom() {
           </div>
         )}
 
-        <fieldset className="mt-4 w-[350px] rounded-md border-2 border-white bg-gradient-to-br from-green-800 to-green-850 bg-fixed p-2 sm:min-w-[450px] sm:p-4">
+        <fieldset className="mt-4 w-[350px] rounded-md border-2 border-white p-2 sm:min-w-[450px] sm:p-4">
           <legend
             style={{
               color: "hsl(120deg 100% 86%)",
@@ -469,7 +469,7 @@ function CreateRoom() {
             }}
             className="baseVertFlex gap-4"
           >
-            <fieldset className="w-[350px] rounded-md border-2 border-white bg-gradient-to-br from-green-800 to-green-850 bg-fixed p-4 sm:min-w-max">
+            <fieldset className="w-[350px] rounded-md border-2 border-white p-4 sm:min-w-max">
               <legend className="baseFlex gap-2 pl-4 pr-4 text-left text-lg">
                 <FaUsers size={"1.25rem"} className="ml-1" />
                 Players

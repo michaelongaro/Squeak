@@ -49,9 +49,9 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
         animate={{ scale: 1 }}
         exit={{ scale: 0.95 }}
         transition={{ duration: 0.15 }}
-        className="baseVertFlex relative h-[95%] w-[95%] !justify-start gap-8 overflow-y-scroll rounded-md rounded-t-md border-2 border-white bg-gradient-to-br from-green-800 to-green-850 bg-fixed shadow-lg tablet:max-h-[90dvh] tablet:max-w-4xl"
+        className="baseVertFlex relative h-[95%] w-[95%] !justify-start gap-8 overflow-y-scroll rounded-md rounded-t-md border-2 border-white bg-gradient-to-br from-green-800 to-green-850 shadow-lg tablet:max-h-[90dvh] tablet:max-w-4xl"
       >
-        <div className="baseFlex sticky left-0 top-0 z-10 w-full border-b border-white bg-gradient-to-br from-green-800 to-green-850 bg-fixed py-3 shadow-lg sm:py-4 tablet:max-w-4xl">
+        <div className="baseFlex sticky left-0 top-0 z-10 w-full border-b border-white bg-gradient-to-br from-green-800 to-green-850 py-3 shadow-lg sm:py-4 tablet:max-w-4xl">
           <div
             style={{
               color: "hsl(120deg 100% 86%)",

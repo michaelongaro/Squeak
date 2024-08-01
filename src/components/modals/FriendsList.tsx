@@ -86,7 +86,7 @@ function FriendsList({ setShowFriendsListModal }: IFriendsList) {
       exit={{ opacity: 0, scale: 0.95 }}
       transition={{ duration: 0.15 }}
       ref={modalRef}
-      className="baseVertFlex absolute right-0 top-16 w-[370px] !items-start gap-2 rounded-md border-2 border-white bg-gradient-to-br from-green-800 to-green-850 bg-fixed p-4"
+      className="baseVertFlex absolute right-0 top-16 w-[370px] !items-start gap-2 rounded-md border-2 border-white bg-gradient-to-br from-green-800 to-green-850 p-4"
     >
       <div className="baseVertFlex max-h-48 w-full !items-start gap-2">
         <div

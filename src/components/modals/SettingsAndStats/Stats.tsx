@@ -46,7 +46,7 @@ function Stats() {
       style={{
         color: "hsl(120deg 100% 86%)",
       }}
-      className="baseVertFlex w-[700px] bg-gradient-to-br from-green-800 to-green-850 bg-fixed p-8"
+      className="baseVertFlex w-[700px] bg-gradient-to-br from-green-800 to-green-850 p-8"
     >
       <div
         style={{

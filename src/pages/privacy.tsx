@@ -14,7 +14,7 @@ function Privacy() {
       transition={{ duration: 0.5 }}
       className="baseVertFlex min-h-[100dvh] !justify-start px-2 pb-16 tablet:pt-16"
     >
-      <div className="baseVertFlex mx-auto mb-32 mt-8 max-w-2xl !items-start rounded-md border-2 border-lightGreen bg-gradient-to-br from-green-800 to-green-850 bg-fixed p-6 text-white tablet:mb-24">
+      <div className="baseVertFlex mx-auto mb-32 mt-8 max-w-2xl !items-start rounded-md border-2 border-lightGreen bg-gradient-to-br from-green-800 to-green-850 p-6 text-white tablet:mb-24">
         <Image
           src={logo}
           alt="Squeak logo"

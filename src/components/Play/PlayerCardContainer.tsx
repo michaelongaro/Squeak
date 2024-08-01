@@ -175,7 +175,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
   return (
     <div
       id={"playerContainer"}
-      className={`${cardContainerClass} bg-gradient-to-br from-green-800 to-green-850 bg-fixed`}
+      className={`${cardContainerClass} rounded-md bg-gradient-to-br from-green-800 to-green-850`}
       onPointerMove={(e) => pointerMoveHandler(e)}
     >
       {userID && (

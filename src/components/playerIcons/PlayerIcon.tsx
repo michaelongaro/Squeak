@@ -189,7 +189,7 @@ function PlayerIcon({
                         </TooltipTrigger>
                         <TooltipContent
                           side={"bottom"}
-                          className="border-2 border-lightGreen bg-gradient-to-br from-green-800 to-green-850 bg-fixed text-lightGreen"
+                          className="border-2 border-lightGreen bg-gradient-to-br from-green-800 to-green-850 text-lightGreen"
                         >
                           <p>Send friend invite</p>
                         </TooltipContent>

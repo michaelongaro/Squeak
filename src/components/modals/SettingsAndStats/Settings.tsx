@@ -44,7 +44,7 @@ function Settings({
       style={{
         color: "hsl(120deg 100% 86%)",
       }}
-      className="baseVertFlex w-[700px] gap-8 bg-gradient-to-br from-green-800 to-green-850 bg-fixed p-8"
+      className="baseVertFlex w-[700px] gap-8 bg-gradient-to-br from-green-800 to-green-850 p-8"
     >
       <div className="baseFlex gap-2">
         <Label htmlFor="username">Username</Label>

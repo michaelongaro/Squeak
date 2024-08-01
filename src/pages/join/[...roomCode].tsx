@@ -252,7 +252,7 @@ function JoinRoom() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.5 }}
-            className="baseVertFlex w-11/12 gap-4 rounded-md border-2 border-lightGreen bg-gradient-to-br from-green-800 to-green-850 bg-fixed px-8 py-4 text-lightGreen md:w-[500px]"
+            className="baseVertFlex w-11/12 gap-4 rounded-md border-2 border-lightGreen bg-gradient-to-br from-green-800 to-green-850 px-8 py-4 text-lightGreen md:w-[500px]"
           >
             <div className="baseVertFlex gap-4">
               <p className="text-nowrap font-semibold">
@@ -378,7 +378,7 @@ function JoinRoom() {
               transition={{ duration: 0.5 }}
               className="baseVertFlex relative gap-4"
             >
-              <div className="baseFlex sticky left-0 top-0 z-[105] w-screen !justify-start gap-4 border-b-2 border-white bg-gradient-to-br from-green-800 to-green-850 bg-fixed p-2 shadow-lg tablet:relative tablet:w-full tablet:bg-none tablet:shadow-none">
+              <div className="baseFlex sticky left-0 top-0 z-[105] w-screen !justify-start gap-4 border-b-2 border-white bg-gradient-to-br from-green-800 to-green-850 p-2 shadow-lg tablet:relative tablet:w-full tablet:bg-none tablet:shadow-none">
                 <Button
                   variant={"secondary"}
                   icon={<BiArrowBack size={"1.25rem"} />}
@@ -407,7 +407,7 @@ function JoinRoom() {
                 }}
                 className="baseVertFlex gap-4"
               >
-                <fieldset className="baseVertFlex mt-4 gap-4 rounded-md border-2 border-white bg-gradient-to-br from-green-800 to-green-850 bg-fixed p-4">
+                <fieldset className="baseVertFlex mt-4 gap-4 rounded-md border-2 border-white p-4">
                   <legend className="baseFlex gap-2 pl-4 pr-4 text-left text-lg">
                     <IoSettingsSharp size={"1.25rem"} />
                     Room settings
@@ -454,7 +454,7 @@ function JoinRoom() {
                     }}
                   />
                 </fieldset>
-                <fieldset className="rounded-md border-2 border-white bg-gradient-to-br from-green-800 to-green-850 bg-fixed p-4">
+                <fieldset className="rounded-md border-2 border-white p-4">
                   <legend className="baseFlex gap-2 pl-4 pr-4 text-left text-lg">
                     <FaUsers size={"1.25rem"} className="ml-1" />
                     Players
