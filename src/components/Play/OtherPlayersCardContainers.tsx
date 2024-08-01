@@ -366,7 +366,7 @@ function OtherPlayersCardContainers({
       {otherPlayerIDs.map((playerID, idx) => (
         <div
           key={playerID}
-          className={`${orderedClassNames[idx]} select-none bg-gradient-to-br from-green-800 to-green-850`}
+          className={`${orderedClassNames[idx]} select-none rounded-md bg-gradient-to-br from-green-800 to-green-850`}
         >
           <div
             id={`${playerID}container`}
