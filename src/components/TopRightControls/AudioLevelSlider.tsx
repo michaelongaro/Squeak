@@ -61,7 +61,7 @@ function AudioLevelSlider({ forMobile }: IAudioLevelSlider) {
           margin: hovered || forMobile ? "0 0.5rem" : "0",
           width: hovered || forMobile ? (forMobile ? "100%" : "10rem") : "0rem",
         }}
-        className="ml-2 mr-2 h-[7px] transition-all"
+        className="ml-2 mr-2 h-[7px] rounded-[0.1rem] transition-all"
       >
         <Range
           aria-label="Volume slider"
