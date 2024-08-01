@@ -63,7 +63,7 @@ function MainOptions() {
               <PlayerIcon
                 avatarPath={user?.avatarPath}
                 borderColor={user?.color}
-                size={"3rem"}
+                size={"2.75rem"}
               />
               {user?.username ? (
                 <div
@@ -74,7 +74,7 @@ function MainOptions() {
                   {user?.username}
                 </div>
               ) : (
-                <div className="skeletonLoading h-6 w-28 rounded-sm"></div>
+                <div className="h-6 w-28 animate-pulse rounded-md bg-muted/50"></div>
               )}
             </div>
           ) : (

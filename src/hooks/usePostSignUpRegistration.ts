@@ -22,7 +22,6 @@ function usePostSignUpRegistration() {
     if (isLoadingQuery || !isSignedIn || isUserRegistered || !user) return;
     addNewUser({
       userId: user.id,
-      username: user.username ?? "New user",
       imageUrl: user.imageUrl,
     });
   }, [isLoadingQuery, isSignedIn, isUserRegistered, user, addNewUser]);

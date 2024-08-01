@@ -387,7 +387,7 @@ function PlayerIcon({
           )}
         </motion.div>
       ) : (
-        <div className="skeletonLoading h-12 w-12 rounded-[50%]"></div>
+        <div className="size-11 animate-pulse rounded-[50%] bg-muted/50"></div>
       )}
     </>
   );

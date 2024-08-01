@@ -69,16 +69,14 @@ export const usersRouter = createTRPCRouter({
     .input(
       z.object({
         userId: z.string(),
-        username: z.string(),
         imageUrl: z.string(),
-      })
+      }),
     )
     .mutation(async ({ input, ctx }) => {
       await ctx.prisma.user
         .create({
           data: {
             userId: input.userId,
-            username: input.username,
             imageUrl: input.imageUrl,
           },
         })
@@ -101,7 +99,7 @@ export const usersRouter = createTRPCRouter({
         prefersSimpleCardAssets: z.boolean(),
         squeakPileOnLeft: z.boolean(),
         desktopNotifications: z.boolean(),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       try {
