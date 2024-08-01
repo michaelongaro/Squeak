@@ -171,7 +171,7 @@ function JoinRoom() {
       className="baseVertFlex relative min-h-[100dvh] pb-16 tablet:pt-16"
     >
       <div className="baseVertFlex relative gap-4">
-        <div className="baseFlex sticky left-0 top-0 z-[105] w-screen !justify-start gap-4 border-b-2 border-white bg-gradient-to-br from-green-800 to-green-850 p-2 shadow-lg tablet:relative tablet:w-full tablet:bg-none tablet:shadow-none">
+        <div className="baseFlex sticky left-0 top-0 z-[105] w-screen !justify-start gap-4 border-b-2 border-white bg-gradient-to-br from-green-800 to-green-850 bg-fixed p-2 shadow-lg tablet:relative tablet:w-full tablet:bg-none tablet:shadow-none">
           <Button
             variant={"secondary"}
             icon={<IoHome size={"1.25rem"} />}
@@ -194,7 +194,7 @@ function JoinRoom() {
           style={{
             color: "hsl(120deg 100% 86%)",
           }}
-          className="baseVertFlex mt-4 gap-8 rounded-md border-2 border-white bg-gradient-to-br from-green-800 to-green-850 p-4"
+          className="baseVertFlex mt-4 gap-8 rounded-md border-2 border-white bg-gradient-to-br from-green-800 to-green-850 bg-fixed p-4"
         >
           <div className="baseVertFlex !items-start gap-4">
             <div className="baseFlex w-full !justify-between gap-5">
@@ -352,7 +352,7 @@ function JoinRoom() {
                 style={{
                   color: "hsl(120deg 100% 86%)",
                 }}
-                className="pointer-events-none absolute right-10 rounded-md border-2 border-white bg-gradient-to-br from-green-800 to-green-850 px-4 py-2 shadow-md"
+                className="pointer-events-none absolute right-10 rounded-md border-2 border-white bg-gradient-to-br from-green-800 to-green-850 bg-fixed px-4 py-2 shadow-md"
               >
                 {roomError}
               </motion.div>
