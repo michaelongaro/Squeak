@@ -787,28 +787,17 @@ function MainDrawer({ status, setShowDrawer }: IMainDrawer) {
               </div>
             )}
 
-            <div className="baseFlex w-full gap-4">
-              <div className="baseFlex mr-2 gap-1.5 py-2 text-sm">
-                Made by
-                <a
-                  href="https://michaelongaro.com"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="baseFlex !items-end gap-1 underline underline-offset-4"
-                >
-                  Michael Ongaro
-                  <HiExternalLink size={"1rem"} />
-                </a>
-              </div>
-              |
-              <Button variant={"link"} asChild>
-                <Link
-                  href="/privacy"
-                  className="font-normal !text-darkGreen underline"
-                >
-                  Privacy Policy
-                </Link>
-              </Button>
+            <div className="baseFlex mr-2 gap-1.5 py-2 text-sm">
+              Made by
+              <a
+                href="https://michaelongaro.com"
+                target="_blank"
+                rel="noreferrer"
+                className="baseFlex !items-end gap-1 underline underline-offset-4"
+              >
+                Michael Ongaro
+                <HiExternalLink size={"1rem"} />
+              </a>
             </div>
           </motion.div>
         )}

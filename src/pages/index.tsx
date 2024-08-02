@@ -24,7 +24,7 @@ import Link from "next/link";
 function MainOptions() {
   const { isSignedIn } = useAuth();
   const userID = useUserIDContext();
-  const { asPath, push } = useRouter();
+  const { push } = useRouter();
 
   // probably want to remove the default "refetch on page focus" behavior
   const { data: user } = api.users.getUserByID.useQuery(userID);
@@ -141,7 +141,7 @@ function MainOptions() {
             transition: "all 0.3s ease-in-out",
           }}
           // leading-normal md:leading-6
-          className={`baseFlex fixed ${hoveringOnAboutMe ? "shadow-md" : "shadow-none"} ${hoveringOnAboutMe ? "w-[25rem]" : "w-8"} bottom-2 right-2 !justify-end overflow-hidden rounded-full border-2 px-[0.75rem] py-[0.15rem] md:px-[0.7rem] md:py-0 lg:bottom-4 lg:right-4`}
+          className={`baseFlex fixed ${hoveringOnAboutMe ? "shadow-md" : "shadow-none"} ${hoveringOnAboutMe ? "w-[18rem]" : "w-8"} bottom-2 right-2 !justify-end overflow-hidden rounded-full border-2 px-[0.75rem] py-[0.15rem] md:px-[0.7rem] md:py-0 lg:bottom-4 lg:right-4`}
           onPointerEnter={() => setHoveringOnAboutMe(true)}
           onPointerLeave={() => setHoveringOnAboutMe(false)}
         >
@@ -173,17 +173,21 @@ function MainOptions() {
                   Michael Ongaro
                   <HiExternalLink size={"1.25rem"} />
                 </a>
-                <Button variant={"link"} asChild>
-                  <Link href="/privacy" className="">
-                    Privacy Policy
-                  </Link>
-                </Button>
               </motion.div>
             )}
           </AnimatePresence>
           <div className="select-none text-base md:text-xl">i</div>
         </div>
       )}
+
+      <Button variant={"link"} asChild>
+        <Link
+          href="/privacy"
+          className="absolute bottom-[-2rem] tablet:bottom-3"
+        >
+          Privacy Policy
+        </Link>
+      </Button>
 
       <AnimatePresence mode={"wait"}>
         {showTutorialModal && (
