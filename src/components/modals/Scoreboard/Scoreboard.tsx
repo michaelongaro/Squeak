@@ -355,7 +355,9 @@ function Scoreboard() {
                   style={{
                     gridTemplateColumns: "50px auto 50px",
                   }}
-                  className="order-[0] grid w-full max-w-xl place-items-center"
+                  // order is -2 since player's "rankInRoom" value initializes at -1
+                  // when the game starts
+                  className="order-[-2] grid w-full max-w-xl place-items-center"
                 >
                   <FaTrophy
                     style={{
