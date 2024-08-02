@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { useUserIDContext } from "../../context/UserIDContext";
 import { useRoomContext } from "../../context/RoomContext";
 import Card from "../Play/Card";
-import AnimatedNumber from "react-awesome-animated-number";
 import { motion } from "framer-motion";
+import AnimatedNumbers from "~/components/ui/AnimatedNumbers";
 
 function ShufflingCountdownModal() {
   const userID = useUserIDContext();
@@ -106,17 +106,13 @@ function ShufflingCountdownModal() {
             </div>
           </div>
 
-          <div className="baseFlex gap-2">
+          <div className="baseFlex gap-2 text-darkGreen">
             <div>Round will begin in:</div>
 
-            <AnimatedNumber
+            <AnimatedNumbers
               value={countdownTimerValue}
-              // needed because by default <AnimatedNumber /> will try to count up from 0
-              // but from the moment this component is rendered, we don't want to show any
-              // counting up, just the countdown.
-              duration={timersInitiated ? 1000 : 0}
-              color={"hsl(120deg, 100%, 18%)"}
-              size={20}
+              padding={2}
+              fontSize={18}
             />
           </div>
         </div>

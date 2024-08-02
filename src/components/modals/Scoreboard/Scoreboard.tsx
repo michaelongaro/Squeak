@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import { socket } from "~/pages/_app";
 import AnimatedCardContainer from "./AnimatedCardContainer";
-import AnimatedNumber from "react-awesome-animated-number";
+import AnimatedNumbers from "~/components/ui/AnimatedNumbers";
 import confetti from "canvas-confetti";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
@@ -55,7 +55,6 @@ function Scoreboard() {
     useState<boolean>(false);
   const [showHostActionButton, setShowHostActionButton] =
     useState<boolean>(false);
-  // const [showCountdownTimer, setShowCountdownTimer] = useState<boolean>(false);
 
   const [animateCardsPlayedValue, setAnimateCardsPlayedValue] =
     useState<boolean>(false);
@@ -65,14 +64,18 @@ function Scoreboard() {
   const [showConfettiPoppers, setShowConfettiPoppers] =
     useState<boolean>(false);
 
-  // const [countdownTimerValue, setCountdownTimerValue] = useState<number>(3);
-
   const [playerColorVariants, setPlayerColorVariants] =
     useState<IPlayerColorVariants>({});
 
   const [sortedPlayerRoundDetails, setSortedPlayerRoundDetails] = useState<
     IPlayerRoundDetails[]
   >([]);
+
+  const [countdownValue, setCountdownValue] = useState<number>(3);
+  const [countdownType, setCountdownType] = useState<
+    "startRound" | "returnToRoom" | null
+  >(null);
+  const [showCountdown, setShowCountdown] = useState<boolean>(false);
 
   const leftConfettiCannonRef = useRef<HTMLImageElement>(null);
   const rightConfettiCannonRef = useRef<HTMLImageElement>(null);
@@ -185,20 +188,6 @@ function Scoreboard() {
       setShowConfettiPoppers(false);
       setShowHostActionButton(true);
     }, 8500);
-
-    // TODO: re-enable this functionality with special handler on backend that listens/propagates
-    // out to other players when host has clicked to move back to lobby/start next round
-    // setTimeout(() => {
-    //   setShowCountdownTimer(true);
-
-    //   setTimeout(() => {
-    //     setCountdownTimerValue(2);
-    //   }, 1000);
-
-    //   setTimeout(() => {
-    //     setCountdownTimerValue(1);
-    //   }, 2000);
-    // }, 10000);
   }, [
     initalizedTimers,
     currentVolume,
@@ -209,6 +198,73 @@ function Scoreboard() {
     scoreboardMetadata,
     userID,
   ]);
+
+  // TODO: can combine together into one emit/effect for sure
+  useEffect(() => {
+    function handleStartRoundCountdown(hostUserID: string) {
+      setShowCountdown(true);
+      setCountdownType("startRound");
+
+      setTimeout(() => {
+        setCountdownValue(3);
+
+        setTimeout(() => {
+          setCountdownValue(2);
+
+          setTimeout(() => {
+            setCountdownValue(1);
+
+            setTimeout(() => {
+              setPlayerIDWhoSqueaked(null);
+
+              if (userID === hostUserID) {
+                socket.emit("resetGame", {
+                  roomCode: roomConfig.code,
+                  gameIsFinished: false,
+                });
+              }
+            }, 500);
+          }, 1000);
+        }, 1000);
+      }, 500);
+    }
+
+    function handleReturnToRoomCountdown(hostUserID: string) {
+      setShowCountdown(true);
+      setCountdownType("returnToRoom");
+
+      setTimeout(() => {
+        setCountdownValue(3);
+
+        setTimeout(() => {
+          setCountdownValue(2);
+
+          setTimeout(() => {
+            setCountdownValue(1);
+
+            setTimeout(() => {
+              setPlayerIDWhoSqueaked(null);
+
+              if (userID === hostUserID) {
+                socket.emit("resetGame", {
+                  roomCode: roomConfig.code,
+                  gameIsFinished: true,
+                });
+              }
+            }, 500);
+          }, 1000);
+        }, 1000);
+      }, 500);
+    }
+
+    socket.on("startRoundCountdown", handleStartRoundCountdown);
+    socket.on("returnToRoomCountdown", handleReturnToRoomCountdown);
+
+    return () => {
+      socket.off("startRoundCountdown", handleStartRoundCountdown);
+      socket.off("returnToRoomCountdown", handleReturnToRoomCountdown);
+    };
+  }, [roomConfig.code, setPlayerIDWhoSqueaked, userID]);
 
   useEffect(() => {
     // set with sorted playerIDs by their oldScore
@@ -290,7 +346,7 @@ function Scoreboard() {
           className="w-[95%] rounded-lg border-2 bg-gradient-to-br from-green-800 to-green-850 p-4 shadow-md tablet:h-[75%] tablet:w-[75%]"
         >
           {scoreboardMetadata?.playerRoundDetails && currentPlayerStats && (
-            <div className="baseVertFlex h-full gap-2 mobileLarge:gap-4 tablet:gap-8">
+            <div className="baseVertFlex h-full gap-6 tablet:gap-8">
               <div className="text-xl font-semibold">Scoreboard</div>
 
               {/* player totals */}
@@ -299,7 +355,7 @@ function Scoreboard() {
                   style={{
                     gridTemplateColumns: "50px auto 50px",
                   }}
-                  className="grid w-full max-w-xl place-items-center"
+                  className="order-[0] grid w-full max-w-xl place-items-center"
                 >
                   <FaTrophy
                     style={{
@@ -390,22 +446,16 @@ function Scoreboard() {
                         backgroundColor:
                           playerColorVariants[player.playerID]?.baseColor ??
                           "white",
+                        color: playerColorVariants[player.playerID]?.textColor,
                       }}
                       className="baseFlex h-8 w-full rounded-r-md"
                     >
-                      <AnimatedNumber
+                      <AnimatedNumbers
                         value={
                           animateTotalValue ? player.newScore : player.oldScore
                         }
-                        duration={animateTotalValue ? 1000 : 0}
-                        order={
-                          player.newScore > player.oldScore ? "asc" : "desc"
-                        }
-                        style={{
-                          color:
-                            playerColorVariants[player.playerID]?.textColor,
-                        }}
-                        size={16}
+                        fontSize={16}
+                        padding={2}
                       />
                     </div>
                   </motion.div>
@@ -463,15 +513,14 @@ function Scoreboard() {
                           >
                             +
                           </div>
-                          <AnimatedNumber
+                          <AnimatedNumbers
                             value={
                               animateCardsPlayedValue
                                 ? currentPlayerStats.cardsPlayed.length
                                 : 0
                             }
-                            duration={animateCardsPlayedValue ? 1000 : 0}
-                            order={"asc"}
-                            size={14}
+                            padding={2}
+                            fontSize={14}
                           />
                         </div>
                       </div>
@@ -487,42 +536,28 @@ function Scoreboard() {
                           >
                             {currentPlayerStats.squeakModifier > 0 ? "+" : ""}
                           </div>
-                          <AnimatedNumber
+                          <AnimatedNumbers
                             value={
                               animateSqueakModifierValue
                                 ? currentPlayerStats.squeakModifier
                                 : 0
                             }
-                            duration={animateSqueakModifierValue ? 1000 : 0}
-                            order={
-                              currentPlayerStats.squeakModifier > 0
-                                ? "asc"
-                                : "desc"
-                            }
-                            size={14}
+                            padding={2}
+                            fontSize={14}
                           />
                         </div>
                       </div>
 
                       <div className="align-center mt-1 flex w-full justify-between gap-4 px-3 font-medium">
                         Total
-                        <AnimatedNumber
+                        <AnimatedNumbers
                           value={
                             animateTotalValue
                               ? currentPlayerStats.newScore
                               : currentPlayerStats.oldScore
                           }
-                          duration={animateTotalValue ? 1000 : 0}
-                          order={
-                            currentPlayerStats.newScore >
-                            currentPlayerStats.oldScore
-                              ? "asc"
-                              : "desc"
-                          }
-                          style={{
-                            marginTop: "0.3rem",
-                          }}
-                          size={16}
+                          padding={8}
+                          fontSize={16}
                         />
                       </div>
                     </div>
@@ -683,73 +718,117 @@ function Scoreboard() {
                 }}
                 className="baseFlex gap-2 transition-all"
               >
-                {userID === roomConfig.hostUserID ? (
-                  <Button
-                    innerText={
-                      scoreboardMetadata.gameWinnerID !== null
-                        ? "Return to room"
-                        : "Start next round"
-                    }
-                    innerTextWhenLoading={
-                      scoreboardMetadata.gameWinnerID !== null
-                        ? "Returning to room"
-                        : "Starting next round"
-                    }
-                    onClickFunction={() => {
-                      setPlayerIDWhoSqueaked(null);
+                {userID === roomConfig.hostUserID && (
+                  <AnimatePresence mode="wait">
+                    {!showCountdown ? (
+                      <motion.div
+                        key={"waitingForHostToStart"}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.5 }}
+                        className="baseFlex"
+                      >
+                        <Button
+                          innerText={
+                            scoreboardMetadata.gameWinnerID === null
+                              ? "Start next round"
+                              : "Return to room"
+                          }
+                          innerTextWhenLoading={
+                            scoreboardMetadata.gameWinnerID === null
+                              ? "Starting next round"
+                              : "Returning to room"
+                          }
+                          onClickFunction={() => {
+                            socket.emit("broadcastRoomActionCountdown", {
+                              code: roomConfig.code,
+                              hostUserID: userID,
+                              type:
+                                scoreboardMetadata.gameWinnerID === null
+                                  ? "startRound"
+                                  : "returnToRoom",
+                            });
+                          }}
+                          showLoadingSpinnerOnClick={true}
+                          className="gap-2"
+                        />
+                      </motion.div>
+                    ) : (
+                      <motion.div
+                        key={"startRoundCountdown"}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.5 }}
+                        className="baseFlex gap-2"
+                      >
+                        {countdownType === "startRound" ? (
+                          <p>Next round starting in</p>
+                        ) : (
+                          <p>Returning to room in</p>
+                        )}
+                        <AnimatedNumbers
+                          value={countdownValue}
+                          fontSize={16}
+                          padding={2}
+                        />
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                )}
 
-                      if (userID === roomConfig.hostUserID) {
-                        socket.emit("resetGame", {
-                          roomCode: roomConfig.code,
-                          gameIsFinished:
-                            scoreboardMetadata.gameWinnerID !== null,
-                        });
-                      }
-                    }}
-                    showLoadingSpinnerOnClick={true}
-                    className="gap-2"
-                  />
-                ) : (
-                  <div className="baseFlex !items-baseline gap-1">
-                    <p>
-                      waiting for{" "}
-                      <span className="font-semibold">
-                        {roomConfig.hostUsername}
-                      </span>{" "}
-                      to
-                      {scoreboardMetadata.gameWinnerID
-                        ? " return to room"
-                        : " start next round"}
-                    </p>
-                    <div className="loadingDots">
-                      <div></div>
-                      <div></div>
-                      <div></div>
-                    </div>
-                  </div>
+                {userID !== roomConfig.hostUserID && (
+                  <AnimatePresence mode="wait">
+                    {!showCountdown ? (
+                      <motion.div
+                        key={"waitingForHostToStart"}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.5 }}
+                        className="baseFlex !items-baseline gap-1"
+                      >
+                        <p>
+                          waiting for{" "}
+                          <span className="font-semibold">
+                            {roomConfig.hostUsername}
+                          </span>{" "}
+                          to
+                          {scoreboardMetadata.gameWinnerID
+                            ? " return to room"
+                            : " start next round"}
+                        </p>
+                        <div className="loadingDots">
+                          <div></div>
+                          <div></div>
+                          <div></div>
+                        </div>
+                      </motion.div>
+                    ) : (
+                      <motion.div
+                        key={"startRoundCountdown"}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.5 }}
+                        className="baseFlex gap-2"
+                      >
+                        {countdownType === "startRound" ? (
+                          <p>Next round starting in</p>
+                        ) : (
+                          <p>Returning to room in</p>
+                        )}
+                        <AnimatedNumbers
+                          value={countdownValue}
+                          fontSize={16}
+                          padding={2}
+                        />
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 )}
               </div>
-
-              {/* <div
-                style={{
-                  opacity: showCountdownTimer ? 1 : 0,
-                  pointerEvents: showCountdownTimer ? "auto" : "none",
-                }}
-                className="baseFlex gap-2 transition-all"
-              >
-                <div>
-                  {scoreboardMetadata.gameWinnerID
-                    ? "Returning to room in:"
-                    : "Next round starts in:"}
-                </div>
-
-                <AnimatedNumber
-                  value={countdownTimerValue}
-                  duration={1000}
-                  order={"desc"}
-                  size={16}
-                />
-              </div> */}
             </div>
           )}
         </motion.div>
@@ -851,15 +930,14 @@ function Scoreboard() {
                             >
                               +
                             </div>
-                            <AnimatedNumber
+                            <AnimatedNumbers
                               value={
                                 animateCardsPlayedValue
                                   ? player.cardsPlayed.length
                                   : 0
                               }
-                              duration={animateCardsPlayedValue ? 1000 : 0}
-                              order={"asc"}
-                              size={18}
+                              padding={2}
+                              fontSize={18}
                             />
                           </div>
                         </div>
@@ -875,32 +953,28 @@ function Scoreboard() {
                             >
                               {player.squeakModifier > 0 ? "+" : ""}
                             </div>
-                            <AnimatedNumber
+                            <AnimatedNumbers
                               value={
                                 animateSqueakModifierValue
                                   ? player.squeakModifier
                                   : 0
                               }
-                              duration={animateSqueakModifierValue ? 1000 : 0}
-                              order={player.squeakModifier > 0 ? "asc" : "desc"}
-                              size={18}
+                              padding={2}
+                              fontSize={18}
                             />
                           </div>
                         </div>
 
                         <div className="align-center mt-1 flex w-full justify-between px-4 text-xl font-medium desktop:px-8">
                           Total
-                          <AnimatedNumber
+                          <AnimatedNumbers
                             value={
                               animateTotalValue
                                 ? player.newScore
                                 : player.oldScore
                             }
-                            duration={animateTotalValue ? 1000 : 0}
-                            order={
-                              player.newScore > player.oldScore ? "asc" : "desc"
-                            }
-                            size={22}
+                            padding={4}
+                            fontSize={22}
                           />
                         </div>
                       </div>
@@ -1057,73 +1131,117 @@ function Scoreboard() {
               }}
               className="baseFlex gap-2 transition-all"
             >
-              {userID === roomConfig.hostUserID ? (
-                <Button
-                  innerText={
-                    scoreboardMetadata.gameWinnerID !== null
-                      ? "Return to room"
-                      : "Start next round"
-                  }
-                  innerTextWhenLoading={
-                    scoreboardMetadata.gameWinnerID !== null
-                      ? "Returning to room"
-                      : "Starting next round"
-                  }
-                  onClickFunction={() => {
-                    setPlayerIDWhoSqueaked(null);
+              {userID === roomConfig.hostUserID && (
+                <AnimatePresence mode="wait">
+                  {!showCountdown ? (
+                    <motion.div
+                      key={"waitingForHostToStart"}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.5 }}
+                      className="baseFlex"
+                    >
+                      <Button
+                        innerText={
+                          scoreboardMetadata.gameWinnerID === null
+                            ? "Start next round"
+                            : "Return to room"
+                        }
+                        innerTextWhenLoading={
+                          scoreboardMetadata.gameWinnerID === null
+                            ? "Starting next round"
+                            : "Returning to room"
+                        }
+                        onClickFunction={() => {
+                          socket.emit("broadcastRoomActionCountdown", {
+                            code: roomConfig.code,
+                            hostUserID: userID,
+                            type:
+                              scoreboardMetadata.gameWinnerID === null
+                                ? "startRound"
+                                : "returnToRoom",
+                          });
+                        }}
+                        showLoadingSpinnerOnClick={true}
+                        className="gap-2"
+                      />
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      key={"startRoundCountdown"}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.5 }}
+                      className="baseFlex gap-2"
+                    >
+                      {countdownType === "startRound" ? (
+                        <p>Next round starting in</p>
+                      ) : (
+                        <p>Returning to room in</p>
+                      )}
+                      <AnimatedNumbers
+                        value={countdownValue}
+                        fontSize={16}
+                        padding={2}
+                      />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              )}
 
-                    if (userID === roomConfig.hostUserID) {
-                      socket.emit("resetGame", {
-                        roomCode: roomConfig.code,
-                        gameIsFinished:
-                          scoreboardMetadata.gameWinnerID !== null,
-                      });
-                    }
-                  }}
-                  showLoadingSpinnerOnClick={true}
-                  className="gap-2"
-                />
-              ) : (
-                <div className="baseFlex !items-baseline gap-1">
-                  <p>
-                    waiting for{" "}
-                    <span className="font-semibold">
-                      {roomConfig.hostUsername}
-                    </span>{" "}
-                    to
-                    {scoreboardMetadata.gameWinnerID
-                      ? " return to room"
-                      : " start next round"}
-                  </p>
-                  <div className="loadingDots">
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                  </div>
-                </div>
+              {userID !== roomConfig.hostUserID && (
+                <AnimatePresence mode="wait">
+                  {!showCountdown ? (
+                    <motion.div
+                      key={"waitingForHostToStart"}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.5 }}
+                      className="baseFlex !items-baseline gap-1"
+                    >
+                      <p>
+                        waiting for{" "}
+                        <span className="font-semibold">
+                          {roomConfig.hostUsername}
+                        </span>{" "}
+                        to
+                        {scoreboardMetadata.gameWinnerID
+                          ? " return to room"
+                          : " start next round"}
+                      </p>
+                      <div className="loadingDots">
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                      </div>
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      key={"startRoundCountdown"}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.5 }}
+                      className="baseFlex gap-2"
+                    >
+                      {countdownType === "startRound" ? (
+                        <p>Next round starting in</p>
+                      ) : (
+                        <p>Returning to room in</p>
+                      )}
+                      <AnimatedNumbers
+                        value={countdownValue}
+                        fontSize={16}
+                        padding={2}
+                      />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               )}
             </div>
-
-            {/* <div
-              style={{
-                opacity: showCountdownTimer ? 1 : 0,
-                pointerEvents: showCountdownTimer ? "auto" : "none",
-              }}
-              className="baseFlex gap-2 text-lg transition-all"
-            >
-              <div>
-                {scoreboardMetadata.gameWinnerID
-                  ? "Returning to room in:"
-                  : "Next round starts in:"}
-              </div>
-
-              <AnimatedNumber
-                value={countdownTimerValue}
-                duration={1000}
-                order={"desc"}
-                size={20}
-              />
-            </div> */}
           </div>
         )}
       </motion.div>

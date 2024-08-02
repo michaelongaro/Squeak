@@ -19,6 +19,7 @@ import { updatePlayerMetadataHandler } from "./handlers/updatePlayerMetadataHand
 import { castVoteHandler } from "./handlers/castVoteHandler";
 import { rejoinRoomHandler } from "./handlers/rejoinRoomHandler";
 import { oldRoomCleanupCron } from "~/pages/api/handlers/oldRoomCleanupCron";
+import { broadcastRoomActionCountdown } from "~/pages/api/handlers/broadcastRoomActionCountdown";
 
 // TODO: is there a better way to type these?
 export interface IFriendsData {
@@ -222,6 +223,8 @@ export default function SocketHandler(req, res) {
     updateRoomConfigHandler(io, socket, roomData);
 
     updatePlayerMetadataHandler(io, socket, roomData);
+
+    broadcastRoomActionCountdown(io, socket);
 
     startGameHandler(io, socket, roomData, gameData, miscRoomData);
 

@@ -29,6 +29,7 @@ import { type IRoomConfig } from "../create";
 import { Label } from "~/components/ui/label";
 import { Input } from "~/components/ui/input";
 import UnableToJoinRoom from "~/components/Play/UnableToJoinRoom";
+import AnimatedNumbers from "~/components/ui/AnimatedNumbers";
 
 const filter = new Filter();
 
@@ -72,6 +73,10 @@ function JoinRoom() {
   const [showRoomIsFullModal, setShowRoomIsFullModal] = useState(false);
   const [showGameAlreadyStartedModal, setShowGameAlreadyStartedModal] =
     useState(false);
+
+  const [startRoundCountdownValue, setStartRoundCountdownValue] =
+    useState<number>(3);
+  const [showCountdown, setShowCountdown] = useState<boolean>(false);
 
   const { data: roomResult } = api.rooms.findRoomByCode.useQuery(
     {
@@ -124,14 +129,32 @@ function JoinRoom() {
       setRoomConfig(roomConfig);
     }
 
+    function handleStartRoundCountdown() {
+      setShowCountdown(true);
+
+      setTimeout(() => {
+        setStartRoundCountdownValue(3);
+
+        setTimeout(() => {
+          setStartRoundCountdownValue(2);
+
+          setTimeout(() => {
+            setStartRoundCountdownValue(1);
+          }, 1000);
+        }, 1000);
+      }, 500);
+    }
+
     socket.on("playerMetadataUpdated", handlePlayerMetadataUpdated);
     socket.on("roomConfigUpdated", handleRoomConfigUpdated);
     socket.on("navigateToPlayScreen", handleNavigateToPlayScreen);
+    socket.on("startRoundCountdown", handleStartRoundCountdown);
 
     return () => {
       socket.off("playerMetadataUpdated", handlePlayerMetadataUpdated);
       socket.off("roomConfigUpdated", handleRoomConfigUpdated);
       socket.off("navigateToPlayScreen", handleNavigateToPlayScreen);
+      socket.off("startRoundCountdown", handleStartRoundCountdown);
     };
   }, [
     setConnectedToRoom,
@@ -383,7 +406,11 @@ function JoinRoom() {
                   variant={"secondary"}
                   icon={<BiArrowBack size={"1.25rem"} />}
                   className="h-10 w-10"
-                  onClick={() => leaveRoom()}
+                  onClick={() => {
+                    leaveRoom();
+                    setShowCountdown(false);
+                    setStartRoundCountdownValue(3);
+                  }}
                 />
 
                 <div
@@ -542,20 +569,48 @@ function JoinRoom() {
                     )}
                   </div>
                 </fieldset>
-                <div className="baseFlex !items-baseline gap-1">
-                  <p>
-                    waiting for{" "}
-                    <span className="font-semibold">
-                      {roomConfig.hostUsername}
-                    </span>{" "}
-                    to start the game
-                  </p>
-                  <div className="loadingDots">
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                  </div>
-                </div>
+
+                <AnimatePresence mode="wait">
+                  {!showCountdown ? (
+                    <motion.div
+                      key={"waitingForHostToStart"}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.5 }}
+                      className="baseFlex !items-baseline gap-1"
+                    >
+                      <p>
+                        waiting for{" "}
+                        <span className="font-semibold">
+                          {roomConfig.hostUsername}
+                        </span>{" "}
+                        to start the game
+                      </p>
+                      <div className="loadingDots">
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                      </div>
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      key={"startRoundCountdown"}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.5 }}
+                      className="baseFlex gap-2"
+                    >
+                      Game starting in{" "}
+                      <AnimatedNumbers
+                        value={startRoundCountdownValue}
+                        fontSize={16}
+                        padding={2}
+                      />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             </motion.div>
           )}

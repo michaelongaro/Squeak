@@ -7,7 +7,6 @@ import { api } from "~/utils/api";
 import { io } from "socket.io-client";
 import GeneralLayout from "~/components/layout/GeneralLayout";
 
-import "react-awesome-animated-number/dist/index.css";
 import "../styles/globals.css";
 
 export const socket = io({

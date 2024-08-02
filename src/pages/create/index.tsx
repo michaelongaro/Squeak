@@ -19,6 +19,7 @@ import Radio from "~/components/Buttons/Radio";
 import { MdCopyAll } from "react-icons/md";
 import { IoHome } from "react-icons/io5";
 import { BiArrowBack } from "react-icons/bi";
+import AnimatedNumbers from "~/components/ui/AnimatedNumbers";
 import { FiCheck } from "react-icons/fi";
 import { AnimatePresence, motion } from "framer-motion";
 import { Input } from "~/components/ui/input";
@@ -93,6 +94,10 @@ function CreateRoom() {
   const [focusedInInput, setFocusedInInput] = useState<boolean>(false);
   const [usernameIsProfane, setUsernameIsProfane] = useState<boolean>(false);
 
+  const [startRoundCountdownValue, setStartRoundCountdownValue] =
+    useState<number>(3);
+  const [showCountdown, setShowCountdown] = useState<boolean>(false);
+
   // needs !connectedToRoom for when player inherits ownership of room after prev
   // host leaves, otherwise this effect would be overwriting the current room config
   useEffect(() => {
@@ -137,14 +142,39 @@ function CreateRoom() {
       setRoomConfig(roomConfig);
     }
 
+    function handleStartRoundCountdown() {
+      setShowCountdown(true);
+
+      setTimeout(() => {
+        setStartRoundCountdownValue(3);
+
+        setTimeout(() => {
+          setStartRoundCountdownValue(2);
+
+          setTimeout(() => {
+            setStartRoundCountdownValue(1);
+
+            setTimeout(() => {
+              socket.emit("startGame", {
+                roomCode: roomConfig.code,
+                firstRound: true,
+              });
+            }, 500);
+          }, 1000);
+        }, 1000);
+      }, 500);
+    }
+
     socket.on("playerMetadataUpdated", handlePlayerMetadataUpdated);
     socket.on("roomConfigUpdated", handleRoomConfigUpdated);
     socket.on("navigateToPlayScreen", handleNavigateToPlayScreen);
+    socket.on("startRoundCountdown", handleStartRoundCountdown);
 
     return () => {
       socket.off("playerMetadataUpdated", handlePlayerMetadataUpdated);
       socket.off("roomConfigUpdated", handleRoomConfigUpdated);
       socket.off("navigateToPlayScreen", handleNavigateToPlayScreen);
+      socket.off("startRoundCountdown", handleStartRoundCountdown);
     };
   }, [
     setConnectedToRoom,
@@ -226,6 +256,8 @@ function CreateRoom() {
             className="h-10 w-10"
             onClick={() => {
               leaveRoom();
+              setShowCountdown(false);
+              setStartRoundCountdownValue(3);
             }}
           />
 
@@ -585,20 +617,50 @@ function CreateRoom() {
               </div>
             </fieldset>
 
-            <Button
-              innerText={"Start game"}
-              innerTextWhenLoading={"Starting game"}
-              disabled={roomConfig.playersInRoom < 2}
-              isDisabled={roomConfig.playersInRoom < 2}
-              onClickFunction={() => {
-                socket.emit("startGame", {
-                  roomCode: roomConfig.code,
-                  firstRound: true,
-                });
-              }}
-              showLoadingSpinnerOnClick={true}
-              className="h-12 w-[14rem] gap-4 text-[1.05rem]"
-            />
+            <AnimatePresence mode="wait">
+              {!showCountdown ? (
+                <motion.div
+                  key={"waitingForHostToStart"}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.5 }}
+                  className="baseFlex"
+                >
+                  <Button
+                    innerText={"Start game"}
+                    innerTextWhenLoading={"Starting game"}
+                    disabled={roomConfig.playersInRoom < 2}
+                    isDisabled={roomConfig.playersInRoom < 2}
+                    onClickFunction={() => {
+                      socket.emit("broadcastRoomActionCountdown", {
+                        code: roomConfig.code,
+                        hostUserID: userID,
+                        type: "startRound",
+                      });
+                    }}
+                    showLoadingSpinnerOnClick={true}
+                    className="h-12 w-[14rem] gap-4 text-[1.05rem]"
+                  />
+                </motion.div>
+              ) : (
+                <motion.div
+                  key={"startRoundCountdown"}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.5 }}
+                  className="baseFlex gap-2"
+                >
+                  Game starting in{" "}
+                  <AnimatedNumbers
+                    value={startRoundCountdownValue}
+                    fontSize={16}
+                    padding={2}
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         ) : (
           <Button
