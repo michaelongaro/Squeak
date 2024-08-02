@@ -71,14 +71,13 @@ function ShufflingCountdownModal() {
         animate={{ scale: 1 }}
         exit={{ scale: 0.95 }}
         transition={{ duration: 0.15, delay: 0.2 }}
-        style={{
-          backgroundColor: "hsl(120deg, 100%, 86%)",
-          color: "hsl(120deg, 100%, 18%)",
-        }}
-        className="h-fit w-fit rounded-md px-16 py-8 font-medium shadow-md"
+        className="h-fit w-fit rounded-lg border-2 border-lightGreen bg-gradient-to-br from-green-800 to-green-850 px-16 py-8 font-medium text-lightGreen shadow-md"
       >
         <div className="baseVertFlex gap-8">
-          <div className="text-xl">Shuffling decks</div>
+          <div className="baseVertFlex gap-2">
+            <div className="text-xl">Round {gameData.currentRound}</div>
+            <div className="text-lightGreen/75">Shuffling decks</div>
+          </div>
 
           <div className="cardDimensions relative mt-16 select-none rounded-[0.25rem] desktop:mt-20">
             <div className="absolute left-0 top-0 h-full w-full">
@@ -106,7 +105,7 @@ function ShufflingCountdownModal() {
             </div>
           </div>
 
-          <div className="baseFlex gap-2 text-darkGreen">
+          <div className="baseFlex gap-2">
             <div>Round will begin in:</div>
 
             <AnimatedNumbers

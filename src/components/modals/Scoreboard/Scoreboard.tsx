@@ -45,6 +45,7 @@ function Scoreboard() {
     roomConfig,
     scoreboardMetadata,
     viewportLabel,
+    gameData,
     setPlayerIDWhoSqueaked,
   } = useRoomContext();
 
@@ -347,7 +348,11 @@ function Scoreboard() {
         >
           {scoreboardMetadata?.playerRoundDetails && currentPlayerStats && (
             <div className="baseVertFlex h-full gap-6 tablet:gap-8">
-              <div className="text-xl font-semibold">Scoreboard</div>
+              <div className="baseFlex w-full !justify-between">
+                <div className="text-xl font-semibold">Scoreboard</div>
+
+                <div className="text-sm">Round {gameData.currentRound}</div>
+              </div>
 
               {/* player totals */}
               <div className="baseVertFlex min-h-[170px] w-full gap-1">
@@ -625,7 +630,7 @@ function Scoreboard() {
                         scoreboardMetadata.roundWinnerID
                     ]?.baseColor ?? "black",
                 }}
-                className="baseFlex relative w-full gap-4 rounded-md px-10 py-2 transition-all duration-300"
+                className="baseFlex relative w-full max-w-xl gap-4 rounded-md px-10 py-2 transition-all duration-300"
               >
                 <AnimatePresence>
                   {showConfettiPoppers && (
@@ -860,8 +865,14 @@ function Scoreboard() {
         className="h-[95%] w-[95%] rounded-lg border-2 bg-gradient-to-br from-green-800 to-green-850 p-4 shadow-md tablet:h-[85%] tablet:w-[85%] desktop:h-[75%] desktop:w-[75%]"
       >
         {scoreboardMetadata?.playerRoundDetails && (
-          <div className="baseVertFlex h-full gap-2 desktop:gap-8">
-            <div className="text-2xl font-semibold">Scoreboard</div>
+          <div className="baseVertFlex relative h-full gap-2 desktop:gap-8">
+            <div className="absolute left-2 top-2">
+              Round {gameData.currentRound}
+            </div>
+
+            <div className="baseFlex w-full">
+              <div className="text-2xl font-semibold">Scoreboard</div>
+            </div>
 
             <div className="baseFlex h-full max-h-[400px] w-full gap-4">
               {Object.values(scoreboardMetadata.playerRoundDetails).map(
