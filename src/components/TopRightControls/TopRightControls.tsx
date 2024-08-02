@@ -718,7 +718,7 @@ function MainDrawer({ status, setShowDrawer }: IMainDrawer) {
       case "front":
         return "225px";
       case "back":
-        return "400px";
+        return "430px";
       default:
         return status === "unauthenticated" ? "384px" : "438px";
     }
@@ -1068,7 +1068,149 @@ function DrawerSettings({
         Back
       </Button>
 
-      <div className="absolute right-2 top-1">
+      <div className="baseVertFlex h-full w-full !justify-start overflow-y-auto">
+        <div className="baseFlex mb-4 mt-16 gap-2">
+          <Label>Username</Label>
+          <div className="relative">
+            <Input
+              type="text"
+              placeholder="username"
+              className="!ring-offset-white focus-visible:ring-2"
+              maxLength={16}
+              onFocus={() => setFocusedInInput(true)}
+              onBlur={() => setFocusedInInput(false)}
+              onChange={(e) => {
+                setUsernameIsProfane(filter.isProfane(e.target.value));
+
+                setLocalPlayerMetadata((prevMetadata) => ({
+                  ...prevMetadata,
+                  [userID]: {
+                    ...prevMetadata?.[userID],
+                    username: e.target.value,
+                  } as IRoomPlayer,
+                }));
+              }}
+              value={localPlayerMetadata[userID]?.username}
+            />
+
+            <div
+              style={{
+                opacity:
+                  focusedInInput ||
+                  localPlayerMetadata[userID]?.username?.length === 0
+                    ? 1
+                    : 0,
+              }}
+              className="absolute right-1 top-0 text-xl text-red-600 transition-opacity"
+            >
+              *
+            </div>
+
+            <AnimatePresence>
+              {usernameIsProfane && (
+                <motion.div
+                  key={"settingsProfanityWarning"}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.15 }}
+                  // TODO: for w/e reason seems like you need to put z-index of avatar/front/back
+                  // to -1 so that this can be visible... something else is probably off
+                  className="baseVertFlex absolute -right-2 top-11 z-[200] whitespace-nowrap rounded-md border-2 border-red-700 bg-green-700 px-4 py-2 text-sm text-lightGreen shadow-md tablet:right-[-255px] tablet:top-0"
+                >
+                  <div>Username not allowed,</div>
+                  <div className="text-center">please choose another one</div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        </div>
+
+        <div className="baseVertFlex h-full w-screen">
+          {settingsViewLabels.map((label) => (
+            <Button
+              key={label}
+              variant="drawer"
+              style={{
+                borderBottomWidth: label === "back" ? "1px" : "0px",
+              }}
+              className="baseFlex h-full w-full !justify-start border-t-[1px]"
+              onClick={() => setRenderedView(label)}
+            >
+              <motion.div
+                key={`${label}PickerPreview`}
+                initial={{ opacity: 0, scale: 0.75 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.75 }}
+                transition={{ duration: 0.15 }}
+                className="baseFlex color-lightGreen h-[96px] cursor-pointer gap-4 border-darkGreen"
+              >
+                <PlayerCustomizationPreview
+                  renderedView={label}
+                  forDrawer
+                  useDarkerFont
+                  transparentAvatarBackground
+                  localPlayerMetadata={localPlayerMetadata}
+                />
+              </motion.div>
+            </Button>
+          ))}
+        </div>
+
+        <div
+          style={{
+            gridTemplateColumns: "minmax(204px, auto) auto",
+          }}
+          className="mt-4 grid grid-cols-2 gap-4"
+        >
+          <Label
+            htmlFor="squeakPileOnLeft"
+            className="self-center justify-self-start"
+          >
+            Show Squeak Pile on left
+          </Label>
+          <Switch
+            id="squeakPileOnLeft"
+            checked={localPlayerSettings.squeakPileOnLeft}
+            onCheckedChange={() =>
+              setLocalPlayerSettings((prevSettings) => ({
+                ...prevSettings,
+                squeakPileOnLeft: !prevSettings.squeakPileOnLeft,
+              }))
+            }
+            className="self-center border-darkGreen"
+          />
+        </div>
+
+        <div
+          style={{
+            gridTemplateColumns: "minmax(204px, auto) auto",
+          }}
+          className="my-4 grid grid-cols-2 items-center gap-4"
+        >
+          <Label
+            htmlFor="enableDesktopNotifications"
+            className="justify-self-start"
+          >
+            Enable mobile notifications
+          </Label>
+          <Switch
+            id="enableDesktopNotifications"
+            checked={localPlayerSettings.desktopNotifications}
+            onCheckedChange={() => {
+              Notification.requestPermission().then((result) => {
+                if (result === "granted") {
+                  setLocalPlayerSettings((prevSettings) => ({
+                    ...prevSettings,
+                    desktopNotifications: !prevSettings.desktopNotifications,
+                  }));
+                }
+              });
+            }}
+            className="self-center border-darkGreen"
+          />
+        </div>
+
         <Button
           innerText="Save"
           innerTextWhenLoading={"Saving"}
@@ -1077,149 +1219,7 @@ function DrawerSettings({
           isDisabled={!ableToSave || usernameIsProfane}
           onClick={() => updateUserHandler()}
           showLoadingSpinnerOnClick
-          className="baseFlex h-[2.5rem] w-[7rem] gap-2 px-4 py-0.5"
-        />
-      </div>
-
-      <div className="baseFlex mb-4 mt-16 gap-2">
-        <Label>Username</Label>
-        <div className="relative">
-          <Input
-            type="text"
-            placeholder="username"
-            className="!ring-offset-white focus-visible:ring-2"
-            maxLength={16}
-            onFocus={() => setFocusedInInput(true)}
-            onBlur={() => setFocusedInInput(false)}
-            onChange={(e) => {
-              setUsernameIsProfane(filter.isProfane(e.target.value));
-
-              setLocalPlayerMetadata((prevMetadata) => ({
-                ...prevMetadata,
-                [userID]: {
-                  ...prevMetadata?.[userID],
-                  username: e.target.value,
-                } as IRoomPlayer,
-              }));
-            }}
-            value={localPlayerMetadata[userID]?.username}
-          />
-
-          <div
-            style={{
-              opacity:
-                focusedInInput ||
-                localPlayerMetadata[userID]?.username?.length === 0
-                  ? 1
-                  : 0,
-            }}
-            className="absolute right-1 top-0 text-xl text-red-600 transition-opacity"
-          >
-            *
-          </div>
-
-          <AnimatePresence>
-            {usernameIsProfane && (
-              <motion.div
-                key={"settingsProfanityWarning"}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.15 }}
-                // TODO: for w/e reason seems like you need to put z-index of avatar/front/back
-                // to -1 so that this can be visible... something else is probably off
-                className="baseVertFlex absolute -right-2 top-11 z-[200] whitespace-nowrap rounded-md border-2 border-red-700 bg-green-700 px-4 py-2 text-sm text-lightGreen shadow-md tablet:right-[-255px] tablet:top-0"
-              >
-                <div>Username not allowed,</div>
-                <div className="text-center">please choose another one</div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-      </div>
-
-      <div className="baseVertFlex h-full w-screen">
-        {settingsViewLabels.map((label) => (
-          <Button
-            key={label}
-            variant="drawer"
-            style={{
-              borderBottomWidth: label === "back" ? "1px" : "0px",
-            }}
-            className="baseFlex h-full w-full !justify-start border-t-[1px]"
-            onClick={() => setRenderedView(label)}
-          >
-            <motion.div
-              key={`${label}PickerPreview`}
-              initial={{ opacity: 0, scale: 0.75 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.75 }}
-              transition={{ duration: 0.15 }}
-              className="baseFlex color-lightGreen h-[96px] cursor-pointer gap-4 border-darkGreen"
-            >
-              <PlayerCustomizationPreview
-                renderedView={label}
-                forDrawer
-                useDarkerFont
-                transparentAvatarBackground
-                localPlayerMetadata={localPlayerMetadata}
-              />
-            </motion.div>
-          </Button>
-        ))}
-      </div>
-
-      <div
-        style={{
-          gridTemplateColumns: "minmax(204px, auto) auto",
-        }}
-        className="mt-4 grid grid-cols-2 gap-4"
-      >
-        <Label
-          htmlFor="squeakPileOnLeft"
-          className="self-center justify-self-start"
-        >
-          Show Squeak Pile on left
-        </Label>
-        <Switch
-          id="squeakPileOnLeft"
-          checked={localPlayerSettings.squeakPileOnLeft}
-          onCheckedChange={() =>
-            setLocalPlayerSettings((prevSettings) => ({
-              ...prevSettings,
-              squeakPileOnLeft: !prevSettings.squeakPileOnLeft,
-            }))
-          }
-          className="self-center border-darkGreen"
-        />
-      </div>
-
-      <div
-        style={{
-          gridTemplateColumns: "minmax(204px, auto) auto",
-        }}
-        className="my-4 grid grid-cols-2 items-center gap-4"
-      >
-        <Label
-          htmlFor="enableDesktopNotifications"
-          className="justify-self-start"
-        >
-          Enable mobile notifications
-        </Label>
-        <Switch
-          id="enableDesktopNotifications"
-          checked={localPlayerSettings.desktopNotifications}
-          onCheckedChange={() => {
-            Notification.requestPermission().then((result) => {
-              if (result === "granted") {
-                setLocalPlayerSettings((prevSettings) => ({
-                  ...prevSettings,
-                  desktopNotifications: !prevSettings.desktopNotifications,
-                }));
-              }
-            });
-          }}
-          className="self-center border-darkGreen"
+          className="baseFlex mb-4 h-[2.5rem] w-[7rem] gap-2 px-4 py-0.5"
         />
       </div>
     </>
@@ -1282,12 +1282,14 @@ function DrawerStatistics({ setRenderedView }: IDrawerStatistics) {
         Back
       </Button>
 
-      <div className="baseVertFlex color-darkGreen gap-6 rounded-md border-2 border-darkGreen p-4">
+      <p className="text-lg font-medium underline underline-offset-2">Stats</p>
+
+      <div className="baseVertFlex color-darkGreen m-4 mt-8 gap-6 rounded-md border-2 border-darkGreen p-4">
         {rowNames.map((rowName, index) => (
           <div key={index} className="baseFlex w-full !justify-between gap-8">
-            <div className="text-lg font-semibold">{rowName}</div>
+            <div className="font-semibold">{rowName}</div>
             {filteredStats ? (
-              <div className="text-lg font-semibold">
+              <div className="font-semibold">
                 {Object.values(filteredStats)[index]}
               </div>
             ) : (

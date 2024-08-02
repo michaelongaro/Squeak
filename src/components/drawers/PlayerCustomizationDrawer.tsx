@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
-import { HiMiniPaintBrush } from "react-icons/hi2";
+import { FaPaintRoller } from "react-icons/fa";
 import { Button } from "~/components/ui/button";
 import {
   Drawer,
@@ -29,7 +29,7 @@ function PlayerCustomizationDrawer() {
       case "front":
         return "225px";
       case "back":
-        return "400px";
+        return "430px";
       default:
         return "250px";
     }
@@ -40,7 +40,7 @@ function PlayerCustomizationDrawer() {
       <DrawerTrigger asChild>
         <Button
           variant="secondary"
-          icon={<HiMiniPaintBrush className="h-4 w-4" />}
+          icon={<FaPaintRoller className="h-4 w-4" />}
           innerText={"Customize"}
           className="baseFlex gap-2"
         ></Button>
@@ -132,8 +132,8 @@ function PlayerCustomizationDrawer() {
                     {renderedView === "avatar"
                       ? "Avatar"
                       : renderedView === "front"
-                      ? "Card front"
-                      : "Card back"}
+                        ? "Card front"
+                        : "Card back"}
                   </p>
                   <PlayerCustomizationPicker type={renderedView} forDrawer />
                 </motion.div>

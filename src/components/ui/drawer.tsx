@@ -42,7 +42,7 @@ const DrawerContent = React.forwardRef<
       ref={ref}
       className={cn(
         "fixed inset-x-0 bottom-0 z-[300] mt-24 flex h-auto flex-col rounded-t-[10px] border-b-0 bg-zinc-200",
-        className
+        className,
       )}
       {...props}
     >
@@ -50,13 +50,13 @@ const DrawerContent = React.forwardRef<
         style={{
           borderColor: "hsl(120deg 100% 18%)",
         }}
-        className="baseFlex h-8 w-full border-b-[3px] shadow-md"
+        className="baseFlex h-6 w-full border-b-2 shadow-md"
       >
         <div
           style={{
             backgroundColor: "hsl(120deg 100% 18%)",
           }}
-          className="mx-auto my-1 h-2 w-[75px] rounded-full"
+          className="mx-auto my-1 h-1.5 w-[55px] rounded-full"
         />
       </div>
       {children}
@@ -95,7 +95,7 @@ const DrawerTitle = React.forwardRef<
     ref={ref}
     className={cn(
       "text-lg font-semibold leading-none tracking-tight",
-      className
+      className,
     )}
     {...props}
   />
