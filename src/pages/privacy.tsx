@@ -15,12 +15,14 @@ function Privacy() {
       className="baseVertFlex min-h-[100dvh] !justify-start px-2 pb-16 tablet:pt-16"
     >
       <div className="baseVertFlex mx-auto mb-32 mt-8 max-w-2xl !items-start rounded-md border-2 border-lightGreen bg-gradient-to-br from-green-800 to-green-850 p-6 text-white tablet:mb-24">
-        <Image
-          src={logo}
-          alt="Squeak logo"
-          priority={true}
-          className="h-48 w-48 !self-center"
-        />
+        <Link href="/" className="self-center">
+          <Image
+            src={logo}
+            alt="Squeak logo"
+            priority={true}
+            className="h-48 w-48 !self-center"
+          />
+        </Link>
 
         <h1 className="mb-6 text-2xl font-bold tablet:text-3xl">
           Privacy Policy
@@ -53,8 +55,9 @@ function Privacy() {
         <ul className="baseVertFlex mb-4 list-inside list-disc !items-start gap-2">
           <li>
             <span className="font-semibold">Personal Information:</span> When
-            you create an account, we may collect personal information,
-            including your first and last name, phone number, and email address.
+            you create an account through Google, we collect your name, email
+            address, language preference, and profile picture. Otherwise we only
+            collect your email address.
           </li>
           <li>
             <span className="font-semibold">Cookies:</span> Clerk, our
@@ -163,12 +166,9 @@ function Privacy() {
         </h2>
         <p className="mb-4">
           If you have any questions or concerns about this Privacy Policy,
-          please contact us at:
+          please contact us:
         </p>
         <p className="baseVertFlex mb-4 w-full !items-start">
-          <span className="font-medium underline underline-offset-2">
-            Squeak
-          </span>
           <div className="baseFlex gap-2">
             Email address:
             <Button variant="link" className="h-6 !px-1" asChild>
