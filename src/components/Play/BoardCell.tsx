@@ -40,19 +40,17 @@ function BoardCell({ card, rowIdx, colIdx }: IBoardCell) {
       )}
 
       <AnimatePresence>
-        {proposedCardBoxShadow?.id === `cell${rowIdx}${colIdx}` &&
-          proposedCardBoxShadow?.boxShadowValue ===
+        {proposedCardBoxShadow !== null &&
+          proposedCardBoxShadow.id === `cell${rowIdx}${colIdx}` &&
+          proposedCardBoxShadow.boxShadowValue ===
             "0px 0px 4px 3px hsl(120, 100%, 86%)" && (
             <motion.div
-              // key={`board${rowIdx}${colIdx}AnimatedPlusOneIndicator-${proposedCardBoxShadow?.boxShadowValue}`}
+              key={`board${rowIdx}${colIdx}AnimatedPlusOneIndicator-${proposedCardBoxShadow.boxShadowValue}`}
               initial={{ opacity: 0, scale: 0.95, translateY: 10 }}
               animate={{ opacity: 1, scale: 1, translateY: 0 }}
               exit={{ opacity: 0, scale: 0.95, translateY: -5 }}
               transition={{ duration: 0.5, ease: "easeInOut" }}
-              style={{
-                color: "hsl(120deg 100% 86%)",
-              }}
-              className="absolute right-[-1.5rem] top-0 select-none text-lg tracking-wider tablet:right-[-1.85rem] desktop:text-xl"
+              className="absolute right-[-1.5rem] top-0 select-none text-lg tracking-wider text-lightGreen tablet:right-[-1.85rem] desktop:text-xl"
             >
               +1
             </motion.div>
