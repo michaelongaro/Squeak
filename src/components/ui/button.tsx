@@ -22,7 +22,7 @@ const buttonVariants = cva(
         secondary: "border-2 transition-all",
         // ideally wanted a link variant but wasn't conducive to how we set up the button variants below..
         ghost: "hover:bg-accent hover:text-accent-foreground",
-        link: "text-primary underline-offset-4 hover:underline",
+        link: "text-lightGreen underline-offset-4 hover:underline",
         text: "text-primary",
         drawer:
           "text-darkGreen border-darkGreen w-full !rounded-none h-full absolute top-0 left-0",

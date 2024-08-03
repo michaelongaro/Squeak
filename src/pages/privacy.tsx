@@ -14,7 +14,7 @@ function Privacy() {
       transition={{ duration: 0.5 }}
       className="baseVertFlex min-h-[100dvh] !justify-start px-2 pb-16 tablet:pt-16"
     >
-      <div className="baseVertFlex mx-auto mb-32 mt-8 max-w-2xl !items-start rounded-md border-2 border-lightGreen bg-gradient-to-br from-green-800 to-green-850 p-6 text-white tablet:mb-24">
+      <div className="baseVertFlex mx-auto my-16 max-w-80 !items-start rounded-md border-2 border-lightGreen bg-gradient-to-br from-green-800 to-green-850 p-6 text-white tablet:mb-24 tablet:max-w-2xl">
         <Link href="/" className="self-center">
           <Image
             src={logo}
@@ -168,8 +168,8 @@ function Privacy() {
           If you have any questions or concerns about this Privacy Policy,
           please contact us:
         </p>
-        <p className="baseVertFlex mb-4 w-full !items-start">
-          <div className="baseFlex gap-2">
+        <div className="baseVertFlex mb-4 w-full !items-start">
+          <div className="baseVertFlex !items-start gap-2 sm:!flex-row">
             Email address:
             <Button variant="link" className="h-6 !px-1" asChild>
               <a href="mailto:michael.ongaro.dev@gmail.com">
@@ -177,7 +177,7 @@ function Privacy() {
               </a>
             </Button>
           </div>
-        </p>
+        </div>
       </div>
     </motion.div>
   );

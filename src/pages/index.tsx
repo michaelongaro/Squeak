@@ -183,7 +183,7 @@ function MainOptions() {
       <Button variant={"link"} asChild>
         <Link
           href="/privacy"
-          className="absolute bottom-[-2rem] text-lightGreen desktop:bottom-3"
+          className="absolute bottom-[-2rem] desktop:bottom-3"
         >
           Privacy Policy
         </Link>

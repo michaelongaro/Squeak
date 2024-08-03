@@ -1855,7 +1855,7 @@ function WhilePlayingDrawer({
           </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader className="baseFlex w-full">
-              <AlertDialogTitle className="w-48">
+              <AlertDialogTitle className="w-48 sm:w-auto">
                 Are you sure you want to leave the game?
               </AlertDialogTitle>
             </AlertDialogHeader>
