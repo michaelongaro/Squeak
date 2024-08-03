@@ -27,19 +27,15 @@ function ShufflingCountdownModal() {
     if (timersInitiated || !showShufflingCountdown || !gameData.currentRound)
       return;
 
-    const timeouts = [
-      setTimeout(() => setTimersInitiated(true), 500),
-      setTimeout(() => setCountdownTimerValue(4), 1500),
-      setTimeout(() => setCountdownTimerValue(3), 2500),
-      setTimeout(() => setCountdownTimerValue(2), 3500),
-      setTimeout(() => setCountdownTimerValue(1), 4500),
-      setTimeout(() => {
-        setShowShufflingCountdown(false);
-        setTimersInitiated(false);
-      }, 5500),
-    ];
-
-    return () => timeouts.forEach(clearTimeout);
+    setTimeout(() => setTimersInitiated(true), 500);
+    setTimeout(() => setCountdownTimerValue(4), 1500);
+    setTimeout(() => setCountdownTimerValue(3), 2500);
+    setTimeout(() => setCountdownTimerValue(2), 3500);
+    setTimeout(() => setCountdownTimerValue(1), 4500);
+    setTimeout(() => {
+      setShowShufflingCountdown(false);
+      setTimersInitiated(false);
+    }, 5500);
   }, [
     gameData.currentRound,
     roomConfig.code,
