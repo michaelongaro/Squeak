@@ -1,9 +1,30 @@
 import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
 import { useRoomContext } from "~/context/RoomContext";
 
 function MiniMobileVotingModal() {
   const { playerMetadata, currentVotes, showVotingOptionButtons } =
     useRoomContext();
+
+  const [topValue, setTopValue] = useState<number>(0);
+
+  useEffect(() => {
+    function handleResize() {
+      const board = document.getElementById("board");
+
+      if (board) {
+        setTopValue(board.getBoundingClientRect().top / 4.25);
+      }
+    }
+
+    handleResize();
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   return (
     <motion.div
@@ -13,7 +34,10 @@ function MiniMobileVotingModal() {
       // ^ don't want this to be showing when toast is showing
       exit={{ opacity: 0 }}
       transition={{ duration: 0.25 }}
-      className="baseFlex absolute left-4 top-0 z-[200] w-3/4 !justify-start gap-2 mobileLarge:top-2"
+      style={{
+        top: `${topValue}px`,
+      }}
+      className="baseFlex absolute left-4 z-[200] w-3/4 max-w-xl !justify-start gap-2"
     >
       <div className="countdownTimerMiniMobileModal"></div>
       <p className="text-sm text-lightGreen">Vote</p>
