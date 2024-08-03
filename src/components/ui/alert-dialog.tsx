@@ -61,7 +61,10 @@ const AlertDialogFooter = ({
   className,
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) => (
-  <div className={cn("flex flex-col-reverse", className)} {...props} />
+  <div
+    className={cn("flex flex-col-reverse tablet:flex-row", className)}
+    {...props}
+  />
 );
 AlertDialogFooter.displayName = "AlertDialogFooter";
 
