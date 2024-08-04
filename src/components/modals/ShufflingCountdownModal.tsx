@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useUserIDContext } from "../../context/UserIDContext";
 import { useRoomContext } from "../../context/RoomContext";
 import Card from "../Play/Card";
@@ -6,8 +6,8 @@ import { motion, useAnimation } from "framer-motion";
 import AnimatedNumbers from "~/components/ui/AnimatedNumbers";
 
 const deck = Array.from({ length: 15 }, () => ({ suit: "S", value: "2" }));
-const repeatCount = 2; // Specify the number of times to repeat the animation
-const delayBetweenIterations = 1500; // Delay in milliseconds between each iteration
+const repeatCount = 2;
+const delayBetweenIterations = 1500;
 
 function ShufflingCountdownModal() {
   const userID = useUserIDContext();
@@ -68,32 +68,6 @@ function ShufflingCountdownModal() {
             <div className="text-lightGreen/75">Shuffling decks</div>
           </div>
 
-          {/* <div className="cardDimensions relative mt-16 select-none rounded-[0.25rem] desktop:mt-20">
-            <div className="absolute left-0 top-0 h-full w-full">
-              <Card
-                showCardBack={true}
-                draggable={false}
-                rotation={0}
-                hueRotation={playerMetadata[userID]?.deckHueRotation || 0}
-                ownerID={userID}
-              />
-            </div>
-            <div
-              style={{
-                animationIterationCount: "5",
-              }}
-              className={`topBackFacingCardInDeck absolute left-0 top-0 h-full w-full`}
-            >
-              <Card
-                showCardBack={true}
-                draggable={false}
-                rotation={0}
-                hueRotation={playerMetadata[userID]?.deckHueRotation || 0}
-                ownerID={userID}
-              />
-            </div>
-          </div> */}
-
           <div
             style={{
               perspective: "450px",
@@ -104,7 +78,7 @@ function ShufflingCountdownModal() {
             {deck.map((card, index) => (
               <AnimatedShufflingCard
                 key={`animatedShufflingCard${index}`}
-                index={index}
+                index={index + 1} // seems to fix bug where the first card skipped animation entirely
                 hueRotation={playerMetadata[userID]?.deckHueRotation || 0}
               />
             ))}
@@ -137,62 +111,79 @@ function AnimatedShufflingCard({
   const controls = useAnimation();
   const topPosition = index * 2; // Ensuring each card gets a unique initial top position
   const halfDeckLength = Math.floor(deck.length / 2);
+  const isMountedRef = useRef(true);
+
+  // trying to be extra cautious with cleanup here since a client side error
+  // would obviously not be tolerable during a real game.
+
+  // also the + 0.01 is a hacky fix to get the animation to still work (maybe delays could
+  // have been used instead) since framer motion doesn't seem to play the animation if the
+  // property value is the same as the previous one.
 
   useEffect(() => {
     async function startAnimationSequence() {
+      if (!isMountedRef.current) return;
+
+      await controls.start({
+        top: topPosition,
+        opacity: 1,
+        x: "-50%",
+        rotateX: 25,
+        rotateZ: 50,
+        transition: { duration: 0.5, ease: "easeInOut" },
+      });
+
       for (let i = 0; i < repeatCount; i++) {
-        await controls.start({
-          top: topPosition,
-          opacity: 1,
-          x: "-50%",
-          rotateX: 25,
-          rotateZ: 50,
-          transition: { duration: 0.5, ease: "easeInOut" },
-        });
+        if (!isMountedRef.current) return;
 
         if (index < halfDeckLength) {
           // Top half of the deck
           await controls.start({
             x: 75, // Move the top half to the right
-            y: topPosition + index * 3, // Fan out vertically
+            y: topPosition / 10,
+            transition: { duration: 0.5, ease: "easeInOut" },
+          });
+          if (!isMountedRef.current) return;
+          await controls.start({
+            x: 75, // Move the top half to the right
+            y: topPosition * 4, // Fan out vertically
+            transition: { duration: 0.5, ease: "easeInOut" },
+          });
+          if (!isMountedRef.current) return;
+          await controls.start({
+            x: "-50%",
+            y: topPosition * 4,
+            zIndex: deck.length - index + 1,
+            transition: { duration: 0.5, ease: "easeInOut" },
+          });
+          if (!isMountedRef.current) return;
+          await controls.start({
+            x: "-50%",
+            y: topPosition / 10 + 0.01, // necessary?
+            zIndex: deck.length - index,
             transition: { duration: 0.5, ease: "easeInOut" },
           });
         } else {
           // Bottom half of the deck
+          if (!isMountedRef.current) return;
           await controls.start({
-            y: topPosition - (index - halfDeckLength) * 3 - 20, // Move the bottom half up and fan out vertically
+            y: topPosition / 10,
             transition: { duration: 0.5, ease: "easeInOut" },
           });
-        }
-
-        await new Promise((resolve) => setTimeout(resolve, 500)); // Delay before moving back
-
-        if (index < halfDeckLength) {
-          // Move the top half back to the center
+          if (!isMountedRef.current) return;
+          await controls.start({
+            y: topPosition * 3 - 50, //- 50,
+            transition: { duration: 0.5, ease: "easeInOut" },
+          });
+          if (!isMountedRef.current) return;
+          await controls.start({
+            y: topPosition * 3 - 50.01, //- 50,
+            transition: { duration: 0.5, ease: "easeInOut" },
+          });
+          if (!isMountedRef.current) return;
           await controls.start({
             x: "-50%",
-            y: topPosition * 4,
-            transition: { duration: 0.5, ease: "easeInOut" },
-          });
-        } else {
-          // Move the bottom half back to the center
-          await controls.start({
-            y: topPosition,
-            transition: { duration: 0.5, ease: "easeInOut" },
-          });
-        }
-
-        if (index < halfDeckLength) {
-          // Move the top half back to the center
-          await controls.start({
-            x: "-50%",
-            y: topPosition,
-            transition: { duration: 0.5, ease: "easeInOut" },
-          });
-        } else {
-          // Move the bottom half back to the center
-          await controls.start({
-            y: topPosition,
+            y: topPosition / 10 + 0.01,
             transition: { duration: 0.5, ease: "easeInOut" },
           });
         }
@@ -204,6 +195,11 @@ function AnimatedShufflingCard({
     }
 
     startAnimationSequence();
+
+    return () => {
+      isMountedRef.current = false;
+      controls.stop();
+    };
   }, [controls, index, topPosition, halfDeckLength]);
 
   return (
