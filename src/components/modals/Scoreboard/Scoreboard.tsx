@@ -461,8 +461,8 @@ function Scoreboard() {
                         value={
                           animateTotalValue ? player.newScore : player.oldScore
                         }
+                        padding={10}
                         fontSize={16}
-                        padding={2}
                       />
                     </div>
                   </motion.div>
@@ -516,7 +516,7 @@ function Scoreboard() {
                             style={{
                               opacity: animateCardsPlayedValue ? 1 : 0,
                             }}
-                            className="transition-opacity"
+                            className="mr-1 transition-opacity"
                           >
                             +
                           </div>
@@ -526,7 +526,7 @@ function Scoreboard() {
                                 ? currentPlayerStats.cardsPlayed.length
                                 : 0
                             }
-                            padding={2}
+                            padding={6}
                             fontSize={14}
                           />
                         </div>
@@ -539,7 +539,7 @@ function Scoreboard() {
                             style={{
                               opacity: animateSqueakModifierValue ? 1 : 0,
                             }}
-                            className="transition-opacity"
+                            className="mr-1 transition-opacity"
                           >
                             {currentPlayerStats.squeakModifier > 0 ? "+" : ""}
                           </div>
@@ -549,7 +549,7 @@ function Scoreboard() {
                                 ? currentPlayerStats.squeakModifier
                                 : 0
                             }
-                            padding={2}
+                            padding={6}
                             fontSize={14}
                           />
                         </div>
@@ -939,7 +939,7 @@ function Scoreboard() {
                               style={{
                                 opacity: animateCardsPlayedValue ? 1 : 0,
                               }}
-                              className="transition-opacity"
+                              className="mr-1 transition-opacity"
                             >
                               +
                             </div>
@@ -949,7 +949,7 @@ function Scoreboard() {
                                   ? player.cardsPlayed.length
                                   : 0
                               }
-                              padding={2}
+                              padding={6}
                               fontSize={18}
                             />
                           </div>
@@ -962,7 +962,7 @@ function Scoreboard() {
                               style={{
                                 opacity: animateSqueakModifierValue ? 1 : 0,
                               }}
-                              className="transition-opacity"
+                              className="mr-1 transition-opacity"
                             >
                               {player.squeakModifier > 0 ? "+" : ""}
                             </div>
@@ -972,7 +972,7 @@ function Scoreboard() {
                                   ? player.squeakModifier
                                   : 0
                               }
-                              padding={2}
+                              padding={6}
                               fontSize={18}
                             />
                           </div>

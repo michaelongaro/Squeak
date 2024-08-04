@@ -38,26 +38,40 @@ function AnimatedNumbers({
   padding = 15,
 }: AnimatedNumbers) {
   const height = fontSize + padding;
+  const absValue = Math.abs(value);
+  const isNegative = value < 0;
 
   return (
     <div
       style={{ fontSize }}
       className="flex space-x-0 overflow-hidden rounded"
     >
+      {isNegative && (
+        <motion.div
+          key="negative-sign"
+          initial={{ opacity: 0, width: 0 }}
+          animate={{ opacity: 1, width: "1ch" }}
+          exit={{ opacity: 0, width: 0 }}
+          transition={{ duration: 0.2 }}
+          className="relative w-[1ch]"
+        >
+          -
+        </motion.div>
+      )}
       <AnimatePresence>
-        {value > 9999 && (
-          <Digit key="10000" place={10000} value={value} height={height} />
+        {absValue > 9999 && (
+          <Digit key="10000" place={10000} value={absValue} height={height} />
         )}
-        {value > 999 && (
-          <Digit key="1000" place={1000} value={value} height={height} />
+        {absValue > 999 && (
+          <Digit key="1000" place={1000} value={absValue} height={height} />
         )}
-        {value > 99 && (
-          <Digit key="100" place={100} value={value} height={height} />
+        {absValue > 99 && (
+          <Digit key="100" place={100} value={absValue} height={height} />
         )}
-        {value > 9 && (
-          <Digit key="10" place={10} value={value} height={height} />
+        {absValue > 9 && (
+          <Digit key="10" place={10} value={absValue} height={height} />
         )}
-        <Digit key="1" place={1} value={value} height={height} />
+        <Digit key="1" place={1} value={absValue} height={height} />
       </AnimatePresence>
     </div>
   );
