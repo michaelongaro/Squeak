@@ -38,7 +38,14 @@ export function createRoomHandler(
         voteType: null,
       };
 
-      io.in(roomConfig.code).emit("roomWasCreated");
+      const room = roomData[roomConfig.code];
+
+      if (room) {
+        io.in(roomConfig.code).emit("roomWasCreated", {
+          roomConfig: room.roomConfig,
+          playerMetadata: room.players,
+        });
+      }
 
       await prisma.room.create({
         data: {

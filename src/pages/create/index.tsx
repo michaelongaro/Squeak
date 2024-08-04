@@ -122,6 +122,27 @@ function CreateRoom() {
   ]);
 
   useEffect(() => {
+    function handleRoomWasCreated({
+      roomConfig,
+      playerMetadata,
+    }: {
+      roomConfig: IRoomConfig;
+      playerMetadata: IRoomPlayersMetadata;
+    }) {
+      setConnectedToRoom(true);
+      setRoomConfig(roomConfig);
+      setPlayerMetadata(playerMetadata);
+
+      if (isSignedIn) {
+        socket.emit("modifyFriendData", {
+          action: "createRoom",
+          initiatorID: userID,
+          roomCode: roomConfig.code,
+          currentRoomIsPublic: roomConfig.isPublic,
+        });
+      }
+    }
+
     function handlePlayerMetadataUpdated(newUsers: IRoomPlayersMetadata) {
       setPlayerMetadata(newUsers);
     }
@@ -165,12 +186,14 @@ function CreateRoom() {
       }, 500);
     }
 
+    socket.on("roomWasCreated", handleRoomWasCreated);
     socket.on("playerMetadataUpdated", handlePlayerMetadataUpdated);
     socket.on("roomConfigUpdated", handleRoomConfigUpdated);
     socket.on("navigateToPlayScreen", handleNavigateToPlayScreen);
     socket.on("startRoundCountdown", handleStartRoundCountdown);
 
     return () => {
+      socket.off("roomWasCreated", handleRoomWasCreated);
       socket.off("playerMetadataUpdated", handlePlayerMetadataUpdated);
       socket.off("roomConfigUpdated", handleRoomConfigUpdated);
       socket.off("navigateToPlayScreen", handleNavigateToPlayScreen);
@@ -183,22 +206,13 @@ function CreateRoom() {
     setRoomConfig,
     push,
     roomConfig.code,
+    isSignedIn,
+    userID,
   ]);
 
   function createRoom() {
     if (roomConfig && userID) {
-      setConnectedToRoom(true);
-
       socket.emit("createRoom", roomConfig, playerMetadata[userID]);
-
-      if (isSignedIn) {
-        socket.emit("modifyFriendData", {
-          action: "createRoom",
-          initiatorID: userID,
-          roomCode: roomConfig.code,
-          currentRoomIsPublic: roomConfig.isPublic,
-        });
-      }
     }
   }
 
