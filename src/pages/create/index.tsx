@@ -546,7 +546,14 @@ function CreateRoom() {
                   {/* Add bot button */}
                   {Object.keys(playerMetadata).length <
                     roomConfig.maxPlayers && (
-                    <div className="baseFlex h-full w-full !items-start sm:w-auto">
+                    <motion.div
+                      key={"addBotButton"}
+                      initial={{ opacity: 0, scale: 0.75 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.75 }}
+                      transition={{ duration: 0.15 }}
+                      className="baseFlex h-full w-full !items-start sm:w-auto"
+                    >
                       <SecondaryButton
                         icon={<FaRobot size={"1.5rem"} />}
                         extraPadding={false}
@@ -568,7 +575,7 @@ function CreateRoom() {
                           });
                         }}
                       />
-                    </div>
+                    </motion.div>
                   )}
                 </div>
 
