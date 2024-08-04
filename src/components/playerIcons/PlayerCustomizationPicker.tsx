@@ -13,6 +13,7 @@ import { hslToDeckHueRotations } from "../../utils/hslToDeckHueRotations";
 import Card from "../Play/Card";
 import { type ILocalPlayerSettings } from "../modals/SettingsAndStats/UserSettingsAndStatsModal";
 import PlayerIcon from "./PlayerIcon";
+import { updateLocalStoragePlayerMetadata } from "~/utils/updateLocalStoragePlayerMetadata";
 
 interface IPlayerCustomizationPicker {
   type: "avatar" | "back" | "front";
@@ -40,8 +41,8 @@ function PlayerCustomizationPicker({
     setPlayerMetadata: storeSetPlayerMetadata,
     connectedToRoom: storeConnectedToRoom,
     roomConfig,
-    prefersSimpleCardAssets,
-    setPrefersSimpleCardAssets,
+    deckVariantIndex,
+    setDeckVariantIndex,
   } = useRoomContext();
 
   // dynamic values depending on if parent is being used in <Settings /> or not
@@ -53,7 +54,7 @@ function PlayerCustomizationPicker({
     ["avatar" | "back", number] | null
   >(null);
   const [hoveringOnFrontCardTooltip, setHoveringOnFrontCardTooltip] = useState<
-    "normal" | "simple" | null
+    number | null
   >(null);
 
   const [userAvatarIndex, setUserAvatarIndex] = useState<number>(-1);
@@ -113,16 +114,10 @@ function PlayerCustomizationPicker({
       : "4px solid transparent";
   }
 
-  function calculateOutlineCardFront(
-    tooltipValue: "normal" | "simple",
-  ): string {
-    if (
-      (prefersSimpleCardAssets && tooltipValue === "simple") ||
-      (!prefersSimpleCardAssets && tooltipValue === "normal")
-    )
-      return "4px solid hsl(120deg 100% 18%)";
+  function calculateOutlineCardFront(index: number): string {
+    if (deckVariantIndex === index) return "4px solid hsl(120deg 100% 18%)";
 
-    return hoveringOnFrontCardTooltip === tooltipValue
+    return hoveringOnFrontCardTooltip === index
       ? "4px solid hsl(120deg 100% 40%)"
       : "4px solid transparent";
   }
@@ -194,6 +189,13 @@ function PlayerCustomizationPicker({
           }
           // if user is not connected to room
           else {
+            updateLocalStoragePlayerMetadata({
+              avatarPath,
+              color: playerMetadata[userID]?.color || "",
+              deckVariantIndex,
+              deckHueRotation: playerMetadata[userID]?.deckHueRotation || 0,
+            });
+
             setPlayerMetadata({
               ...playerMetadata,
               [userID]: {
@@ -225,6 +227,96 @@ function PlayerCustomizationPicker({
           )}
       </div>
     ));
+  }
+
+  function renderCardFrontTooltip() {
+    return (
+      <>
+        <div
+          style={{
+            outline: calculateOutlineCardFront(0),
+            cursor: deckVariantIndex !== 0 ? "pointer" : "auto",
+            pointerEvents: deckVariantIndex !== 0 ? "auto" : "none",
+          }}
+          className="relative shrink-0 rounded-sm outline-offset-4 transition-all"
+          onMouseEnter={() => setHoveringOnFrontCardTooltip(0)}
+          onMouseLeave={() => setHoveringOnFrontCardTooltip(null)}
+          onClick={() => {
+            updateLocalStoragePlayerMetadata({
+              avatarPath: playerMetadata[userID]?.avatarPath || "",
+              color: playerMetadata[userID]?.color || "",
+              deckVariantIndex: 0,
+              deckHueRotation: playerMetadata[userID]?.deckHueRotation || 0,
+            });
+
+            setDeckVariantIndex(0);
+
+            if (setLocalPlayerSettings === undefined) return;
+
+            setLocalPlayerSettings((localPlayerSettings) => {
+              return {
+                ...localPlayerSettings,
+                deckVariantIndex: 0,
+              };
+            });
+          }}
+        >
+          <Card
+            value={"8"}
+            suit={"C"}
+            showCardBack={false}
+            draggable={false}
+            rotation={0}
+            width={64}
+            height={87}
+            hueRotation={0}
+            manuallyShowSpecificCardFront={0}
+          />
+        </div>
+
+        <div
+          style={{
+            outline: calculateOutlineCardFront(1),
+            cursor: deckVariantIndex !== 1 ? "pointer" : "auto",
+            pointerEvents: deckVariantIndex !== 1 ? "auto" : "none",
+          }}
+          className="relative rounded-sm outline-offset-4 transition-all"
+          onMouseEnter={() => setHoveringOnFrontCardTooltip(1)}
+          onMouseLeave={() => setHoveringOnFrontCardTooltip(null)}
+          onClick={() => {
+            updateLocalStoragePlayerMetadata({
+              avatarPath: playerMetadata[userID]?.avatarPath || "",
+              color: playerMetadata[userID]?.color || "",
+              deckVariantIndex: 1,
+              deckHueRotation: playerMetadata[userID]?.deckHueRotation || 0,
+            });
+
+            setDeckVariantIndex(1);
+
+            if (setLocalPlayerSettings === undefined) return;
+
+            setLocalPlayerSettings((localPlayerSettings) => {
+              return {
+                ...localPlayerSettings,
+                deckVariantIndex: 1,
+              };
+            });
+          }}
+        >
+          <Card
+            value={"8"}
+            suit={"C"}
+            showCardBack={false}
+            draggable={false}
+            rotation={0}
+            width={64}
+            height={87}
+            hueRotation={0}
+            manuallyShowSpecificCardFront={1}
+          />
+        </div>
+      </>
+    );
   }
 
   function renderDeckTooltip() {
@@ -259,6 +351,16 @@ function PlayerCustomizationPicker({
           }
           // if user is not connected to room
           else {
+            updateLocalStoragePlayerMetadata({
+              avatarPath: playerMetadata[userID]?.avatarPath || "",
+              color,
+              deckVariantIndex,
+              deckHueRotation:
+                hslToDeckHueRotations[
+                  color as keyof typeof hslToDeckHueRotations
+                ],
+            });
+
             setPlayerMetadata({
               ...playerMetadata,
               [userID]: {
@@ -298,79 +400,6 @@ function PlayerCustomizationPicker({
         </div>
       </div>
     ));
-  }
-
-  function renderCardFrontTooltip() {
-    return (
-      <>
-        <div
-          style={{
-            outline: calculateOutlineCardFront("normal"),
-          }}
-          className="relative shrink-0 rounded-sm outline-offset-4 transition-all"
-          onMouseEnter={() => setHoveringOnFrontCardTooltip("normal")}
-          onMouseLeave={() => setHoveringOnFrontCardTooltip(null)}
-          onClick={() => {
-            setPrefersSimpleCardAssets(false);
-
-            if (setLocalPlayerSettings === undefined) return;
-
-            setLocalPlayerSettings((localPlayerSettings) => {
-              return {
-                ...localPlayerSettings,
-                prefersSimpleCardAssets: false,
-              };
-            });
-          }}
-        >
-          <Card
-            value={"8"}
-            suit={"C"}
-            showCardBack={false}
-            draggable={false}
-            rotation={0}
-            width={64}
-            height={87}
-            hueRotation={0}
-            manuallyShowSpecificCardFront={"normal"}
-          />
-        </div>
-        <div
-          style={{
-            outline: calculateOutlineCardFront("simple"),
-            cursor: !prefersSimpleCardAssets ? "pointer" : "auto",
-            pointerEvents: !prefersSimpleCardAssets ? "auto" : "none",
-          }}
-          className="relative rounded-sm outline-offset-4 transition-all"
-          onMouseEnter={() => setHoveringOnFrontCardTooltip("simple")}
-          onMouseLeave={() => setHoveringOnFrontCardTooltip(null)}
-          onClick={() => {
-            setPrefersSimpleCardAssets(true);
-
-            if (setLocalPlayerSettings === undefined) return;
-
-            setLocalPlayerSettings((localPlayerSettings) => {
-              return {
-                ...localPlayerSettings,
-                prefersSimpleCardAssets: true,
-              };
-            });
-          }}
-        >
-          <Card
-            value={"8"}
-            suit={"C"}
-            showCardBack={false}
-            draggable={false}
-            rotation={0}
-            width={64}
-            height={87}
-            hueRotation={0}
-            manuallyShowSpecificCardFront={"simple"}
-          />
-        </div>
-      </>
-    );
   }
 
   return (

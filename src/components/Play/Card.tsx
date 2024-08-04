@@ -30,7 +30,7 @@ interface ICardComponent {
   hueRotation: number;
   width?: number;
   height?: number;
-  manuallyShowSpecificCardFront?: "normal" | "simple";
+  manuallyShowSpecificCardFront?: number;
 }
 
 export interface IMoveCard {
@@ -75,7 +75,7 @@ function Card({
     setCardBeingMovedProgramatically,
     squeakDeckBeingMovedProgramatically,
     setSqueakDeckBeingMovedProgramatically,
-    prefersSimpleCardAssets,
+    deckVariantIndex,
     setHoldingADeckCard,
     setHoldingASqueakCard,
   } = useRoomContext();
@@ -633,17 +633,17 @@ function Card({
     return transitionStyles;
   }
 
+  // TODO: this will need to be refactored for sure to have better DX
+  // than hardcoding the card asset path variations like this
   function getCardAssetPath(): StaticImageData {
-    if (manuallyShowSpecificCardFront) {
+    if (manuallyShowSpecificCardFront !== undefined) {
       return cardAssets[
-        `${suit}${value}${
-          manuallyShowSpecificCardFront === "simple" ? "Simple" : ""
-        }`
+        `${suit}${value}${manuallyShowSpecificCardFront === 1 ? "Simple" : ""}`
       ] as StaticImageData;
     }
 
     return cardAssets[
-      `${suit}${value}${prefersSimpleCardAssets ? "Simple" : ""}`
+      `${suit}${value}${deckVariantIndex === 1 ? "Simple" : ""}`
     ] as StaticImageData;
   }
 

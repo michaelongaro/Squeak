@@ -974,7 +974,7 @@ function DrawerSettings({
       } as IRoomPlayer,
     });
     setLocalPlayerSettings({
-      prefersSimpleCardAssets: user.prefersSimpleCardAssets,
+      deckVariantIndex: user.deckVariantIndex,
       squeakPileOnLeft: user.squeakPileOnLeft,
       desktopNotifications: user.desktopNotifications,
     });
@@ -996,8 +996,7 @@ function DrawerSettings({
       localPlayerMetadata[userID]?.avatarPath !== user.avatarPath ||
       localPlayerMetadata[userID]?.color !== user.color ||
       localPlayerMetadata[userID]?.deckHueRotation !== user.deckHueRotation ||
-      localPlayerSettings.prefersSimpleCardAssets !==
-        user.prefersSimpleCardAssets ||
+      localPlayerSettings.deckVariantIndex !== user.deckVariantIndex ||
       localPlayerSettings.squeakPileOnLeft !== user.squeakPileOnLeft ||
       localPlayerSettings.desktopNotifications !== user.desktopNotifications
     ) {
@@ -1019,7 +1018,7 @@ function DrawerSettings({
       avatarPath: updatedMetadata.avatarPath,
       color: updatedMetadata.color,
       deckHueRotation: updatedMetadata.deckHueRotation,
-      prefersSimpleCardAssets: localPlayerSettings.prefersSimpleCardAssets,
+      deckVariantIndex: localPlayerSettings.deckVariantIndex,
       squeakPileOnLeft: localPlayerSettings.squeakPileOnLeft,
       desktopNotifications: localPlayerSettings.desktopNotifications,
     });

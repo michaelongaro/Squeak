@@ -210,7 +210,7 @@ function JoinRoom() {
                     setUsernameIsProfane(filter.isProfane(e.target.value));
 
                     if (!isSignedIn) {
-                      localStorage.setItem("squeakUsername", e.target.value);
+                      localStorage.setItem("squeak-username", e.target.value);
                     }
 
                     setPlayerMetadata({

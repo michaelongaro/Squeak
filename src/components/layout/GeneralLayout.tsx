@@ -4,7 +4,6 @@ import { Montserrat } from "next/font/google";
 import { Toaster, ToastBar } from "react-hot-toast";
 import TopRightControls from "../TopRightControls/TopRightControls";
 import { cardAssets } from "~/utils/cardAssetPaths";
-import useInitializeLocalStorageValues from "~/hooks/useInitializeLocalStorageValues";
 import usePlayerLeftRoom from "~/hooks/usePlayerLeftRoom";
 import useAttachUnloadEventListener from "~/hooks/useAttachUnloadEventListener";
 import useRejoinRoom from "~/hooks/useRejoinRoom";
@@ -65,7 +64,6 @@ function GeneralLayout({ children }: GeneralLayout) {
     }, 2500);
   }, []);
 
-  useInitializeLocalStorageValues();
   usePlayerLeftRoom();
   useRejoinRoom();
   useResetPlayerStateUponPageLoad();

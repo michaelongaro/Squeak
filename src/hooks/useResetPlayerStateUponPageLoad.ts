@@ -41,14 +41,46 @@ function useResetPlayerStateUponPageLoad() {
       });
 
       if (userID !== "") {
-        const localStorageUsername = localStorage.getItem("squeakUsername");
+        const localStorageUsername = localStorage.getItem("squeak-username");
+        const localStoragePlayerMetadata = localStorage.getItem(
+          "squeak-playerMetadata",
+        );
+
+        let parsedPlayerMetadata: {
+          avatarPath: string;
+          color: string;
+          deckVariantIndex: number;
+          deckHueRotation: number;
+        } = {
+          avatarPath: "/avatars/rabbit.svg",
+          color: "hsl(352deg, 69%, 61%)",
+          deckVariantIndex: 0,
+          deckHueRotation: 232,
+        };
+
+        if (localStoragePlayerMetadata) {
+          parsedPlayerMetadata = JSON.parse(localStoragePlayerMetadata);
+        } else {
+          localStorage.setItem(
+            "squeak-playerMetadata",
+            JSON.stringify({
+              avatarPath: "/avatars/rabbit.svg",
+              deckVariantIndex: 0,
+              deckHueRotation: 232,
+            }),
+          );
+        }
+
+        // TODO: even if it isn't strictly used by backend, maybe include
+        // the deckVariantIndex in playerMetadata just to simplify things?
 
         setPlayerMetadata({
           [userID]: {
             username: user?.username ?? localStorageUsername ?? "",
-            avatarPath: user?.avatarPath ?? "/avatars/rabbit.svg",
-            color: user?.color ?? "hsl(352deg, 69%, 61%)",
-            deckHueRotation: user?.deckHueRotation ?? 232,
+            avatarPath: user?.avatarPath ?? parsedPlayerMetadata.avatarPath,
+            color: user?.color ?? parsedPlayerMetadata.color,
+            deckHueRotation:
+              user?.deckHueRotation ?? parsedPlayerMetadata.deckHueRotation,
           } as IRoomPlayer,
         } as IRoomPlayersMetadata);
       }

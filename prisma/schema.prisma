@@ -41,14 +41,14 @@ model User {
   imageUrl String?
 
   // user metadata
-  username                String  @default("New user")
-  avatarPath              String  @default("/avatars/rabbit.svg")
-  color                   String  @default("hsl(352deg, 69%, 61%)") // defaults to red color
-  deckHueRotation         Int     @default(232) // defaults to red color
-  prefersSimpleCardAssets Boolean @default(false)
-  squeakPileOnLeft        Boolean @default(true)
-  desktopNotifications    Boolean @default(false)
-  stats                   Stats?
+  username             String  @default("New user")
+  avatarPath           String  @default("/avatars/rabbit.svg")
+  color                String  @default("hsl(352deg, 69%, 61%)") // defaults to red color
+  deckHueRotation      Int     @default(232) // defaults to red color
+  deckVariantIndex     Int     @default(0)
+  squeakPileOnLeft     Boolean @default(true)
+  desktopNotifications Boolean @default(false)
+  stats                Stats?
 
   // just storing IDs for simplicity, client handles querying for relevant User data that
   // can be found from these IDs.

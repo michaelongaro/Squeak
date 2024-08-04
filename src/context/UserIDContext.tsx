@@ -14,16 +14,16 @@ export function UserIDProvider(props: { children: React.ReactNode }) {
 
     if (!userId) {
       let userID: string;
-      if (localStorage.getItem("squeakUserID") === null) {
+      if (localStorage.getItem("squeak-userID") === null) {
         userID = cryptoRandomString({ length: 16 });
-        localStorage.setItem("squeakUserID", userID);
+        localStorage.setItem("squeak-userID", userID);
       } else {
-        userID = localStorage.getItem("squeakUserID") as string;
+        userID = localStorage.getItem("squeak-userID") as string;
       }
       setValue(userID);
     } else {
-      if (localStorage.getItem("squeakUserID") !== null) {
-        localStorage.removeItem("squeakUserID");
+      if (localStorage.getItem("squeak-userID") !== null) {
+        localStorage.removeItem("squeak-userID");
       }
       setValue(userId);
     }

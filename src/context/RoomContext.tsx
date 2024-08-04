@@ -107,10 +107,8 @@ interface IRoomContext {
 
   currentVolume: number | null;
   setCurrentVolume: React.Dispatch<React.SetStateAction<number | null>>;
-  prefersSimpleCardAssets: boolean | null;
-  setPrefersSimpleCardAssets: React.Dispatch<
-    React.SetStateAction<boolean | null>
-  >;
+  deckVariantIndex: number;
+  setDeckVariantIndex: React.Dispatch<React.SetStateAction<number>>;
 
   cardBeingMovedProgramatically: ICardBeingMovedProgramatically;
   setCardBeingMovedProgramatically: React.Dispatch<
@@ -206,9 +204,7 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     useState<AudioBuffer | null>(null);
 
   const [currentVolume, setCurrentVolume] = useState<number | null>(null);
-  const [prefersSimpleCardAssets, setPrefersSimpleCardAssets] = useState<
-    boolean | null
-  >(null);
+  const [deckVariantIndex, setDeckVariantIndex] = useState<number>(0);
 
   const [showSettingsModal, setShowSettingsModal] = useState<boolean>(false);
 
@@ -354,22 +350,24 @@ export function RoomProvider(props: { children: React.ReactNode }) {
   }, [userID, friendData]);
 
   useEffect(() => {
-    if (prefersSimpleCardAssets === null) return;
-
-    localStorage.setItem(
-      "squeakPrefersSimpleCardAssets",
-      prefersSimpleCardAssets.toString(),
-    );
-  }, [prefersSimpleCardAssets]);
-
-  useEffect(() => {
     if (currentVolume === null || !masterVolumeGainNode) return;
 
-    localStorage.setItem("squeakVolume", currentVolume.toString());
+    localStorage.setItem("squeak-volume", currentVolume.toString());
 
     const fixedVolume = currentVolume * 0.01;
     masterVolumeGainNode.gain.value = Number(fixedVolume.toFixed(2));
   }, [currentVolume, masterVolumeGainNode]);
+
+  useEffect(() => {
+    const storedVolume = localStorage.getItem("squeak-volume");
+
+    if (storedVolume) {
+      setCurrentVolume(parseFloat(storedVolume));
+    } else {
+      localStorage.setItem("squeak-volume", "50");
+      setCurrentVolume(50);
+    }
+  }, []);
 
   useEffect(() => {
     if (isSignedIn) {
@@ -403,7 +401,7 @@ export function RoomProvider(props: { children: React.ReactNode }) {
       } as IRoomPlayer,
     }));
 
-    setPrefersSimpleCardAssets(user ? user.prefersSimpleCardAssets : false);
+    setDeckVariantIndex(user ? user.deckVariantIndex : 0);
     setMirrorPlayerContainer(user ? !user.squeakPileOnLeft : false);
   }, [userID, user, playerMetadata, isLoaded, isSignedIn]);
 
@@ -417,19 +415,50 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     )
       return;
 
-    const localStorageUsername = localStorage.getItem("squeakUsername");
+    const localStorageUsername = localStorage.getItem("squeak-username");
+    const localStoragePlayerMetadata = localStorage.getItem(
+      "squeak-playerMetadata",
+    );
+
+    let parsedPlayerMetadata: {
+      avatarPath: string;
+      color: string;
+      deckVariantIndex: number;
+      deckHueRotation: number;
+    } = {
+      avatarPath: "/avatars/rabbit.svg",
+      color: "hsl(352deg, 69%, 61%)",
+      deckVariantIndex: 0,
+      deckHueRotation: 232,
+    };
+
+    if (localStoragePlayerMetadata) {
+      parsedPlayerMetadata = JSON.parse(localStoragePlayerMetadata);
+    } else {
+      localStorage.setItem(
+        "squeak-playerMetadata",
+        JSON.stringify({
+          avatarPath: "/avatars/rabbit.svg",
+          deckVariantIndex: 0,
+          deckHueRotation: 232,
+        }),
+      );
+    }
+
+    // TODO: even if it isn't strictly used by backend, maybe include
+    // the deckVariantIndex in playerMetadata just to simplify things?
 
     setPlayerMetadata((prev) => ({
       ...prev,
       [userID]: {
         username: localStorageUsername ?? "",
-        avatarPath: "/avatars/rabbit.svg",
+        avatarPath: parsedPlayerMetadata.avatarPath,
         color: "hsl(352deg, 69%, 61%)",
-        deckHueRotation: 232,
+        deckHueRotation: parsedPlayerMetadata.deckHueRotation,
       } as IRoomPlayer,
     }));
 
-    setPrefersSimpleCardAssets(false);
+    setDeckVariantIndex(parsedPlayerMetadata.deckVariantIndex);
     setMirrorPlayerContainer(false);
   }, [userID, user, playerMetadata, isLoaded, isSignedIn]);
 
@@ -482,8 +511,8 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     setConnectedToRoom,
     currentVolume,
     setCurrentVolume,
-    prefersSimpleCardAssets,
-    setPrefersSimpleCardAssets,
+    deckVariantIndex,
+    setDeckVariantIndex,
     cardBeingMovedProgramatically,
     setCardBeingMovedProgramatically,
     newInviteNotification,

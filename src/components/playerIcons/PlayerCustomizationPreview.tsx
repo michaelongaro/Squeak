@@ -25,7 +25,7 @@ function PlayerCustomizationPreview({
 }: IPlayerCustomizationPicker) {
   const userID = useUserIDContext();
 
-  const { playerMetadata: storePlayerMetadata, prefersSimpleCardAssets } =
+  const { playerMetadata: storePlayerMetadata, deckVariantIndex } =
     useRoomContext();
 
   const playerMetadata = localPlayerMetadata ?? storePlayerMetadata;
@@ -98,9 +98,7 @@ function PlayerCustomizationPreview({
         width={48} // roughly correct for ratio of a card
         height={64}
         hueRotation={playerMetadata[userID]?.deckHueRotation || 0}
-        manuallyShowSpecificCardFront={
-          prefersSimpleCardAssets ? "simple" : "normal"
-        }
+        manuallyShowSpecificCardFront={deckVariantIndex}
       />
       {renderDescriptionText && (
         <p
