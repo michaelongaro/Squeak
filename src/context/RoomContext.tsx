@@ -184,7 +184,9 @@ export function RoomProvider(props: { children: React.ReactNode }) {
   const userID = useUserIDContext();
 
   // probably want to remove the default "refetch on page focus" behavior
-  const { data: user } = api.users.getUserByID.useQuery(userID);
+  const { data: user } = api.users.getUserByID.useQuery(userID, {
+    enabled: userID !== "",
+  });
 
   const viewportLabel = useGetViewportLabel();
 
@@ -453,7 +455,7 @@ export function RoomProvider(props: { children: React.ReactNode }) {
       [userID]: {
         username: localStorageUsername ?? "",
         avatarPath: parsedPlayerMetadata.avatarPath,
-        color: "hsl(352deg, 69%, 61%)",
+        color: parsedPlayerMetadata.color,
         deckHueRotation: parsedPlayerMetadata.deckHueRotation,
       } as IRoomPlayer,
     }));
