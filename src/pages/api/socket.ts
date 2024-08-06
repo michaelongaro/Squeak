@@ -211,10 +211,19 @@ export default function SocketHandler(req, res) {
 
   const io = new Server(res.socket.server, {
     path: "/api/socket",
+    connectionStateRecovery: {
+      maxDisconnectionDuration: 2 * 60 * 1000, // 2 minutes
+      skipMiddlewares: true,
+    },
   });
   res.socket.server.io = io;
 
   const onConnection = (socket: Socket) => {
+    if (socket.recovered) {
+      // catch up on missed events by sending full state
+      console.log("recovered");
+    }
+
     // pregame/room handlers
     createRoomHandler(io, socket, roomData, miscRoomData);
 
