@@ -7,7 +7,7 @@ import AnimatedNumbers from "~/components/ui/AnimatedNumbers";
 
 const deck = Array.from({ length: 15 }, () => ({ suit: "S", value: "2" }));
 const repeatCount = 2;
-const delayBetweenIterations = 1500;
+const delayBetweenIterations = 1000;
 
 function ShufflingCountdownModal() {
   const userID = useUserIDContext();
@@ -73,7 +73,7 @@ function ShufflingCountdownModal() {
               perspective: "450px",
               transformStyle: "preserve-3d",
             }}
-            className="z-[2] h-[115px] w-full tablet:h-[165px]"
+            className="z-[2] mt-4 h-[115px] w-full tablet:h-[165px]"
           >
             {deck.map((card, index) => (
               <AnimatedShufflingCard
@@ -130,7 +130,7 @@ function AnimatedShufflingCard({
         x: "-50%",
         rotateX: 25,
         rotateZ: 50,
-        transition: { duration: 0.5, ease: "easeInOut" },
+        transition: { duration: 1, ease: "easeInOut" },
       });
 
       for (let i = 0; i < repeatCount; i++) {
@@ -141,26 +141,33 @@ function AnimatedShufflingCard({
           await controls.start({
             x: 75, // Move the top half to the right
             y: topPosition / 10,
-            transition: { duration: 0.5, ease: "easeInOut" },
+            transition: {
+              duration: 0.5,
+              ease: "easeInOut",
+            },
           });
           if (!isMountedRef.current) return;
           await controls.start({
             x: 75, // Move the top half to the right
-            y: topPosition * 4, // Fan out vertically
-            transition: { duration: 0.5, ease: "easeInOut" },
+            y: topPosition * 2, // Fan out vertically
+            transition: {
+              duration: 0.5,
+              ease: "easeInOut",
+            },
           });
           if (!isMountedRef.current) return;
           await controls.start({
             x: "-50%",
-            y: topPosition * 4,
-            zIndex: deck.length - index + 1,
-            transition: { duration: 0.5, ease: "easeInOut" },
+            y: topPosition * 2,
+            transition: {
+              duration: 0.35,
+              ease: "easeInOut",
+            },
           });
           if (!isMountedRef.current) return;
           await controls.start({
             x: "-50%",
             y: topPosition / 10 + 0.01, // necessary?
-            zIndex: deck.length - index,
             transition: { duration: 0.5, ease: "easeInOut" },
           });
         } else {
@@ -172,13 +179,13 @@ function AnimatedShufflingCard({
           });
           if (!isMountedRef.current) return;
           await controls.start({
-            y: topPosition * 3 - 50, //- 50,
+            y: topPosition * 1.5 - 30,
             transition: { duration: 0.5, ease: "easeInOut" },
           });
           if (!isMountedRef.current) return;
           await controls.start({
-            y: topPosition * 3 - 50.01, //- 50,
-            transition: { duration: 0.5, ease: "easeInOut" },
+            y: topPosition * 1.5 - 30.01,
+            transition: { duration: 0.35, ease: "easeInOut" },
           });
           if (!isMountedRef.current) return;
           await controls.start({
@@ -210,7 +217,6 @@ function AnimatedShufflingCard({
         position: "absolute",
         left: "50%",
         transform: "translateX(-50%) rotateX(25deg) rotateZ(50deg)",
-        zIndex: deck.length - index, // to maintain stack order
       }}
       id={`animatedShufflingCard${index}`}
     >
