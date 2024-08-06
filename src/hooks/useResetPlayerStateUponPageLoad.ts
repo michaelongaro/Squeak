@@ -13,7 +13,9 @@ function useResetPlayerStateUponPageLoad() {
   const { events } = useRouter();
   const userID = useUserIDContext();
 
-  const { data: user } = api.users.getUserByID.useQuery(userID);
+  const { data: user } = api.users.getUserByID.useQuery(userID, {
+    enabled: userID !== "",
+  });
 
   const {
     setRoomConfig,

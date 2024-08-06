@@ -86,6 +86,9 @@ function CreateRoom() {
 
   const { data: authenticatedUsers } = api.users.getUsersFromIDList.useQuery(
     Object.keys(playerMetadata),
+    {
+      enabled: Object.keys(playerMetadata).length > 0,
+    },
   );
 
   const [configAndMetadataInitialized, setConfigAndMetadataInitialized] =

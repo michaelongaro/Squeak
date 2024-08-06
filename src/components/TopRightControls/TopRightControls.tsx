@@ -1328,12 +1328,28 @@ function DrawerFriendsList({
 
   const { data: friends } = api.users.getUsersFromIDList.useQuery(
     friendData?.friendIDs ?? [],
+    {
+      enabled: Boolean(
+        (friendData?.friendIDs ? friendData.friendIDs.length : 0) > 0,
+      ),
+    },
   );
   const { data: friendInviteIDs } = api.users.getUsersFromIDList.useQuery(
     friendData?.friendInviteIDs ?? [],
+    {
+      enabled: Boolean(
+        (friendData?.friendInviteIDs ? friendData.friendInviteIDs.length : 0) >
+          0,
+      ),
+    },
   );
   const { data: roomInviteIDs } = api.users.getUsersFromIDList.useQuery(
     friendData?.roomInviteIDs ?? [],
+    {
+      enabled: Boolean(
+        (friendData?.roomInviteIDs ? friendData.roomInviteIDs.length : 0) > 0,
+      ),
+    },
   );
 
   useEffect(() => {

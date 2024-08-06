@@ -68,6 +68,12 @@ function JoinRoom() {
 
   const { data: roomInviteIDs } = api.users.getUsersFromIDList.useQuery(
     friendData?.roomInviteIDs ?? [],
+    {
+      enabled: Boolean(
+        (friendData?.friendInviteIDs ? friendData.friendInviteIDs.length : 0) >
+          0,
+      ),
+    },
   );
 
   const joinRoom = useCallback(() => {

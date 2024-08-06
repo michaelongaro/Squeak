@@ -9,7 +9,9 @@ function useInitializeUserStats() {
   const userID = useUserIDContext();
 
   // also hook to query to see if user exists in db already
-  const { data: currentUserStats } = api.stats.getStatsByID.useQuery(userID);
+  const { data: currentUserStats } = api.stats.getStatsByID.useQuery(userID, {
+    enabled: userID !== "",
+  });
   const initializeUser = api.stats.initializeUser.useMutation();
 
   const [initialized, setInitialized] = useState(false);

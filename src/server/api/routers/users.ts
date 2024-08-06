@@ -122,6 +122,8 @@ export const usersRouter = createTRPCRouter({
       }
     }),
 
+  // TODO: you should probably just update the main leaderboard ranking arrays
+  // for each category instead of recalculating them every time
   getLeaderboardStats: publicProcedure.query(async ({ ctx }) => {
     try {
       const allUsers = await ctx.prisma.user.findMany({

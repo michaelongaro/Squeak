@@ -27,7 +27,9 @@ function MainOptions() {
   const { push } = useRouter();
 
   // probably want to remove the default "refetch on page focus" behavior
-  const { data: user } = api.users.getUserByID.useQuery(userID);
+  const { data: user } = api.users.getUserByID.useQuery(userID, {
+    enabled: userID !== "",
+  });
 
   const { viewportLabel } = useRoomContext();
 
