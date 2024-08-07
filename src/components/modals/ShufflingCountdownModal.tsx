@@ -60,7 +60,7 @@ function ShufflingCountdownModal() {
         animate={{ scale: 1 }}
         exit={{ scale: 0.95 }}
         transition={{ duration: 0.15, delay: 0.2 }}
-        className="h-fit w-fit rounded-lg border-2 border-lightGreen bg-gradient-to-br from-green-800 to-green-850 px-16 py-8 font-medium text-lightGreen shadow-md"
+        className="h-fit w-80 rounded-lg border-2 border-lightGreen bg-gradient-to-br from-green-800 to-green-850 px-16 py-8 font-medium text-lightGreen shadow-md sm:w-96"
       >
         <div className="baseVertFlex gap-8">
           <div className="baseVertFlex gap-2">

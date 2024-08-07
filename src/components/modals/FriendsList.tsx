@@ -7,11 +7,9 @@ import { useUserIDContext } from "../../context/UserIDContext";
 import { useRoomContext } from "../../context/RoomContext";
 import PlayerIcon from "../playerIcons/PlayerIcon";
 import { motion } from "framer-motion";
-import SecondaryButton from "../Buttons/SecondaryButton";
 import { AiOutlineCheck, AiOutlineClose } from "react-icons/ai";
 import { FaTrashAlt } from "react-icons/fa";
 import { TbDoorEnter } from "react-icons/tb";
-import DangerButton from "../Buttons/DangerButton";
 import useOnClickOutside from "../../hooks/useOnClickOutside";
 import {
   Tooltip,
@@ -52,30 +50,34 @@ function FriendsList({ setShowFriendsListModal }: IFriendsList) {
     setConnectedToRoom,
   } = useRoomContext();
 
+  // TODO: fix ergonomics around these queries. Currently can't fully disable
+  // queries based on friendData being undefined, since jsx below will infinitely
+  // render loading spinners
+
   const { data: friends } = api.users.getUsersFromIDList.useQuery(
     friendData?.friendIDs ?? [],
-    {
-      enabled: Boolean(
-        (friendData?.friendIDs ? friendData.friendIDs.length : 0) > 0,
-      ),
-    },
+    // {
+    //   enabled: Boolean(
+    //     (friendData?.friendIDs ? friendData.friendIDs.length : 0) > 0,
+    //   ),
+    // },
   );
   const { data: friendInviteIDs } = api.users.getUsersFromIDList.useQuery(
     friendData?.friendInviteIDs ?? [],
-    {
-      enabled: Boolean(
-        (friendData?.friendInviteIDs ? friendData.friendInviteIDs.length : 0) >
-          0,
-      ),
-    },
+    // {
+    //   enabled: Boolean(
+    //     (friendData?.friendInviteIDs ? friendData.friendInviteIDs.length : 0) >
+    //       0,
+    //   ),
+    // },
   );
   const { data: roomInviteIDs } = api.users.getUsersFromIDList.useQuery(
     friendData?.roomInviteIDs ?? [],
-    {
-      enabled: Boolean(
-        (friendData?.roomInviteIDs ? friendData.roomInviteIDs.length : 0) > 0,
-      ),
-    },
+    // {
+    //   enabled: Boolean(
+    //     (friendData?.roomInviteIDs ? friendData.roomInviteIDs.length : 0) > 0,
+    //   ),
+    // },
   );
 
   const [openPopoverID, setOpenPopoverID] = useState("");
@@ -153,29 +155,33 @@ function FriendsList({ setShowFriendsListModal }: IFriendsList) {
                   </div>
                 </div>
                 <div className="baseFlex gap-[0.75rem]">
-                  <SecondaryButton
-                    icon={<AiOutlineCheck size={"1.5rem"} />}
-                    extraPadding={false}
-                    onClickFunction={() =>
+                  <Button
+                    variant={"secondary"}
+                    style={customButtonStyles}
+                    onClick={() =>
                       socket.emit("modifyFriendData", {
                         action: "acceptFriendInvite",
                         initiatorID: userID,
                         targetID: friend.id,
                       })
                     }
+                  >
+                    <AiOutlineCheck size={"1.5rem"} />
+                  </Button>
+
+                  <Button
+                    variant={"destructive"}
                     style={customButtonStyles}
-                  />
-                  <DangerButton
-                    icon={<AiOutlineClose size={"1.5rem"} />}
-                    onClickFunction={() =>
+                    onClick={() => {
                       socket.emit("modifyFriendData", {
                         action: "declineFriendInvite",
                         initiatorID: userID,
                         targetID: friend.id,
-                      })
-                    }
-                    style={customButtonStyles}
-                  />
+                      });
+                    }}
+                  >
+                    <AiOutlineClose size={"1.5rem"} />
+                  </Button>
                 </div>
               </div>
             ))}
@@ -183,16 +189,12 @@ function FriendsList({ setShowFriendsListModal }: IFriendsList) {
         ) : (
           <div className="baseFlex w-full">
             <div
-              style={{
-                width: "2.5rem",
-                height: "2.5rem",
-                borderTop: `0.35rem solid hsla(120deg, 100%, 86%, 40%)`,
-                borderRight: `0.35rem solid hsla(120deg, 100%, 86%, 40%)`,
-                borderBottom: `0.35rem solid hsla(120deg, 100%, 86%, 40%)`,
-                borderLeft: `0.35rem solid hsl(120deg 100% 86%)`,
-              }}
-              className="loadingSpinner"
-            ></div>
+              className="inline-block size-10 animate-spin rounded-full border-[2px] border-lightGreen border-t-transparent text-lightGreen"
+              role="status"
+              aria-label="loading"
+            >
+              <span className="sr-only">Loading...</span>
+            </div>
           </div>
         )}
 
@@ -217,10 +219,10 @@ function FriendsList({ setShowFriendsListModal }: IFriendsList) {
                 </div>
               </div>
               <div className="baseFlex gap-[0.75rem]">
-                <SecondaryButton
-                  icon={<AiOutlineCheck size={"1.5rem"} />}
-                  extraPadding={false}
-                  onClickFunction={() => {
+                <Button
+                  variant={"secondary"}
+                  style={customButtonStyles}
+                  onClick={() => {
                     // there are probably major redundancies here, but should work for now
 
                     const roomCodeOfRoomBeingJoined = friend.roomCode;
@@ -263,19 +265,23 @@ function FriendsList({ setShowFriendsListModal }: IFriendsList) {
 
                     setConnectedToRoom(true);
                   }}
+                >
+                  <AiOutlineCheck size={"1.5rem"} />
+                </Button>
+
+                <Button
+                  variant={"destructive"}
                   style={customButtonStyles}
-                />
-                <DangerButton
-                  icon={<AiOutlineClose size={"1.5rem"} />}
-                  onClickFunction={() =>
+                  onClick={() =>
                     socket.emit("modifyFriendData", {
                       action: "declineRoomInvite",
                       initiatorID: userID,
                       targetID: friend.id,
                     })
                   }
-                  style={customButtonStyles}
-                />
+                >
+                  <AiOutlineClose size={"1.5rem"} />
+                </Button>
               </div>
             </div>
           ))}
@@ -351,31 +357,30 @@ function FriendsList({ setShowFriendsListModal }: IFriendsList) {
                     </div>
                   </div>
                   <div className="baseFlex gap-2">
-                    <SecondaryButton
-                      icon={<FiMail size={"1.5rem"} />}
-                      extraPadding={false}
+                    <Button
                       disabled={
                         !friend.online ||
                         friend.status === "in a game" ||
                         !connectedToRoom ||
                         friend.roomCode === roomConfig.code
                       }
-                      hoverTooltipText={"Send room invite"}
-                      hoverTooltipTextPosition={"bottom"}
-                      postClickTooltipText={"Invite sent!"}
-                      hoverTooltipTextTop={"2.25rem"}
-                      onClickFunction={() =>
+                      style={customButtonStyles}
+                      // hoverTooltipText={"Send room invite"}
+                      // hoverTooltipTextPosition={"bottom"}
+                      // postClickTooltipText={"Invite sent!"}
+                      // hoverTooltipTextTop={"2.25rem"}
+                      onClick={() =>
                         socket.emit("modifyFriendData", {
                           action: "sendRoomInvite",
                           initiatorID: userID,
                           targetID: friend.id,
                         })
                       }
-                      style={customButtonStyles}
-                    />
-                    <SecondaryButton
-                      icon={<TbDoorEnter size={"1.5rem"} />}
-                      extraPadding={false}
+                    >
+                      <FiMail size={"1.5rem"} />
+                    </Button>
+
+                    <Button
                       disabled={
                         !friend.online ||
                         friend.roomCode === null ||
@@ -384,10 +389,10 @@ function FriendsList({ setShowFriendsListModal }: IFriendsList) {
                         !friend.currentRoomIsPublic ||
                         friend.currentRoomIsFull === true
                       }
-                      hoverTooltipText={"Join room"}
-                      hoverTooltipTextPosition={"bottom"}
-                      hoverTooltipTextTop={"2.25rem"}
-                      onClickFunction={() => {
+                      // hoverTooltipText={"Join room"}
+                      // hoverTooltipTextPosition={"bottom"}
+                      // hoverTooltipTextTop={"2.25rem"}
+                      onClick={() => {
                         if (connectedToRoom) {
                           socket.emit("leaveRoom", {
                             roomCode: roomConfig.code,
@@ -414,7 +419,9 @@ function FriendsList({ setShowFriendsListModal }: IFriendsList) {
                         setConnectedToRoom(true);
                       }}
                       style={customButtonStyles}
-                    />
+                    >
+                      <TbDoorEnter size={"1.5rem"} />
+                    </Button>
 
                     <Popover
                       open={openPopoverID === friend.id}
@@ -428,14 +435,15 @@ function FriendsList({ setShowFriendsListModal }: IFriendsList) {
                             <TooltipTrigger asChild>
                               <Button
                                 variant={"destructive"}
-                                icon={<FaTrashAlt size={"1.25rem"} />}
                                 className="h-[36px] w-[36px] rounded-[50%] p-0"
                                 onClick={() => setOpenPopoverID(friend.id)}
-                              />
+                              >
+                                <FaTrashAlt size={"1.25rem"} />
+                              </Button>
                             </TooltipTrigger>
                             <TooltipContent
                               side={"bottom"}
-                              className="border-2 border-[hsl(0,84%,60%)] bg-[hsl(0,84%,95%)] text-[hsl(0,84%,40%)]"
+                              className="border-2 border-[hsl(0,84%,60%)] bg-[hsl(0,84%,98%)] text-[hsl(0,84%,40%)]"
                             >
                               <p>Remove friend</p>
                             </TooltipContent>
@@ -444,7 +452,7 @@ function FriendsList({ setShowFriendsListModal }: IFriendsList) {
                       </PopoverTrigger>
                       <PopoverContent
                         redArrow
-                        className="text-[hsl(0,84%,40%) border-2 border-[hsl(0,84%,60%)] bg-[hsl(0,84%,95%)]"
+                        className="text-[hsl(0,84%,40%) border-2 border-[hsl(0,84%,60%)] bg-[hsl(0,84%,98%)]"
                       >
                         <div className="baseVertFlex w-64 gap-3 p-2">
                           <p className="text-center font-semibold text-[hsl(0,84%,40%)]">
@@ -454,7 +462,6 @@ function FriendsList({ setShowFriendsListModal }: IFriendsList) {
                           </p>
                           <Button
                             variant={"destructive"}
-                            innerText={"Confirm"}
                             onClick={() => {
                               setOpenPopoverID("");
 
@@ -466,7 +473,9 @@ function FriendsList({ setShowFriendsListModal }: IFriendsList) {
                                 });
                               }, 350);
                             }}
-                          />
+                          >
+                            Confirm
+                          </Button>
                         </div>
                       </PopoverContent>
                     </Popover>
@@ -477,16 +486,12 @@ function FriendsList({ setShowFriendsListModal }: IFriendsList) {
         ) : (
           <div className="baseFlex w-full">
             <div
-              style={{
-                width: "2.5rem",
-                height: "2.5rem",
-                borderTop: `0.35rem solid hsla(120deg, 100%, 86%, 40%)`,
-                borderRight: `0.35rem solid hsla(120deg, 100%, 86%, 40%)`,
-                borderBottom: `0.35rem solid hsla(120deg, 100%, 86%, 40%)`,
-                borderLeft: `0.35rem solid hsl(120deg 100% 86%)`,
-              }}
-              className="loadingSpinner"
-            ></div>
+              className="inline-block size-10 animate-spin rounded-full border-[2px] border-lightGreen border-t-transparent text-lightGreen"
+              role="status"
+              aria-label="loading"
+            >
+              <span className="sr-only">Loading...</span>
+            </div>
           </div>
         )}
       </div>

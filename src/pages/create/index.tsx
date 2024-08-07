@@ -14,13 +14,11 @@ import { IoSettingsSharp } from "react-icons/io5";
 import { FaRobot } from "react-icons/fa6";
 import { FaUsers } from "react-icons/fa";
 import PlayerIcon from "~/components/playerIcons/PlayerIcon";
-import SecondaryButton from "~/components/Buttons/SecondaryButton";
-import Radio from "~/components/Buttons/Radio";
+import Radio from "~/components/ui/Radio";
 import { MdCopyAll } from "react-icons/md";
 import { IoHome } from "react-icons/io5";
 import { BiArrowBack } from "react-icons/bi";
 import AnimatedNumbers from "~/components/ui/AnimatedNumbers";
-import { FiCheck } from "react-icons/fi";
 import { AnimatePresence, motion } from "framer-motion";
 import { Input } from "~/components/ui/input";
 import Filter from "bad-words";
@@ -93,9 +91,14 @@ function CreateRoom() {
 
   const [configAndMetadataInitialized, setConfigAndMetadataInitialized] =
     useState<boolean>(false);
-  const [showCheckmark, setShowCheckmark] = useState<boolean>(false);
   const [focusedInInput, setFocusedInInput] = useState<boolean>(false);
   const [usernameIsProfane, setUsernameIsProfane] = useState<boolean>(false);
+
+  const [createButtonText, setCreateButtonText] = useState<string>("Create");
+  const [startGameButtonText, setStartGameButtonText] =
+    useState<string>("Start game");
+  const [copyRoomCodeButtonText, setCopyRoomCodeButtonText] =
+    useState<string>("Copy");
 
   const [startRoundCountdownValue, setStartRoundCountdownValue] =
     useState<number>(3);
@@ -215,7 +218,9 @@ function CreateRoom() {
 
   function createRoom() {
     if (roomConfig && userID) {
-      socket.emit("createRoom", roomConfig, playerMetadata[userID]);
+      setTimeout(() => {
+        socket.emit("createRoom", roomConfig, playerMetadata[userID]);
+      }, 1000);
     }
   }
 
@@ -263,20 +268,19 @@ function CreateRoom() {
         <div className="baseFlex sticky left-0 top-0 z-[105] w-screen !justify-start gap-4 border-b-2 border-white bg-gradient-to-br from-green-800 to-green-850 p-2 shadow-lg tablet:relative tablet:w-full tablet:bg-none tablet:shadow-none">
           <Button
             variant={"secondary"}
-            icon={
-              connectedToRoom ? (
-                <BiArrowBack size={"1.25rem"} />
-              ) : (
-                <IoHome size={"1.25rem"} />
-              )
-            }
-            className="h-10 w-10"
+            className="size-10"
             onClick={() => {
               leaveRoom();
               setShowCountdown(false);
               setStartRoundCountdownValue(3);
             }}
-          />
+          >
+            {connectedToRoom ? (
+              <BiArrowBack size={"1.25rem"} />
+            ) : (
+              <IoHome size={"1.25rem"} />
+            )}
+          </Button>
 
           <div
             style={{
@@ -423,31 +427,31 @@ function CreateRoom() {
           >
             <Label>Points to win:</Label>
             <div className="baseFlex !justify-between gap-2 sm:px-4">
-              <SecondaryButton
-                innerText={"-25"}
+              <Button
+                variant={"secondary"}
                 disabled={roomConfig.pointsToWin <= 25}
-                extraPadding={false}
-                width={"3rem"}
-                height={"3rem"}
-                onClickFunction={() =>
+                onClick={() =>
                   updateRoomConfig("pointsToWin", roomConfig.pointsToWin - 25)
                 }
-              />
+                className="size-12"
+              >
+                -25
+              </Button>
 
               <div className="w-7 text-center text-lightGreen">
                 {roomConfig.pointsToWin}
               </div>
 
-              <SecondaryButton
-                innerText={"+25"}
+              <Button
+                variant={"secondary"}
                 disabled={roomConfig.pointsToWin >= 300}
-                extraPadding={false}
-                width={"3rem"}
-                height={"3rem"}
-                onClickFunction={() =>
+                onClick={() =>
                   updateRoomConfig("pointsToWin", roomConfig.pointsToWin + 25)
                 }
-              />
+                className="size-12"
+              >
+                +25
+              </Button>
             </div>
 
             <Label>Players:</Label>
@@ -486,27 +490,60 @@ function CreateRoom() {
               >
                 {roomConfig.code}
               </div>
-              <SecondaryButton
-                icon={
-                  showCheckmark ? (
-                    <FiCheck size={"1.25rem"} />
-                  ) : (
-                    <MdCopyAll size={"1.25rem"} />
-                  )
-                }
-                style={{
-                  fontSize: "0.875rem",
-                }}
-                innerText={showCheckmark ? "Copied" : "Copy"}
-                extraPadding={false}
-                onClickFunction={() => {
+
+              <Button
+                variant={"secondary"}
+                disabled={copyRoomCodeButtonText !== "Copy"}
+                onClick={() => {
+                  setCopyRoomCodeButtonText("Copied");
                   navigator.clipboard.writeText(
                     `${process.env.NEXT_PUBLIC_DOMAIN_URL}/join/${roomConfig.code}`,
                   );
-                  setShowCheckmark(true);
-                  setTimeout(() => setShowCheckmark(false), 1500);
+                  setTimeout(() => setCopyRoomCodeButtonText("Copy"), 1500);
                 }}
-              />
+              >
+                <AnimatePresence mode={"popLayout"} initial={false}>
+                  <motion.div
+                    key={copyRoomCodeButtonText}
+                    layout
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 20 }}
+                    transition={{
+                      duration: 0.25,
+                    }}
+                    className="baseFlex h-12 w-[7rem] gap-2 text-sm"
+                  >
+                    {copyRoomCodeButtonText}
+                    {copyRoomCodeButtonText === "Copy" && (
+                      <MdCopyAll size={"1.25rem"} />
+                    )}
+                    {copyRoomCodeButtonText === "Copied" && (
+                      <svg
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={2}
+                        className="text-offwhite size-5"
+                      >
+                        <motion.path
+                          initial={{ pathLength: 0 }}
+                          animate={{ pathLength: 1 }}
+                          transition={{
+                            delay: 0.2,
+                            type: "tween",
+                            ease: "easeOut",
+                            duration: 0.3,
+                          }}
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                    )}
+                  </motion.div>
+                </AnimatePresence>
+              </Button>
             </div>
           </div>
         </fieldset>
@@ -547,10 +584,12 @@ function CreateRoom() {
                       playerIsHost={playerID === roomConfig.hostUserID}
                       showAddFriendButton={
                         userID !== playerID &&
-                        friendData?.friendIDs?.indexOf(playerID) === -1 &&
+                        // FYI: unsure of how flaky this is
+                        (friendData === undefined ||
+                          friendData.friendIDs.indexOf(playerID) === -1) &&
                         authenticatedUsers
                           ? authenticatedUsers.findIndex(
-                              (player) => player.id === playerID,
+                              (player) => player.userId === playerID,
                             ) !== -1
                           : false
                       }
@@ -571,18 +610,9 @@ function CreateRoom() {
                       transition={{ duration: 0.15 }}
                       className="baseFlex h-full w-full !items-start sm:w-auto"
                     >
-                      <SecondaryButton
-                        icon={<FaRobot size={"1.5rem"} />}
-                        extraPadding={false}
-                        innerText="Add bot"
-                        style={{
-                          width: "4rem",
-                          height: "4rem",
-                          fontSize: "0.75rem",
-                          whiteSpace: "nowrap",
-                          flexDirection: "column-reverse",
-                        }}
-                        onClickFunction={() => {
+                      <Button
+                        variant={"secondary"}
+                        onClick={() => {
                           const botID = cryptoRandomString({ length: 16 });
 
                           socket.emit("joinRoom", {
@@ -591,7 +621,11 @@ function CreateRoom() {
                             playerMetadata: getNewBotMetadata(),
                           });
                         }}
-                      />
+                        className="baseVertFlex size-16 gap-1.5 whitespace-nowrap text-xs"
+                      >
+                        <FaRobot size={"1.5rem"} />
+                        Add bot
+                      </Button>
                     </motion.div>
                   )}
                 </div>
@@ -652,20 +686,42 @@ function CreateRoom() {
                   className="baseFlex"
                 >
                   <Button
-                    innerText={"Start game"}
-                    innerTextWhenLoading={"Starting game"}
                     disabled={roomConfig.playersInRoom < 2}
-                    isDisabled={roomConfig.playersInRoom < 2}
-                    onClickFunction={() => {
+                    onClick={() => {
+                      setStartGameButtonText("Loading");
                       socket.emit("broadcastRoomActionCountdown", {
                         code: roomConfig.code,
                         hostUserID: userID,
                         type: "startRound",
                       });
                     }}
-                    showLoadingSpinnerOnClick={true}
-                    className="h-12 w-[14rem] gap-4 text-[1.05rem]"
-                  />
+                    className="h-11 w-[14rem] font-medium"
+                  >
+                    <AnimatePresence mode={"popLayout"} initial={false}>
+                      <motion.div
+                        key={startGameButtonText}
+                        layout
+                        initial={{ opacity: 0, y: -20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 20 }}
+                        transition={{
+                          duration: 0.25,
+                        }}
+                        className="baseFlex h-11 w-[14rem] gap-4"
+                      >
+                        {startGameButtonText}
+                        {startGameButtonText === "Loading" && (
+                          <div
+                            className="inline-block size-4 animate-spin rounded-full border-[2px] border-darkGreen border-t-transparent text-darkGreen"
+                            role="status"
+                            aria-label="loading"
+                          >
+                            <span className="sr-only">Loading...</span>
+                          </div>
+                        )}
+                      </motion.div>
+                    </AnimatePresence>
+                  </Button>
                 </motion.div>
               ) : (
                 <motion.div
@@ -674,7 +730,7 @@ function CreateRoom() {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.5 }}
-                  className="baseFlex gap-2"
+                  className="baseFlex h-11 gap-2"
                 >
                   Game starting in{" "}
                   <AnimatedNumbers
@@ -688,18 +744,42 @@ function CreateRoom() {
           </div>
         ) : (
           <Button
-            innerText={"Create"}
-            innerTextWhenLoading={"Creating"}
             disabled={
-              playerMetadata[userID]?.username.length === 0 || usernameIsProfane
+              createButtonText !== "Create" ||
+              playerMetadata[userID]?.username.length === 0 ||
+              usernameIsProfane
             }
-            isDisabled={
-              playerMetadata[userID]?.username.length === 0 || usernameIsProfane
-            }
-            onClickFunction={() => createRoom()}
-            showLoadingSpinnerOnClick={true}
-            className="h-12 w-[12rem] gap-4 text-[1.05rem]"
-          />
+            onClick={() => {
+              setCreateButtonText("Creating");
+              createRoom();
+            }}
+            className="h-12 w-[12rem]"
+          >
+            <AnimatePresence mode={"popLayout"} initial={false}>
+              <motion.div
+                key={createButtonText}
+                layout
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 20 }}
+                transition={{
+                  duration: 0.25,
+                }}
+                className="baseFlex h-12 w-[12rem] gap-4 text-[1.05rem] font-medium"
+              >
+                {createButtonText}
+                {createButtonText === "Creating" && (
+                  <div
+                    className="inline-block size-4 animate-spin rounded-full border-[2px] border-darkGreen border-t-transparent text-darkGreen"
+                    role="status"
+                    aria-label="loading"
+                  >
+                    <span className="sr-only">Loading...</span>
+                  </div>
+                )}
+              </motion.div>
+            </AnimatePresence>
+          </Button>
         )}
       </div>
     </motion.div>

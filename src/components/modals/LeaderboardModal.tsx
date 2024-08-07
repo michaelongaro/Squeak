@@ -2,11 +2,11 @@ import { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import useOnClickOutside from "../../hooks/useOnClickOutside";
 import { api } from "~/utils/api";
-import Radio from "../Buttons/Radio";
+import Radio from "../ui/Radio";
 import PlayerIcon from "../playerIcons/PlayerIcon";
-import SecondaryButton from "../Buttons/SecondaryButton";
 import { IoClose, IoStatsChart } from "react-icons/io5";
 import { useRoomContext } from "~/context/RoomContext";
+import { Button } from "~/components/ui/button";
 
 interface ILeaderboardModal {
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -154,33 +154,25 @@ function LeaderboardModal({ setShowModal }: ILeaderboardModal) {
               ) : (
                 <div className="baseFlex h-[420px] w-full">
                   <div
-                    style={{
-                      width: "4rem",
-                      height: "4rem",
-                      borderTop: `0.35rem solid hsla(120deg, 100%, 86%, 40%)`,
-                      borderRight: `0.35rem solid hsla(120deg, 100%, 86%, 40%)`,
-                      borderBottom: `0.35rem solid hsla(120deg, 100%, 86%, 40%)`,
-                      borderLeft: `0.35rem solid hsl(120deg 100% 86%)`,
-                    }}
-                    className="loadingSpinner"
-                  ></div>
+                    className="inline-block size-16 animate-spin rounded-full border-[2px] border-lightGreen border-t-transparent text-lightGreen"
+                    role="status"
+                    aria-label="loading"
+                  >
+                    <span className="sr-only">Loading...</span>
+                  </div>
                 </div>
               )}
             </div>
           </div>
 
-          <SecondaryButton
-            icon={<IoClose size={"1.5rem"} />}
-            extraPadding={false}
-            onClickFunction={() => setShowModal(false)}
-            width={"2.25rem"}
-            height={"2.25rem"}
-            style={{
-              position: "absolute",
-              top: "0.5rem",
-              right: "0.5rem",
-            }}
-          />
+          <Button
+            variant={"text"}
+            size={"icon"}
+            className="!absolute right-1 top-1 size-8"
+            onClick={() => setShowModal(false)}
+          >
+            <IoClose size={"1.5rem"} />
+          </Button>
         </div>
       </motion.div>
     </motion.div>

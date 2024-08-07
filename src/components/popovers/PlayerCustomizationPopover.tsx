@@ -35,7 +35,7 @@ function PlayerCustomizationPopover({
           forCreateAndJoin
         />
       </PopoverTrigger>
-      <PopoverContent className="bg-white">
+      <PopoverContent>
         <PlayerCustomizationPicker
           type={type}
           localPlayerMetadata={localPlayerMetadata}

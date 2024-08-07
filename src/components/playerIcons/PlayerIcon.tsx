@@ -3,8 +3,6 @@ import { socket } from "~/pages/_app";
 import { motion } from "framer-motion";
 import { useUserIDContext } from "../../context/UserIDContext";
 import { useRoomContext } from "../../context/RoomContext";
-import SecondaryButton from "../Buttons/SecondaryButton";
-import DangerButton from "../Buttons/DangerButton";
 import { type IRoomPlayer } from "../../pages/api/socket";
 import { AiOutlinePlus, AiOutlineClose } from "react-icons/ai";
 import { FaCrown } from "react-icons/fa6";
@@ -112,19 +110,17 @@ function PlayerIcon({
                         <Button
                           variant={"secondary"}
                           disabled={friendInviteSent}
-                          isDisabled={friendInviteSent}
-                          icon={
-                            friendInviteSent ? (
-                              <FiCheck size={"1rem"} />
-                            ) : (
-                              <AiOutlinePlus size={"1rem"} />
-                            )
-                          }
                           className="absolute left-[-1rem] top-[-0.75rem] h-[30px] w-[30px] rounded-[50%] p-0"
                           onClick={() => {
                             setDrawerOpen(true);
                           }}
-                        />
+                        >
+                          {friendInviteSent ? (
+                            <FiCheck size={"1rem"} />
+                          ) : (
+                            <AiOutlinePlus size={"1rem"} />
+                          )}
+                        </Button>
                       </DrawerTrigger>
                       <DrawerContent>
                         <div className="baseVertFlex gap-2 p-4">
@@ -134,9 +130,6 @@ function PlayerIcon({
                           <Button
                             variant={"secondary"}
                             disabled={friendInviteSent}
-                            isDisabled={friendInviteSent}
-                            innerText={friendInviteSent ? "Sent!" : "Send"}
-                            icon={<FiMail size={"1rem"} />}
                             className="gap-2"
                             onClick={() => {
                               socket.emit("modifyFriendData", {
@@ -151,27 +144,22 @@ function PlayerIcon({
                                 setDrawerOpen(false);
                               }, 1000);
                             }}
-                          />
+                          >
+                            {friendInviteSent ? "Sent!" : "Send"}
+                            <FiMail size={"1rem"} />
+                          </Button>
                         </div>
                       </DrawerContent>
                     </Drawer>
                   </div>
                 ) : (
                   <div className="absolute left-0 top-0 h-0 w-0">
-                    <TooltipProvider>
+                    <TooltipProvider delayDuration={500}>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Button
                             variant={"secondary"}
                             disabled={friendInviteSent}
-                            isDisabled={friendInviteSent}
-                            icon={
-                              friendInviteSent ? (
-                                <FiCheck size={"1rem"} />
-                              ) : (
-                                <AiOutlinePlus size={"1rem"} />
-                              )
-                            }
                             className="absolute left-[-1rem] top-[-0.75rem] h-[30px] w-[30px] rounded-[50%] p-0"
                             onClick={() => {
                               socket.emit("modifyFriendData", {
@@ -185,7 +173,13 @@ function PlayerIcon({
                                 setFriendInviteSent(false);
                               }, 1000);
                             }}
-                          />
+                          >
+                            {friendInviteSent ? (
+                              <FiCheck size={"1rem"} />
+                            ) : (
+                              <AiOutlinePlus size={"1rem"} />
+                            )}
+                          </Button>
                         </TooltipTrigger>
                         <TooltipContent
                           side={"bottom"}
@@ -213,12 +207,13 @@ function PlayerIcon({
                       <DrawerTrigger asChild>
                         <Button
                           variant={"destructive"}
-                          icon={<AiOutlineClose size={"1rem"} />}
                           className="absolute right-[-2rem] top-[-0.75rem] h-[30px] w-[30px] rounded-[50%] p-0"
                           onClick={() => {
                             setDrawerOpen(true);
                           }}
-                        />
+                        >
+                          <AiOutlineClose size={"1rem"} />
+                        </Button>
                       </DrawerTrigger>
                       <DrawerContent>
                         <div className="baseVertFlex gap-2 p-4">
@@ -228,7 +223,6 @@ function PlayerIcon({
                           </p>
                           <Button
                             variant={"destructive"}
-                            innerText={"Kick"}
                             onClick={() => {
                               setDrawerOpen(false);
 
@@ -241,7 +235,9 @@ function PlayerIcon({
                                 });
                               }, 350);
                             }}
-                          />
+                          >
+                            Kick
+                          </Button>
                         </div>
                       </DrawerContent>
                     </Drawer>
@@ -256,20 +252,20 @@ function PlayerIcon({
                     >
                       <PopoverTrigger>
                         <TooltipProvider>
-                          <Tooltip>
+                          <Tooltip delayDuration={500}>
                             <TooltipTrigger asChild>
                               <Button
                                 variant={"destructive"}
                                 disabled={friendInviteSent}
-                                isDisabled={friendInviteSent}
-                                icon={<AiOutlineClose size={"1rem"} />}
                                 className="absolute right-0 top-0 h-[30px] w-[30px] rounded-[50%] p-0"
                                 onClick={() => setPopoverOpen(true)}
-                              />
+                              >
+                                <AiOutlineClose size={"1rem"} />
+                              </Button>
                             </TooltipTrigger>
                             <TooltipContent
                               side={"bottom"}
-                              className="border-2 border-[hsl(0,84%,60%)] bg-[hsl(0,84%,95%)] text-[hsl(0,84%,40%)]"
+                              className="border-2 border-[hsl(0,84%,60%)] bg-[hsl(0,84%,98%)] text-[hsl(0,84%,40%)]"
                             >
                               <p>Kick player</p>
                             </TooltipContent>
@@ -278,7 +274,7 @@ function PlayerIcon({
                       </PopoverTrigger>
                       <PopoverContent
                         redArrow
-                        className="text-[hsl(0,84%,40%) border-2 border-[hsl(0,84%,60%)] bg-[hsl(0,84%,95%)]"
+                        className="text-[hsl(0,84%,40%) border-2 border-[hsl(0,84%,60%)] bg-gradient-to-br from-red-50 to-red-100"
                       >
                         <div className="baseVertFlex w-64 gap-3 p-2">
                           <p className="text-center font-semibold text-[hsl(0,84%,40%)]">
@@ -287,7 +283,6 @@ function PlayerIcon({
                           </p>
                           <Button
                             variant={"destructive"}
-                            innerText={"Kick"}
                             onClick={() => {
                               setPopoverOpen(false);
 
@@ -300,7 +295,9 @@ function PlayerIcon({
                                 });
                               }, 175);
                             }}
-                          />
+                          >
+                            Kick
+                          </Button>
                         </div>
                       </PopoverContent>
                     </Popover>
@@ -353,17 +350,9 @@ function PlayerIcon({
                 ></div>
               </div>
               {roomHostIsRendering ? (
-                <SecondaryButton
-                  innerText={playerMetadata.botDifficulty}
-                  extraPadding={false}
-                  style={{
-                    padding: "0.75rem 0.25rem",
-                    minWidth: "fit-content",
-                    height: "1rem",
-                    marginTop: "0.5rem",
-                    fontSize: "0.875rem",
-                  }}
-                  onClickFunction={() => {
+                <Button
+                  variant={"secondary"}
+                  onClick={() => {
                     if (!playerID) return;
                     socket.emit("updatePlayerMetadata", {
                       playerID,
@@ -379,7 +368,10 @@ function PlayerIcon({
                       },
                     });
                   }}
-                />
+                  className="mt-2 h-4 w-min !px-2 !py-3 text-sm"
+                >
+                  {playerMetadata.botDifficulty}
+                </Button>
               ) : (
                 <p className="mt-1 text-sm">{playerMetadata.botDifficulty}</p>
               )}

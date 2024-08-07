@@ -3,7 +3,6 @@ import Filter from "bad-words";
 import { AnimatePresence, motion } from "framer-motion";
 import { useCallback, useEffect, useState } from "react";
 import { IoHome } from "react-icons/io5";
-import PrimaryButton from "~/components/Buttons/PrimaryButton";
 import PublicRooms from "~/components/JoinRoom/PublicRooms";
 import PlayerCustomizationDrawer from "~/components/drawers/PlayerCustomizationDrawer";
 import PlayerCustomizationPreview from "~/components/playerIcons/PlayerCustomizationPreview";
@@ -48,6 +47,7 @@ function JoinRoom() {
   });
 
   const [roomCode, setRoomCode] = useState<string>("");
+  const [joinButtonText, setJoinButtonText] = useState<string>("Join");
 
   const [focusedInInput, setFocusedInInput] = useState<boolean>(false);
   const [usernameIsProfane, setUsernameIsProfane] = useState<boolean>(false);
@@ -86,8 +86,10 @@ function JoinRoom() {
       },
       (response?: "roomIsFull") => {
         if (response !== "roomIsFull") {
-          setConnectedToRoom(true);
-          push(`join/${roomCode}`);
+          setTimeout(() => {
+            setConnectedToRoom(true);
+            push(`join/${roomCode}`);
+          }, 1000);
         }
       },
     );
@@ -128,17 +130,19 @@ function JoinRoom() {
 
   useEffect(() => {
     if (queriedRoom && typeof queriedRoom !== "string" && !connectedToRoom) {
-      setRoomConfig(queriedRoom);
       joinRoom();
 
       setRoomError(null);
     } else if (typeof queriedRoom === "string") {
-      setRoomError(queriedRoom);
-      setShowAnimation(true);
+      setTimeout(() => {
+        setJoinButtonText("Join");
+
+        setRoomError(queriedRoom);
+        setShowAnimation(true);
+      }, 1000);
     }
   }, [queriedRoom, connectedToRoom, joinRoom, setRoomConfig]);
 
-  // TODO: not sure if this will refire & work as expected when player actually joins room socket wise
   useEffect(() => {
     function handleRoomConfigUpdated(roomConfig: IRoomConfig) {
       setRoomConfig(roomConfig);
@@ -180,10 +184,11 @@ function JoinRoom() {
         <div className="baseFlex sticky left-0 top-0 z-[105] w-screen !justify-start gap-4 border-b-2 border-white bg-gradient-to-br from-green-800 to-green-850 p-2 shadow-lg tablet:relative tablet:w-full tablet:bg-none tablet:shadow-none">
           <Button
             variant={"secondary"}
-            icon={<IoHome size={"1.25rem"} />}
-            className="h-10 w-10"
+            className="size-10"
             onClick={() => leaveRoom()}
-          />
+          >
+            <IoHome size={"1.25rem"} />
+          </Button>
 
           <div
             style={{
@@ -333,19 +338,44 @@ function JoinRoom() {
             }, 1000);
           }}
         >
-          <PrimaryButton
-            innerText={"Join"}
-            innerTextWhenLoading={"Joining"}
+          <Button
             disabled={
+              joinButtonText !== "Join" ||
               playerMetadata[userID]?.username.length === 0 ||
               roomCode.length === 0 ||
               usernameIsProfane
             }
-            width={"12rem"}
-            height={"3rem"}
-            onClickFunction={() => searchForRoom()}
-            showLoadingSpinnerOnClick={true}
-          />
+            onClick={() => {
+              setJoinButtonText("Joining");
+              searchForRoom();
+            }}
+            className="h-11 font-medium"
+          >
+            <AnimatePresence mode={"popLayout"} initial={false}>
+              <motion.div
+                key={joinButtonText}
+                layout
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 20 }}
+                transition={{
+                  duration: 0.25,
+                }}
+                className="baseFlex w-[122.75px] gap-3"
+              >
+                {joinButtonText}
+                {joinButtonText === "Joining" && (
+                  <div
+                    className="inline-block size-4 animate-spin rounded-full border-[2px] border-darkGreen border-t-transparent text-darkGreen"
+                    role="status"
+                    aria-label="loading"
+                  >
+                    <span className="sr-only">Loading...</span>
+                  </div>
+                )}
+              </motion.div>
+            </AnimatePresence>
+          </Button>
 
           <AnimatePresence mode={"wait"}>
             {roomError && (

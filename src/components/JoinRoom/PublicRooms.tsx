@@ -89,10 +89,6 @@ function PublicRooms() {
 
         <Button
           variant={"secondary"}
-          icon={<HiOutlineRefresh size={"1.5rem"} />}
-          innerText={"Refresh"}
-          className="gap-2"
-          rotateIcon={isFetching || fetchingNewRooms}
           onClick={() => {
             setFetchingNewRooms(true);
             setTimeout(() => {
@@ -100,7 +96,20 @@ function PublicRooms() {
               refetch();
             }, 500);
           }}
-        />
+          className="gap-2 !px-4 text-sm !font-medium"
+        >
+          Refresh
+          <HiOutlineRefresh
+            size={"1.5rem"}
+            style={{
+              transform:
+                isFetching || fetchingNewRooms
+                  ? "rotate(540deg)"
+                  : "rotate(0deg)",
+              transition: "transform 0.5s ease-in-out",
+            }}
+          />
+        </Button>
       </legend>
 
       {publicRooms ? (
@@ -146,7 +155,7 @@ function PublicRooms() {
                           ? "0 0 0.375rem 0.375rem"
                           : "none",
                     }}
-                    className="relative grid w-auto grid-cols-3 place-items-center border-b-2 p-4 pr-8 lg:w-[600px]"
+                    className="relative grid w-auto grid-cols-3 place-items-center border-b-2 p-4 pr-8 transition-colors lg:w-[600px]"
                     onPointerEnter={() => setHoveredIndex(index)}
                     onPointerLeave={() => setHoveredIndex(-1)}
                   >
@@ -167,23 +176,15 @@ function PublicRooms() {
                             playerMetadata[userID]?.username ?? "",
                           )
                         }
-                        isDisabled={
-                          playerMetadata[userID]?.username.length === 0 ||
-                          filter.isProfane(
-                            playerMetadata[userID]?.username ?? "",
-                          )
-                        }
-                        className="px-2"
-                        icon={
-                          viewportLabel.includes("mobile") ? (
-                            <BiArrowBack size={"1rem"} className="rotate-180" />
-                          ) : undefined
-                        }
-                        innerText={
-                          viewportLabel.includes("mobile") ? undefined : "Join"
-                        }
+                        className="!px-2 text-sm"
                         onClick={() => joinRoom(room)}
-                      />
+                      >
+                        {viewportLabel.includes("mobile") ? (
+                          <BiArrowBack size={"1rem"} className="rotate-180" />
+                        ) : (
+                          "Join"
+                        )}
+                      </Button>
                     </div>
                   </div>
                 ))}
@@ -200,16 +201,12 @@ function PublicRooms() {
       ) : (
         <div className="baseFlex w-auto py-16 lg:min-w-[600px]">
           <div
-            style={{
-              width: "3rem",
-              height: "3rem",
-              borderTop: `0.35rem solid hsla(120deg, 100%, 86%, 40%)`,
-              borderRight: `0.35rem solid hsla(120deg, 100%, 86%, 40%)`,
-              borderBottom: `0.35rem solid hsla(120deg, 100%, 86%, 40%)`,
-              borderLeft: `0.35rem solid hsl(120deg 100% 86%)`,
-            }}
-            className="loadingSpinner"
-          ></div>
+            className="inline-block size-12 animate-spin rounded-full border-[2px] border-lightGreen border-t-transparent text-lightGreen"
+            role="status"
+            aria-label="loading"
+          >
+            <span className="sr-only">Loading...</span>
+          </div>
         </div>
       )}
     </fieldset>

@@ -1,13 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useRoomContext } from "../../context/RoomContext";
-import { useAuth, SignOutButton } from "@clerk/nextjs";
+import { useAuth } from "@clerk/nextjs";
 import { socket } from "~/pages/_app";
 import { api } from "~/utils/api";
 import {
   type IRoomPlayersMetadata,
   type IRoomPlayer,
 } from "../../pages/api/socket";
-import SecondaryButton from "../Buttons/SecondaryButton";
 import UserSettingsAndStatsModal, {
   type ILocalPlayerSettings,
 } from "../modals/SettingsAndStats/UserSettingsAndStatsModal";
@@ -33,15 +32,19 @@ import { TbDoorEnter } from "react-icons/tb";
 import AudioLevelSlider from "./AudioLevelSlider";
 import useLeaveRoom from "../../hooks/useLeaveRoom";
 import { MdHowToVote } from "react-icons/md";
-import { MdSkipNext } from "react-icons/md";
 import { FaArrowsRotate } from "react-icons/fa6";
 import { IoIosCheckmark } from "react-icons/io";
 import { IoClose, IoSave } from "react-icons/io5";
 import useVoteHasBeenCast from "~/hooks/useVoteHasBeenCast";
 import toast from "react-hot-toast";
 import { HiExternalLink } from "react-icons/hi";
-import { HiEllipsisHorizontal } from "react-icons/hi2";
 import { IoIosArrowForward } from "react-icons/io";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "~/components/ui/tooltip";
 import {
   Drawer,
   DrawerContent,
@@ -49,7 +52,6 @@ import {
   DrawerTrigger,
 } from "~/components/ui/drawer";
 import FriendsList from "../modals/FriendsList";
-import DangerButton from "../Buttons/DangerButton";
 import { useRouter } from "next/router";
 import { Label } from "~/components/ui/label";
 import { Button } from "~/components/ui/button";
@@ -62,7 +64,6 @@ import { useUserIDContext } from "~/context/UserIDContext";
 import Filter from "bad-words";
 import PlayerIcon from "../playerIcons/PlayerIcon";
 import { type User } from "@prisma/client";
-import Link from "next/link";
 
 const filter = new Filter();
 
@@ -104,6 +105,11 @@ function TopRightControls() {
   const [voteWasStarted, setVoteWasStarted] = useState(false);
 
   const [showDrawer, setShowDrawer] = useState(false);
+
+  const [showSettingsUnauthTooltip, setShowSettingsUnauthTooltip] =
+    useState(false);
+  const [showFriendsListUnauthTooltip, setShowFriendsListUnauthTooltip] =
+    useState(false);
 
   useEffect(() => {
     if (
@@ -205,19 +211,42 @@ function TopRightControls() {
       } fixed right-1 top-1 z-[190] !min-w-fit gap-3 sm:gap-4 lg:right-4 lg:top-4`}
     >
       {!asPath.includes("/game") && (
-        <div className="h-[40px] w-[40px] md:h-[44px] md:w-[44px]">
-          <SecondaryButton
-            icon={<IoSettingsSharp size={"1.5rem"} />}
-            extraPadding={false}
-            disabled={!isSignedIn}
-            hoverTooltipText={"Log in to access"}
-            hoverTooltipTextPosition={"left"}
-            onClickFunction={() => {
-              if (isSignedIn) {
-                setShowSettingsModal(true);
-              }
-            }}
-          />
+        <div
+          onMouseEnter={() => {
+            if (!isSignedIn) {
+              setShowSettingsUnauthTooltip(true);
+            }
+          }}
+          onMouseLeave={() => {
+            if (!isSignedIn) {
+              setShowSettingsUnauthTooltip(false);
+            }
+          }}
+        >
+          <TooltipProvider>
+            <Tooltip open={showSettingsUnauthTooltip}>
+              <TooltipTrigger asChild>
+                <Button
+                  variant={"secondary"}
+                  disabled={!isSignedIn}
+                  onClick={() => {
+                    if (isSignedIn) {
+                      setShowSettingsModal(true);
+                    }
+                  }}
+                  className="h-[40px] w-[40px] md:h-[44px] md:w-[44px]"
+                >
+                  <IoSettingsSharp size={"1.5rem"} />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent
+                side={"left"}
+                className="border-2 border-lightGreen bg-darkGreen text-lightGreen"
+              >
+                <p>Log in to access</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
       )}
 
@@ -227,11 +256,9 @@ function TopRightControls() {
         <>
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button
-                variant="secondary"
-                icon={<TbDoorExit size={"1.5rem"} />}
-                className="h-11 w-11"
-              />
+              <Button variant="secondary" className="size-11 !shrink-0">
+                <TbDoorExit size={"1.5rem"} />
+              </Button>
             </AlertDialogTrigger>
             <AlertDialogContent className="baseVertFlex gap-8">
               <AlertDialogHeader>
@@ -239,43 +266,35 @@ function TopRightControls() {
                   Are you sure you want to leave the game?
                 </AlertDialogTitle>
               </AlertDialogHeader>
-              <AlertDialogFooter className="baseFlex !justify-center gap-4">
+              <AlertDialogFooter className="baseFlex !justify-center gap-4 sm:gap-8">
                 <AlertDialogCancel asChild>
-                  <Button
-                    variant={"secondary"}
-                    innerText={"Cancel"}
-                    className="w-24"
-                  />
+                  <Button variant={"secondary"} className="w-24">
+                    Cancel
+                  </Button>
                 </AlertDialogCancel>
                 <AlertDialogAction asChild>
                   <Button
                     variant={"destructive"}
-                    innerText={"Confirm"}
                     className="w-24"
                     onClick={() => {
                       leaveRoom();
                     }}
-                  />
+                  >
+                    Confirm
+                  </Button>
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
 
           <div className="absolute right-0 top-[60px]">
-            <SecondaryButton
-              icon={<MdHowToVote size={"1.5rem"} />}
-              extraPadding={false}
-              style={{
-                position: "absolute",
-                right: "0px",
-                top: "0px",
-                width: "2.75rem",
-                height: "2.75rem",
-              }}
-              onClickFunction={() => {
-                setShowVotingModal(true);
-              }}
-            />
+            <Button
+              variant={"secondary"}
+              onClick={() => setShowVotingModal(true)}
+              className="absolute right-0 top-0 size-11"
+            >
+              <MdHowToVote size={"1.5rem"} />
+            </Button>
 
             {votingIsLockedOut && (
               <motion.div
@@ -301,14 +320,39 @@ function TopRightControls() {
 
       {!asPath.includes("/game") && (
         <div className="relative h-[40px] w-[40px] md:h-[44px] md:w-[44px]">
-          <SecondaryButton
-            icon={<FaUserFriends size={"1.5rem"} />}
-            extraPadding={false}
-            disabled={!isSignedIn}
-            hoverTooltipText={"Log in to access"}
-            hoverTooltipTextPosition={"left"}
-            onClickFunction={() => setShowFriendsList(!showFriendsList)}
-          />
+          <div
+            onMouseEnter={() => {
+              if (!isSignedIn) {
+                setShowFriendsListUnauthTooltip(true);
+              }
+            }}
+            onMouseLeave={() => {
+              if (!isSignedIn) {
+                setShowFriendsListUnauthTooltip(false);
+              }
+            }}
+          >
+            <TooltipProvider>
+              <Tooltip open={showFriendsListUnauthTooltip}>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant={"secondary"}
+                    disabled={!isSignedIn}
+                    className="absolute right-0 top-0 size-11"
+                    onClick={() => setShowFriendsList(!showFriendsList)}
+                  >
+                    <FaUserFriends size={"1.5rem"} />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent
+                  side={"left"}
+                  className="border-2 border-lightGreen bg-darkGreen text-lightGreen"
+                >
+                  <p>Log in to access</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
 
           <AnimatePresence mode={"wait"}>
             {newInviteNotification && (
@@ -517,20 +561,9 @@ function VotingModal({
               {voteType === null ? (
                 <div className="baseFlex w-full gap-4 tablet:!flex-col">
                   <div className="relative h-12 w-full">
-                    <SecondaryButton
-                      icon={<FaArrowsRotate size={"1rem"} />}
-                      extraPadding={false}
-                      innerText="Rotate decks"
-                      width={"100%"}
-                      height={"3rem"}
-                      style={{
-                        position: "absolute",
-                        top: 0,
-                        left: 0,
-                        fontSize: "0.85rem",
-                        gap: "0.8rem",
-                      }}
-                      onClickFunction={() => {
+                    <Button
+                      variant={"secondary"}
+                      onClick={() => {
                         setShowVotingOptionButtons(false);
 
                         toast.dismiss();
@@ -542,7 +575,11 @@ function VotingModal({
                           voteDirection: "for",
                         });
                       }}
-                    />
+                      className="absolute left-0 top-0 h-12 w-full gap-[0.8rem] text-sm"
+                    >
+                      Rotate decks
+                      <FaArrowsRotate size={"1rem"} />
+                    </Button>
 
                     {votingIsLockedOut && (
                       <motion.div
@@ -557,17 +594,9 @@ function VotingModal({
                   </div>
 
                   <div className="relative h-12 w-full">
-                    <SecondaryButton
-                      icon={<MdSkipNext size={"1.25rem"} />}
-                      extraPadding={false}
-                      innerText="Finish the round"
-                      width={"100%"}
-                      height={"3rem"}
-                      style={{
-                        fontSize: "0.85rem",
-                        whiteSpace: "nowrap",
-                      }}
-                      onClickFunction={() => {
+                    <Button
+                      variant={"secondary"}
+                      onClick={() => {
                         setShowVotingOptionButtons(false);
 
                         toast.dismiss();
@@ -579,7 +608,11 @@ function VotingModal({
                           voteDirection: "for",
                         });
                       }}
-                    />
+                      className="absolute left-0 top-0 h-12 w-full gap-[0.8rem] whitespace-nowrap text-sm"
+                    >
+                      Finish the round
+                      <FaArrowsRotate size={"1rem"} />
+                    </Button>
 
                     {votingIsLockedOut && (
                       <motion.div
@@ -595,16 +628,9 @@ function VotingModal({
                 </div>
               ) : (
                 <div className="baseFlex w-full gap-2">
-                  <SecondaryButton
-                    icon={<IoIosCheckmark size={"2rem"} />}
-                    extraPadding={false}
-                    innerText="Yes"
-                    width={"50%"}
-                    height={"2rem"}
-                    style={{
-                      gap: "0.25rem",
-                    }}
-                    onClickFunction={() => {
+                  <Button
+                    variant={"secondary"}
+                    onClick={() => {
                       setShowVotingOptionButtons(false);
 
                       toast.dismiss();
@@ -616,15 +642,15 @@ function VotingModal({
                         voteDirection: "for",
                       });
                     }}
-                  />
+                    className="h-8 w-1/2 gap-2"
+                  >
+                    Yes
+                    <IoIosCheckmark size={"2rem"} />
+                  </Button>
 
-                  <SecondaryButton
-                    icon={<IoClose size={"1.25rem"} />}
-                    extraPadding={false}
-                    innerText="No"
-                    width={"50%"}
-                    height={"2rem"}
-                    onClickFunction={() => {
+                  <Button
+                    variant={"secondary"}
+                    onClick={() => {
                       setShowVotingOptionButtons(false);
 
                       toast.dismiss();
@@ -636,7 +662,11 @@ function VotingModal({
                         voteDirection: "against",
                       });
                     }}
-                  />
+                    className="h-8 w-1/2 gap-2"
+                  >
+                    No
+                    <IoClose size={"1.25rem"} />
+                  </Button>
                 </div>
               )}
             </motion.div>
@@ -708,7 +738,7 @@ function MainDrawer({ status, setShowDrawer }: IMainDrawer) {
       case "Settings":
         return "500px";
       case "Statistics":
-        return "375px";
+        return "400px";
       case "Friends list":
         return "500px";
       case "Friend actions":
@@ -749,10 +779,10 @@ function MainDrawer({ status, setShowDrawer }: IMainDrawer) {
                 key={label}
                 variant={"drawer"}
                 disabled={status === "unauthenticated"}
-                isDisabled={status === "unauthenticated"}
                 style={{
                   borderTopWidth: label === "Settings" ? "0px" : "1px",
                 }}
+                showArrow
                 className="baseFlex h-20 w-full !justify-start"
                 onClick={() => setRenderedView(label)}
               >
@@ -774,16 +804,16 @@ function MainDrawer({ status, setShowDrawer }: IMainDrawer) {
 
             {status === "authenticated" && (
               <div className="baseFlex w-full px-2 pt-4">
-                <SecondaryButton
-                  innerText="Log out"
-                  extraPadding={false}
-                  width={"8rem"}
-                  height={"2.5rem"}
-                  onClickFunction={() => {
+                <Button
+                  variant={"secondary"}
+                  onClick={() => {
                     setShowDrawer(false);
                     signOut();
                   }}
-                />
+                  className="h-10 w-32"
+                >
+                  Log out
+                </Button>
               </div>
             )}
 
@@ -856,14 +886,16 @@ function MainDrawer({ status, setShowDrawer }: IMainDrawer) {
             }}
             className={"baseVertFlex relative h-full w-screen bg-zinc-200"}
           >
-            <Button
-              variant={"ghost"}
-              onClick={() => setRenderedView("Settings")}
-              className="baseFlex absolute left-2 top-0 gap-2 !p-0"
-            >
-              <IoIosArrowForward size={"1rem"} className="rotate-180" />
-              Back
-            </Button>
+            <div className="absolute left-0 top-0 z-10 h-8 w-full bg-zinc-200">
+              <Button
+                variant={"ghost"}
+                onClick={() => setRenderedView("Settings")}
+                className="baseFlex absolute left-2 top-0 gap-2 !p-0"
+              >
+                <IoIosArrowForward size={"1rem"} className="rotate-180" />
+                Back
+              </Button>
+            </div>
 
             <p className="text-lg font-semibold underline underline-offset-2">
               {renderedView === "avatar"
@@ -950,11 +982,19 @@ function DrawerSettings({
       }
     },
     onSettled: () => {
-      utils.users.getUserByID.invalidate(userID);
+      setTimeout(() => {
+        setSaveButtonText("Saved");
+        utils.users.getUserByID.invalidate(userID);
+
+        setTimeout(() => {
+          setSaveButtonText("Save");
+        }, 1000);
+      }, 1000);
     },
   });
 
   const [ableToSave, setAbleToSave] = useState<boolean>(false);
+  const [saveButtonText, setSaveButtonText] = useState<string>("Save");
   const [usernameIsProfane, setUsernameIsProfane] = useState<boolean>(false);
 
   useEffect(() => {
@@ -1047,14 +1087,16 @@ function DrawerSettings({
 
   return (
     <>
-      <Button
-        variant={"ghost"}
-        onClick={() => setRenderedView(undefined)}
-        className="baseFlex absolute left-2 top-0 gap-2 !p-0"
-      >
-        <IoIosArrowForward size={"1rem"} className="rotate-180" />
-        Back
-      </Button>
+      <div className="absolute left-0 top-0 z-10 h-8 w-full bg-zinc-200">
+        <Button
+          variant={"ghost"}
+          onClick={() => setRenderedView(undefined)}
+          className="baseFlex absolute left-2 top-0 gap-2 !p-0"
+        >
+          <IoIosArrowForward size={"1rem"} className="rotate-180" />
+          Back
+        </Button>
+      </div>
 
       <div className="baseVertFlex h-full w-full !justify-start overflow-y-auto">
         <div className="baseFlex mb-4 mt-16 gap-2">
@@ -1122,7 +1164,8 @@ function DrawerSettings({
               style={{
                 borderBottomWidth: label === "back" ? "1px" : "0px",
               }}
-              className="baseFlex h-full w-full !justify-start border-t-[1px]"
+              showArrow
+              className="baseFlex h-24 w-full !justify-start border-t-[1px]"
               onClick={() => setRenderedView(label)}
             >
               <motion.div
@@ -1200,15 +1243,64 @@ function DrawerSettings({
         </div>
 
         <Button
-          innerText="Save"
-          innerTextWhenLoading={"Saving"}
-          icon={<IoSave size={"1.25rem"} />}
-          disabled={!ableToSave || usernameIsProfane}
-          isDisabled={!ableToSave || usernameIsProfane}
-          onClick={() => updateUserHandler()}
-          showLoadingSpinnerOnClick
-          className="baseFlex mb-4 h-[2.5rem] w-[7rem] gap-2 px-4 py-0.5"
-        />
+          disabled={
+            !ableToSave || usernameIsProfane || saveButtonText === "Saving"
+          }
+          onClick={() => {
+            setSaveButtonText("Saving");
+            updateUserHandler();
+          }}
+          className="my-4 h-[2.75rem] w-[10rem] !py-6"
+        >
+          <AnimatePresence mode={"popLayout"} initial={false}>
+            <motion.div
+              key={saveButtonText}
+              layout
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              transition={{
+                duration: 0.25,
+              }}
+              className="baseFlex h-[2.75rem] w-[10rem] gap-2 !py-6"
+            >
+              {saveButtonText}
+              {saveButtonText === "Save" && <IoSave size={"1.25rem"} />}
+              {saveButtonText === "Saving" && (
+                <div
+                  className="inline-block size-4 animate-spin rounded-full border-[2px] border-darkGreen border-t-transparent text-darkGreen"
+                  role="status"
+                  aria-label="loading"
+                >
+                  <span className="sr-only">Loading...</span>
+                </div>
+              )}
+              {saveButtonText === "Saved" && (
+                <svg
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                  className="text-offwhite size-5"
+                >
+                  <motion.path
+                    initial={{ pathLength: 0 }}
+                    animate={{ pathLength: 1 }}
+                    transition={{
+                      delay: 0.2,
+                      type: "tween",
+                      ease: "easeOut",
+                      duration: 0.3,
+                    }}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              )}
+            </motion.div>
+          </AnimatePresence>
+        </Button>
       </div>
     </>
   );
@@ -1261,14 +1353,16 @@ function DrawerStatistics({ setRenderedView }: IDrawerStatistics) {
 
   return (
     <>
-      <Button
-        variant={"ghost"}
-        onClick={() => setRenderedView(undefined)}
-        className="baseFlex absolute left-2 top-0 gap-2 !p-0"
-      >
-        <IoIosArrowForward size={"1rem"} className="rotate-180" />
-        Back
-      </Button>
+      <div className="absolute left-0 top-0 z-10 h-8 w-full bg-zinc-200">
+        <Button
+          variant={"ghost"}
+          onClick={() => setRenderedView(undefined)}
+          className="baseFlex absolute left-2 top-0 gap-2 !p-0"
+        >
+          <IoIosArrowForward size={"1rem"} className="rotate-180" />
+          Back
+        </Button>
+      </div>
 
       <p className="text-lg font-medium underline underline-offset-2">Stats</p>
 
@@ -1276,23 +1370,34 @@ function DrawerStatistics({ setRenderedView }: IDrawerStatistics) {
         {rowNames.map((rowName, index) => (
           <div key={index} className="baseFlex w-full !justify-between gap-8">
             <div className="font-semibold">{rowName}</div>
-            {filteredStats ? (
-              <div className="font-semibold">
-                {Object.values(filteredStats)[index]}
-              </div>
-            ) : (
-              <div
-                style={{
-                  width: "1.5rem",
-                  height: "1.5rem",
-                  borderTop: `0.35rem solid hsla(120deg, 100%, 18%, 40%)`,
-                  borderRight: `0.35rem solid hsla(120deg, 100%, 18%, 40%)`,
-                  borderBottom: `0.35rem solid hsla(120deg, 100%, 18%, 40%)`,
-                  borderLeft: `0.35rem solid hsl(120deg 100% 18%)`,
-                }}
-                className="loadingSpinner"
-              ></div>
-            )}
+
+            <div className="w-16 text-right">
+              <AnimatePresence mode="wait">
+                {filteredStats ? (
+                  <motion.div
+                    key={`filteredStats${rowName}`}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="font-semibold"
+                  >
+                    {Object.values(filteredStats)[index]}
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key={`loadingSpinner${rowName}`}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="inline-block size-4 animate-spin rounded-full border-[2px] border-darkGreen border-t-transparent text-darkGreen"
+                    role="status"
+                    aria-label="loading"
+                  >
+                    <span className="sr-only">Loading...</span>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           </div>
         ))}
       </div>
@@ -1326,30 +1431,34 @@ function DrawerFriendsList({
     setConnectedToRoom,
   } = useRoomContext();
 
+  // TODO: fix ergonomics around these queries. Currently can't fully disable
+  // queries based on friendData being undefined, since jsx below will infinitely
+  // render loading spinners
+
   const { data: friends } = api.users.getUsersFromIDList.useQuery(
     friendData?.friendIDs ?? [],
-    {
-      enabled: Boolean(
-        (friendData?.friendIDs ? friendData.friendIDs.length : 0) > 0,
-      ),
-    },
+    // {
+    //   enabled: Boolean(
+    //     (friendData?.friendIDs ? friendData.friendIDs.length : 0) > 0,
+    //   ),
+    // },
   );
   const { data: friendInviteIDs } = api.users.getUsersFromIDList.useQuery(
     friendData?.friendInviteIDs ?? [],
-    {
-      enabled: Boolean(
-        (friendData?.friendInviteIDs ? friendData.friendInviteIDs.length : 0) >
-          0,
-      ),
-    },
+    // {
+    //   enabled: Boolean(
+    //     (friendData?.friendInviteIDs ? friendData.friendInviteIDs.length : 0) >
+    //       0,
+    //   ),
+    // },
   );
   const { data: roomInviteIDs } = api.users.getUsersFromIDList.useQuery(
     friendData?.roomInviteIDs ?? [],
-    {
-      enabled: Boolean(
-        (friendData?.roomInviteIDs ? friendData.roomInviteIDs.length : 0) > 0,
-      ),
-    },
+    // {
+    //   enabled: Boolean(
+    //     (friendData?.roomInviteIDs ? friendData.roomInviteIDs.length : 0) > 0,
+    //   ),
+    // },
   );
 
   useEffect(() => {
@@ -1361,14 +1470,16 @@ function DrawerFriendsList({
 
   return (
     <>
-      <Button
-        variant={"ghost"}
-        onClick={() => setRenderedView(undefined)}
-        className="baseFlex absolute left-2 top-0 gap-2 !p-0"
-      >
-        <IoIosArrowForward size={"1rem"} className="rotate-180" />
-        Back
-      </Button>
+      <div className="absolute left-0 top-0 z-10 h-8 w-full bg-zinc-200">
+        <Button
+          variant={"ghost"}
+          onClick={() => setRenderedView(undefined)}
+          className="baseFlex absolute left-2 top-0 gap-2 !p-0"
+        >
+          <IoIosArrowForward size={"1rem"} className="rotate-180" />
+          Back
+        </Button>
+      </div>
 
       <div className="baseVertFlex h-full w-11/12 max-w-[500px] !items-start !justify-start gap-2 overflow-y-auto pb-4 pt-12">
         <div className="baseVertFlex w-full !items-start gap-2">
@@ -1417,8 +1528,7 @@ function DrawerFriendsList({
                   <div className="baseFlex gap-[0.75rem]">
                     <Button
                       variant={"secondary"}
-                      icon={<AiOutlineCheck size={"1.25rem"} />}
-                      onClickFunction={() =>
+                      onClick={() =>
                         socket.emit("modifyFriendData", {
                           action: "acceptFriendInvite",
                           initiatorID: userID,
@@ -1426,12 +1536,13 @@ function DrawerFriendsList({
                         })
                       }
                       className="gap-2 !p-2"
-                    />
+                    >
+                      <AiOutlineCheck size={"1.25rem"} />
+                    </Button>
 
                     <Button
                       variant={"destructive"}
-                      icon={<AiOutlineClose size={"1.25rem"} />}
-                      onClickFunction={() =>
+                      onClick={() =>
                         socket.emit("modifyFriendData", {
                           action: "declineFriendInvite",
                           initiatorID: userID,
@@ -1439,7 +1550,9 @@ function DrawerFriendsList({
                         })
                       }
                       className="gap-2 !p-2"
-                    />
+                    >
+                      <AiOutlineClose size={"1.25rem"} />
+                    </Button>
                   </div>
                 </div>
               ))}
@@ -1447,16 +1560,12 @@ function DrawerFriendsList({
           ) : (
             <div className="baseFlex w-full">
               <div
-                style={{
-                  width: "2.5rem",
-                  height: "2.5rem",
-                  borderTop: `0.35rem solid hsla(120deg, 100%, 86%, 40%)`,
-                  borderRight: `0.35rem solid hsla(120deg, 100%, 86%, 40%)`,
-                  borderBottom: `0.35rem solid hsla(120deg, 100%, 86%, 40%)`,
-                  borderLeft: `0.35rem solid hsl(120deg 100% 86%)`,
-                }}
-                className="loadingSpinner"
-              ></div>
+                className="inline-block size-10 animate-spin rounded-full border-[2px] border-darkGreen border-t-transparent text-darkGreen"
+                role="status"
+                aria-label="loading"
+              >
+                <span className="sr-only">Loading...</span>
+              </div>
             </div>
           )}
 
@@ -1482,8 +1591,7 @@ function DrawerFriendsList({
                 <div className="baseFlex gap-[0.75rem]">
                   <Button
                     variant={"secondary"}
-                    icon={<AiOutlineCheck size={"1.25rem"} />}
-                    onClickFunction={() => {
+                    onClick={() => {
                       // there are probably major redundancies here, but should work for now
 
                       const roomCodeOfRoomBeingJoined = friend.roomCode;
@@ -1529,12 +1637,13 @@ function DrawerFriendsList({
                       setShowDrawer(false);
                     }}
                     className="gap-2 !p-2"
-                  />
+                  >
+                    <AiOutlineCheck size={"1.25rem"} />
+                  </Button>
 
                   <Button
                     variant={"destructive"}
-                    icon={<AiOutlineClose size={"1.25rem"} />}
-                    onClickFunction={() =>
+                    onClick={() =>
                       socket.emit("modifyFriendData", {
                         action: "declineRoomInvite",
                         initiatorID: userID,
@@ -1542,7 +1651,9 @@ function DrawerFriendsList({
                       })
                     }
                     className="gap-2 !p-2"
-                  />
+                  >
+                    <AiOutlineClose size={"1.25rem"} />
+                  </Button>
                 </div>
               </div>
             ))}
@@ -1605,16 +1716,12 @@ function DrawerFriendsList({
           ) : (
             <div className="baseFlex w-full">
               <div
-                style={{
-                  width: "2.5rem",
-                  height: "2.5rem",
-                  borderTop: `0.35rem solid hsla(120deg, 100%, 86%, 40%)`,
-                  borderRight: `0.35rem solid hsla(120deg, 100%, 86%, 40%)`,
-                  borderBottom: `0.35rem solid hsla(120deg, 100%, 86%, 40%)`,
-                  borderLeft: `0.35rem solid hsl(120deg 100% 86%)`,
-                }}
-                className="loadingSpinner"
-              ></div>
+                className="inline-block size-10 animate-spin rounded-full border-[2px] border-darkGreen border-t-transparent text-darkGreen"
+                role="status"
+                aria-label="loading"
+              >
+                <span className="sr-only">Loading...</span>
+              </div>
             </div>
           )}
         </div>
@@ -1647,14 +1754,16 @@ function FriendActions({
 
   return (
     <>
-      <Button
-        variant={"ghost"}
-        onClick={() => setRenderedView("Friends list")}
-        className="baseFlex absolute left-2 top-0 gap-2 !p-0"
-      >
-        <IoIosArrowForward size={"1rem"} className="rotate-180" />
-        Back
-      </Button>
+      <div className="absolute left-0 top-0 z-10 h-8 w-full bg-zinc-200">
+        <Button
+          variant={"ghost"}
+          onClick={() => setRenderedView("Friends list")}
+          className="baseFlex absolute left-2 top-0 gap-2 !p-0"
+        >
+          <IoIosArrowForward size={"1rem"} className="rotate-180" />
+          Back
+        </Button>
+      </div>
 
       <div className="baseVertFlex w-full">
         <div className="baseFlex mb-4 gap-4">
@@ -1676,12 +1785,6 @@ function FriendActions({
         <Button
           variant="drawer"
           disabled={
-            !friend.online ||
-            friend.status === "in a game" ||
-            !connectedToRoom ||
-            friend.roomCode === roomConfig.code
-          }
-          isDisabled={
             !friend.online ||
             friend.status === "in a game" ||
             !connectedToRoom ||
@@ -1711,14 +1814,6 @@ function FriendActions({
         <Button
           variant="drawer"
           disabled={
-            !friend.online ||
-            friend.roomCode === null ||
-            friend.roomCode === roomConfig.code ||
-            friend.status === "in a game" ||
-            !friend.currentRoomIsPublic ||
-            friend.currentRoomIsFull === true
-          }
-          isDisabled={
             !friend.online ||
             friend.roomCode === null ||
             friend.roomCode === roomConfig.code ||
@@ -1798,16 +1893,13 @@ function FriendActions({
             </AlertDialogHeader>
             <AlertDialogFooter className="baseVertFlex gap-4">
               <AlertDialogCancel asChild>
-                <Button
-                  variant={"secondary"}
-                  innerText={"Cancel"}
-                  className="w-24"
-                />
+                <Button variant={"secondary"} className="w-24">
+                  Cancel
+                </Button>
               </AlertDialogCancel>
               <AlertDialogAction asChild>
                 <Button
                   variant={"destructive"}
-                  innerText={"Confirm"}
                   className="w-24"
                   onClick={() => {
                     socket.emit("modifyFriendData", {
@@ -1817,7 +1909,9 @@ function FriendActions({
                     });
                     setRenderedView("Friends list");
                   }}
-                />
+                >
+                  Confirm
+                </Button>
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
@@ -1861,37 +1955,34 @@ function WhilePlayingDrawer({
       <div className="baseFlex w-full border-t-[1px] border-darkGreen px-2 py-4">
         <AlertDialog>
           <AlertDialogTrigger asChild>
-            <Button
-              variant="destructive"
-              icon={<TbDoorExit size={"1.5rem"} />}
-              innerText={"Leave game"}
-              className="gap-2"
-            />
+            <Button variant="destructive" className="gap-2">
+              <TbDoorExit size={"1.5rem"} />
+              Leave game
+            </Button>
           </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader className="baseFlex w-full">
-              <AlertDialogTitle className="w-48 sm:w-auto">
+              <AlertDialogTitle className="w-64 sm:w-auto">
                 Are you sure you want to leave the game?
               </AlertDialogTitle>
             </AlertDialogHeader>
             <AlertDialogFooter className="baseFlex mt-4 !flex-row gap-8">
               <AlertDialogCancel asChild>
-                <Button
-                  variant={"secondary"}
-                  innerText={"Cancel"}
-                  className="m-0 w-24"
-                />
+                <Button variant={"secondary"} className="m-0 w-24">
+                  Cancel
+                </Button>
               </AlertDialogCancel>
               <AlertDialogAction asChild>
                 <Button
                   variant={"destructive"}
-                  innerText={"Confirm"}
                   className="m-0 w-24"
                   onClick={() => {
                     setShowDrawer(false);
                     leaveRoom();
                   }}
-                />
+                >
+                  Confirm
+                </Button>
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>

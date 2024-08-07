@@ -11,15 +11,14 @@ import {
 import { useUserIDContext } from "../../../context/UserIDContext";
 import { useRoomContext } from "../../../context/RoomContext";
 import { api } from "~/utils/api";
-import { motion } from "framer-motion";
-import SecondaryButton from "../../Buttons/SecondaryButton";
+import { AnimatePresence, motion } from "framer-motion";
 import {
   IoSettingsSharp,
   IoStatsChart,
   IoClose,
   IoSave,
 } from "react-icons/io5";
-import PrimaryButton from "../../Buttons/PrimaryButton";
+import { Button } from "~/components/ui/button";
 
 export interface ILocalPlayerSettings {
   deckVariantIndex: number;
@@ -58,12 +57,21 @@ function UserSettingsAndStatsModal({
       }
     },
     onSettled: () => {
-      utils.users.getUserByID.invalidate(userID);
+      setTimeout(() => {
+        setSaveButtonText("Saved");
+        utils.users.getUserByID.invalidate(userID);
+
+        setTimeout(() => {
+          setSaveButtonText("Save");
+        }, 1000);
+      }, 1000);
     },
   });
 
   // if not showing settings, stats are being shown instead
   const [showSettings, setShowSettings] = useState<boolean>(true);
+
+  const [saveButtonText, setSaveButtonText] = useState<string>("Save");
 
   const [localPlayerMetadata, setLocalPlayerMetadata] =
     useState<IRoomPlayersMetadata>({} as IRoomPlayersMetadata);
@@ -173,35 +181,37 @@ function UserSettingsAndStatsModal({
         transition={{ duration: 0.15 }}
         className="baseVertFlex rounded-md border-2 border-white shadow-md"
       >
-        <div className="baseFlex relative w-full gap-4 rounded-t-md bg-green-900 pb-4 pl-20 pr-20 pt-4">
-          <SecondaryButton
-            innerText="Settings"
-            icon={<IoSettingsSharp size={"1.25rem"} />}
-            extraPadding={true}
-            forceHover={showSettings}
-            onClickFunction={() => setShowSettings(true)}
-          />
+        <div className="baseFlex relative w-full gap-8 rounded-t-md border-b border-white bg-green-900 py-4">
+          <Button
+            variant={"secondary"}
+            forceActive={showSettings}
+            showCardSuitAccents
+            onClick={() => setShowSettings(true)}
+            className="h-[3.5rem] w-48 gap-2"
+          >
+            <IoSettingsSharp size={"1.25rem"} />
+            Settings
+          </Button>
 
-          <SecondaryButton
-            innerText="Statistics"
-            icon={<IoStatsChart size={"1.25rem"} />}
-            extraPadding={true}
-            forceHover={!showSettings}
-            onClickFunction={() => setShowSettings(false)}
-          />
+          <Button
+            variant={"secondary"}
+            forceActive={!showSettings}
+            showCardSuitAccents
+            onClick={() => setShowSettings(false)}
+            className="h-[3.5rem] w-48 gap-2"
+          >
+            <IoStatsChart size={"1.25rem"} />
+            Statistics
+          </Button>
 
-          <SecondaryButton
-            icon={<IoClose size={"1.5rem"} />}
-            extraPadding={false}
-            onClickFunction={() => setShowModal(false)}
-            width={"2.25rem"}
-            height={"2.25rem"}
-            style={{
-              position: "absolute",
-              top: "0.5rem",
-              right: "0.5rem",
-            }}
-          />
+          <Button
+            variant={"text"}
+            size={"icon"}
+            className="!absolute right-1 top-1 size-8"
+            onClick={() => setShowModal(false)}
+          >
+            <IoClose size={"1.5rem"} />
+          </Button>
         </div>
 
         {showSettings && (
@@ -217,28 +227,78 @@ function UserSettingsAndStatsModal({
 
         {!showSettings && <Stats />}
 
-        <div className="baseFlex w-full gap-16 rounded-b-md bg-green-900 pb-4 pl-12 pr-12 pt-4">
-          <SecondaryButton
-            innerText="Log out"
-            extraPadding={false}
-            width={"10rem"}
-            height={"3rem"}
-            onClickFunction={() => {
+        <div className="baseFlex w-full gap-16 rounded-b-md border-t border-white bg-green-900 px-12 py-4">
+          <Button
+            variant={"secondary"}
+            onClick={() => {
               setShowModal(false);
               signOut();
             }}
-          />
+            className="h-[2.75rem] w-[10rem]"
+          >
+            Log out
+          </Button>
+
           {showSettings && (
-            <PrimaryButton
-              innerText="Save"
-              innerTextWhenLoading={"Saving"}
-              icon={<IoSave size={"1.25rem"} />}
-              width={"10rem"}
-              height={"3rem"}
-              disabled={!ableToSave || usernameIsProfane}
-              onClickFunction={() => updateUserHandler()}
-              showLoadingSpinnerOnClick={true}
-            />
+            <Button
+              disabled={
+                !ableToSave || usernameIsProfane || saveButtonText === "Saving"
+              }
+              onClick={() => {
+                setSaveButtonText("Saving");
+                updateUserHandler();
+              }}
+              className="h-[2.75rem] w-[10rem]"
+            >
+              <AnimatePresence mode={"popLayout"} initial={false}>
+                <motion.div
+                  key={saveButtonText}
+                  layout
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 20 }}
+                  transition={{
+                    duration: 0.25,
+                  }}
+                  className="baseFlex h-[2.75rem] w-[10rem] gap-2"
+                >
+                  {saveButtonText}
+                  {saveButtonText === "Save" && <IoSave size={"1.25rem"} />}
+                  {saveButtonText === "Saving" && (
+                    <div
+                      className="inline-block size-4 animate-spin rounded-full border-[2px] border-darkGreen border-t-transparent text-darkGreen"
+                      role="status"
+                      aria-label="loading"
+                    >
+                      <span className="sr-only">Loading...</span>
+                    </div>
+                  )}
+                  {saveButtonText === "Saved" && (
+                    <svg
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                      className="text-offwhite size-5"
+                    >
+                      <motion.path
+                        initial={{ pathLength: 0 }}
+                        animate={{ pathLength: 1 }}
+                        transition={{
+                          delay: 0.2,
+                          type: "tween",
+                          ease: "easeOut",
+                          duration: 0.3,
+                        }}
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                  )}
+                </motion.div>
+              </AnimatePresence>
+            </Button>
           )}
         </div>
       </motion.div>

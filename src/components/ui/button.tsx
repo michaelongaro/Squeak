@@ -10,22 +10,22 @@ import { IoIosArrowForward } from "react-icons/io";
 import { cn } from "~/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-base font-normal ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 overflow-hidden",
+
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground",
+        default: "bg-lightGreen text-darkGreen",
         destructive:
           "bg-destructive text-destructive-foreground hover:bg-destructive/90 border-2",
         outline:
           "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
-        secondary: "border-2 transition-all",
-        // ideally wanted a link variant but wasn't conducive to how we set up the button variants below..
+        secondary: "border-2 transition-all select-none",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-lightGreen underline-offset-4 hover:underline",
         text: "text-primary",
         drawer:
-          "text-darkGreen border-darkGreen w-full !rounded-none h-full absolute top-0 left-0",
+          "text-darkGreen border-darkGreen w-full !rounded-none h-full baseFlex relative z-[500] w-full py-4 transition-colors",
       },
       size: {
         default: "h-10 px-4 py-2",
@@ -45,18 +45,8 @@ export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   asChild?: boolean;
-  forceHover?: boolean;
-  isDisabled?: boolean; // I feel like there is a way around this, but not messing with it right now
-  tempDisabled?: boolean;
-  showLoadingSpinnerOnClick?: boolean;
-  innerText?: string;
-  innerTextWhenLoading?: string;
-  onClickFunction?: () => void;
-  width?: string;
-  height?: string;
-  icon?: JSX.Element;
-  iconOnLeft?: boolean;
-  rotateIcon?: boolean;
+  forceActive?: boolean;
+  disabled?: boolean;
   showCardSuitAccents?: boolean;
   showArrow?: boolean;
   showCheckmark?: boolean;
@@ -65,20 +55,14 @@ export interface ButtonProps
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   (
     {
+      children,
       className,
       variant,
       size,
-      isDisabled, // I feel like there is a way around this, but not messing with it right now
       asChild = false,
-      showLoadingSpinnerOnClick,
-      innerText,
-      innerTextWhenLoading,
-      onClickFunction,
-      icon,
-      iconOnLeft,
-      rotateIcon,
+      forceActive = false,
       showCardSuitAccents,
-      showArrow = true,
+      showArrow,
       showCheckmark,
       ...props
     },
@@ -86,26 +70,18 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ) => {
     const Comp = asChild ? Slot : "button";
 
-    // not a fan of having this much state in here, but otherwise it's offloaded
-    // to the parent component, which is not ideal either
+    const disabled = props.disabled;
 
-    const [buttonIsActive, setButtonIsActive] = useState(false);
-    const [showLoadingSpinner, setShowLoadingSpinner] = useState(false);
-    const [tempDisabled, setTempDisabled] = useState(false);
+    const [isActive, setIsActive] = useState(false);
     const [brightness, setBrightness] = useState(1);
 
-    const forceHover = false; // add this as prop later
+    const dynamicOpacity = disabled ? 0.25 : 1;
 
-    const dynamicOpacity =
-      isDisabled || tempDisabled
-        ? buttonIsActive || forceHover
-          ? 0.35
-          : 0.25
-        : 1;
+    // TODO: can probably simplify these below outside of secondary variant most likely?
 
     if (variant === "text") {
       return (
-        <div
+        <Comp
           onMouseEnter={() => setBrightness(0.75)}
           onMouseLeave={() => setBrightness(1)}
           onPointerDown={() => {
@@ -117,52 +93,46 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           onPointerLeave={() => {
             setBrightness(1);
           }}
-          className="baseFlex"
+          style={{
+            color: "hsl(120deg, 100%, 86%)",
+            filter: `brightness(${brightness})`,
+          }}
+          className={`${cn(
+            `${buttonVariants({ variant, size, className })} relative`,
+          )} `}
+          ref={ref}
+          {...props}
         >
-          <Comp
-            style={{
-              color: "hsl(120deg, 100%, 86%)",
-              filter: `brightness(${brightness})`,
-            }}
-            className={`${cn(
-              `${buttonVariants({ variant, size, className })} relative`,
-            )} `}
-            ref={ref}
-            {...props}
-          >
-            {innerText}
-            {icon}
-          </Comp>
-        </div>
+          {children}
+        </Comp>
       );
     }
 
     if (variant === "drawer") {
       return (
-        <div
-          className={`${className} baseFlex relative z-[500] w-full px-2 py-4 transition-colors ${
-            buttonIsActive ? "bg-black/25" : "bg-zinc-200"
-          }`}
+        <Comp
           onPointerDown={() => {
-            if (isDisabled) return;
-            setButtonIsActive(true);
+            if (disabled) return;
+            setIsActive(true);
           }}
           onPointerUp={() => {
-            if (isDisabled) return;
-            setButtonIsActive(false);
+            if (disabled) return;
+            setIsActive(false);
           }}
           onPointerLeave={() => {
-            if (isDisabled) return;
-            setButtonIsActive(false);
+            if (disabled) return;
+            setIsActive(false);
           }}
+          className={cn(
+            buttonVariants({ variant, size, className }),
+            `relative ${isActive ? "bg-black/25" : "bg-zinc-200"}`,
+          )}
+          ref={ref}
+          {...props}
         >
-          <Comp
-            className={cn(buttonVariants({ variant, size, className }))}
-            ref={ref}
-            {...props}
-          />
+          {children}
 
-          {isDisabled && (
+          {disabled && (
             <p className="baseFlex absolute right-16 w-32 gap-2 text-sm text-darkGreen/70">
               Log in to access
               <FaLock />
@@ -175,230 +145,129 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           {showCheckmark && (
             <AiOutlineCheck size={"1rem"} className="absolute right-4" />
           )}
-        </div>
+        </Comp>
       );
     }
 
     if (variant === "destructive") {
       return (
-        <div
-          onMouseEnter={() => setButtonIsActive(true)}
-          onMouseLeave={() => setButtonIsActive(false)}
+        <Comp
+          onMouseEnter={() => setIsActive(true)}
+          onMouseLeave={() => setIsActive(false)}
           onPointerDown={() => {
             setBrightness(0.75);
-            setButtonIsActive(true);
+            setIsActive(true);
           }}
           onPointerUp={() => {
             setBrightness(1);
-            setButtonIsActive(false);
+            setIsActive(false);
           }}
           onPointerLeave={() => {
             setBrightness(1);
-            setButtonIsActive(false);
+            setIsActive(false);
           }}
+          style={{
+            borderColor: isActive ? "#dc2626" : "#dc2626",
+            backgroundColor: isActive ? "#dc2626" : "rgba(255, 255, 255, 0.85)",
+            color: isActive ? "hsl(255, 100%, 100%)" : "#dc2626",
+            filter: `brightness(${brightness})`,
+          }}
+          className={`${cn(
+            `${buttonVariants({ variant, size, className })} relative`,
+          )} `}
+          ref={ref}
+          {...props}
         >
-          <Comp
-            style={{
-              borderColor: buttonIsActive
-                ? "hsl(0, 84%, 50%)"
-                : "hsl(0, 84%, 60%)",
-              backgroundColor: buttonIsActive
-                ? "hsl(0, 84%, 50%)"
-                : "hsl(0, 84%, 95%)",
-              color: buttonIsActive
-                ? "hsl(255, 100%, 100%)"
-                : "hsl(0, 84%, 40%)",
-              filter: `brightness(${brightness})`,
-            }}
-            className={`${cn(
-              `${buttonVariants({ variant, size, className })} relative`,
-            )} `}
-            ref={ref}
-            {...props}
-          >
-            {innerText}
-            {icon}
-          </Comp>
-        </div>
+          {children}
+        </Comp>
       );
     }
 
     if (variant === "secondary") {
       return (
-        <div
-          onMouseEnter={() => setButtonIsActive(true)}
-          onMouseLeave={() => setButtonIsActive(false)}
+        <Comp
+          onMouseEnter={() => setIsActive(true)}
+          onMouseLeave={() => setIsActive(false)}
           onPointerDown={() => {
             setBrightness(0.75);
-            setButtonIsActive(true);
+            setIsActive(true); // TOOD: maybe make separate state to differentiate from when to show
+            // card suit accents so they don't show on pointer down?
           }}
           onPointerUp={() => {
             setBrightness(1);
-            setButtonIsActive(false);
+            setIsActive(false);
           }}
           onPointerLeave={() => {
             setBrightness(1);
-            setButtonIsActive(false);
+            setIsActive(false);
           }}
+          style={{
+            borderColor:
+              isActive || forceActive
+                ? `hsl(120deg 100% 18% / ${dynamicOpacity})`
+                : `hsl(120deg 100% 86% / ${dynamicOpacity})`,
+            backgroundColor:
+              isActive || forceActive
+                ? `hsl(120deg 100% 86% / ${dynamicOpacity})`
+                : `hsl(120deg 100% 18% / ${dynamicOpacity})`,
+            color:
+              isActive || forceActive
+                ? `hsl(120deg 100% 18% / ${dynamicOpacity})`
+                : `hsl(120deg 100% 86% / ${dynamicOpacity})`,
+            filter: `brightness(${brightness})`,
+            padding: showCardSuitAccents ? "1.15rem 1.5rem" : "0",
+          }}
+          className={`${cn(
+            `${buttonVariants({ variant, size, className })} relative`,
+          )}`}
+          ref={ref}
+          {...props}
         >
-          <Comp
-            style={{
-              borderColor:
-                buttonIsActive || forceHover
-                  ? `hsl(120deg 100% 18% / ${dynamicOpacity})`
-                  : `hsl(120deg 100% 86% / ${dynamicOpacity})`,
-              backgroundColor:
-                buttonIsActive || forceHover
-                  ? `hsl(120deg 100% 86% / ${dynamicOpacity})`
-                  : `hsl(120deg 100% 18% / ${dynamicOpacity})`,
-              color:
-                buttonIsActive || forceHover
-                  ? `hsl(120deg 100% 18% / ${dynamicOpacity})`
-                  : `hsl(120deg 100% 86% / ${dynamicOpacity})`,
-              filter: `brightness(${brightness})`,
-            }}
-            className={`${cn(
-              `${buttonVariants({ variant, size, className })} relative`,
-            )}`}
-            ref={ref}
-            {...props}
-          >
-            {iconOnLeft && icon && (
-              <div
-                style={{
-                  transform: rotateIcon ? "rotate(540deg)" : "rotate(0deg)",
-                  transition: "transform 0.5s ease-in-out",
-                }}
-              >
-                {icon}
-              </div>
-            )}
-            {innerText}
-            {!iconOnLeft && !showLoadingSpinner && icon && (
-              <div
-                style={{
-                  transform: rotateIcon ? "rotate(540deg)" : "rotate(0deg)",
-                  transition: "transform 0.5s ease-in-out",
-                }}
-              >
-                {icon}
-              </div>
-            )}
+          {children}
 
-            {showCardSuitAccents && (
-              <>
-                <GiClubs
-                  size={"0.9rem"}
-                  style={{
-                    position: "absolute",
-                    color: "hsl(120deg 100% 18%)",
-                    left: "0.25rem",
-                    top: "0.25rem",
-                    transform: "rotate(315deg)",
-                    opacity: buttonIsActive || forceHover ? 1 : 0,
-                  }}
-                />
-                <GiDiamonds
-                  size={"0.9rem"}
-                  style={{
-                    position: "absolute",
-                    color: "hsl(120deg 100% 18%)",
-                    right: "0.25rem",
-                    top: "0.25rem",
-                    transform: "rotate(45deg)",
-                    opacity: buttonIsActive || forceHover ? 1 : 0,
-                  }}
-                />
-                <GiHearts
-                  size={"0.9rem"}
-                  style={{
-                    position: "absolute",
-                    color: "hsl(120deg 100% 18%)",
-                    left: "0.25rem",
-                    bottom: "0.25rem",
-                    transform: "rotate(225deg)",
-                    opacity: buttonIsActive || forceHover ? 1 : 0,
-                  }}
-                />
-                <GiSpades
-                  size={"0.9rem"}
-                  style={{
-                    position: "absolute",
-                    color: "hsl(120deg 100% 18%)",
-                    right: "0.25rem",
-                    bottom: "0.25rem",
-                    transform: "rotate(135deg)",
-                    opacity: buttonIsActive || forceHover ? 1 : 0,
-                  }}
-                />
-              </>
-            )}
-          </Comp>
-        </div>
+          {showCardSuitAccents && (
+            <>
+              <GiClubs
+                className={`absolute left-1 top-1 size-[0.9rem] rotate-[315deg] text-darkGreen ${isActive || forceActive ? "opacity-100" : "opacity-0"}`}
+              />
+              <GiDiamonds
+                className={`absolute right-1 top-1 size-[0.9rem] rotate-[45deg] text-darkGreen ${isActive || forceActive ? "opacity-100" : "opacity-0"}`}
+              />
+              <GiHearts
+                style={{
+                  position: "absolute",
+                }}
+                className={`absolute bottom-1 left-1 size-[0.9rem] rotate-[225deg] text-darkGreen ${isActive || forceActive ? "opacity-100" : "opacity-0"}`}
+              />
+              <GiSpades
+                className={`absolute bottom-1 right-1 size-[0.9rem] rotate-[135deg] text-darkGreen ${isActive || forceActive ? "opacity-100" : "opacity-0"}`}
+              />
+            </>
+          )}
+        </Comp>
       );
     }
 
     if (variant === "default" || variant === undefined) {
       return (
-        <div
-          className="baseFlex gap-2"
+        <Comp
           onMouseEnter={() => setBrightness(0.9)}
           onMouseLeave={() => setBrightness(1)}
           onPointerDown={() => setBrightness(0.75)}
           onPointerUp={() => setBrightness(1)}
           onPointerLeave={() => setBrightness(1)}
-          onClick={() => {
-            if (isDisabled || tempDisabled) return;
-
-            if (showLoadingSpinnerOnClick) {
-              setShowLoadingSpinner(true);
-              setTempDisabled(true);
-
-              setTimeout(() => {
-                setShowLoadingSpinner(false);
-                setTempDisabled(false);
-                onClickFunction?.();
-              }, 1000);
-            } else {
-              onClickFunction?.();
-            }
+          style={{
+            filter: `brightness(${brightness})`,
+            cursor: disabled ? "not-allowed" : "pointer",
+            opacity: disabled ? 0.25 : 1,
+            userSelect: disabled ? "none" : "auto",
           }}
+          className={`${cn(buttonVariants({ variant, size, className }))}`}
+          ref={ref}
+          {...props}
         >
-          <Comp
-            style={{
-              filter: `brightness(${brightness})`,
-              cursor: isDisabled || tempDisabled ? "not-allowed" : "pointer",
-              opacity: isDisabled || tempDisabled ? 0.25 : 1,
-              // TODO: I really don't know why this wasn't working on mobile safari... explicitly defining for the time being
-              backgroundColor: "hsl(120deg, 100%, 86%)",
-              color: "hsl(120deg, 100%, 18%)",
-            }}
-            className={`${cn(buttonVariants({ variant, size, className }))}`}
-            ref={ref}
-            {...props}
-          >
-            {iconOnLeft && icon}
-            {showLoadingSpinner ? innerTextWhenLoading : innerText}
-            {!iconOnLeft && !showLoadingSpinner && icon}
-
-            {/* technically could structure so that icon/loading spinner could be animate presence'd,
-                but not essential right now */}
-
-            {showLoadingSpinner && (
-              <div
-                style={{
-                  width: "1.5rem",
-                  height: "1.5rem",
-                  borderTop: `0.35rem solid hsla(120deg, 100%, 18%, 40%)`,
-                  borderRight: `0.35rem solid hsla(120deg, 100%, 18%, 40%)`,
-                  borderBottom: `0.35rem solid hsla(120deg, 100%, 18%, 40%)`,
-                  borderLeft: `0.35rem solid hsl(120deg, 100%, 18%)`,
-                }}
-                className="loadingSpinner"
-              ></div>
-            )}
-          </Comp>
-        </div>
+          {children}
+        </Comp>
       );
     }
 
@@ -407,7 +276,9 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         className={cn(buttonVariants({ variant, size, className }))}
         ref={ref}
         {...props}
-      />
+      >
+        {children}
+      </Comp>
     );
   },
 );

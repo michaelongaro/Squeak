@@ -38,12 +38,10 @@ function PlayerCustomizationDrawer() {
   return (
     <Drawer onOpenChange={() => setRenderedView(undefined)}>
       <DrawerTrigger asChild>
-        <Button
-          variant="secondary"
-          icon={<FaPaintRoller className="h-4 w-4" />}
-          innerText={"Customize"}
-          className="baseFlex gap-2"
-        ></Button>
+        <Button variant="secondary" className="gap-2 !px-4">
+          Customize
+          <FaPaintRoller className="size-4" />
+        </Button>
       </DrawerTrigger>
       <DrawerPortal>
         <DrawerContent

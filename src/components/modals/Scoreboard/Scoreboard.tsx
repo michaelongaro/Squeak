@@ -72,6 +72,8 @@ function Scoreboard() {
     IPlayerRoundDetails[]
   >([]);
 
+  const [hostActionButtonText, setHostActionButtonText] = useState<string>("");
+
   const [countdownValue, setCountdownValue] = useState<number>(3);
   const [countdownType, setCountdownType] = useState<
     "startRound" | "returnToRoom" | null
@@ -85,6 +87,12 @@ function Scoreboard() {
     if (initalizedTimers) return;
 
     setInitalizedTimers(true);
+
+    setHostActionButtonText(
+      scoreboardMetadata?.gameWinnerID === null
+        ? "Start next round"
+        : "Return to room",
+    );
 
     setTimeout(() => {
       setAnimateCardsPlayedValue(true);
@@ -324,6 +332,15 @@ function Scoreboard() {
     ];
   }, [userID, scoreboardMetadata]);
 
+  function getDynamicMobileScoreboardTableHeight() {
+    const maxPlayers = 4;
+    const playersInRoom = Object.keys(playerMetadata).length;
+    // Calculate the decrement height based on the number of players less than the maximum
+    const height = 170 - (maxPlayers - playersInRoom) * 32;
+
+    return height;
+  }
+
   if (viewportLabel.includes("mobile")) {
     return (
       <motion.div
@@ -348,14 +365,19 @@ function Scoreboard() {
         >
           {scoreboardMetadata?.playerRoundDetails && currentPlayerStats && (
             <div className="baseVertFlex h-full gap-6 tablet:gap-8">
-              <div className="baseFlex w-full !justify-between">
+              <div className="baseFlex w-full !items-start !justify-between">
                 <div className="text-xl font-semibold">Scoreboard</div>
 
-                <div className="text-sm">Round {gameData.currentRound}</div>
+                <div className="baseVertFlex !items-end text-sm">
+                  <div>Round {gameData.currentRound}</div>
+                  <div>Goal: {roomConfig.pointsToWin} points</div>
+                </div>
               </div>
 
               {/* player totals */}
-              <div className="baseVertFlex min-h-[170px] w-full gap-1">
+              <div
+                className={`baseVertFlex min-h-[${getDynamicMobileScoreboardTableHeight}px] w-full gap-1`}
+              >
                 <div
                   style={{
                     gridTemplateColumns: "50px auto 50px",
@@ -737,29 +759,48 @@ function Scoreboard() {
                         className="baseFlex"
                       >
                         <Button
-                          innerText={
-                            scoreboardMetadata.gameWinnerID === null
-                              ? "Start next round"
-                              : "Return to room"
-                          }
-                          innerTextWhenLoading={
-                            scoreboardMetadata.gameWinnerID === null
-                              ? "Starting next round"
-                              : "Returning to room"
-                          }
-                          onClickFunction={() => {
-                            socket.emit("broadcastRoomActionCountdown", {
-                              code: roomConfig.code,
-                              hostUserID: userID,
-                              type:
-                                scoreboardMetadata.gameWinnerID === null
-                                  ? "startRound"
-                                  : "returnToRoom",
-                            });
+                          disabled={hostActionButtonText === "Loading"}
+                          onClick={() => {
+                            setHostActionButtonText("Loading");
+
+                            setTimeout(() => {
+                              socket.emit("broadcastRoomActionCountdown", {
+                                code: roomConfig.code,
+                                hostUserID: userID,
+                                type:
+                                  scoreboardMetadata.gameWinnerID === null
+                                    ? "startRound"
+                                    : "returnToRoom",
+                              });
+                            }, 1000);
                           }}
-                          showLoadingSpinnerOnClick={true}
-                          className="gap-2"
-                        />
+                          className="h-11 w-[14rem] text-sm font-medium"
+                        >
+                          <AnimatePresence mode={"popLayout"} initial={false}>
+                            <motion.div
+                              key={hostActionButtonText}
+                              layout
+                              initial={{ opacity: 0, y: -20 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={{ opacity: 0, y: 20 }}
+                              transition={{
+                                duration: 0.25,
+                              }}
+                              className="baseFlex h-11 w-[14rem] gap-4"
+                            >
+                              {hostActionButtonText}
+                              {hostActionButtonText === "Loading" && (
+                                <div
+                                  className="inline-block size-4 animate-spin rounded-full border-[2px] border-darkGreen border-t-transparent text-darkGreen"
+                                  role="status"
+                                  aria-label="loading"
+                                >
+                                  <span className="sr-only">Loading...</span>
+                                </div>
+                              )}
+                            </motion.div>
+                          </AnimatePresence>
+                        </Button>
                       </motion.div>
                     ) : (
                       <motion.div
@@ -768,7 +809,7 @@ function Scoreboard() {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.5 }}
-                        className="baseFlex gap-2"
+                        className="baseFlex h-11 gap-2"
                       >
                         {countdownType === "startRound" ? (
                           <p>Next round starting in</p>
@@ -866,8 +907,12 @@ function Scoreboard() {
       >
         {scoreboardMetadata?.playerRoundDetails && (
           <div className="baseVertFlex relative h-full gap-2 desktop:gap-8">
-            <div className="absolute left-2 top-2">
-              Round {gameData.currentRound}
+            <div className="baseFlex absolute left-2 top-2 gap-2">
+              <div>Round {gameData.currentRound}</div>
+
+              <div className="h-4 w-[1px] rounded-md bg-lightGreen"></div>
+
+              <div>Goal: {roomConfig.pointsToWin} points</div>
             </div>
 
             <div className="baseFlex w-full">
@@ -879,7 +924,7 @@ function Scoreboard() {
                 (player) => (
                   <div
                     key={player.playerID}
-                    className="baseVertFlex h-full w-full shadow-md"
+                    className="baseVertFlex h-full w-full max-w-md shadow-md"
                   >
                     {/* avatar + username */}
                     <div
@@ -1156,29 +1201,48 @@ function Scoreboard() {
                       className="baseFlex"
                     >
                       <Button
-                        innerText={
-                          scoreboardMetadata.gameWinnerID === null
-                            ? "Start next round"
-                            : "Return to room"
-                        }
-                        innerTextWhenLoading={
-                          scoreboardMetadata.gameWinnerID === null
-                            ? "Starting next round"
-                            : "Returning to room"
-                        }
-                        onClickFunction={() => {
-                          socket.emit("broadcastRoomActionCountdown", {
-                            code: roomConfig.code,
-                            hostUserID: userID,
-                            type:
-                              scoreboardMetadata.gameWinnerID === null
-                                ? "startRound"
-                                : "returnToRoom",
-                          });
+                        disabled={hostActionButtonText === "Loading"}
+                        onClick={() => {
+                          setHostActionButtonText("Loading");
+
+                          setTimeout(() => {
+                            socket.emit("broadcastRoomActionCountdown", {
+                              code: roomConfig.code,
+                              hostUserID: userID,
+                              type:
+                                scoreboardMetadata.gameWinnerID === null
+                                  ? "startRound"
+                                  : "returnToRoom",
+                            });
+                          }, 1000);
                         }}
-                        showLoadingSpinnerOnClick={true}
-                        className="gap-2"
-                      />
+                        className="h-11 w-[14rem] font-medium"
+                      >
+                        <AnimatePresence mode={"popLayout"} initial={false}>
+                          <motion.div
+                            key={hostActionButtonText}
+                            layout
+                            initial={{ opacity: 0, y: -20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: 20 }}
+                            transition={{
+                              duration: 0.25,
+                            }}
+                            className="baseFlex h-11 w-[14rem] gap-4"
+                          >
+                            {hostActionButtonText}
+                            {hostActionButtonText === "Loading" && (
+                              <div
+                                className="inline-block size-4 animate-spin rounded-full border-[2px] border-darkGreen border-t-transparent text-darkGreen"
+                                role="status"
+                                aria-label="loading"
+                              >
+                                <span className="sr-only">Loading...</span>
+                              </div>
+                            )}
+                          </motion.div>
+                        </AnimatePresence>
+                      </Button>
                     </motion.div>
                   ) : (
                     <motion.div
@@ -1187,7 +1251,7 @@ function Scoreboard() {
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
                       transition={{ duration: 0.5 }}
-                      className="baseFlex gap-2"
+                      className="baseFlex h-11 gap-2"
                     >
                       {countdownType === "startRound" ? (
                         <p>Next round starting in</p>

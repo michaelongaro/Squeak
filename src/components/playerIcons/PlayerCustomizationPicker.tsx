@@ -387,17 +387,18 @@ function PlayerCustomizationPicker({
             ]
           }
         />
-        <div className="absolute bottom-[-0.75rem] right-[-0.75rem] z-[150] h-12 w-12 rounded-[50%]">
-          {getMetadataOfPlayerByAttribute(color, "back") !==
-            playerMetadata[userID]?.avatarPath &&
-            getMetadataOfPlayerByAttribute(color, "back") !== "" && (
+
+        {getMetadataOfPlayerByAttribute(color, "back") !==
+          playerMetadata[userID]?.avatarPath &&
+          getMetadataOfPlayerByAttribute(color, "back") !== "" && (
+            <div className="absolute bottom-[-0.75rem] right-[-0.75rem] z-[150] h-12 w-12 rounded-[50%] outline outline-[1px] outline-zinc-200">
               <PlayerIcon
                 avatarPath={getMetadataOfPlayerByAttribute(color, "back")}
                 borderColor={"transparent"}
                 size="3rem"
               />
-            )}
-        </div>
+            </div>
+          )}
       </div>
     ));
   }

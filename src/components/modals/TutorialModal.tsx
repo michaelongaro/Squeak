@@ -1,7 +1,6 @@
 import { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import SecondaryButton from "../Buttons/SecondaryButton";
 import { IoClose } from "react-icons/io5";
 import { AiOutlineInfoCircle } from "react-icons/ai";
 import { HiExternalLink } from "react-icons/hi";
@@ -65,10 +64,11 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
           <Button
             variant={"text"}
             size={"icon"}
-            icon={<IoClose size={"1.5rem"} />}
             className="!absolute right-1 top-1 size-8"
             onClick={() => setShowModal(false)}
-          />
+          >
+            <IoClose size={"1.5rem"} />
+          </Button>
         </div>
 
         <div className="baseVertFlex w-full !justify-start gap-8 p-4 md:p-8 tablet:max-w-3xl">

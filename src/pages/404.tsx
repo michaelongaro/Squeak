@@ -1,7 +1,7 @@
 import React from "react";
-import { BiErrorAlt } from "react-icons/bi";
-import PrimaryButton from "../components/Buttons/PrimaryButton";
 import { useRouter } from "next/navigation";
+import { Button } from "~/components/ui/button";
+import { IoWarningOutline } from "react-icons/io5";
 
 function Custom404() {
   const { push } = useRouter();
@@ -12,17 +12,16 @@ function Custom404() {
         style={{
           color: "hsl(120, 100%, 86%)",
         }}
-        className="baseVertFlex rounded-md border-2 border-white bg-gradient-to-br from-green-800 to-green-850 p-8 shadow-lg"
+        className="baseVertFlex rounded-md border-2 border-white bg-gradient-to-br from-green-800 to-green-850 p-12 shadow-lg"
       >
-        <BiErrorAlt size={"3rem"} />
+        <IoWarningOutline className="size-12" />
 
         <div className="baseVertFlex mt-8 gap-4">
           <div className="text-2xl">404 - Page Not Found</div>
 
-          <PrimaryButton
-            innerText={"Go back to home page"}
-            onClickFunction={() => push("/")}
-          />
+          <Button onClick={() => push("/")} className="mt-4">
+            Return to homepage
+          </Button>
         </div>
       </div>
     </div>

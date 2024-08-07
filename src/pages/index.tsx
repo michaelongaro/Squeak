@@ -3,7 +3,6 @@ import { api } from "~/utils/api";
 import { SignInButton, SignUpButton, useAuth } from "@clerk/nextjs";
 import { AnimatePresence, motion } from "framer-motion";
 import { useUserIDContext } from "~/context/UserIDContext";
-import SecondaryButton from "~/components/Buttons/SecondaryButton";
 import TutorialModal from "~/components/modals/TutorialModal";
 import { TbDoorEnter } from "react-icons/tb";
 import { AiOutlinePlusCircle, AiOutlineInfoCircle } from "react-icons/ai";
@@ -82,54 +81,59 @@ function MainOptions() {
           ) : (
             <div className="baseFlex gap-4">
               <SignUpButton mode="modal">
-                <Button innerText={"Sign up"} className="w-28" />
+                <Button className="w-28 text-sm font-medium">Sign up</Button>
               </SignUpButton>
               <SignInButton mode="modal">
                 <Button
                   variant={"secondary"}
-                  innerText={"Sign in"}
-                  className="w-22"
-                />
+                  className="!px-4 text-sm font-medium"
+                >
+                  Sign in
+                </Button>
               </SignInButton>
             </div>
           )}
 
           <div className="baseVertFlex mt-8 gap-4">
-            <SecondaryButton
-              innerText={"How to play"}
-              icon={<AiOutlineInfoCircle size={"1.5rem"} />}
-              iconOnLeft={true}
-              extraPadding={true}
-              style={{ gap: "1.25rem", justifyContent: "flex-start" }}
-              onClickFunction={() => setShowTutorialModal(true)}
-            />
+            <Button
+              variant={"secondary"}
+              showCardSuitAccents
+              onClick={() => setShowTutorialModal(true)}
+              className="baseFlex h-16 w-full !justify-start gap-5"
+            >
+              <AiOutlineInfoCircle size={"1.5rem"} />
+              How to play
+            </Button>
 
-            <SecondaryButton
-              innerText={"Create room"}
-              icon={<AiOutlinePlusCircle size={"1.5rem"} />}
-              iconOnLeft={true}
-              extraPadding={true}
-              style={{ gap: "1.3rem", justifyContent: "flex-start" }}
-              onClickFunction={() => push("/create")}
-            />
+            <Button
+              variant={"secondary"}
+              showCardSuitAccents
+              onClick={() => push("/create")}
+              className="baseFlex h-16 w-full !justify-start gap-[1.3rem]"
+            >
+              <AiOutlinePlusCircle size={"1.5rem"} />
+              Create room
+            </Button>
 
-            <SecondaryButton
-              innerText={"Join room"}
-              icon={<TbDoorEnter size={"1.5rem"} />}
-              iconOnLeft={true}
-              extraPadding={true}
-              style={{ gap: "1.5rem", justifyContent: "flex-start" }}
-              onClickFunction={() => push("/join")}
-            />
+            <Button
+              variant={"secondary"}
+              showCardSuitAccents
+              onClick={() => push("/join")}
+              className="baseFlex h-16 w-full !justify-start gap-6"
+            >
+              <TbDoorEnter size={"1.5rem"} />
+              Join room
+            </Button>
 
-            <SecondaryButton
-              innerText={"Leaderboard"}
-              icon={<IoStatsChart size={"1.5rem"} />}
-              iconOnLeft={true}
-              style={{ gap: "1.25rem", justifyContent: "flex-start" }}
-              extraPadding={true}
-              onClickFunction={() => setShowLeaderboardModal(true)}
-            />
+            <Button
+              variant={"secondary"}
+              showCardSuitAccents
+              onClick={() => setShowLeaderboardModal(true)}
+              className="baseFlex h-16 w-full !justify-start gap-5"
+            >
+              <IoStatsChart size={"1.5rem"} />
+              Leaderboard
+            </Button>
           </div>
         </div>
       )}
@@ -185,7 +189,7 @@ function MainOptions() {
       <Button variant={"link"} asChild>
         <Link
           href="/privacy"
-          className="absolute bottom-[-2rem] desktop:bottom-3"
+          className="absolute bottom-[-2rem] text-sm !font-medium desktop:bottom-3"
         >
           Privacy Policy
         </Link>

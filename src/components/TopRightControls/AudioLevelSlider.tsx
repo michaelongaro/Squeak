@@ -34,7 +34,7 @@ function AudioLevelSlider({ forMobile }: IAudioLevelSlider) {
 
   return (
     <div
-      data-vaul-no-drag="" // TODO: I don't think this actually works atm
+      data-vaul-no-drag=""
       style={{
         borderColor: forMobile ? "" : "hsl(120deg 100% 86%)",
         color: "hsl(120deg 100% 86%)",
@@ -42,9 +42,7 @@ function AudioLevelSlider({ forMobile }: IAudioLevelSlider) {
       }}
       onPointerEnter={() => setHovered(true)}
       onPointerLeave={() => setHovered(false)}
-      className={`baseFlex !justify-start ${hovered || forMobile ? "w-full" : "w-[40px] md:w-full"} ${hovered || forMobile ? "h-full" : "h-[40px] md:h-full"} ${
-        hovered || forMobile ? "gap-2" : "gap-0"
-      } rounded-md border-2 p-2 transition-all`}
+      className={`baseFlex !justify-start rounded-md border-2 p-2 transition-all ${hovered || forMobile ? "size-full gap-2" : "size-[40px] md:h-full md:w-auto"} `}
     >
       {(hovered || forMobile) && (
         <div className="min-w-6 text-center">{values[0]}</div>
@@ -107,12 +105,14 @@ function AudioLevelSlider({ forMobile }: IAudioLevelSlider) {
         />
       </div>
 
-      {values[0] === 0 && <BsFillVolumeMuteFill size={"1.5rem"} />}
+      {values[0] === 0 && (
+        <BsFillVolumeMuteFill size={"1.5rem"} className="shrink-0" />
+      )}
       {values[0] && values[0] > 0 && values[0] < 50 ? (
-        <BsFillVolumeDownFill size={"1.5rem"} />
+        <BsFillVolumeDownFill size={"1.5rem"} className="shrink-0" />
       ) : null}
       {values[0] && values[0] >= 50 ? (
-        <BsFillVolumeUpFill size={"1.5rem"} />
+        <BsFillVolumeUpFill size={"1.5rem"} className="shrink-0" />
       ) : null}
     </div>
   );

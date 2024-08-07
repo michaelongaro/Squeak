@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useUserIDContext } from "../../../context/UserIDContext";
 import { api } from "~/utils/api";
+import { motion, AnimatePresence } from "framer-motion";
 
 const rowNames = [
   "Total Squeaks",
@@ -46,7 +47,7 @@ function Stats() {
       style={{
         color: "hsl(120deg 100% 86%)",
       }}
-      className="baseVertFlex w-[700px] bg-gradient-to-br from-green-800 to-green-850 p-8"
+      className="baseVertFlex h-[328px] w-[700px] bg-gradient-to-br from-green-800 to-green-850 p-8"
     >
       <div
         style={{
@@ -57,24 +58,34 @@ function Stats() {
       >
         {rowNames.map((rowName, index) => (
           <div key={index} className="baseFlex w-full !justify-between gap-12">
-            <div className="text-xl">{rowName}</div>
-            {filteredStats ? (
-              <div className="text-xl">
-                {Object.values(filteredStats)[index]}
-              </div>
-            ) : (
-              <div
-                style={{
-                  width: "1.5rem",
-                  height: "1.5rem",
-                  borderTop: `0.35rem solid hsla(120deg, 100%, 86%, 40%)`,
-                  borderRight: `0.35rem solid hsla(120deg, 100%, 86%, 40%)`,
-                  borderBottom: `0.35rem solid hsla(120deg, 100%, 86%, 40%)`,
-                  borderLeft: `0.35rem solid hsl(120deg 100% 86%)`,
-                }}
-                className="loadingSpinner"
-              ></div>
-            )}
+            <div>{rowName}</div>
+
+            <div className="w-16 text-right">
+              <AnimatePresence mode="wait">
+                {filteredStats ? (
+                  <motion.div
+                    key={`filteredStats${rowName}`}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                  >
+                    {Object.values(filteredStats)[index]}
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key={`loadingSpinner${rowName}`}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="inline-block size-4 animate-spin rounded-full border-[2px] border-lightGreen border-t-transparent text-lightGreen"
+                    role="status"
+                    aria-label="loading"
+                  >
+                    <span className="sr-only">Loading...</span>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           </div>
         ))}
       </div>

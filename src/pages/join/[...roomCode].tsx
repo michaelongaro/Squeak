@@ -6,10 +6,8 @@ import { useCallback, useEffect, useState } from "react";
 import { BiArrowBack } from "react-icons/bi";
 import { FaUsers } from "react-icons/fa";
 import { TbDoorEnter } from "react-icons/tb";
-import { FiCheck } from "react-icons/fi";
 import { IoSettingsSharp } from "react-icons/io5";
 import { MdCopyAll } from "react-icons/md";
-import SecondaryButton from "~/components/Buttons/SecondaryButton";
 import PlayerCustomizationDrawer from "~/components/drawers/PlayerCustomizationDrawer";
 import PlayerCustomizationPreview from "~/components/playerIcons/PlayerCustomizationPreview";
 import PlayerIcon from "~/components/playerIcons/PlayerIcon";
@@ -56,8 +54,6 @@ function JoinRoom() {
     routeToNavigateTo: "/join",
   });
 
-  const [showCheckmark, setShowCheckmark] = useState<boolean>(false);
-
   // for username prompt
   const [username, setUsername] = useState("");
   const [focusedInInput, setFocusedInInput] = useState(false);
@@ -73,6 +69,9 @@ function JoinRoom() {
   const [showRoomIsFullModal, setShowRoomIsFullModal] = useState(false);
   const [showGameAlreadyStartedModal, setShowGameAlreadyStartedModal] =
     useState(false);
+
+  const [copyRoomCodeButtonText, setCopyRoomCodeButtonText] =
+    useState<string>("Copy invite link");
 
   const [startRoundCountdownValue, setStartRoundCountdownValue] =
     useState<number>(3);
@@ -362,13 +361,9 @@ function JoinRoom() {
             </div>
 
             <Button
-              icon={<TbDoorEnter size={"1.5rem"} />}
               disabled={usernameIsProfane || username.length === 0}
-              isDisabled={usernameIsProfane || username.length === 0}
-              innerText={"Join room"}
-              iconOnLeft
-              className="my-2 gap-2"
-              onClickFunction={() =>
+              className="my-2 gap-4 px-6 font-medium"
+              onClick={() =>
                 socket.emit(
                   "joinRoom",
                   {
@@ -389,7 +384,10 @@ function JoinRoom() {
                   },
                 )
               }
-            />
+            >
+              <TbDoorEnter size={"1.5rem"} />
+              Join room
+            </Button>
           </motion.div>
         )}
 
@@ -407,14 +405,15 @@ function JoinRoom() {
               <div className="baseFlex sticky left-0 top-0 z-[105] w-screen !justify-start gap-4 border-b-2 border-white bg-gradient-to-br from-green-800 to-green-850 p-2 shadow-lg tablet:relative tablet:w-full tablet:bg-none tablet:shadow-none">
                 <Button
                   variant={"secondary"}
-                  icon={<BiArrowBack size={"1.25rem"} />}
-                  className="h-10 w-10"
+                  className="size-10"
                   onClick={() => {
                     leaveRoom();
                     setShowCountdown(false);
                     setStartRoundCountdownValue(3);
                   }}
-                />
+                >
+                  <BiArrowBack size={"1.25rem"} />
+                </Button>
 
                 <div
                   style={{
@@ -457,32 +456,63 @@ function JoinRoom() {
                       {roomConfig?.code}
                     </div>
                   </div>
-                  <SecondaryButton
-                    icon={
-                      showCheckmark ? (
-                        <FiCheck size={"1.25rem"} />
-                      ) : (
-                        <MdCopyAll size={"1.25rem"} />
-                      )
-                    }
-                    innerText={
-                      showCheckmark ? "Invite link copied" : "Copy invite link"
-                    }
-                    style={{
-                      fontSize: "0.875rem",
-                      width: "14rem",
-                      placeItems: "center",
-                      justifyItems: "center",
-                    }}
-                    extraPadding={false}
-                    onClickFunction={() => {
+
+                  <Button
+                    variant={"secondary"}
+                    disabled={copyRoomCodeButtonText !== "Copy invite link"}
+                    onClick={() => {
+                      setCopyRoomCodeButtonText("Invite link copied");
                       navigator.clipboard.writeText(
                         `${process.env.NEXT_PUBLIC_DOMAIN_URL}/join/${roomConfig.code}`,
                       );
-                      setShowCheckmark(true);
-                      setTimeout(() => setShowCheckmark(false), 1500);
+                      setTimeout(
+                        () => setCopyRoomCodeButtonText("Copy invite link"),
+                        1500,
+                      );
                     }}
-                  />
+                  >
+                    <AnimatePresence mode={"popLayout"} initial={false}>
+                      <motion.div
+                        key={copyRoomCodeButtonText}
+                        layout
+                        initial={{ opacity: 0, y: -20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 20 }}
+                        transition={{
+                          duration: 0.25,
+                        }}
+                        className="baseFlex h-12 w-[14rem] gap-2 text-sm"
+                      >
+                        {copyRoomCodeButtonText}
+                        {copyRoomCodeButtonText === "Copy invite link" && (
+                          <MdCopyAll size={"1.25rem"} />
+                        )}
+                        {copyRoomCodeButtonText === "Invite link copied" && (
+                          <svg
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            strokeWidth={2}
+                            className="text-offwhite size-5"
+                          >
+                            <motion.path
+                              initial={{ pathLength: 0 }}
+                              animate={{ pathLength: 1 }}
+                              transition={{
+                                delay: 0.2,
+                                type: "tween",
+                                ease: "easeOut",
+                                duration: 0.3,
+                              }}
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M5 13l4 4L19 7"
+                            />
+                          </svg>
+                        )}
+                      </motion.div>
+                    </AnimatePresence>
+                  </Button>
                 </fieldset>
                 <fieldset className="rounded-md border-2 border-white p-4">
                   <legend className="baseFlex gap-2 pl-4 pr-4 text-left text-lg">
@@ -513,10 +543,12 @@ function JoinRoom() {
                           playerIsHost={playerID === roomConfig.hostUserID}
                           showAddFriendButton={
                             userID !== playerID &&
-                            friendData?.friendIDs?.indexOf(playerID) === -1 &&
+                            // FYI: unsure of how flaky this is
+                            (friendData === undefined ||
+                              friendData.friendIDs.indexOf(playerID) === -1) &&
                             authenticatedUsers
                               ? authenticatedUsers.findIndex(
-                                  (player) => player.id === playerID,
+                                  (player) => player.userId === playerID,
                                 ) !== -1
                               : false
                           }
