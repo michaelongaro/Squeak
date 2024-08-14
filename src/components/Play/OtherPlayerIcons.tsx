@@ -22,8 +22,6 @@ function OtherPlayerIcons() {
     { top: "0px", left: "0px" },
   ]);
 
-  const [hideUsernames, setHideUsernames] = useState(false);
-
   const otherPlayerIDs = Object.keys(gameData.players).filter(
     (playerID) => playerID !== userID,
   );
@@ -67,8 +65,8 @@ function OtherPlayerIcons() {
 
             if (withinIconOnlyViewportRange) {
               tempAbsolutePositioning[0] = {
-                top: `${playerContainer.top}px`,
-                left: `${playerContainer.left}px`,
+                top: `${playerContainer.top - 15}px`, // gets a 13px offset from closest edge of board
+                left: `${playerContainer.left - topPlayerIconWidth / 4}px`,
               };
             } else {
               tempAbsolutePositioning[0] = {
@@ -80,7 +78,7 @@ function OtherPlayerIcons() {
             if (withinIconOnlyViewportRange) {
               tempAbsolutePositioning[1] = {
                 top: `${playerContainer.top}px`,
-                left: `${playerContainer.left}px`,
+                left: `${playerContainer.left - 5}px`, // gets a 13px offset from closest edge of board
               };
             } else {
               tempAbsolutePositioning[1] = {
@@ -95,7 +93,7 @@ function OtherPlayerIcons() {
             if (withinIconOnlyViewportRange) {
               tempAbsolutePositioning[2] = {
                 top: `${playerContainer.top}px`,
-                left: `${playerContainer.left}px`,
+                left: `${playerContainer.left - 9}px`, // gets a 13px offset from closest edge of board
               };
             } else {
               tempAbsolutePositioning[2] = {
@@ -106,7 +104,6 @@ function OtherPlayerIcons() {
           }
         }
 
-        setHideUsernames(withinIconOnlyViewportRange);
         setAbsolutePositioning(tempAbsolutePositioning);
       }, 50);
     }
@@ -150,11 +147,7 @@ function OtherPlayerIcons() {
                   playerMetadata[otherPlayerIDs[0]]?.color ||
                   "hsl(352deg, 69%, 61%)"
                 }
-                username={
-                  (!hideUsernames &&
-                    playerMetadata[otherPlayerIDs[0]]?.username) ||
-                  ""
-                }
+                username={playerMetadata[otherPlayerIDs[0]]?.username}
                 size={"3rem"}
               />
             </motion.div>
@@ -190,11 +183,7 @@ function OtherPlayerIcons() {
                   playerMetadata[otherPlayerIDs[1]]?.color ||
                   "hsl(352deg, 69%, 61%)"
                 }
-                username={
-                  (!hideUsernames &&
-                    playerMetadata[otherPlayerIDs[1]]?.username) ||
-                  ""
-                }
+                username={playerMetadata[otherPlayerIDs[1]]?.username}
                 size={"3rem"}
               />
             </motion.div>
@@ -231,11 +220,7 @@ function OtherPlayerIcons() {
                   playerMetadata[otherPlayerIDs[2]]?.color ||
                   "hsl(352deg, 69%, 61%)"
                 }
-                username={
-                  (!hideUsernames &&
-                    playerMetadata[otherPlayerIDs[2]]?.username) ||
-                  ""
-                }
+                username={playerMetadata[otherPlayerIDs[2]]?.username}
                 size={"3rem"}
               />
             </motion.div>
