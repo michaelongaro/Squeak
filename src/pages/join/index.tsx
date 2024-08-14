@@ -52,9 +52,6 @@ function JoinRoom() {
   const [focusedInInput, setFocusedInInput] = useState<boolean>(false);
   const [usernameIsProfane, setUsernameIsProfane] = useState<boolean>(false);
 
-  const [roomError, setRoomError] = useState<string | null>(null);
-  const [showAnimation, setShowAnimation] = useState<boolean>(false);
-
   const { data: queriedRoom, refetch: searchForRoom } =
     api.rooms.findRoomByCode.useQuery(
       {
@@ -131,17 +128,24 @@ function JoinRoom() {
   useEffect(() => {
     if (queriedRoom && typeof queriedRoom !== "string" && !connectedToRoom) {
       joinRoom();
-
-      setRoomError(null);
     } else if (typeof queriedRoom === "string") {
       setTimeout(() => {
-        setJoinButtonText("Join");
+        setJoinButtonText(queriedRoom);
 
-        setRoomError(queriedRoom);
-        setShowAnimation(true);
+        setTimeout(() => {
+          setJoinButtonText("Join");
+          ctx.rooms.findRoomByCode.reset(); // clearing trpc cache so that the error message
+          // can be shown again if the user tries to join the same room
+        }, 2000);
       }, 1000);
     }
-  }, [queriedRoom, connectedToRoom, joinRoom, setRoomConfig]);
+  }, [
+    queriedRoom,
+    connectedToRoom,
+    joinRoom,
+    setRoomConfig,
+    ctx.rooms.findRoomByCode,
+  ]);
 
   useEffect(() => {
     function handleRoomConfigUpdated(roomConfig: IRoomConfig) {
@@ -324,20 +328,7 @@ function JoinRoom() {
           )}
         </div>
 
-        <div
-          style={{
-            animation: showAnimation ? "errorAnimation 0.65s linear" : "none",
-          }}
-          className="baseFlex relative h-full w-full"
-          onAnimationEnd={() => {
-            setShowAnimation(false);
-            setTimeout(() => {
-              setRoomError(null);
-              ctx.rooms.findRoomByCode.reset(); // clearing trpc cache so that the error message
-              // can be shown again if the user tries to join the same room
-            }, 1000);
-          }}
-        >
+        <div className="baseFlex relative h-full w-full">
           <Button
             disabled={
               joinButtonText !== "Join" ||
@@ -349,19 +340,31 @@ function JoinRoom() {
               setJoinButtonText("Joining");
               searchForRoom();
             }}
-            className="h-11 font-medium"
+            className={`h-11 font-medium !transition-all ${
+              joinButtonText === "Game has already started."
+                ? "w-[250px]"
+                : joinButtonText === "Room not found." ||
+                    joinButtonText === "Room is full."
+                  ? "w-[175px]"
+                  : "w-[122.75px]"
+            }`}
           >
             <AnimatePresence mode={"popLayout"} initial={false}>
               <motion.div
                 key={joinButtonText}
-                layout
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 20 }}
                 transition={{
                   duration: 0.25,
                 }}
-                className="baseFlex w-[122.75px] gap-3"
+                className={`baseFlex gap-3 ${
+                  joinButtonText === "Room not found." ||
+                  joinButtonText === "Room is full." ||
+                  joinButtonText === "Game has already started."
+                    ? "w-[175px]"
+                    : "w-[122.75px]"
+                }`}
               >
                 {joinButtonText}
                 {joinButtonText === "Joining" && (
@@ -376,24 +379,6 @@ function JoinRoom() {
               </motion.div>
             </AnimatePresence>
           </Button>
-
-          <AnimatePresence mode={"wait"}>
-            {roomError && (
-              <motion.div
-                key={"joinRoomError"}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.15 }}
-                style={{
-                  color: "hsl(120deg 100% 86%)",
-                }}
-                className="pointer-events-none absolute right-10 rounded-md border-2 border-white bg-gradient-to-br from-green-800 to-green-850 px-4 py-2 shadow-md"
-              >
-                {roomError}
-              </motion.div>
-            )}
-          </AnimatePresence>
         </div>
 
         <PublicRooms />
