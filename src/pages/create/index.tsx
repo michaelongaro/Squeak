@@ -499,7 +499,7 @@ function CreateRoom() {
                   navigator.clipboard.writeText(
                     `${process.env.NEXT_PUBLIC_DOMAIN_URL}/join/${roomConfig.code}`,
                   );
-                  setTimeout(() => setCopyRoomCodeButtonText("Copy"), 1500);
+                  setTimeout(() => setCopyRoomCodeButtonText("Copy"), 1750);
                 }}
               >
                 <AnimatePresence mode={"popLayout"} initial={false}>

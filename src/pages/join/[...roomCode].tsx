@@ -467,7 +467,7 @@ function JoinRoom() {
                       );
                       setTimeout(
                         () => setCopyRoomCodeButtonText("Copy invite link"),
-                        1500,
+                        1750,
                       );
                     }}
                   >
