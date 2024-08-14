@@ -44,7 +44,6 @@ function OtherPlayersCardContainers({
     cardBeingMovedProgramatically,
     roomConfig,
     squeakStackDragAlterations,
-    smallerViewportCardBeingMoved,
     viewportLabel,
   } = useRoomContext();
 
@@ -168,14 +167,6 @@ function OtherPlayersCardContainers({
                           <div
                             key={`${playerID}squeakCard${card.suit}${card.value}`}
                             id={`${playerID}squeakStack${squeakStackIdx}${cardIdx}`}
-                            style={{
-                              opacity:
-                                smallerViewportCardBeingMoved[playerID] ===
-                                `${card.suit}${card.value}`
-                                  ? 1
-                                  : 0,
-                              transition: "opacity 0.15s ease-in-out",
-                            }}
                             className={
                               "cardDimenions absolute left-0 top-0 select-none"
                             }
@@ -280,14 +271,6 @@ function OtherPlayersCardContainers({
                       card !== null && (
                         <div
                           key={`${playerID}handCard${card.suit}${card.value}`}
-                          style={{
-                            opacity:
-                              smallerViewportCardBeingMoved[playerID] ===
-                              `${card.suit}${card.value}`
-                                ? 1
-                                : 0,
-                            transition: "opacity 0.15s ease-in-out",
-                          }}
                           className="absolute left-0 top-0 select-none"
                         >
                           <Card

@@ -136,15 +136,6 @@ interface IRoomContext {
     }>
   >;
 
-  smallerViewportCardBeingMoved: {
-    [playerID: string]: string | null; // string is the stringified card `${cardValue}${cardSuit}` being moved
-  };
-  setSmallerViewportCardBeingMoved: React.Dispatch<
-    React.SetStateAction<{
-      [playerID: string]: string | null;
-    }>
-  >;
-
   // related to voting
   currentVotes: ("agree" | "disagree")[];
   setCurrentVotes: React.Dispatch<
@@ -282,11 +273,6 @@ export function RoomProvider(props: { children: React.ReactNode }) {
   const [squeakStackDragAlterations, setOtherPlayerSqueakStacksBeingDragged] =
     useState<{
       [playerID: string]: SqueakStackDragAlterations;
-    }>({});
-
-  const [smallerViewportCardBeingMoved, setSmallerViewportCardBeingMoved] =
-    useState<{
-      [playerID: string]: string | null;
     }>({});
 
   const [currentVotes, setCurrentVotes] = useState<("agree" | "disagree")[]>(
@@ -525,8 +511,6 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     setSqueakDeckBeingMovedProgramatically,
     squeakStackDragAlterations,
     setOtherPlayerSqueakStacksBeingDragged,
-    smallerViewportCardBeingMoved,
-    setSmallerViewportCardBeingMoved,
     currentVotes,
     setCurrentVotes,
     voteType,
