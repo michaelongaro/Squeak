@@ -70,7 +70,7 @@ function OtherPlayersCardContainers({
     const mutationObserver = new MutationObserver(updateOffsets);
     const resizeObserver = new ResizeObserver(updateOffsets);
 
-    mutationObserver.observe(boardElement, { childList: true, subtree: true });
+    mutationObserver.observe(boardElement, { attributes: true });
     resizeObserver.observe(boardElement);
 
     updateOffsets();
@@ -242,9 +242,9 @@ function OtherPlayersCardContainers({
                             ? -topOffsetsFromBoard[idx]!
                             : 0
                         }px`,
-                        left: 25,
-                        width: "75px",
-                        height: "50px",
+                        left: viewportLabel === "tablet" ? 25 : 0,
+                        width: viewportLabel === "tablet" ? "75px" : "auto",
+                        height: viewportLabel === "tablet" ? "50px" : "auto",
                       }}
                     >
                       <Buzzer
