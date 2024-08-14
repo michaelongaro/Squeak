@@ -325,7 +325,11 @@ function PlayerIcon({
           {username && (
             <div className="baseFlex mt-2 gap-2">
               {playerIsHost && (
-                <FaCrown size={"0.9rem"} className="mb-[0.1rem]" />
+                <FaCrown
+                  size={"0.9rem"}
+                  viewBox="0 0 591 512"
+                  className="mb-[0.1rem] shrink-0"
+                />
               )}
               {username}
             </div>
