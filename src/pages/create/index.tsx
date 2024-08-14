@@ -271,8 +271,16 @@ function CreateRoom() {
             className="size-10"
             onClick={() => {
               leaveRoom();
+
+              // don't bother resetting these states if returning to
+              // the homepage
+              if (connectedToRoom) {
+                setConfigAndMetadataInitialized(false);
               setShowCountdown(false);
+                setCreateButtonText("Create");
+                setStartGameButtonText("Start game");
               setStartRoundCountdownValue(3);
+              }
             }}
           >
             {connectedToRoom ? (
