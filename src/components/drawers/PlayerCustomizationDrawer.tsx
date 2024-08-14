@@ -78,6 +78,7 @@ function PlayerCustomizationDrawer() {
                       style={{
                         borderTopWidth: label === "avatar" ? "0px" : "1px",
                       }}
+                      showArrow
                       className="baseFlex h-full w-full !justify-start"
                       onClick={() => setRenderedView(label)}
                     >
