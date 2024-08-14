@@ -276,10 +276,10 @@ function CreateRoom() {
               // the homepage
               if (connectedToRoom) {
                 setConfigAndMetadataInitialized(false);
-              setShowCountdown(false);
+                setShowCountdown(false);
                 setCreateButtonText("Create");
                 setStartGameButtonText("Start game");
-              setStartRoundCountdownValue(3);
+                setStartRoundCountdownValue(3);
               }
             }}
           >
@@ -513,7 +513,6 @@ function CreateRoom() {
                 <AnimatePresence mode={"popLayout"} initial={false}>
                   <motion.div
                     key={copyRoomCodeButtonText}
-                    layout
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 20 }}
@@ -708,7 +707,6 @@ function CreateRoom() {
                     <AnimatePresence mode={"popLayout"} initial={false}>
                       <motion.div
                         key={startGameButtonText}
-                        layout
                         initial={{ opacity: 0, y: -20 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: 20 }}
@@ -766,7 +764,6 @@ function CreateRoom() {
             <AnimatePresence mode={"popLayout"} initial={false}>
               <motion.div
                 key={createButtonText}
-                layout
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 20 }}

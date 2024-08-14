@@ -212,12 +212,12 @@ function TopRightControls() {
     >
       {!asPath.includes("/game") && (
         <div
-          onMouseEnter={() => {
+          onPointerEnter={() => {
             if (!isSignedIn) {
               setShowSettingsUnauthTooltip(true);
             }
           }}
-          onMouseLeave={() => {
+          onPointerLeave={() => {
             if (!isSignedIn) {
               setShowSettingsUnauthTooltip(false);
             }
@@ -229,6 +229,7 @@ function TopRightControls() {
                 <Button
                   variant={"secondary"}
                   disabled={!isSignedIn}
+                  includeMouseEvents
                   onClick={() => {
                     if (isSignedIn) {
                       setShowSettingsModal(true);
@@ -321,12 +322,12 @@ function TopRightControls() {
       {!asPath.includes("/game") && (
         <div className="relative h-[40px] w-[40px] md:h-[44px] md:w-[44px]">
           <div
-            onMouseEnter={() => {
+            onPointerEnter={() => {
               if (!isSignedIn) {
                 setShowFriendsListUnauthTooltip(true);
               }
             }}
-            onMouseLeave={() => {
+            onPointerLeave={() => {
               if (!isSignedIn) {
                 setShowFriendsListUnauthTooltip(false);
               }
@@ -338,6 +339,7 @@ function TopRightControls() {
                   <Button
                     variant={"secondary"}
                     disabled={!isSignedIn}
+                    includeMouseEvents
                     className="absolute right-0 top-0 size-11"
                     onClick={() => setShowFriendsList(!showFriendsList)}
                   >
@@ -1255,7 +1257,6 @@ function DrawerSettings({
           <AnimatePresence mode={"popLayout"} initial={false}>
             <motion.div
               key={saveButtonText}
-              layout
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 20 }}

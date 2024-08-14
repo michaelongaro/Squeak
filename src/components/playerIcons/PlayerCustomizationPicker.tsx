@@ -173,8 +173,8 @@ function PlayerCustomizationPicker({
             : "none",
         }}
         className="relative shrink-0 rounded-[50%] outline-offset-4 transition-all"
-        onMouseEnter={() => setHoveredTooltip(["avatar", index])}
-        onMouseLeave={() => setHoveredTooltip(null)}
+        onPointerEnter={() => setHoveredTooltip(["avatar", index])}
+        onPointerLeave={() => setHoveredTooltip(null)}
         onClick={() => {
           // if user is connected to room
           if (connectedToRoom) {
@@ -239,8 +239,8 @@ function PlayerCustomizationPicker({
             pointerEvents: deckVariantIndex !== 0 ? "auto" : "none",
           }}
           className="relative shrink-0 rounded-sm outline-offset-4 transition-all"
-          onMouseEnter={() => setHoveringOnFrontCardTooltip(0)}
-          onMouseLeave={() => setHoveringOnFrontCardTooltip(null)}
+          onPointerEnter={() => setHoveringOnFrontCardTooltip(0)}
+          onPointerLeave={() => setHoveringOnFrontCardTooltip(null)}
           onClick={() => {
             updateLocalStoragePlayerMetadata({
               avatarPath: playerMetadata[userID]?.avatarPath || "",
@@ -281,8 +281,8 @@ function PlayerCustomizationPicker({
             pointerEvents: deckVariantIndex !== 1 ? "auto" : "none",
           }}
           className="relative rounded-sm outline-offset-4 transition-all"
-          onMouseEnter={() => setHoveringOnFrontCardTooltip(1)}
-          onMouseLeave={() => setHoveringOnFrontCardTooltip(null)}
+          onPointerEnter={() => setHoveringOnFrontCardTooltip(1)}
+          onPointerLeave={() => setHoveringOnFrontCardTooltip(null)}
           onClick={() => {
             updateLocalStoragePlayerMetadata({
               avatarPath: playerMetadata[userID]?.avatarPath || "",
@@ -331,8 +331,8 @@ function PlayerCustomizationPicker({
             : "none",
         }}
         className="relative shrink-0 rounded-sm outline-offset-4 transition-all"
-        onMouseEnter={() => setHoveredTooltip(["back", index])}
-        onMouseLeave={() => setHoveredTooltip(null)}
+        onPointerEnter={() => setHoveredTooltip(["back", index])}
+        onPointerLeave={() => setHoveredTooltip(null)}
         onClick={() => {
           // if user is connected to room
           if (connectedToRoom) {

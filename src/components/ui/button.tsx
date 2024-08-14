@@ -50,6 +50,7 @@ export interface ButtonProps
   showCardSuitAccents?: boolean;
   showArrow?: boolean;
   showCheckmark?: boolean;
+  includeMouseEvents?: boolean;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
@@ -64,6 +65,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       showCardSuitAccents,
       showArrow,
       showCheckmark,
+      includeMouseEvents,
       ...props
     },
     ref,
@@ -215,6 +217,13 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     if (variant === "secondary") {
       return (
         <Comp
+          // this one is purely only for buttons wrapped by <TooltipProvider>, since
+          // the tooltip provider doesn't seem to work well with pointer leave events
+          onMouseLeave={() => {
+            if (!includeMouseEvents) return;
+            setBrightness(1);
+            setIsActive(false);
+          }}
           onPointerDown={() => {
             setBrightness(0.75);
             setIsActive(true); // TODO: maybe make separate state to differentiate from when to show

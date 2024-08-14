@@ -76,7 +76,6 @@ function RadioButton({
     <Button
       key={value}
       disabled={disabledIndicies?.includes(index)}
-      onMouseLeave={() => setBrightness(1)}
       onPointerDown={() => setBrightness(0.75)}
       onPointerUp={() => setBrightness(1)}
       onPointerEnter={() => setHoveredOptionIndex(index)}
@@ -84,6 +83,9 @@ function RadioButton({
         setBrightness(1);
         setHoveredOptionIndex(-1);
       }}
+      onTouchStart={() => setBrightness(0.75)}
+      onTouchEnd={() => setBrightness(1)}
+      onTouchCancel={() => setBrightness(1)}
       style={{
         borderColor: "hsl(120deg 100% 86%)",
         borderLeft: index !== 0 ? "1px solid hsl(120deg 100% 86%)" : "none",
