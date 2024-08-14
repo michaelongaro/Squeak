@@ -58,8 +58,10 @@ function PlayerIcon({
   const { roomConfig, viewportLabel } = useRoomContext();
 
   const [friendInviteSent, setFriendInviteSent] = useState(false);
-  const [drawerOpen, setDrawerOpen] = useState(false);
   const [popoverOpen, setPopoverOpen] = useState(false);
+  const [kickPlayerDrawerOpen, setKickPlayerDrawerOpen] = useState(false);
+  const [sendFriendInviteDrawerOpen, setSendFriendInviteDrawerOpen] =
+    useState(false);
 
   return (
     <>
@@ -101,9 +103,9 @@ function PlayerIcon({
                 {viewportLabel.includes("mobile") ? (
                   <div className="absolute left-0 top-0 h-0 w-0">
                     <Drawer
-                      open={drawerOpen}
+                      open={sendFriendInviteDrawerOpen}
                       onOpenChange={(open) => {
-                        if (!open) setDrawerOpen(false);
+                        if (!open) setSendFriendInviteDrawerOpen(false);
                       }}
                     >
                       <DrawerTrigger asChild>
@@ -112,7 +114,7 @@ function PlayerIcon({
                           disabled={friendInviteSent}
                           className="absolute left-[-1rem] top-[-0.75rem] h-[30px] w-[30px] rounded-[50%] p-0"
                           onClick={() => {
-                            setDrawerOpen(true);
+                            setSendFriendInviteDrawerOpen(true);
                           }}
                         >
                           {friendInviteSent ? (
@@ -123,14 +125,14 @@ function PlayerIcon({
                         </Button>
                       </DrawerTrigger>
                       <DrawerContent>
-                        <div className="baseVertFlex gap-2 p-4">
-                          <p className="text-lg text-darkGreen">
+                        <div className="baseVertFlex gap-4 p-4">
+                          <p className="max-w-64 text-center text-lg text-darkGreen">
                             Send friend invite to &ldquo;{username}&rdquo;?
                           </p>
                           <Button
                             variant={"secondary"}
                             disabled={friendInviteSent}
-                            className="gap-2"
+                            className="gap-2 !px-8"
                             onClick={() => {
                               socket.emit("modifyFriendData", {
                                 action: "sendFriendInvite",
@@ -141,7 +143,7 @@ function PlayerIcon({
                               setFriendInviteSent(true);
                               setTimeout(() => {
                                 setFriendInviteSent(false);
-                                setDrawerOpen(false);
+                                setSendFriendInviteDrawerOpen(false);
                               }, 1000);
                             }}
                           >
@@ -160,6 +162,7 @@ function PlayerIcon({
                           <Button
                             variant={"secondary"}
                             disabled={friendInviteSent}
+                            includeMouseEvents
                             className="absolute left-[-1rem] top-[-0.75rem] h-[30px] w-[30px] rounded-[50%] p-0"
                             onClick={() => {
                               socket.emit("modifyFriendData", {
@@ -199,9 +202,9 @@ function PlayerIcon({
                 {viewportLabel.includes("mobile") ? (
                   <div className="absolute left-0 top-0 h-0 w-0">
                     <Drawer
-                      open={drawerOpen}
+                      open={kickPlayerDrawerOpen}
                       onOpenChange={(open) => {
-                        if (!open) setDrawerOpen(false);
+                        if (!open) setKickPlayerDrawerOpen(false);
                       }}
                     >
                       <DrawerTrigger asChild>
@@ -209,22 +212,22 @@ function PlayerIcon({
                           variant={"destructive"}
                           className="absolute right-[-2rem] top-[-0.75rem] h-[30px] w-[30px] rounded-[50%] p-0"
                           onClick={() => {
-                            setDrawerOpen(true);
+                            setKickPlayerDrawerOpen(true);
                           }}
                         >
                           <AiOutlineClose size={"1rem"} />
                         </Button>
                       </DrawerTrigger>
                       <DrawerContent>
-                        <div className="baseVertFlex gap-2 p-4">
-                          <p className="text-lg text-darkGreen">
+                        <div className="baseVertFlex gap-4 p-4">
+                          <p className="max-w-64 text-center text-lg text-darkGreen">
                             Are you sure you want to kick &ldquo;{username}
                             &rdquo;?
                           </p>
                           <Button
                             variant={"destructive"}
                             onClick={() => {
-                              setDrawerOpen(false);
+                              setKickPlayerDrawerOpen(false);
 
                               setTimeout(() => {
                                 if (!playerID) return;
@@ -257,6 +260,7 @@ function PlayerIcon({
                               <Button
                                 variant={"destructive"}
                                 disabled={friendInviteSent}
+                                includeMouseEvents
                                 className="absolute right-0 top-0 h-[30px] w-[30px] rounded-[50%] p-0"
                                 onClick={() => setPopoverOpen(true)}
                               >

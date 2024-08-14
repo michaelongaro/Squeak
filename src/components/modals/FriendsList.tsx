@@ -435,6 +435,7 @@ function FriendsList({ setShowFriendsListModal }: IFriendsList) {
                             <TooltipTrigger asChild>
                               <Button
                                 variant={"destructive"}
+                                includeMouseEvents
                                 className="h-[36px] w-[36px] rounded-[50%] p-0"
                                 onClick={() => setOpenPopoverID(friend.id)}
                               >

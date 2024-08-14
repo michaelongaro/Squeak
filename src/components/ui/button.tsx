@@ -66,6 +66,8 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       showArrow,
       showCheckmark,
       includeMouseEvents,
+      // ^ this one is purely only for buttons wrapped by <TooltipProvider>, since
+      // the tooltip provider doesn't seem to work well with pointer leave events
       ...props
     },
     ref,
@@ -170,6 +172,16 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     if (variant === "destructive") {
       return (
         <Comp
+          onMouseDown={() => {
+            if (!includeMouseEvents) return;
+            setBrightness(0.75);
+            setIsActive(true);
+          }}
+          onMouseLeave={() => {
+            if (!includeMouseEvents) return;
+            setBrightness(1);
+            setIsActive(false);
+          }}
           onPointerDown={() => {
             setBrightness(0.75);
             setIsActive(true);
@@ -217,8 +229,11 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     if (variant === "secondary") {
       return (
         <Comp
-          // this one is purely only for buttons wrapped by <TooltipProvider>, since
-          // the tooltip provider doesn't seem to work well with pointer leave events
+          onMouseDown={() => {
+            if (!includeMouseEvents) return;
+            setBrightness(0.75);
+            setIsActive(true);
+          }}
           onMouseLeave={() => {
             if (!includeMouseEvents) return;
             setBrightness(1);
@@ -299,6 +314,14 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     if (variant === "default" || variant === undefined) {
       return (
         <Comp
+          onMouseDown={() => {
+            if (!includeMouseEvents) return;
+            setBrightness(0.75);
+          }}
+          onMouseLeave={() => {
+            if (!includeMouseEvents) return;
+            setBrightness(1);
+          }}
           onPointerDown={() => setBrightness(0.75)}
           onPointerUp={() => setBrightness(1)}
           onPointerEnter={() => setBrightness(0.9)}
