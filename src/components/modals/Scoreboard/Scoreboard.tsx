@@ -390,10 +390,10 @@ function Scoreboard() {
                     style={{
                       color: "hsl(120deg 100% 86%)",
                     }}
-                    className="h-4 w-4"
+                    className="size-4"
                   />
                   <div className="font-semibold">Player</div>
-                  <div className="font-semibold">Total</div>
+                  <div className="mr-3 font-semibold">Total</div>
                 </div>
 
                 {sortedPlayerRoundDetails.map((player) => (
@@ -419,7 +419,7 @@ function Scoreboard() {
                           playerColorVariants[player.playerID]?.textColor ??
                           "black",
                       }}
-                      className="grid h-8 w-full grid-cols-1 items-center justify-items-center rounded-l-md"
+                      className="grid h-8 w-full grid-cols-1 items-center justify-items-start rounded-l-md pl-3"
                     >
                       <AnimatePresence mode={"wait"}>
                         {showNewRankings && (
@@ -477,7 +477,7 @@ function Scoreboard() {
                           "white",
                         color: playerColorVariants[player.playerID]?.textColor,
                       }}
-                      className="baseFlex h-8 w-full rounded-r-md"
+                      className="baseFlex h-8 w-full !justify-end rounded-r-md pr-4"
                     >
                       <AnimatedNumbers
                         value={
