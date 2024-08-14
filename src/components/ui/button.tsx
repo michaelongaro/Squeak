@@ -88,6 +88,9 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           onPointerUp={() => {
             setBrightness(1);
           }}
+          onPointerEnter={() => {
+            setBrightness(0.75);
+          }}
           onPointerLeave={() => {
             setBrightness(1);
           }}
@@ -173,6 +176,9 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
             setBrightness(1);
             setIsActive(false);
           }}
+          onPointerEnter={() => {
+            setIsActive(true);
+          }}
           onPointerLeave={() => {
             setBrightness(1);
             setIsActive(false);
@@ -217,6 +223,9 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           onPointerUp={() => {
             setBrightness(1);
             setIsActive(false);
+          }}
+          onPointerEnter={() => {
+            setIsActive(true);
           }}
           onPointerLeave={() => {
             setBrightness(1);
@@ -283,6 +292,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         <Comp
           onPointerDown={() => setBrightness(0.75)}
           onPointerUp={() => setBrightness(1)}
+          onPointerEnter={() => setBrightness(0.9)}
           onPointerLeave={() => setBrightness(1)}
           onTouchStart={() => setBrightness(0.75)}
           onTouchEnd={() => setBrightness(1)}
