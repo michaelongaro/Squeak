@@ -20,12 +20,12 @@ const buttonVariants = cva(
           "bg-destructive text-destructive-foreground hover:bg-destructive/90 border-2",
         outline:
           "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
-        secondary: "border-2 transition-all select-none",
+        secondary: "border-2 select-none",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-lightGreen underline-offset-4 hover:underline",
         text: "text-primary",
         drawer:
-          "text-darkGreen border-darkGreen w-full !rounded-none h-full baseFlex relative z-[500] w-full py-4 transition-colors",
+          "text-darkGreen border-darkGreen bg-zinc-200 w-full !rounded-none h-full baseFlex relative z-[500] w-full py-4",
       },
       size: {
         default: "h-10 px-4 py-2",
@@ -125,7 +125,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           }}
           className={cn(
             buttonVariants({ variant, size, className }),
-            `relative ${isActive ? "bg-black/25" : "bg-zinc-200"}`,
+            `relative ${isActive ? "brightness-75" : ""}`,
           )}
           ref={ref}
           {...props}
@@ -190,7 +190,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           onMouseLeave={() => setIsActive(false)}
           onPointerDown={() => {
             setBrightness(0.75);
-            setIsActive(true); // TOOD: maybe make separate state to differentiate from when to show
+            setIsActive(true); // TODO: maybe make separate state to differentiate from when to show
             // card suit accents so they don't show on pointer down?
           }}
           onPointerUp={() => {
@@ -234,9 +234,6 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
                 className={`absolute right-1 top-1 size-[0.9rem] rotate-[45deg] text-darkGreen ${isActive || forceActive ? "opacity-100" : "opacity-0"}`}
               />
               <GiHearts
-                style={{
-                  position: "absolute",
-                }}
                 className={`absolute bottom-1 left-1 size-[0.9rem] rotate-[225deg] text-darkGreen ${isActive || forceActive ? "opacity-100" : "opacity-0"}`}
               />
               <GiSpades
