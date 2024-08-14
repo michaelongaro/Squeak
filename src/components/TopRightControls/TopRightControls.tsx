@@ -738,7 +738,7 @@ function MainDrawer({ status, setShowDrawer }: IMainDrawer) {
       case "Settings":
         return "500px";
       case "Statistics":
-        return "400px";
+        return "405px";
       case "Friends list":
         return "500px";
       case "Friend actions":
