@@ -92,7 +92,7 @@ function AnimatedCard({
     <motion.div
       key={`${playerID}scoreboardAnimatedCard${index}`}
       id={`scoreboardAnimatedCard${index}${playerID}`}
-      className="absolute shadow-sm"
+      className="absolute"
       initial={{
         top: "-100%",
         left: "50%",
