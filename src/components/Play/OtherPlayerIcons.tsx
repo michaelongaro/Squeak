@@ -9,9 +9,8 @@ function OtherPlayerIcons() {
 
   const { gameData, playerMetadata, viewportLabel } = useRoomContext();
 
-  // don't need leftPlayerIconRef since it is flows left-to-right already
-  // and doesn't need any offset positioning wise.
   const topPlayerIconRef = useRef<HTMLDivElement>(null);
+  const leftPlayerIconRef = useRef<HTMLDivElement>(null);
   const rightPlayerIconRef = useRef<HTMLDivElement>(null);
 
   const [absolutePositioning, setAbsolutePositioning] = useState<
@@ -75,10 +74,13 @@ function OtherPlayerIcons() {
               };
             }
           } else if (i === 1 && playerContainer) {
+            const leftPlayerIconWidth =
+              leftPlayerIconRef.current?.getBoundingClientRect().width || 0;
+
             if (withinIconOnlyViewportRange) {
               tempAbsolutePositioning[1] = {
                 top: `${playerContainer.top}px`,
-                left: `${playerContainer.left - 5}px`, // gets a 13px offset from closest edge of board
+                left: `${playerContainer.left - leftPlayerIconWidth / 4 - 8}px`, // gets a 13px offset from closest edge of board
               };
             } else {
               tempAbsolutePositioning[1] = {
@@ -93,7 +95,7 @@ function OtherPlayerIcons() {
             if (withinIconOnlyViewportRange) {
               tempAbsolutePositioning[2] = {
                 top: `${playerContainer.top}px`,
-                left: `${playerContainer.left - 9}px`, // gets a 13px offset from closest edge of board
+                left: `${playerContainer.left - 8}px`, // gets a 13px offset from closest edge of board
               };
             } else {
               tempAbsolutePositioning[2] = {
@@ -161,6 +163,7 @@ function OtherPlayerIcons() {
             !playerIDsShowingSqueakButton[otherPlayerIDs[1]]) && (
             <motion.div
               key={`otherPlayerIcon${otherPlayerIDs[1]}`}
+              ref={leftPlayerIconRef}
               initial={{ scale: 0.75 }}
               animate={{ scale: 1 }}
               exit={{ scale: 0.75 }}
