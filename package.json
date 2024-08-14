@@ -27,7 +27,6 @@
     "@trpc/next": "^10.45.2",
     "@trpc/react-query": "^10.45.2",
     "@trpc/server": "^10.45.2",
-    "animejs": "^3.2.2",
     "bad-words": "^3.0.4",
     "canvas-confetti": "^1.9.3",
     "class-variance-authority": "^0.7.0",
