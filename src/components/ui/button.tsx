@@ -82,8 +82,6 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     if (variant === "text") {
       return (
         <Comp
-          onMouseEnter={() => setBrightness(0.75)}
-          onMouseLeave={() => setBrightness(1)}
           onPointerDown={() => {
             setBrightness(0.65);
           }}
@@ -91,6 +89,15 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
             setBrightness(1);
           }}
           onPointerLeave={() => {
+            setBrightness(1);
+          }}
+          onTouchStart={() => {
+            setBrightness(0.65);
+          }}
+          onTouchEnd={() => {
+            setBrightness(1);
+          }}
+          onTouchCancel={() => {
             setBrightness(1);
           }}
           style={{
@@ -112,15 +119,21 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       return (
         <Comp
           onPointerDown={() => {
-            if (disabled) return;
             setIsActive(true);
           }}
           onPointerUp={() => {
-            if (disabled) return;
             setIsActive(false);
           }}
           onPointerLeave={() => {
-            if (disabled) return;
+            setIsActive(false);
+          }}
+          onTouchStart={() => {
+            setIsActive(true);
+          }}
+          onTouchEnd={() => {
+            setIsActive(false);
+          }}
+          onTouchCancel={() => {
             setIsActive(false);
           }}
           className={cn(
@@ -152,8 +165,6 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     if (variant === "destructive") {
       return (
         <Comp
-          onMouseEnter={() => setIsActive(true)}
-          onMouseLeave={() => setIsActive(false)}
           onPointerDown={() => {
             setBrightness(0.75);
             setIsActive(true);
@@ -163,6 +174,18 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
             setIsActive(false);
           }}
           onPointerLeave={() => {
+            setBrightness(1);
+            setIsActive(false);
+          }}
+          onTouchStart={() => {
+            setBrightness(0.75);
+            setIsActive(true);
+          }}
+          onTouchEnd={() => {
+            setBrightness(1);
+            setIsActive(false);
+          }}
+          onTouchCancel={() => {
             setBrightness(1);
             setIsActive(false);
           }}
@@ -186,8 +209,6 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     if (variant === "secondary") {
       return (
         <Comp
-          onMouseEnter={() => setIsActive(true)}
-          onMouseLeave={() => setIsActive(false)}
           onPointerDown={() => {
             setBrightness(0.75);
             setIsActive(true); // TODO: maybe make separate state to differentiate from when to show
@@ -198,6 +219,18 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
             setIsActive(false);
           }}
           onPointerLeave={() => {
+            setBrightness(1);
+            setIsActive(false);
+          }}
+          onTouchStart={() => {
+            setBrightness(0.75);
+            setIsActive(true);
+          }}
+          onTouchEnd={() => {
+            setBrightness(1);
+            setIsActive(false);
+          }}
+          onTouchCancel={() => {
             setBrightness(1);
             setIsActive(false);
           }}
@@ -218,7 +251,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
             padding: showCardSuitAccents ? "1.15rem 1.5rem" : "0",
           }}
           className={`${cn(
-            `${buttonVariants({ variant, size, className })} relative`,
+            `${buttonVariants({ variant, size, className })} relative !opacity-100`, // TODO: find better solution to this rather than using !opacity-100. Wanted to keep the primary button's opacity
           )}`}
           ref={ref}
           {...props}
@@ -248,15 +281,16 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     if (variant === "default" || variant === undefined) {
       return (
         <Comp
-          onMouseEnter={() => setBrightness(0.9)}
-          onMouseLeave={() => setBrightness(1)}
           onPointerDown={() => setBrightness(0.75)}
           onPointerUp={() => setBrightness(1)}
           onPointerLeave={() => setBrightness(1)}
+          onTouchStart={() => setBrightness(0.75)}
+          onTouchEnd={() => setBrightness(1)}
+          onTouchCancel={() => setBrightness(1)}
           style={{
             filter: `brightness(${brightness})`,
             cursor: disabled ? "not-allowed" : "pointer",
-            opacity: disabled ? 0.25 : 1,
+            // opacity: disabled ? 0.25 : 1,
             userSelect: disabled ? "none" : "auto",
           }}
           className={`${cn(buttonVariants({ variant, size, className }))}`}
