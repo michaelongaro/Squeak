@@ -9,8 +9,7 @@
   max-width: 100%;
   row-gap: 0.5rem;
   gap: 0.5rem;
-  padding: 1rem;
-  padding-top: 3rem;
+  padding: 3rem 0.75rem 1rem 0.75rem;
   /* ^ for the mini voting container results and space to render settings cog
      for <Drawer /> */
 }
@@ -67,6 +66,13 @@
   justify-items: center;
   height: 100% !important;
   max-width: 750px;
+}
+
+/* mobileLarge breakpoint */
+@media (min-height: 667px) {
+  .fullBoardGrid {
+    gap: 1rem;
+  }
 }
 
 /* allowed to show avatars for other user's on left/top/right of board */
