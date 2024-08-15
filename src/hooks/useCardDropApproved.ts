@@ -50,7 +50,7 @@ function useCardDropApproved({
     setGameData,
     setProposedCardBoxShadow,
     squeakStackDragAlterations,
-    setOtherPlayerSqueakStacksBeingDragged,
+    setSqueakStackDragAlterations,
     viewportLabel,
   } = useRoomContext();
 
@@ -110,7 +110,7 @@ function useCardDropApproved({
         source.start();
       }
 
-      // fyi: hand -> cell = no need to setOtherPlayerSqueakStacksBeingDragged();
+      // fyi: hand -> cell = no need to setSqueakStackDragAlterations();
 
       // ---------- hand to squeak stack ----------
       if (
@@ -120,7 +120,7 @@ function useCardDropApproved({
         const depthAlterations = [0, 0, 0, 0];
         depthAlterations[startingCardMetadata.destinationSqueakStackIdx] = 1;
 
-        setOtherPlayerSqueakStacksBeingDragged({
+        setSqueakStackDragAlterations({
           ...squeakStackDragAlterations,
           [ownerID]: {
             squeakStackDepthAlterations: depthAlterations,
@@ -139,7 +139,7 @@ function useCardDropApproved({
         depthAlterations[startingCardMetadata.destinationSqueakStackIdx] =
           startingCardMetadata.lengthOfStack;
 
-        setOtherPlayerSqueakStacksBeingDragged({
+        setSqueakStackDragAlterations({
           ...squeakStackDragAlterations,
           [ownerID]: {
             squeakStackDepthAlterations: depthAlterations,
@@ -161,7 +161,7 @@ function useCardDropApproved({
         const depthAlterations = [0, 0, 0, 0];
         depthAlterations[startingCardMetadata.originSqueakStackIdx] = -1;
 
-        setOtherPlayerSqueakStacksBeingDragged({
+        setSqueakStackDragAlterations({
           ...squeakStackDragAlterations,
           [ownerID]: {
             squeakStackDepthAlterations: depthAlterations,
@@ -203,7 +203,7 @@ function useCardDropApproved({
         flip: false,
         rotate: endID.includes("cell"),
         callbackFunction: () => {
-          setOtherPlayerSqueakStacksBeingDragged({
+          setSqueakStackDragAlterations({
             ...squeakStackDragAlterations,
             [ownerID]: {
               squeakStackDepthAlterations: [0, 0, 0, 0],
@@ -238,7 +238,7 @@ function useCardDropApproved({
     otherPlayerCardMoveBuffer,
     setProposedCardBoxShadow,
     squeakStackDragAlterations,
-    setOtherPlayerSqueakStacksBeingDragged,
+    setSqueakStackDragAlterations,
     suit,
     ownerID,
     value,

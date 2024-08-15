@@ -136,7 +136,7 @@ interface IRoomContext {
   squeakStackDragAlterations: {
     [playerID: string]: SqueakStackDragAlterations;
   };
-  setOtherPlayerSqueakStacksBeingDragged: React.Dispatch<
+  setSqueakStackDragAlterations: React.Dispatch<
     React.SetStateAction<{
       [playerID: string]: SqueakStackDragAlterations;
     }>
@@ -276,10 +276,9 @@ export function RoomProvider(props: { children: React.ReactNode }) {
   const [newInviteNotification, setNewInviteNotification] =
     useState<boolean>(false);
 
-  const [squeakStackDragAlterations, setOtherPlayerSqueakStacksBeingDragged] =
-    useState<{
-      [playerID: string]: SqueakStackDragAlterations;
-    }>({});
+  const [squeakStackDragAlterations, setSqueakStackDragAlterations] = useState<{
+    [playerID: string]: SqueakStackDragAlterations;
+  }>({});
 
   const [currentVotes, setCurrentVotes] = useState<("agree" | "disagree")[]>(
     [],
@@ -507,7 +506,7 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     squeakDeckBeingMovedProgramatically,
     setSqueakDeckBeingMovedProgramatically,
     squeakStackDragAlterations,
-    setOtherPlayerSqueakStacksBeingDragged,
+    setSqueakStackDragAlterations,
     currentVotes,
     setCurrentVotes,
     voteType,
