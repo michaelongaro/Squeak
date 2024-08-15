@@ -8,12 +8,7 @@ function Custom404() {
 
   return (
     <div className="baseVertFlex min-h-[100dvh] w-[100vw]">
-      <div
-        style={{
-          color: "hsl(120, 100%, 86%)",
-        }}
-        className="baseVertFlex rounded-md border-2 border-white bg-gradient-to-br from-green-800 to-green-850 p-12 shadow-lg"
-      >
+      <div className="baseVertFlex rounded-md border-2 border-white bg-gradient-to-br from-green-800 to-green-850 p-12 text-lightGreen shadow-lg">
         <IoWarningOutline className="size-12" />
 
         <div className="baseVertFlex mt-8 gap-4">

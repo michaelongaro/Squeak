@@ -76,12 +76,7 @@ function PublicRooms() {
 
   return (
     <fieldset className="mt-8 w-[360px] rounded-md border-2 border-white p-2 sm:w-full sm:p-4">
-      <legend
-        style={{
-          color: "hsl(120deg 100% 86%)",
-        }}
-        className="baseFlex gap-4 pl-4 pr-4 text-left text-lg"
-      >
+      <legend className="baseFlex gap-4 pl-4 pr-4 text-left text-lg text-lightGreen">
         <div className="baseFlex gap-2 whitespace-nowrap">
           <div className="text-base sm:text-xl">Public rooms</div>
           {publicRooms && <div>{`(${publicRooms.length})`}</div>}
@@ -115,19 +110,8 @@ function PublicRooms() {
       {publicRooms ? (
         <>
           {publicRooms.length > 0 ? (
-            <div
-              style={{
-                borderColor: "hsl(120deg 100% 86%)",
-              }}
-              className="baseVertFlex mt-2 max-h-[400px] w-full !justify-start rounded-md border-2 sm:mt-0"
-            >
-              <div
-                style={{
-                  backgroundColor: "hsl(120deg 100% 86%)",
-                  color: "hsl(120deg 100% 18%)",
-                }}
-                className="grid w-full grid-cols-3 place-items-center p-4 pr-8 text-sm font-medium sm:text-base"
-              >
+            <div className="baseVertFlex mt-2 max-h-[400px] w-full !justify-start rounded-md border-2 border-lightGreen sm:mt-0">
+              <div className="grid w-full grid-cols-3 place-items-center bg-lightGreen p-4 pr-8 text-sm font-medium text-darkGreen sm:text-base">
                 <div>Owner</div>
                 <div>Points to win</div>
                 {viewportLabel.includes("mobile") ? (
@@ -146,8 +130,6 @@ function PublicRooms() {
                         hoveredIndex === index
                           ? "hsl(120deg 100% 18%)"
                           : "hsl(120deg 100% 15%)",
-                      color: "hsl(120deg 100% 86%)",
-                      borderColor: "hsl(120deg 100% 86%)",
                       borderBottomWidth:
                         index === publicRooms.length - 1 ? "0px" : "2px ",
                       borderRadius:
@@ -155,7 +137,7 @@ function PublicRooms() {
                           ? "0 0 0.375rem 0.375rem"
                           : "none",
                     }}
-                    className="relative grid w-auto grid-cols-3 place-items-center border-b-2 p-4 pr-8 transition-colors lg:w-[600px]"
+                    className="relative grid w-auto grid-cols-3 place-items-center border-b-2 border-darkGreen p-4 pr-8 text-lightGreen transition-colors lg:w-[600px]"
                     onPointerEnter={() => setHoveredIndex(index)}
                     onPointerLeave={() => setHoveredIndex(-1)}
                   >

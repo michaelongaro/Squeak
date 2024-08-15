@@ -303,26 +303,83 @@ function Scoreboard() {
     const newPlayerColorVariants: IPlayerColorVariants = {};
 
     for (const userID in playerMetadata) {
-      const hslColor = playerMetadata[userID]?.color;
+      const oklchColor = playerMetadata[userID]?.color;
 
-      if (!hslColor) return;
+      if (!oklchColor) return;
 
-      const strippedHSLColor = hslColor.slice(0, -4);
-      const lightness = parseInt(
-        hslColor.slice(hslColor.length - 4, hslColor.length).trim(),
+      // Extract the lightness, chroma, and hue components from the OKLCH color string
+      const matches = oklchColor.match(
+        /oklch\((\d+\.?\d*)%\s+(\d+\.?\d*)\s+(\d+\.?\d*)\)/,
       );
 
+      if (!matches) return;
+
+      const [_, lightnessStr, chromaStr, hueStr] = matches;
+
+      console.log(lightnessStr, chromaStr, hueStr);
+
+      if (!lightnessStr || !chromaStr || !hueStr) return;
+
+      const lightness = parseFloat(lightnessStr);
+      const chroma = parseFloat(chromaStr);
+      const hue = parseFloat(hueStr);
+
+      // Generate the variants based on the lightness adjustments
       newPlayerColorVariants[userID] = {
-        baseColor: hslColor,
-        pointsBackgroundColor:
-          strippedHSLColor + `${Math.floor(lightness * 0.75)}%)`,
-        textColor: strippedHSLColor + `${Math.floor(lightness * 1.5)}%)`,
-        animatedCardsBackgroundColor: strippedHSLColor + "90%)",
+        baseColor: oklchColor,
+        pointsBackgroundColor: `oklch(${(lightness * 0.75).toFixed(2)}% ${chroma.toFixed(3)} ${hue.toFixed(2)})`,
+        textColor: `oklch(${Math.min(lightness * 1.5, 100).toFixed(2)}% ${chroma.toFixed(3)} ${hue.toFixed(2)})`, // Ensure lightness doesn't exceed 100%
+        animatedCardsBackgroundColor: `oklch(100% ${chroma.toFixed(3)} ${hue.toFixed(2)})`,
       };
     }
 
     setPlayerColorVariants(newPlayerColorVariants);
   }, [playerMetadata, playerColorVariants]);
+
+  function test() {
+    if (Object.keys(playerColorVariants).length !== 0) return;
+
+    const newPlayerColorVariants: IPlayerColorVariants = {};
+
+    for (const userID in playerMetadata) {
+      const oklchColor = playerMetadata[userID]?.color;
+
+      console.log(oklchColor);
+
+      if (!oklchColor) return;
+
+      // Extract the lightness, chroma, and hue components from the OKLCH color string
+      const matches = oklchColor.match(
+        /oklch\((\d+\.?\d*)%\s+(\d+\.?\d*)\s+(\d+\.?\d*)\)/,
+      );
+
+      if (!matches) return;
+
+      const [_, lightnessStr, chromaStr, hueStr] = matches;
+
+      console.log(lightnessStr, chromaStr, hueStr);
+
+      if (!lightnessStr || !chromaStr || !hueStr) return;
+
+      const lightness = parseFloat(lightnessStr);
+      const chroma = parseFloat(chromaStr);
+      const hue = parseFloat(hueStr);
+
+      // Generate the variants based on the lightness adjustments
+      newPlayerColorVariants[userID] = {
+        baseColor: oklchColor,
+        pointsBackgroundColor: `oklch(${(lightness * 0.75).toFixed(2)}% ${chroma.toFixed(3)} ${hue.toFixed(2)})`,
+        textColor: `oklch(${Math.min(lightness * 1.5, 100).toFixed(2)}% ${chroma.toFixed(3)} ${hue.toFixed(2)})`, // Ensure lightness doesn't exceed 100%
+        animatedCardsBackgroundColor: `oklch(90% ${chroma.toFixed(3)} ${hue.toFixed(2)})`,
+      };
+    }
+  }
+
+  test();
+
+  console.log(playerMetadata);
+
+  console.log(scoreboardMetadata);
 
   const currentPlayerStats = useMemo(() => {
     if (!scoreboardMetadata?.playerRoundDetails) return;
@@ -357,11 +414,7 @@ function Scoreboard() {
           animate={{ scale: 1 }}
           exit={{ scale: 0.95 }}
           transition={{ duration: 0.15, delay: 0.35 }}
-          style={{
-            color: "hsl(120deg 100% 86%)",
-            borderColor: "hsl(120deg 100% 86%)",
-          }}
-          className="w-[95%] rounded-lg border-2 bg-gradient-to-br from-green-800 to-green-850 p-4 shadow-md tablet:h-[75%] tablet:w-[75%]"
+          className="w-[95%] rounded-lg border-2 border-lightGreen bg-gradient-to-br from-green-800 to-green-850 p-4 text-lightGreen shadow-md tablet:h-[75%] tablet:w-[75%]"
         >
           {scoreboardMetadata?.playerRoundDetails && currentPlayerStats && (
             <div className="baseVertFlex h-full gap-6 tablet:gap-8">
@@ -386,12 +439,7 @@ function Scoreboard() {
                   // when the game starts
                   className="order-[-2] grid w-full max-w-xl place-items-center"
                 >
-                  <FaTrophy
-                    style={{
-                      color: "hsl(120deg 100% 86%)",
-                    }}
-                    className="-mr-5 size-4"
-                  />
+                  <FaTrophy className="-mr-5 size-4 text-lightGreen" />
                   <div className="font-semibold">Player</div>
                   <div className="mr-4 font-semibold">Total</div>
                 </div>
@@ -690,7 +738,7 @@ function Scoreboard() {
                       playerMetadata[
                         scoreboardMetadata.gameWinnerID ??
                           scoreboardMetadata.roundWinnerID
-                      ]?.color ?? "hsl(352deg, 69%, 61%)"
+                      ]?.color ?? "oklch(64.02% 0.171 15.38)"
                     }
                     size={"2.5rem"}
                   />
@@ -898,11 +946,7 @@ function Scoreboard() {
         animate={{ scale: 1 }}
         exit={{ scale: 0.95 }}
         transition={{ duration: 0.15, delay: 0.35 }}
-        style={{
-          color: "hsl(120deg 100% 86%)",
-          borderColor: "hsl(120deg 100% 86%)",
-        }}
-        className="h-[95%] w-[95%] rounded-lg border-2 bg-gradient-to-br from-green-800 to-green-850 p-4 shadow-md tablet:h-[85%] tablet:w-[85%] desktop:h-[75%] desktop:w-[75%]"
+        className="h-[95%] w-[95%] rounded-lg border-2 border-lightGreen bg-gradient-to-br from-green-800 to-green-850 p-4 text-lightGreen shadow-md tablet:h-[85%] tablet:w-[85%] desktop:h-[75%] desktop:w-[75%]"
       >
         {scoreboardMetadata?.playerRoundDetails && (
           <div className="baseVertFlex relative h-full gap-2 desktop:gap-8">
@@ -941,7 +985,7 @@ function Scoreboard() {
                         }
                         borderColor={
                           playerMetadata[player.playerID]?.color ??
-                          "hsl(352deg, 69%, 61%)"
+                          "oklch(64.02% 0.171 15.38)"
                         }
                         size={"3rem"}
                       />
@@ -1135,7 +1179,7 @@ function Scoreboard() {
                   playerMetadata[
                     scoreboardMetadata.gameWinnerID ??
                       scoreboardMetadata.roundWinnerID
-                  ]?.color ?? "hsl(352deg, 69%, 61%)"
+                  ]?.color ?? "oklch(64.02% 0.171 15.38)"
                 }
                 size={"3rem"}
               />

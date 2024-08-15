@@ -67,13 +67,7 @@ function MainOptions() {
                 size={"2.75rem"}
               />
               {user?.username ? (
-                <div
-                  style={{
-                    color: "hsl(120, 100%, 86%)",
-                  }}
-                >
-                  {user?.username}
-                </div>
+                <div className="text-lightGreen">{user?.username}</div>
               ) : (
                 <div className="h-6 w-28 animate-pulse rounded-md bg-muted/50"></div>
               )}
@@ -141,13 +135,10 @@ function MainOptions() {
       {!viewportLabel.includes("mobile") && (
         <div
           style={{
-            color: "hsl(120, 100%, 86%)",
-            borderColor: "hsl(120, 100%, 86%)",
-            background: "hsl(120, 100%, 18%)",
             transition: "all 0.3s ease-in-out",
           }}
           // leading-normal md:leading-6
-          className={`baseFlex fixed ${hoveringOnAboutMe ? "shadow-md" : "shadow-none"} ${hoveringOnAboutMe ? "w-[18rem]" : "w-8"} bottom-2 right-2 !justify-end overflow-hidden rounded-full border-2 px-[0.75rem] py-[0.15rem] md:px-[0.7rem] md:py-0 lg:bottom-4 lg:right-4`}
+          className={`baseFlex fixed border-lightGreen bg-darkGreen text-lightGreen ${hoveringOnAboutMe ? "shadow-md" : "shadow-none"} ${hoveringOnAboutMe ? "w-[18rem]" : "w-8"} bottom-2 right-2 !justify-end overflow-hidden rounded-full border-2 px-[0.75rem] py-[0.15rem] md:px-[0.7rem] md:py-0 lg:bottom-4 lg:right-4`}
           onPointerEnter={() => setHoveringOnAboutMe(true)}
           onPointerLeave={() => setHoveringOnAboutMe(false)}
         >

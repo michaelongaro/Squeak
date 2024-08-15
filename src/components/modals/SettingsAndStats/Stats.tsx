@@ -43,19 +43,8 @@ function Stats() {
   }, [userStats, filteredStats]);
 
   return (
-    <div
-      style={{
-        color: "hsl(120deg 100% 86%)",
-      }}
-      className="baseVertFlex h-[328px] w-[700px] bg-gradient-to-br from-green-800 to-green-850 p-8"
-    >
-      <div
-        style={{
-          borderColor: "hsl(120deg 100% 86%)",
-          color: "hsl(120deg 100% 86%)",
-        }}
-        className="baseVertFlex gap-6 rounded-md border-2 p-4"
-      >
+    <div className="baseVertFlex h-[328px] w-[700px] bg-gradient-to-br from-green-800 to-green-850 p-8 text-lightGreen">
+      <div className="baseVertFlex gap-6 rounded-md border-2 border-lightGreen p-4 text-lightGreen">
         {rowNames.map((rowName, index) => (
           <div key={index} className="baseFlex w-full !justify-between gap-12">
             <div>{rowName}</div>

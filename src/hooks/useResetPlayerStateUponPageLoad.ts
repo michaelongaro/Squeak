@@ -55,7 +55,7 @@ function useResetPlayerStateUponPageLoad() {
           deckHueRotation: number;
         } = {
           avatarPath: "/avatars/rabbit.svg",
-          color: "hsl(352deg, 69%, 61%)",
+          color: "oklch(64.02% 0.171 15.38)",
           deckVariantIndex: 0,
           deckHueRotation: 232,
         };

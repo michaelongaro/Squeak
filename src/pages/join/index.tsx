@@ -196,21 +196,15 @@ function JoinRoom() {
 
           <div
             style={{
-              color: "hsl(120deg 100% 86%)",
               filter: "drop-shadow(2px 3px 2px rgba(0, 0, 0, 0.2))",
             }}
-            className="text-xl font-medium"
+            className="text-xl font-medium text-lightGreen"
           >
             Join room
           </div>
         </div>
 
-        <div
-          style={{
-            color: "hsl(120deg 100% 86%)",
-          }}
-          className="baseVertFlex mt-4 gap-8 rounded-md border-2 border-white bg-gradient-to-br from-green-800 to-green-850 p-4"
-        >
+        <div className="baseVertFlex mt-4 gap-8 rounded-md border-2 border-white bg-gradient-to-br from-green-800 to-green-850 p-4 text-lightGreen">
           <div className="baseVertFlex !items-start gap-4">
             <div className="baseFlex w-full !justify-between gap-5">
               <label>Username</label>

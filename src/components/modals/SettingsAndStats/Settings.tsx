@@ -40,12 +40,7 @@ function Settings({
   const [focusedInInput, setFocusedInInput] = useState<boolean>(false);
 
   return (
-    <div
-      style={{
-        color: "hsl(120deg 100% 86%)",
-      }}
-      className="baseVertFlex w-[700px] bg-gradient-to-br from-green-800 to-green-850 p-8"
-    >
+    <div className="baseVertFlex w-[700px] bg-gradient-to-br from-green-800 to-green-850 p-8 text-lightGreen">
       <div className="baseVertFlex gap-8">
         <div className="baseFlex gap-2">
           <Label htmlFor="username">Username</Label>
@@ -92,11 +87,7 @@ function Settings({
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.15 }}
-                  style={{
-                    right: "-255px",
-                    color: "hsl(120deg 100% 86%)",
-                  }}
-                  className="baseVertFlex absolute top-0 gap-2 rounded-md border-2 border-red-700 bg-green-700 pb-2 pl-1 pr-1 pt-2 shadow-md"
+                  className="baseVertFlex absolute right-[-255px] top-0 gap-2 rounded-md border-2 border-red-700 bg-green-700 pb-2 pl-1 pr-1 pt-2 text-lightGreen shadow-md"
                 >
                   <div>Username not allowed,</div>
                   <div className="text-center">please choose another one</div>

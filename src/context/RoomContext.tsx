@@ -384,7 +384,7 @@ export function RoomProvider(props: { children: React.ReactNode }) {
       [userID]: {
         username: user ? user.username : "",
         avatarPath: user ? user.avatarPath : "/avatars/rabbit.svg",
-        color: user ? user.color : "hsl(352deg, 69%, 61%)",
+        color: user ? user.color : "oklch(64.02% 0.171 15.38)",
         deckHueRotation: user ? user.deckHueRotation : 232,
       } as IRoomPlayer,
     }));
@@ -415,7 +415,7 @@ export function RoomProvider(props: { children: React.ReactNode }) {
       deckHueRotation: number;
     } = {
       avatarPath: "/avatars/rabbit.svg",
-      color: "hsl(352deg, 69%, 61%)",
+      color: "oklch(64.02% 0.171 15.38)",
       deckVariantIndex: 0,
       deckHueRotation: 232,
     };
@@ -427,6 +427,7 @@ export function RoomProvider(props: { children: React.ReactNode }) {
         "squeak-playerMetadata",
         JSON.stringify({
           avatarPath: "/avatars/rabbit.svg",
+          color: "oklch(64.02% 0.171 15.38)",
           deckVariantIndex: 0,
           deckHueRotation: 232,
         }),

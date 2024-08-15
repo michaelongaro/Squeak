@@ -249,7 +249,7 @@ function CreateRoom() {
     return {
       username: uniqueBotName,
       avatarPath: "/avatars/rabbit.svg",
-      color: "hsl(352deg, 69%, 61%)",
+      color: "oklch(64.02% 0.171 15.38)",
       deckHueRotation: 232,
       botDifficulty: "Medium",
     } as IRoomPlayer;
@@ -292,10 +292,9 @@ function CreateRoom() {
 
           <div
             style={{
-              color: "hsl(120deg 100% 86%)",
               filter: "drop-shadow(2px 3px 2px rgba(0, 0, 0, 0.2))",
             }}
-            className="text-xl font-medium"
+            className="text-xl font-medium text-lightGreen"
           >
             {`${
               connectedToRoom
@@ -308,13 +307,7 @@ function CreateRoom() {
         {!connectedToRoom && (
           <div className="baseVertFlex mt-4 gap-4 rounded-md border-2 border-white bg-gradient-to-br from-green-800 to-green-850 p-4">
             <div className="baseFlex gap-2">
-              <Label
-                style={{
-                  color: "hsl(120deg 100% 86%)",
-                }}
-              >
-                Username
-              </Label>
+              <Label className="text-lightGreen">Username</Label>
               <div className="relative">
                 <Input
                   type="text"
@@ -417,22 +410,12 @@ function CreateRoom() {
         )}
 
         <fieldset className="mt-4 w-[350px] rounded-md border-2 border-white p-2 sm:min-w-[450px] sm:p-4">
-          <legend
-            style={{
-              color: "hsl(120deg 100% 86%)",
-            }}
-            className="baseFlex gap-2 pl-4 pr-4 text-left text-lg"
-          >
+          <legend className="baseFlex gap-2 pl-4 pr-4 text-left text-lg text-lightGreen">
             <IoSettingsSharp size={"1.25rem"} />
             Room settings
           </legend>
 
-          <div
-            style={{
-              color: "hsl(120deg 100% 86%)",
-            }}
-            className="grid grid-cols-2 grid-rows-4 items-center gap-y-4 p-1 sm:p-2"
-          >
+          <div className="grid grid-cols-2 grid-rows-4 items-center gap-y-4 p-1 text-lightGreen sm:p-2">
             <Label>Points to win:</Label>
             <div className="baseFlex !justify-between gap-2 sm:px-4">
               <Button
@@ -491,13 +474,7 @@ function CreateRoom() {
 
             <Label>Room code:</Label>
             <div className="baseFlex gap-4">
-              <div
-                style={{
-                  color: "hsl(120deg 100% 86%)",
-                }}
-              >
-                {roomConfig.code}
-              </div>
+              <div className="text-lightGreen">{roomConfig.code}</div>
 
               <Button
                 variant={"secondary"}
@@ -556,12 +533,7 @@ function CreateRoom() {
         </fieldset>
 
         {connectedToRoom ? (
-          <div
-            style={{
-              color: "hsl(120deg 100% 86%)",
-            }}
-            className="baseVertFlex gap-4"
-          >
+          <div className="baseVertFlex gap-4 text-lightGreen">
             <fieldset className="w-[350px] rounded-md border-2 border-white p-4 sm:min-w-max">
               <legend className="baseFlex gap-2 pl-4 pr-4 text-left text-lg">
                 <FaUsers size={"1.25rem"} className="ml-1" />
@@ -583,7 +555,7 @@ function CreateRoom() {
                       }
                       borderColor={
                         playerMetadata[playerID]?.color ||
-                        "hsl(352deg, 69%, 61%)"
+                        "oklch(64.02% 0.171 15.38)"
                       }
                       username={playerMetadata[playerID]?.username}
                       playerID={playerID}

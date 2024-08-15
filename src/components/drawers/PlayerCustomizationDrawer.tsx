@@ -46,10 +46,10 @@ function PlayerCustomizationDrawer() {
       <DrawerPortal>
         <DrawerContent
           style={{
-            color: "hsl(120deg 100% 18%)",
             zIndex: 250,
             // height: "100%", ah this could be tricky to get right here
           }}
+          className="text-darkGreen"
         >
           <div
             style={{

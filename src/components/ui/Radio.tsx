@@ -24,10 +24,7 @@ function Radio({
 
   return (
     <div
-      style={{
-        borderColor: "hsl(120deg 100% 86%)",
-      }}
-      className={`baseFlex relative h-full w-full snap-x snap-mandatory !justify-start overflow-x-auto rounded-md border-2 transition-all`}
+      className={`baseFlex relative h-full w-full snap-x snap-mandatory !justify-start overflow-x-auto rounded-md border-2 border-lightGreen transition-all`}
     >
       {values.map((value, index) => (
         <RadioButton

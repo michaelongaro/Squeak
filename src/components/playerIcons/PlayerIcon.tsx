@@ -74,9 +74,8 @@ function PlayerIcon({
           transition={{ duration: 0.15 }}
           style={{
             ...style,
-            color: "hsl(120deg 100% 86%)",
           }}
-          className="baseVertFlex shrink-0"
+          className="baseVertFlex shrink-0 text-lightGreen"
         >
           <div
             style={{

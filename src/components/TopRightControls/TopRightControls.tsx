@@ -162,19 +162,16 @@ function TopRightControls() {
           <DrawerTrigger onClick={() => setShowDrawer(true)}>
             <IoSettingsSharp
               size={"1.25rem"}
-              style={{
-                color: "hsl(120deg 100% 86%)",
-              }}
-              className="transition-all active:brightness-50"
+              className="text-lightGreen transition-all active:brightness-50"
             />
           </DrawerTrigger>
         </div>
         <DrawerPortal>
           <DrawerContent
             style={{
-              color: "hsl(120deg 100% 18%)",
               zIndex: 250,
             }}
+            className="text-darkGreen"
           >
             {asPath.includes("/game") ? (
               <WhilePlayingDrawer
@@ -456,18 +453,10 @@ function VotingModal({
     >
       {/* voting modal */}
       <div
-        style={{
-          borderColor: `hsl(120deg 100% ${forDrawer ? "18%" : "86%"}`,
-          backgroundColor: "hsl(120deg 100% 18%)",
-        }}
-        className="baseVertFlex rounded-md border-2"
+        className={`baseVertFlex rounded-md border-2 bg-darkGreen ${forDrawer ? "border-darkGreen" : "border-lightGreen"} `}
       >
         <div
-          style={{
-            backgroundColor: "hsl(120deg 100% 86%)",
-            color: "hsl(120deg 100% 18%)",
-          }}
-          className={`baseFlex w-full gap-4 px-4 py-2 ${
+          className={`baseFlex w-full gap-4 bg-lightGreen px-4 py-2 text-darkGreen ${
             forDrawer ? "rounded-sm" : ""
           }`}
         >

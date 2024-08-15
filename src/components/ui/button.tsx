@@ -23,7 +23,7 @@ const buttonVariants = cva(
         secondary: "border-2 select-none",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-lightGreen underline-offset-4 hover:underline",
-        text: "text-primary",
+        text: "text-lightGreen",
         drawer:
           "text-darkGreen border-darkGreen bg-zinc-200 w-full !rounded-none h-full baseFlex relative z-[500] w-full py-4",
       },
@@ -108,7 +108,6 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
             setBrightness(1);
           }}
           style={{
-            color: "hsl(120deg, 100%, 86%)",
             filter: `brightness(${brightness})`,
           }}
           className={`${cn(

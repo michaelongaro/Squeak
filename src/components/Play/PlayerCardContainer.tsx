@@ -496,7 +496,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                 playerMetadata[userID]?.avatarPath || "/avatars/rabbit.svg"
               }
               borderColor={
-                playerMetadata[userID]?.color || "hsl(352deg, 69%, 61%)"
+                playerMetadata[userID]?.color || "oklch(64.02% 0.171 15.38)"
               }
               username={playerMetadata[userID]?.username}
               size={"3rem"}

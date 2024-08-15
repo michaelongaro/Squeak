@@ -47,12 +47,9 @@ function PlayerCustomizationPreview({
         {renderDescriptionText && (
           <p
             style={{
-              color: useDarkerFont
-                ? "hsl(120deg, 100%, 18%)"
-                : "hsl(120deg, 100%, 86%)",
               paddingTop: forDrawer ? "0" : "0.85rem",
             }}
-            className={`${useDarkerFont ? "text-lg font-semibold" : ""}`}
+            className={`${useDarkerFont ? "text-lg font-semibold text-darkGreen" : "text-lightGreen"}`}
           >
             Avatar
           </p>

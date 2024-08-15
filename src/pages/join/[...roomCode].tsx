@@ -285,13 +285,7 @@ function JoinRoom() {
               </p>
 
               <div className="baseFlex gap-2">
-                <Label
-                  style={{
-                    color: "hsl(120deg 100% 86%)",
-                  }}
-                >
-                  Username
-                </Label>
+                <Label className="text-lightGreen">Username</Label>
                 <div className="relative">
                   <Input
                     type="text"
@@ -417,10 +411,9 @@ function JoinRoom() {
 
                 <div
                   style={{
-                    color: "hsl(120deg 100% 86%)",
                     filter: "drop-shadow(2px 3px 2px rgba(0, 0, 0, 0.2))",
                   }}
-                  className="text-xl font-medium"
+                  className="text-xl font-medium text-lightGreen"
                 >
                   {`${
                     connectedToRoom
@@ -430,12 +423,7 @@ function JoinRoom() {
                 </div>
               </div>
 
-              <div
-                style={{
-                  color: "hsl(120deg 100% 86%)",
-                }}
-                className="baseVertFlex gap-4"
-              >
+              <div className="baseVertFlex gap-4 text-lightGreen">
                 <fieldset className="baseVertFlex mt-4 gap-4 rounded-md border-2 border-white p-4">
                   <legend className="baseFlex gap-2 pl-4 pr-4 text-left text-lg">
                     <IoSettingsSharp size={"1.25rem"} />
@@ -536,7 +524,7 @@ function JoinRoom() {
                           }
                           borderColor={
                             playerMetadata[playerID]?.color ||
-                            "hsl(352deg, 69%, 61%)"
+                            "oklch(64.02% 0.171 15.38)"
                           }
                           playerID={playerID}
                           playerIsHost={playerID === roomConfig.hostUserID}

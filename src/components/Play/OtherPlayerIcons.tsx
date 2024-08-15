@@ -147,7 +147,7 @@ function OtherPlayerIcons() {
                 }
                 borderColor={
                   playerMetadata[otherPlayerIDs[0]]?.color ||
-                  "hsl(352deg, 69%, 61%)"
+                  "oklch(64.02% 0.171 15.38)"
                 }
                 username={playerMetadata[otherPlayerIDs[0]]?.username}
                 size={"3rem"}
@@ -184,7 +184,7 @@ function OtherPlayerIcons() {
                 }
                 borderColor={
                   playerMetadata[otherPlayerIDs[1]]?.color ||
-                  "hsl(352deg, 69%, 61%)"
+                  "oklch(64.02% 0.171 15.38)"
                 }
                 username={playerMetadata[otherPlayerIDs[1]]?.username}
                 size={"3rem"}
@@ -221,7 +221,7 @@ function OtherPlayerIcons() {
                 }
                 borderColor={
                   playerMetadata[otherPlayerIDs[2]]?.color ||
-                  "hsl(352deg, 69%, 61%)"
+                  "oklch(64.02% 0.171 15.38)"
                 }
                 username={playerMetadata[otherPlayerIDs[2]]?.username}
                 size={"3rem"}

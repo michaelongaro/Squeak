@@ -5,7 +5,7 @@ import {
   type IRoomPlayer,
 } from "../socket";
 import { avatarPaths } from "../../../utils/avatarPaths";
-import { hslToDeckHueRotations } from "../../../utils/hslToDeckHueRotations";
+import { oklchToDeckHueRotations } from "../../../utils/oklchToDeckHueRotations";
 import { prisma } from "~/server/db";
 interface IJoinRoomConfig {
   code: string;
@@ -16,7 +16,7 @@ interface IJoinRoomConfig {
 export function joinRoomHandler(
   io: Server,
   socket: Socket,
-  roomData: IRoomData
+  roomData: IRoomData,
 ) {
   socket.on(
     "joinRoom",
@@ -40,7 +40,7 @@ export function joinRoomHandler(
         if (player.avatarPath === playerMetadata.avatarPath) {
           playerMetadata.avatarPath = getAvailableAttribute(
             "avatarPath",
-            players
+            players,
           );
         }
 
@@ -49,8 +49,8 @@ export function joinRoomHandler(
         }
 
         playerMetadata.deckHueRotation =
-          hslToDeckHueRotations[
-            playerMetadata.color as keyof typeof hslToDeckHueRotations
+          oklchToDeckHueRotations[
+            playerMetadata.color as keyof typeof oklchToDeckHueRotations
           ];
       }
 
@@ -75,21 +75,21 @@ export function joinRoomHandler(
           playerIDsInRoom: Object.keys(players),
         },
       });
-    }
+    },
   );
 }
 
 function getAvailableAttribute(
   attribute: "avatarPath" | "color",
-  players: IRoomPlayersMetadata
+  players: IRoomPlayersMetadata,
 ): string {
   if (attribute === "avatarPath") {
     const usedAttributes = Object.values(players).map(
-      (player) => player.avatarPath
+      (player) => player.avatarPath,
     );
 
     const availableAttributes = [...usedAttributes, ...avatarPaths].filter(
-      (avatarPath) => !usedAttributes.includes(avatarPath)
+      (avatarPath) => !usedAttributes.includes(avatarPath),
     );
 
     return availableAttributes[
@@ -101,7 +101,7 @@ function getAvailableAttribute(
 
   const availableAttributes = [
     ...usedAttributes,
-    ...Object.keys(hslToDeckHueRotations),
+    ...Object.keys(oklchToDeckHueRotations),
   ].filter((color) => !usedAttributes.includes(color));
 
   return availableAttributes[

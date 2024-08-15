@@ -9,7 +9,7 @@ import {
 } from "../../pages/api/socket";
 import { avatarPaths } from "../../utils/avatarPaths";
 import { deckHueRotations } from "../../utils/deckHueRotations";
-import { hslToDeckHueRotations } from "../../utils/hslToDeckHueRotations";
+import { oklchToDeckHueRotations } from "../../utils/oklchToDeckHueRotations";
 import Card from "../Play/Card";
 import { type ILocalPlayerSettings } from "../modals/SettingsAndStats/UserSettingsAndStatsModal";
 import PlayerIcon from "./PlayerIcon";
@@ -320,7 +320,7 @@ function PlayerCustomizationPicker({
   }
 
   function renderDeckTooltip() {
-    return Object.keys(hslToDeckHueRotations).map((color, index) => (
+    return Object.keys(oklchToDeckHueRotations).map((color, index) => (
       <div
         key={`${color}-${index}`}
         style={{
@@ -340,8 +340,8 @@ function PlayerCustomizationPicker({
               newPlayerMetadata: {
                 ...playerMetadata[userID],
                 deckHueRotation:
-                  hslToDeckHueRotations[
-                    color as keyof typeof hslToDeckHueRotations // seems hacky
+                  oklchToDeckHueRotations[
+                    color as keyof typeof oklchToDeckHueRotations // seems hacky
                   ],
                 color,
               },
@@ -356,8 +356,8 @@ function PlayerCustomizationPicker({
               color,
               deckVariantIndex,
               deckHueRotation:
-                hslToDeckHueRotations[
-                  color as keyof typeof hslToDeckHueRotations
+                oklchToDeckHueRotations[
+                  color as keyof typeof oklchToDeckHueRotations
                 ],
             });
 
@@ -367,8 +367,8 @@ function PlayerCustomizationPicker({
                 ...playerMetadata[userID],
                 color,
                 deckHueRotation:
-                  hslToDeckHueRotations[
-                    color as keyof typeof hslToDeckHueRotations // seems hacky
+                  oklchToDeckHueRotations[
+                    color as keyof typeof oklchToDeckHueRotations // seems hacky
                   ],
               } as IRoomPlayer,
             });
@@ -382,8 +382,8 @@ function PlayerCustomizationPicker({
           width={64}
           height={87}
           hueRotation={
-            hslToDeckHueRotations[
-              color as keyof typeof hslToDeckHueRotations // seems hacky
+            oklchToDeckHueRotations[
+              color as keyof typeof oklchToDeckHueRotations // seems hacky
             ]
           }
         />

@@ -107,12 +107,7 @@ function FriendsList({ setShowFriendsListModal }: IFriendsList) {
       className="baseVertFlex absolute right-0 top-16 w-[370px] !items-start gap-2 rounded-md border-2 border-white bg-gradient-to-br from-green-800 to-green-850 p-4"
     >
       <div className="baseVertFlex max-h-48 w-full !items-start gap-2">
-        <div
-          style={{
-            color: "hsl(120deg 100% 86%)",
-          }}
-          className="baseFlex mb-4 gap-2 border-b-2 border-white text-xl"
-        >
+        <div className="baseFlex mb-4 gap-2 border-b-2 border-white text-xl text-lightGreen">
           <FiMail size={"1.5rem"} />
           <div className="baseFlex gap-2">
             Pending
@@ -138,10 +133,9 @@ function FriendsList({ setShowFriendsListModal }: IFriendsList) {
               <div
                 key={friend.id}
                 style={{
-                  color: "hsl(120deg 100% 86%)",
                   zIndex: friendInviteIDs.length - index,
                 }}
-                className="baseFlex gap-4"
+                className="baseFlex gap-4 text-lightGreen"
               >
                 <div className="baseFlex gap-2">
                   <PlayerIcon
@@ -206,10 +200,9 @@ function FriendsList({ setShowFriendsListModal }: IFriendsList) {
             <div
               key={friend.id}
               style={{
-                color: "hsl(120deg 100% 86%)",
                 zIndex: roomInviteIDs.length - index,
               }}
-              className="baseFlex gap-4 p-2"
+              className="baseFlex gap-4 p-2 text-lightGreen"
             >
               <div className="baseFlex gap-2 pl-2">
                 <TbDoorEnter size={"2rem"} />
@@ -288,19 +281,9 @@ function FriendsList({ setShowFriendsListModal }: IFriendsList) {
       </div>
 
       <div className="baseVertFlex max-h-96 w-full !items-start gap-2">
-        <div
-          style={{
-            color: "hsl(120deg 100% 86%)",
-          }}
-          className="baseFlex mt-4 gap-2 border-b-2 border-white text-xl"
-        >
+        <div className="baseFlex mt-4 gap-2 border-b-2 border-white text-xl text-lightGreen">
           <FaUserFriends size={"1.5rem"} />
-          <div
-            style={{
-              color: "hsl(120deg 100% 86%)",
-            }}
-            className="baseFlex gap-2"
-          >
+          <div className="baseFlex gap-2 text-lightGreen">
             Friends
             {friends !== undefined && (
               <div className="baseFlex gap-[0.1rem]">
@@ -342,12 +325,7 @@ function FriendsList({ setShowFriendsListModal }: IFriendsList) {
                       size={"3rem"}
                       onlineStatus={friend.online}
                     />
-                    <div
-                      style={{
-                        color: "hsl(120deg 100% 86%)",
-                      }}
-                      className="baseVertFlex !items-start"
-                    >
+                    <div className="baseVertFlex !items-start text-lightGreen">
                       {friend.username}
                       {friend.online && (
                         <div className="text-sm opacity-80">

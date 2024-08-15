@@ -37,12 +37,10 @@ function AudioLevelSlider({ forMobile }: IAudioLevelSlider) {
       data-vaul-no-drag=""
       style={{
         borderColor: forMobile ? "" : "hsl(120deg 100% 86%)",
-        color: "hsl(120deg 100% 86%)",
-        backgroundColor: "hsl(120deg 100% 18%)",
       }}
       onPointerEnter={() => setHovered(true)}
       onPointerLeave={() => setHovered(false)}
-      className={`baseFlex !justify-start rounded-md border-2 p-2 transition-all ${hovered || forMobile ? "size-full gap-2" : "size-[40px] md:h-full md:w-auto"} `}
+      className={`baseFlex !justify-start rounded-md border-2 bg-darkGreen p-2 text-lightGreen transition-all ${hovered || forMobile ? "size-full gap-2" : "size-[40px] md:h-full md:w-auto"} ${forMobile ? "" : "border-lightGreen"} `}
     >
       {(hovered || forMobile) && (
         <div className="min-w-6 text-center">{values[0]}</div>
@@ -93,13 +91,7 @@ function AudioLevelSlider({ forMobile }: IAudioLevelSlider) {
           renderThumb={({ props }) => (
             <div
               {...props}
-              style={{
-                ...props.style,
-                height: "16px",
-                width: "16px",
-                backgroundColor: "hsl(120deg 100% 86%)",
-                borderRadius: "0.175rem",
-              }}
+              className="size-4 rounded-[0.175rem] bg-lightGreen"
             />
           )}
         />

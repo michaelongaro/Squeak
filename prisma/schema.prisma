@@ -43,7 +43,7 @@ model User {
   // user metadata
   username             String  @default("New user")
   avatarPath           String  @default("/avatars/rabbit.svg")
-  color                String  @default("hsl(352deg, 69%, 61%)") // defaults to red color
+  color                String  @default("oklch(64.02% 0.171 15.38)") // defaults to red color
   deckHueRotation      Int     @default(232) // defaults to red color
   deckVariantIndex     Int     @default(0)
   squeakPileOnLeft     Boolean @default(true)

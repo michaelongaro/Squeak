@@ -46,18 +46,8 @@ const DrawerContent = React.forwardRef<
       )}
       {...props}
     >
-      <div
-        style={{
-          borderColor: "hsl(120deg 100% 18%)",
-        }}
-        className="baseFlex h-6 w-full border-b-2 shadow-md"
-      >
-        <div
-          style={{
-            backgroundColor: "hsl(120deg 100% 18%)",
-          }}
-          className="mx-auto my-1 h-1.5 w-[55px] rounded-full"
-        />
+      <div className="baseFlex h-6 w-full border-b-2 border-darkGreen shadow-md">
+        <div className="mx-auto my-1 h-1.5 w-[55px] rounded-full bg-darkGreen" />
       </div>
       {children}
     </DrawerPrimitive.Content>

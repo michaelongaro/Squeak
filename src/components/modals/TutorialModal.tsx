@@ -51,12 +51,7 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
         className="baseVertFlex relative h-[95%] w-[95%] !justify-start gap-8 overflow-y-scroll rounded-md rounded-t-md border-2 border-white bg-gradient-to-br from-green-800 to-green-850 shadow-lg tablet:max-h-[90dvh] tablet:max-w-4xl"
       >
         <div className="baseFlex sticky left-0 top-0 z-10 w-full border-b border-white bg-gradient-to-br from-green-800 to-green-850 py-3 shadow-lg sm:py-4 tablet:max-w-4xl">
-          <div
-            style={{
-              color: "hsl(120deg 100% 86%)",
-            }}
-            className="baseFlex gap-2 text-lg font-medium lg:text-xl"
-          >
+          <div className="baseFlex gap-2 text-lg font-medium text-lightGreen lg:text-xl">
             <AiOutlineInfoCircle size={"1.5rem"} />
             How to play
           </div>
@@ -73,22 +68,12 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
 
         <div className="baseVertFlex w-full !justify-start gap-8 p-4 md:p-8 tablet:max-w-3xl">
           <fieldset className="rounded-md border-2 border-white p-4">
-            <legend
-              style={{
-                color: "hsl(120deg 100% 86%)",
-              }}
-              className="pl-4 pr-4 text-left text-base lg:text-lg"
-            >
+            <legend className="pl-4 pr-4 text-left text-base text-lightGreen lg:text-lg">
               Preparation
             </legend>
 
             <div className="baseVertFlex gap-4">
-              <div
-                style={{
-                  color: "hsl(120deg 100% 86%)",
-                }}
-                className="w-auto p-4 pt-0 text-sm lg:w-[725px] lg:text-base"
-              >
+              <div className="w-auto p-4 pt-0 text-sm text-lightGreen lg:w-[725px] lg:text-base">
                 <p>
                   Squeak is a multiplayer rendition of Solitaire, otherwise
                   known as
@@ -128,20 +113,10 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
           </fieldset>
 
           <fieldset className="mt-4 rounded-md border-2 border-white p-4">
-            <legend
-              style={{
-                color: "hsl(120deg 100% 86%)",
-              }}
-              className="pl-4 pr-4 text-left text-base lg:text-lg"
-            >
+            <legend className="pl-4 pr-4 text-left text-base text-lightGreen lg:text-lg">
               Objective
             </legend>
-            <p
-              style={{
-                color: "hsl(120deg 100% 86%)",
-              }}
-              className="w-auto p-4 pt-0 text-sm lg:w-[725px] lg:text-base"
-            >
+            <p className="w-auto p-4 pt-0 text-sm text-lightGreen lg:w-[725px] lg:text-base">
               The goal of each round is to accrue as many points as possible and
               empty your Squeak deck, which reveals your Squeak button. When
               pressed, it ends the current round and adds ten extra points to
@@ -151,21 +126,11 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
           </fieldset>
 
           <fieldset className="mt-4 rounded-md border-2 border-white p-4">
-            <legend
-              style={{
-                color: "hsl(120deg 100% 86%)",
-              }}
-              className="pl-4 pr-4 text-left text-base lg:text-lg"
-            >
+            <legend className="pl-4 pr-4 text-left text-base text-lightGreen lg:text-lg">
               Rules
             </legend>
 
-            <div
-              style={{
-                color: "hsl(120deg 100% 86%)",
-              }}
-              className="baseVertFlex w-auto !justify-start gap-8 p-4 pt-0 text-sm sm:gap-4 lg:w-[725px] lg:text-base"
-            >
+            <div className="baseVertFlex w-auto !justify-start gap-8 p-4 pt-0 text-sm text-lightGreen sm:gap-4 lg:w-[725px] lg:text-base">
               <div className="baseVertFlex w-full !items-start !justify-start gap-4 sm:!flex-row">
                 <div className="baseFlex size-[30px] rounded-full border-2 border-white sm:h-[35px] sm:w-[37px]">
                   1
@@ -266,20 +231,10 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
           </fieldset>
 
           <fieldset className="mt-4 rounded-md border-2 border-white p-4">
-            <legend
-              style={{
-                color: "hsl(120deg 100% 86%)",
-              }}
-              className="pl-4 pr-4 text-left text-base lg:text-lg"
-            >
+            <legend className="pl-4 pr-4 text-left text-base text-lightGreen lg:text-lg">
               Scoring
             </legend>
-            <ul
-              style={{
-                color: "hsl(120deg 100% 86%)",
-              }}
-              className="baseVertFlex w-auto list-disc !items-start gap-4 p-4 pl-8 pt-0 text-sm lg:w-[725px] lg:text-base"
-            >
+            <ul className="baseVertFlex w-auto list-disc !items-start gap-4 p-4 pl-8 pt-0 text-sm text-lightGreen lg:w-[725px] lg:text-base">
               <li>
                 Points are calculated after the end of each round. Each card a
                 player placed onto a board pile is worth one point.
@@ -297,20 +252,10 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
           </fieldset>
 
           <fieldset className="mt-4 rounded-md border-2 border-white p-4">
-            <legend
-              style={{
-                color: "hsl(120deg 100% 86%)",
-              }}
-              className="pl-4 pr-4 text-left text-base lg:text-lg"
-            >
+            <legend className="pl-4 pr-4 text-left text-base text-lightGreen lg:text-lg">
               Voting
             </legend>
-            <ul
-              style={{
-                color: "hsl(120deg 100% 86%)",
-              }}
-              className="baseVertFlex w-auto list-disc !items-start gap-4 p-4 pl-8 pt-0 text-sm lg:w-[725px] lg:text-base"
-            >
+            <ul className="baseVertFlex w-auto list-disc !items-start gap-4 p-4 pl-8 pt-0 text-sm text-lightGreen lg:w-[725px] lg:text-base">
               <li>
                 If a player feels that no one has a valid move to make, they may
                 start a vote to rotate everyone&apos;s deck by one card. This

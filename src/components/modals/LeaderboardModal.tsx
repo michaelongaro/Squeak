@@ -64,12 +64,7 @@ function LeaderboardModal({ setShowModal }: ILeaderboardModal) {
       >
         {/* combine these classes with above? */}
         <div className="baseVertFlex relative w-full !justify-start gap-8 rounded-md bg-gradient-to-br from-green-800 to-green-850 p-4 tablet:p-8">
-          <div
-            style={{
-              color: "hsl(120deg 100% 86%)",
-            }}
-            className="baseFlex gap-4 pt-4 text-base font-semibold sm:text-xl md:pt-2"
-          >
+          <div className="baseFlex gap-4 pt-4 text-base font-semibold text-lightGreen sm:text-xl md:pt-2">
             <IoStatsChart size={"1.5rem"} />
             Leaderboard
           </div>
@@ -96,21 +91,14 @@ function LeaderboardModal({ setShowModal }: ILeaderboardModal) {
               minHeight={"4rem"}
             />
 
-            <div
-              style={{
-                borderColor: "hsl(120deg 100% 86%)",
-                color: "hsl(120deg 100% 86%)",
-              }}
-              className="baseVertFlex mt-4 h-[63dvh] w-auto !justify-start gap-6 rounded-md border-2 p-4 lg:min-w-[500px]"
-            >
+            <div className="baseVertFlex mt-4 h-[63dvh] w-auto !justify-start gap-6 rounded-md border-2 border-lightGreen p-4 text-lightGreen lg:min-w-[500px]">
               <div
                 style={{
-                  borderColor: "hsl(120deg 100% 86%)",
                   gridTemplateColumns: viewportLabel.includes("mobile")
                     ? "50px auto 50px"
                     : "1fr 1fr 1fr",
                 }}
-                className="grid w-full grid-rows-1 place-items-center border-b-2 font-semibold"
+                className="grid w-full grid-rows-1 place-items-center border-b-2 border-lightGreen font-semibold"
               >
                 <p>#</p>
                 <p>Player</p>
