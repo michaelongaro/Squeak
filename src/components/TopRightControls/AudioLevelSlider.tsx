@@ -6,6 +6,7 @@ import {
   BsFillVolumeUpFill,
   BsFillVolumeDownFill,
 } from "react-icons/bs";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface IAudioLevelSlider {
   forMobile?: boolean;
@@ -43,14 +44,16 @@ function AudioLevelSlider({ forMobile }: IAudioLevelSlider) {
       className={`baseFlex !justify-start rounded-md border-2 bg-darkGreen p-2 text-lightGreen transition-all ${hovered || forMobile ? "size-full gap-2" : "size-[40px] md:h-full md:w-auto"} ${forMobile ? "" : "border-lightGreen"} `}
     >
       {(hovered || forMobile) && (
-        <div className="min-w-6 text-center">{values[0]}</div>
+        <div className={`text-center ${forMobile ? "min-w-6" : "w-6"}`}>
+          {values[0]}
+        </div>
       )}
 
       <div
         style={{
           background: getTrackBackground({
             values: values,
-            colors: ["hsl(120deg 100% 86%)", "#ccc"],
+            colors: ["hsl(120deg 100% 86%)", "#d4d4d8"], // lightGreen, zinc-300
             min: 0,
             max: 100,
           }),
@@ -97,15 +100,41 @@ function AudioLevelSlider({ forMobile }: IAudioLevelSlider) {
         />
       </div>
 
-      {values[0] === 0 && (
-        <BsFillVolumeMuteFill size={"1.5rem"} className="shrink-0" />
-      )}
-      {values[0] && values[0] > 0 && values[0] < 50 ? (
-        <BsFillVolumeDownFill size={"1.5rem"} className="shrink-0" />
-      ) : null}
-      {values[0] && values[0] >= 50 ? (
-        <BsFillVolumeUpFill size={"1.5rem"} className="shrink-0" />
-      ) : null}
+      <AnimatePresence mode="popLayout">
+        {values[0] === 0 && (
+          <motion.div
+            key="muteIcon"
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.5 }}
+            className="baseFlex"
+          >
+            <BsFillVolumeMuteFill size={"1.5rem"} className="shrink-0" />
+          </motion.div>
+        )}
+        {values[0] && values[0] > 0 && values[0] < 50 ? (
+          <motion.div
+            key="lowVolumeIcon"
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.5 }}
+            className="baseFlex"
+          >
+            <BsFillVolumeDownFill size={"1.5rem"} className="shrink-0" />
+          </motion.div>
+        ) : null}
+        {values[0] && values[0] >= 50 ? (
+          <motion.div
+            key="highVolumeIcon"
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.5 }}
+            className="baseFlex"
+          >
+            <BsFillVolumeUpFill size={"1.5rem"} className="shrink-0" />
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
     </div>
   );
 }
