@@ -96,7 +96,7 @@ function AnimatedCard({
       initial={{
         top: "-100%",
         left: "50%",
-        x: "-50%",
+        x: "-43%", // not entirely sure why this magic number was needed, but -50% was too far to the left
         rotateX: 25,
         rotateZ: 50,
       }}
