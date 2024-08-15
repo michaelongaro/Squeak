@@ -470,7 +470,7 @@ function Card({
   }
 
   function dropHandler() {
-    // deck start + board end
+    // hand start + board end
     if (holdingADeckCard && hoveredCell && value && suit) {
       const [row, col] = hoveredCell;
 
@@ -482,7 +482,7 @@ function Card({
             value,
             suit,
           },
-          deckStart: true,
+          handStart: true,
           boardEndLocation: { row, col },
           playerID: userID,
           roomCode: roomConfig.code,
@@ -492,7 +492,7 @@ function Card({
       }
     }
 
-    // deck start + squeak end
+    // hand start + squeak end
     else if (holdingADeckCard && hoveredSqueakStack !== null && value && suit) {
       const idx = hoveredSqueakStack;
 
@@ -505,7 +505,7 @@ function Card({
             value,
             suit,
           },
-          deckStart: true,
+          handStart: true,
           squeakEndLocation: idx,
           playerID: userID,
           roomCode: roomConfig.code,

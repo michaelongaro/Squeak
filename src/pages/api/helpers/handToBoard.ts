@@ -14,7 +14,7 @@ interface IDeckToBoard {
   boardEndLocation: { row: number; col: number };
 }
 
-export function deckToBoard({
+export function handToBoard({
   gameData,
   miscRoomData,
   card,

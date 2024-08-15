@@ -1,6 +1,6 @@
 import { type Server, type Socket } from "socket.io";
-import { deckToBoard } from "../helpers/deckToBoard";
-import { deckToSqueak } from "../helpers/deckToSqueak";
+import { handToBoard } from "../helpers/handToBoard";
+import { handToSqueak } from "../helpers/handToSqueak";
 import { squeakToBoard } from "../helpers/squeakToBoard";
 import { squeakToSqueak } from "../helpers/squeakToSqueak";
 import {
@@ -13,19 +13,19 @@ export function proposedCardDropHandler(
   io: Server,
   socket: Socket,
   gameData: IGameData,
-  miscRoomData: IMiscRoomData
+  miscRoomData: IMiscRoomData,
 ) {
   function proposedCardDrop({
     card,
-    deckStart,
+    handStart,
     squeakStartLocation,
     boardEndLocation,
     squeakEndLocation,
     playerID,
     roomCode,
   }: ICardDropProposal) {
-    if (deckStart && boardEndLocation) {
-      deckToBoard({
+    if (handStart && boardEndLocation) {
+      handToBoard({
         gameData,
         miscRoomData,
         card,
@@ -34,8 +34,8 @@ export function proposedCardDropHandler(
         roomCode,
         io,
       });
-    } else if (deckStart && squeakEndLocation != null) {
-      deckToSqueak({
+    } else if (handStart && squeakEndLocation != null) {
+      handToSqueak({
         gameData,
         card,
         squeakEndLocation,

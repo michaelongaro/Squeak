@@ -121,7 +121,7 @@ export interface IModifyFriendData {
 
 export interface ICardDropProposal {
   card: ICard;
-  deckStart?: boolean;
+  handStart?: boolean;
   squeakStartLocation?: number;
   boardEndLocation?: { row: number; col: number };
   squeakEndLocation?: number;

@@ -4,8 +4,8 @@ import { type IGameData, type IRoomData, type IMiscRoomData } from "../socket";
 import { generateAndEmitScoreboard } from "./roundOverHandler";
 import { squeakToSqueak } from "../helpers/squeakToSqueak";
 import { squeakToBoard } from "../helpers/squeakToBoard";
-import { deckToBoard } from "../helpers/deckToBoard";
-import { deckToSqueak } from "../helpers/deckToSqueak";
+import { handToBoard } from "../helpers/handToBoard";
+import { handToSqueak } from "../helpers/handToSqueak";
 import { drawFromDeck } from "./drawFromDeckHandler";
 import { type ICard } from "../../../utils/generateDeckAndSqueakCards";
 
@@ -272,7 +272,7 @@ export function botMoveHandler(
 
         setTimeout(
           () => {
-            deckToBoard({
+            handToBoard({
               gameData,
               miscRoomData,
               card: topCardInHand as ICard,
@@ -314,7 +314,7 @@ export function botMoveHandler(
           false,
         )
       ) {
-        deckToSqueak({
+        handToSqueak({
           gameData,
           card: topCardInHand,
           playerID,

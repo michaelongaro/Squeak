@@ -11,7 +11,7 @@ interface IDeckToSqueak {
   squeakEndLocation: number;
 }
 
-export function deckToSqueak({
+export function handToSqueak({
   gameData,
   card,
   squeakEndLocation,
