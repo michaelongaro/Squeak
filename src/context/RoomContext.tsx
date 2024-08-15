@@ -53,8 +53,14 @@ export interface IQueuedCard {
 
 interface IRoomContext {
   viewportLabel: "mobile" | "mobileLarge" | "tablet" | "desktop";
+
   audioContext: AudioContext | null;
+  setAudioContext: React.Dispatch<React.SetStateAction<AudioContext | null>>;
   masterVolumeGainNode: GainNode | null;
+  setMasterVolumeGainNode: React.Dispatch<
+    React.SetStateAction<GainNode | null>
+  >;
+
   showSettingsModal: boolean;
   setShowSettingsModal: React.Dispatch<React.SetStateAction<boolean>>;
   roomConfig: IRoomConfig;
@@ -320,18 +326,6 @@ export function RoomProvider(props: { children: React.ReactNode }) {
   }, [audioContext]);
 
   useEffect(() => {
-    if (audioContext && masterVolumeGainNode) return;
-    const newAudioContext = new AudioContext();
-
-    const newMasterVolumeGainNode = newAudioContext.createGain();
-
-    newMasterVolumeGainNode.connect(newAudioContext.destination);
-
-    setAudioContext(newAudioContext);
-    setMasterVolumeGainNode(newMasterVolumeGainNode);
-  }, [audioContext, masterVolumeGainNode]);
-
-  useEffect(() => {
     if (userID && friendData === undefined) {
       socket.emit("initializePlayerInFriendsObj", userID);
     }
@@ -454,7 +448,9 @@ export function RoomProvider(props: { children: React.ReactNode }) {
   const context: IRoomContext = {
     viewportLabel,
     audioContext,
+    setAudioContext,
     masterVolumeGainNode,
+    setMasterVolumeGainNode,
     successfulMoveBuffer,
     notAllowedMoveBuffer,
     otherPlayerCardMoveBuffer,
