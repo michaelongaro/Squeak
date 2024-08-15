@@ -113,7 +113,7 @@ function MainOptions() {
               variant={"secondary"}
               showCardSuitAccents
               onClick={() => push("/join")}
-              className="baseFlex h-16 w-full !justify-start gap-6"
+              className="baseFlex h-16 w-full !justify-start gap-[1.35rem]"
             >
               <TbDoorEnter size={"1.5rem"} />
               Join room
