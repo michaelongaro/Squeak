@@ -1,4 +1,4 @@
-import { Fragment } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { useRoomContext } from "../../context/RoomContext";
 import useTrackHoverOverBoardCells from "../../hooks/useTrackHoverOverBoardCells";
 import BoardCell from "./BoardCell";
@@ -21,6 +21,44 @@ function Board() {
   } = useRoomContext();
 
   useTrackHoverOverBoardCells();
+
+  // FYI: I don't have a real way to explain why this is necessary, however the intent is that
+  // both the plusOneIndicator and the cardDropApprovedBoxShadow should be reset to null shortly
+  // after the card has been played. This was not happening after quick successive card placements
+  // on the same deck cell. Below states and effect are a workaround to manually reset these states
+  // after the card has been played. This is not ideal, but seemingly works okay.
+
+  const [cardDropApprovedBoxShadowID, setCardDropApprovedBoxShadowID] =
+    useState<string | null>(null);
+  const [plusOneIndicatorID, setPlusOneIndicatorID] = useState<string | null>(
+    null,
+  );
+
+  useEffect(() => {
+    if (
+      proposedCardBoxShadow !== null &&
+      proposedCardBoxShadow.boxShadowValue ===
+        "0px 0px 4px 3px hsl(120, 100%, 86%)"
+    ) {
+      setCardDropApprovedBoxShadowID(proposedCardBoxShadow.id);
+
+      setTimeout(() => {
+        setCardDropApprovedBoxShadowID(null);
+      }, 150); // standard duration of box shadow transition
+
+      setPlusOneIndicatorID(proposedCardBoxShadow.id);
+
+      setTimeout(() => {
+        setPlusOneIndicatorID(null);
+      }, 500); // trying to make sure the animation completes before hiding the indicator
+      // this has been a recurring problem despite multiple approaches to fix it
+    }
+
+    return () => {
+      setCardDropApprovedBoxShadowID(null);
+      setPlusOneIndicatorID(null);
+    };
+  }, [proposedCardBoxShadow]);
 
   function getBoxShadowStyles({
     id,
@@ -56,11 +94,14 @@ function Board() {
               key={`board${rowIdx}${colIdx}`}
               id={`parentCell${rowIdx}${colIdx}`}
               style={{
-                boxShadow: getBoxShadowStyles({
-                  id: `cell${rowIdx}${colIdx}`,
-                  rowIdx,
-                  colIdx,
-                }),
+                boxShadow:
+                  cardDropApprovedBoxShadowID === `cell${rowIdx}${colIdx}`
+                    ? "0px 0px 4px 3px hsl(120, 100%, 86%)"
+                    : getBoxShadowStyles({
+                        id: `cell${rowIdx}${colIdx}`,
+                        rowIdx,
+                        colIdx,
+                      }),
                 opacity:
                   hoveredCell?.[0] === rowIdx &&
                   hoveredCell?.[1] === colIdx &&
@@ -71,7 +112,12 @@ function Board() {
               className="baseFlex relative z-0 h-[71px] min-h-fit w-[56px] min-w-fit select-none rounded-lg p-1 transition-all mobileLarge:h-[77px] mobileLarge:w-[61px] tablet:h-[81px] tablet:w-[64px] desktop:h-[95px] desktop:w-[75px]"
             >
               <div id={`cell${rowIdx}${colIdx}`} className="h-full w-full">
-                <BoardCell rowIdx={rowIdx} colIdx={colIdx} card={cell} />
+                <BoardCell
+                  rowIdx={rowIdx}
+                  colIdx={colIdx}
+                  card={cell}
+                  plusOneIndicatorID={plusOneIndicatorID}
+                />
               </div>
             </div>
           ))}
