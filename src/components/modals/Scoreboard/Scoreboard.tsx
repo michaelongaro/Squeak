@@ -882,23 +882,25 @@ function Scoreboard() {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.5 }}
-                        className="baseFlex !items-baseline gap-1"
+                        className="!inline-block max-w-64 !items-baseline gap-1"
                       >
-                        <p>
-                          waiting for{" "}
-                          <span className="font-semibold">
-                            {roomConfig.hostUsername}
-                          </span>{" "}
-                          to
-                          {scoreboardMetadata.gameWinnerID
-                            ? " return to room"
-                            : " start next round"}
+                        <p className="inline-block items-baseline text-center">
+                          <span>
+                            waiting for{" "}
+                            <span className="font-semibold">
+                              {roomConfig.hostUsername}
+                            </span>{" "}
+                            to
+                            {scoreboardMetadata.gameWinnerID
+                              ? " return to room"
+                              : " start the next round"}
+                          </span>
+                          <div className="loadingDots ml-1.5">
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                          </div>
                         </p>
-                        <div className="loadingDots">
-                          <div></div>
-                          <div></div>
-                          <div></div>
-                        </div>
                       </motion.div>
                     ) : (
                       <motion.div
@@ -1319,23 +1321,25 @@ function Scoreboard() {
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
                       transition={{ duration: 0.5 }}
-                      className="baseFlex !items-baseline gap-1"
+                      className="!inline-block !items-baseline gap-1"
                     >
-                      <p>
-                        waiting for{" "}
-                        <span className="font-semibold">
-                          {roomConfig.hostUsername}
-                        </span>{" "}
-                        to
-                        {scoreboardMetadata.gameWinnerID
-                          ? " return to room"
-                          : " start next round"}
+                      <p className="inline-block items-baseline text-center">
+                        <span>
+                          waiting for{" "}
+                          <span className="font-semibold">
+                            {roomConfig.hostUsername}
+                          </span>{" "}
+                          to
+                          {scoreboardMetadata.gameWinnerID
+                            ? " return to room"
+                            : " start the next round"}
+                        </span>
+                        <div className="loadingDots ml-1.5">
+                          <div></div>
+                          <div></div>
+                          <div></div>
+                        </div>
                       </p>
-                      <div className="loadingDots">
-                        <div></div>
-                        <div></div>
-                        <div></div>
-                      </div>
                     </motion.div>
                   ) : (
                     <motion.div

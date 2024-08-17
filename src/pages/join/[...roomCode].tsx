@@ -600,20 +600,22 @@ function JoinRoom() {
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
                       transition={{ duration: 0.5 }}
-                      className="baseFlex !items-baseline gap-1"
+                      className="!inline-block max-w-[325px] !items-baseline gap-1 sm:max-w-none"
                     >
-                      <p>
+                      <p className="inline-block items-baseline text-center">
+                        <span>
                         waiting for{" "}
                         <span className="font-semibold">
                           {roomConfig.hostUsername}
                         </span>{" "}
                         to start the game
-                      </p>
-                      <div className="loadingDots">
+                        </span>
+                        <div className="loadingDots ml-1.5">
                         <div></div>
                         <div></div>
                         <div></div>
                       </div>
+                      </p>
                     </motion.div>
                   ) : (
                     <motion.div
