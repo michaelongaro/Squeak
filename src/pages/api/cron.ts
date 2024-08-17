@@ -6,18 +6,18 @@ import { prisma } from "~/server/db";
 
 export const config = {
   api: {
+    responseLimit: false,
     externalResolver: true,
   },
 };
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
   console.log("cron job starting");
 
-  const socket = io("https://playsqueak.com:8080", {
-    // ^ do we include the :8080?
+  const socket = io({
     path: "/api/socket",
   });
 
