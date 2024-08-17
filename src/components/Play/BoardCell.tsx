@@ -45,7 +45,7 @@ function BoardCell({ card, rowIdx, colIdx, plusOneIndicatorID }: IBoardCell) {
             animate={{ opacity: 1, scale: 1, translateY: 0 }}
             exit={{ opacity: 0, scale: 0.95, translateY: -5 }}
             transition={{ duration: 0.5, ease: "easeInOut" }}
-            className="absolute right-[-1.5rem] top-0 select-none text-lg tracking-wider text-lightGreen tablet:right-[-1.85rem] desktop:text-xl"
+            className="absolute right-[-1.5rem] top-0 z-[200] select-none text-lg tracking-wider text-lightGreen tablet:right-[-1.85rem] desktop:text-xl"
           >
             +1
           </motion.div>
