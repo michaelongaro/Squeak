@@ -316,8 +316,6 @@ function Scoreboard() {
 
       const [_, lightnessStr, chromaStr, hueStr] = matches;
 
-      console.log(lightnessStr, chromaStr, hueStr);
-
       if (!lightnessStr || !chromaStr || !hueStr) return;
 
       const lightness = parseFloat(lightnessStr);
@@ -335,51 +333,6 @@ function Scoreboard() {
 
     setPlayerColorVariants(newPlayerColorVariants);
   }, [playerMetadata, playerColorVariants]);
-
-  function test() {
-    if (Object.keys(playerColorVariants).length !== 0) return;
-
-    const newPlayerColorVariants: IPlayerColorVariants = {};
-
-    for (const userID in playerMetadata) {
-      const oklchColor = playerMetadata[userID]?.color;
-
-      console.log(oklchColor);
-
-      if (!oklchColor) return;
-
-      // Extract the lightness, chroma, and hue components from the OKLCH color string
-      const matches = oklchColor.match(
-        /oklch\((\d+\.?\d*)%\s+(\d+\.?\d*)\s+(\d+\.?\d*)\)/,
-      );
-
-      if (!matches) return;
-
-      const [_, lightnessStr, chromaStr, hueStr] = matches;
-
-      console.log(lightnessStr, chromaStr, hueStr);
-
-      if (!lightnessStr || !chromaStr || !hueStr) return;
-
-      const lightness = parseFloat(lightnessStr);
-      const chroma = parseFloat(chromaStr);
-      const hue = parseFloat(hueStr);
-
-      // Generate the variants based on the lightness adjustments
-      newPlayerColorVariants[userID] = {
-        baseColor: oklchColor,
-        pointsBackgroundColor: `oklch(${(lightness * 0.75).toFixed(2)}% ${chroma.toFixed(3)} ${hue.toFixed(2)})`,
-        textColor: `oklch(${Math.min(lightness * 1.5, 100).toFixed(2)}% ${chroma.toFixed(3)} ${hue.toFixed(2)})`, // Ensure lightness doesn't exceed 100%
-        animatedCardsBackgroundColor: `oklch(90% ${chroma.toFixed(3)} ${hue.toFixed(2)})`,
-      };
-    }
-  }
-
-  test();
-
-  console.log(playerMetadata);
-
-  console.log(scoreboardMetadata);
 
   const currentPlayerStats = useMemo(() => {
     if (!scoreboardMetadata?.playerRoundDetails) return;
