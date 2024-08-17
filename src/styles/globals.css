@@ -55,6 +55,7 @@
   width: 1rem;
   height: 1rem;
   flex-shrink: 0;
+  animation: timer 30s linear;
 }
 
 @keyframes timer {
