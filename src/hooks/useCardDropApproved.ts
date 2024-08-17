@@ -74,7 +74,6 @@ function useCardDropApproved({
         startingCardMetadata,
         endID,
         squeakEndCoords,
-        boardEndLocation,
         gameData,
         playerID,
       } = dataFromBackend;
