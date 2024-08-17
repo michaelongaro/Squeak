@@ -1,6 +1,41 @@
 import { useState, useEffect } from "react";
 import { socket } from "~/pages/_app";
 import { useRoomContext } from "../context/RoomContext";
+import toast from "react-hot-toast";
+
+function resetAnimation(element: Element | null, className: string) {
+  if (element) {
+    // Remove the animation class to stop the current animation
+    element.classList.remove(className);
+
+    // Force a reflow to restart the animation
+    // @ts-expect-error asdf
+    void element.offsetWidth;
+
+    // Re-add the class to start the animation from the beginning
+    element.classList.add(className);
+  }
+}
+
+function resetCooldownPercentages() {
+  const elements = [
+    { selector: ".countdownTimerToast", className: "countdownTimerToast" },
+    { selector: ".cooldownVoteTimer", className: "cooldownVoteTimer" },
+    {
+      selector: ".drawerCooldownVoteTimer",
+      className: "drawerCooldownVoteTimer",
+    },
+    {
+      selector: ".countdownTimerMiniMobileModal",
+      className: "countdownTimerMiniMobileModal",
+    },
+  ];
+
+  elements.forEach(({ selector, className }) => {
+    const element = document.querySelector(selector);
+    resetAnimation(element, className);
+  });
+}
 
 interface IVoteHasBeenCast {
   voteType: "rotateDecks" | "finishRound";
@@ -10,6 +45,7 @@ interface IVoteHasBeenCast {
 
 function useVoteHasBeenCast() {
   const {
+    viewportLabel,
     currentVotes,
     setCurrentVotes,
     setVoteType,
@@ -45,10 +81,19 @@ function useVoteHasBeenCast() {
           setTimeout(() => {
             setCurrentVotes([]);
             setVoteType(null);
+            toast.dismiss();
+
+            setTimeout(
+              () => {
+                resetCooldownPercentages();
+              },
+              viewportLabel.includes("mobile") ? 500 : 0,
+            );
+            // waiting for <MiniMobileVotingModal /> to animate out first.
+            // Not an issue with regular voting modal on tablet+
 
             setVotingIsLockedOut(true);
             setVotingLockoutStartTimestamp(Date.now());
-            // TODO: reset css timer variable % here to 0 if need be
 
             setTimeout(() => {
               setVotingIsLockedOut(false);
@@ -62,15 +107,23 @@ function useVoteHasBeenCast() {
 
       if (dataFromBackend.voteIsFinished) {
         clearTimeout(passiveVoteResolutionTimerId);
+        setVotingIsLockedOut(true);
 
         setTimeout(() => {
           setCurrentVotes([]);
           setVoteType(null);
+          toast.dismiss();
 
-          setVotingIsLockedOut(true);
+          setTimeout(
+            () => {
+              resetCooldownPercentages();
+            },
+            viewportLabel.includes("mobile") ? 500 : 0,
+          );
+          // waiting for <MiniMobileVotingModal /> to animate out first.
+          // Not an issue with regular voting modal on tablet+
+
           setVotingLockoutStartTimestamp(Date.now());
-
-          // TODO: reset css timer variable % here to 0 if need be
 
           setTimeout(() => {
             setVotingIsLockedOut(false);
@@ -87,6 +140,7 @@ function useVoteHasBeenCast() {
     passiveVoteResolutionTimerId,
     setPassiveVoteResolutionTimerId,
     setVotingLockoutStartTimestamp,
+    viewportLabel,
   ]);
 }
 
