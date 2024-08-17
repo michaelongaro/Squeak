@@ -562,10 +562,10 @@ function CreateRoom() {
                       size={"3rem"}
                       playerIsHost={playerID === roomConfig.hostUserID}
                       showAddFriendButton={
+                        isSignedIn &&
                         userID !== playerID &&
-                        // FYI: unsure of how flaky this is
-                        (friendData === undefined ||
-                          friendData.friendIDs.indexOf(playerID) === -1) &&
+                        friendData !== undefined &&
+                        friendData.friendIDs.indexOf(playerID) === -1 &&
                         authenticatedUsers
                           ? authenticatedUsers.findIndex(
                               (player) => player.userId === playerID,

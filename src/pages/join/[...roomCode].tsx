@@ -529,10 +529,10 @@ function JoinRoom() {
                           playerID={playerID}
                           playerIsHost={playerID === roomConfig.hostUserID}
                           showAddFriendButton={
+                            isSignedIn &&
                             userID !== playerID &&
-                            // FYI: unsure of how flaky this is
-                            (friendData === undefined ||
-                              friendData.friendIDs.indexOf(playerID) === -1) &&
+                            friendData !== undefined &&
+                            friendData.friendIDs.indexOf(playerID) === -1 &&
                             authenticatedUsers
                               ? authenticatedUsers.findIndex(
                                   (player) => player.userId === playerID,
@@ -604,17 +604,17 @@ function JoinRoom() {
                     >
                       <p className="inline-block items-baseline text-center">
                         <span>
-                        waiting for{" "}
-                        <span className="font-semibold">
-                          {roomConfig.hostUsername}
-                        </span>{" "}
-                        to start the game
+                          waiting for{" "}
+                          <span className="font-semibold">
+                            {roomConfig.hostUsername}
+                          </span>{" "}
+                          to start the game
                         </span>
                         <div className="loadingDots ml-1.5">
-                        <div></div>
-                        <div></div>
-                        <div></div>
-                      </div>
+                          <div></div>
+                          <div></div>
+                          <div></div>
+                        </div>
                       </p>
                     </motion.div>
                   ) : (
