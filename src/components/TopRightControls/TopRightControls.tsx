@@ -879,9 +879,9 @@ function MainDrawer({ status, setShowDrawer }: IMainDrawer) {
           >
             <div className="absolute left-0 top-0 z-10 h-8 w-full bg-zinc-200">
               <Button
-                variant={"ghost"}
+                variant={"text"}
                 onClick={() => setRenderedView("Settings")}
-                className="baseFlex absolute left-2 top-0 gap-2 !p-0"
+                className="baseFlex !absolute left-2 top-0 gap-2 !p-0 text-darkGreen"
               >
                 <IoIosArrowForward size={"1rem"} className="rotate-180" />
                 Back
@@ -1080,9 +1080,9 @@ function DrawerSettings({
     <>
       <div className="absolute left-0 top-0 z-10 h-8 w-full bg-zinc-200">
         <Button
-          variant={"ghost"}
+          variant={"text"}
           onClick={() => setRenderedView(undefined)}
-          className="baseFlex absolute left-2 top-0 gap-2 !p-0"
+          className="baseFlex !absolute left-2 top-0 gap-2 !p-0 text-darkGreen"
         >
           <IoIosArrowForward size={"1rem"} className="rotate-180" />
           Back
@@ -1345,9 +1345,9 @@ function DrawerStatistics({ setRenderedView }: IDrawerStatistics) {
     <>
       <div className="absolute left-0 top-0 z-10 h-8 w-full bg-zinc-200">
         <Button
-          variant={"ghost"}
+          variant={"text"}
           onClick={() => setRenderedView(undefined)}
-          className="baseFlex absolute left-2 top-0 gap-2 !p-0"
+          className="baseFlex !absolute left-2 top-0 gap-2 !p-0 text-darkGreen"
         >
           <IoIosArrowForward size={"1rem"} className="rotate-180" />
           Back
@@ -1462,9 +1462,9 @@ function DrawerFriendsList({
     <>
       <div className="absolute left-0 top-0 z-10 h-8 w-full bg-zinc-200">
         <Button
-          variant={"ghost"}
+          variant={"text"}
           onClick={() => setRenderedView(undefined)}
-          className="baseFlex absolute left-2 top-0 gap-2 !p-0"
+          className="baseFlex !absolute left-2 top-0 gap-2 !p-0 text-darkGreen"
         >
           <IoIosArrowForward size={"1rem"} className="rotate-180" />
           Back
@@ -1746,9 +1746,9 @@ function FriendActions({
     <>
       <div className="absolute left-0 top-0 z-10 h-8 w-full bg-zinc-200">
         <Button
-          variant={"ghost"}
+          variant={"text"}
           onClick={() => setRenderedView("Friends list")}
-          className="baseFlex absolute left-2 top-0 gap-2 !p-0"
+          className="baseFlex !absolute left-2 top-0 gap-2 !p-0 text-darkGreen"
         >
           <IoIosArrowForward size={"1rem"} className="rotate-180" />
           Back

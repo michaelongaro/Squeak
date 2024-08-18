@@ -120,9 +120,9 @@ function PlayerCustomizationDrawer() {
                   }
                 >
                   <Button
-                    variant={"ghost"}
+                    variant={"text"}
                     onClick={() => setRenderedView(undefined)}
-                    className="baseFlex absolute left-2 top-0 gap-2 !p-0"
+                    className="baseFlex !absolute left-2 top-0 gap-2 !p-0 text-darkGreen"
                   >
                     <IoIosArrowForward size={"1rem"} className="rotate-180" />
                     Back
