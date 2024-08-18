@@ -42,6 +42,7 @@ function Play() {
     setShowVotingModal,
     connectedToRoom,
     viewportLabel,
+    setShowScoreboard,
   } = useRoomContext();
 
   const { data: roomResult } = api.rooms.findRoomByCode.useQuery(
@@ -160,6 +161,12 @@ function Play() {
     userID,
     playerMetadata,
   ]);
+
+  useEffect(() => {
+    return () => {
+      setShowScoreboard(false); // makes sure to reset this state when leaving the page
+    };
+  }, [setShowScoreboard]);
 
   if (
     showRoomNotFoundModal ||
