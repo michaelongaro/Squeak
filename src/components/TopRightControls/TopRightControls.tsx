@@ -735,9 +735,9 @@ function MainDrawer({ status, setShowDrawer }: IMainDrawer) {
       case "Friend actions":
         return "280px";
       case "avatar":
-        return "350px";
+        return "365px";
       case "front":
-        return "225px";
+        return "240px";
       case "back":
         return "430px";
       default:
