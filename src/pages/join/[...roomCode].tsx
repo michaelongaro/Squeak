@@ -429,7 +429,7 @@ function JoinRoom() {
                     <IoSettingsSharp size={"1.25rem"} />
                     Room settings
                   </legend>
-                  <div className="grid grid-cols-2 grid-rows-4 items-center gap-x-24 gap-y-2 p-2">
+                  <div className="xs:gap-x-24 grid grid-cols-2 grid-rows-4 items-center gap-x-12 gap-y-2 text-nowrap p-2">
                     <div>Points to win:</div>
                     {roomConfig?.pointsToWin}
 
@@ -600,7 +600,7 @@ function JoinRoom() {
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
                       transition={{ duration: 0.5 }}
-                      className="!inline-block max-w-[325px] !items-baseline gap-1 sm:max-w-none"
+                      className="xs:max-w-none !inline-block max-w-[300px] !items-baseline gap-1"
                     >
                       <p className="inline-block items-baseline text-center">
                         <span>

@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import defaultTheme from "tailwindcss/defaultTheme";
 
 const config = {
   darkMode: ["class"],
@@ -14,8 +15,13 @@ const config = {
       center: true,
       padding: "2rem",
       screens: {
-        "2xl": "1400px",
+        xs: "450px",
+        ...defaultTheme.screens,
       },
+    },
+    screens: {
+      xs: "450px",
+      ...defaultTheme.screens,
     },
     extend: {
       screens: {

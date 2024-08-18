@@ -473,7 +473,7 @@ function CreateRoom() {
             />
 
             <Label>Room code:</Label>
-            <div className="baseFlex gap-4">
+            <div className="baseFlex gap-2 sm:gap-4">
               <div className="text-lightGreen">{roomConfig.code}</div>
 
               <Button
