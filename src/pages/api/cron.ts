@@ -42,7 +42,7 @@ export default async function handler(
       setTimeout(() => {
         const code = oldRooms[i]?.code;
         if (code) {
-          socket.emit("oldRoomCleanupCron", { code });
+          socket.volatile.emit("oldRoomCleanupCron", { code });
         }
 
         // Close the socket after the last room is processed

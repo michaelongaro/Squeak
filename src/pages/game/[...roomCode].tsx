@@ -92,7 +92,7 @@ function Play() {
   const dynamicallyHandleInitializationFlow = useCallback(() => {
     // player was a part of the room already, rejoining.
     if (room && room.playerIDsInRoom.includes(userID) && !connectedToRoom) {
-      socket.emit("rejoinRoom", {
+      socket.volatile.emit("rejoinRoom", {
         userID,
         code: room.code,
       });
@@ -148,7 +148,7 @@ function Play() {
       setShowShufflingCountdown(true);
     }
 
-    socket.emit("modifyFriendData", {
+    socket.volatile.emit("modifyFriendData", {
       action: "startGame",
       initiatorID: userID,
     });
@@ -245,9 +245,7 @@ function Play() {
         {showShufflingCountdown && <ShufflingCountdownModal />}
       </AnimatePresence>
 
-      <AnimatePresence mode={"wait"}>
-        {showScoreboard && <Scoreboard />}
-      </AnimatePresence>
+      <AnimatePresence mode={"wait"}>{true && <Scoreboard />}</AnimatePresence>
     </motion.div>
   );
 }

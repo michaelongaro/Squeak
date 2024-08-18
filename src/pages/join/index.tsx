@@ -74,7 +74,7 @@ function JoinRoom() {
   );
 
   const joinRoom = useCallback(() => {
-    socket.emit(
+    socket.volatile.emit(
       "joinRoom",
       {
         userID,
@@ -93,7 +93,7 @@ function JoinRoom() {
 
     if (!queriedRoom || typeof queriedRoom === "string" || !isSignedIn) return;
 
-    socket.emit("modifyFriendData", {
+    socket.volatile.emit("modifyFriendData", {
       action: "joinRoom",
       initiatorID: userID,
       roomCode: roomCode,
@@ -104,7 +104,7 @@ function JoinRoom() {
     if (roomInviteIDs) {
       for (const friend of roomInviteIDs) {
         if (friend.roomCode === roomCode) {
-          socket.emit("modifyFriendData", {
+          socket.volatile.emit("modifyFriendData", {
             action: "acceptRoomInvite",
             initiatorID: userID,
             targetID: friend.id,

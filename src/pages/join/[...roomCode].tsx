@@ -170,7 +170,7 @@ function JoinRoom() {
   const dynamicallyHandleInitializationFlow = useCallback(() => {
     // player was a part of the room already, rejoining.
     if (room && room.playerIDsInRoom.includes(userID) && !connectedToRoom) {
-      socket.emit(
+      socket.volatile.emit(
         "rejoinRoom",
         {
           userID,
@@ -196,7 +196,7 @@ function JoinRoom() {
       room.playerIDsInRoom.length < room.maxPlayers
     ) {
       if (isSignedIn && playerMetadata[userID]) {
-        socket.emit("joinRoom", {
+        socket.volatile.emit("joinRoom", {
           userID,
           code: room.code,
           playerMetadata: playerMetadata[userID],
@@ -295,7 +295,7 @@ function JoinRoom() {
                     onBlur={() => setFocusedInInput(false)}
                     onKeyDown={(e) => {
                       if (e.key === "Enter") {
-                        socket.emit(
+                        socket.volatile.emit(
                           "joinRoom",
                           {
                             userID,
@@ -358,7 +358,7 @@ function JoinRoom() {
               disabled={usernameIsProfane || username.length === 0}
               className="my-2 gap-4 px-6 font-medium"
               onClick={() =>
-                socket.emit(
+                socket.volatile.emit(
                   "joinRoom",
                   {
                     userID,

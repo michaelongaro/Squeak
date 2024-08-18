@@ -25,7 +25,7 @@ function useLeaveRoom({ routeToNavigateTo }: IUseLeaveRoom) {
       // If the player was kicked, the server will automatically emit
       // a "playerHasLeftRoom" event.
       if (!playerWasKicked) {
-        socket.emit("leaveRoom", {
+        socket.volatile.emit("leaveRoom", {
           playerID: userID,
           roomCode: roomConfig.code,
           playerWasKicked: false,
@@ -33,7 +33,7 @@ function useLeaveRoom({ routeToNavigateTo }: IUseLeaveRoom) {
       }
 
       if (isSignedIn) {
-        socket.emit("modifyFriendData", {
+        socket.volatile.emit("modifyFriendData", {
           action: "leaveRoom",
           initiatorID: userID,
         });

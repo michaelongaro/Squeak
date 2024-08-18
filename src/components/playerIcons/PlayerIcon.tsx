@@ -133,7 +133,7 @@ function PlayerIcon({
                             disabled={friendInviteSent}
                             className="gap-2 !px-8"
                             onClick={() => {
-                              socket.emit("modifyFriendData", {
+                              socket.volatile.emit("modifyFriendData", {
                                 action: "sendFriendInvite",
                                 initiatorID: userID,
                                 targetID: playerID,
@@ -164,7 +164,7 @@ function PlayerIcon({
                             includeMouseEvents
                             className="absolute left-[-1rem] top-[-0.75rem] h-[30px] w-[30px] rounded-[50%] p-0"
                             onClick={() => {
-                              socket.emit("modifyFriendData", {
+                              socket.volatile.emit("modifyFriendData", {
                                 action: "sendFriendInvite",
                                 initiatorID: userID,
                                 targetID: playerID,
@@ -230,7 +230,7 @@ function PlayerIcon({
 
                               setTimeout(() => {
                                 if (!playerID) return;
-                                socket.emit("leaveRoom", {
+                                socket.volatile.emit("leaveRoom", {
                                   playerID,
                                   roomCode: roomConfig.code,
                                   playerWasKicked: true,
@@ -291,7 +291,7 @@ function PlayerIcon({
 
                               setTimeout(() => {
                                 if (!playerID) return;
-                                socket.emit("leaveRoom", {
+                                socket.volatile.emit("leaveRoom", {
                                   playerID,
                                   roomCode: roomConfig.code,
                                   playerWasKicked: true,
@@ -361,7 +361,7 @@ function PlayerIcon({
                   variant={"secondary"}
                   onClick={() => {
                     if (!playerID) return;
-                    socket.emit("updatePlayerMetadata", {
+                    socket.volatile.emit("updatePlayerMetadata", {
                       playerID,
                       roomCode: roomConfig.code,
                       newPlayerMetadata: {

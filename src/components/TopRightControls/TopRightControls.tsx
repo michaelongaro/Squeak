@@ -560,7 +560,7 @@ function VotingModal({
                         toast.dismiss();
                         setShowDrawer?.(false);
 
-                        socket.emit("castVote", {
+                        socket.volatile.emit("castVote", {
                           roomCode: roomConfig.code,
                           voteType: "rotateDecks",
                           voteDirection: "for",
@@ -593,7 +593,7 @@ function VotingModal({
                         toast.dismiss();
                         setShowDrawer?.(false);
 
-                        socket.emit("castVote", {
+                        socket.volatile.emit("castVote", {
                           roomCode: roomConfig.code,
                           voteType: "finishRound",
                           voteDirection: "for",
@@ -627,7 +627,7 @@ function VotingModal({
                       toast.dismiss();
                       setShowDrawer?.(false);
 
-                      socket.emit("castVote", {
+                      socket.volatile.emit("castVote", {
                         roomCode: roomConfig.code,
                         voteType,
                         voteDirection: "for",
@@ -647,7 +647,7 @@ function VotingModal({
                       toast.dismiss();
                       setShowDrawer?.(false);
 
-                      socket.emit("castVote", {
+                      socket.volatile.emit("castVote", {
                         roomCode: roomConfig.code,
                         voteType,
                         voteDirection: "against",
@@ -1519,7 +1519,7 @@ function DrawerFriendsList({
                     <Button
                       variant={"secondary"}
                       onClick={() =>
-                        socket.emit("modifyFriendData", {
+                        socket.volatile.emit("modifyFriendData", {
                           action: "acceptFriendInvite",
                           initiatorID: userID,
                           targetID: friend.id,
@@ -1533,7 +1533,7 @@ function DrawerFriendsList({
                     <Button
                       variant={"destructive"}
                       onClick={() =>
-                        socket.emit("modifyFriendData", {
+                        socket.volatile.emit("modifyFriendData", {
                           action: "declineFriendInvite",
                           initiatorID: userID,
                           targetID: friend.id,
@@ -1589,7 +1589,7 @@ function DrawerFriendsList({
                       // if player has invite(s) to this room, remove them
                       for (const friend of roomInviteIDs) {
                         if (friend.roomCode === roomCodeOfRoomBeingJoined) {
-                          socket.emit("modifyFriendData", {
+                          socket.volatile.emit("modifyFriendData", {
                             action: "acceptRoomInvite",
                             initiatorID: userID,
                             targetID: friend.id,
@@ -1600,7 +1600,7 @@ function DrawerFriendsList({
                       }
 
                       if (connectedToRoom) {
-                        socket.emit("leaveRoom", {
+                        socket.volatile.emit("leaveRoom", {
                           roomCode: roomConfig.code,
                           userID,
                           playerWasKicked: false,
@@ -1609,14 +1609,14 @@ function DrawerFriendsList({
 
                       push(`/join/${roomCodeOfRoomBeingJoined}`);
 
-                      socket.emit("modifyFriendData", {
+                      socket.volatile.emit("modifyFriendData", {
                         action: "joinRoom",
                         initiatorID: userID,
                         roomCode: friend.roomCode,
                         currentRoomIsPublic: friend.currentRoomIsPublic,
                       });
 
-                      socket.emit("joinRoom", {
+                      socket.volatile.emit("joinRoom", {
                         userID,
                         code: friend.roomCode,
                         playerMetadata: playerMetadata[userID],
@@ -1634,7 +1634,7 @@ function DrawerFriendsList({
                   <Button
                     variant={"destructive"}
                     onClick={() =>
-                      socket.emit("modifyFriendData", {
+                      socket.volatile.emit("modifyFriendData", {
                         action: "declineRoomInvite",
                         initiatorID: userID,
                         targetID: friend.id,
@@ -1784,7 +1784,7 @@ function FriendActions({
           showCheckmark={sendInviteInnerText === "Invite sent!"}
           className="h-16 border-t-[1px]"
           onClick={() => {
-            socket.emit("modifyFriendData", {
+            socket.volatile.emit("modifyFriendData", {
               action: "sendRoomInvite",
               initiatorID: userID,
               targetID: friend.id,
@@ -1815,7 +1815,7 @@ function FriendActions({
           className="h-16 border-t-[1px]"
           onClick={() => {
             if (connectedToRoom) {
-              socket.emit("leaveRoom", {
+              socket.volatile.emit("leaveRoom", {
                 roomCode: roomConfig.code,
                 userID,
                 playerWasKicked: false,
@@ -1824,14 +1824,14 @@ function FriendActions({
 
             push(`/join/${friend.roomCode}`);
 
-            socket.emit("modifyFriendData", {
+            socket.volatile.emit("modifyFriendData", {
               action: "joinRoom",
               initiatorID: userID,
               roomCode: friend.roomCode,
               currentRoomIsPublic: friend.currentRoomIsPublic,
             });
 
-            socket.emit("joinRoom", {
+            socket.volatile.emit("joinRoom", {
               userID,
               code: friend.roomCode,
               playerMetadata: playerMetadata[userID],
@@ -1892,7 +1892,7 @@ function FriendActions({
                   variant={"destructive"}
                   className="w-24"
                   onClick={() => {
-                    socket.emit("modifyFriendData", {
+                    socket.volatile.emit("modifyFriendData", {
                       action: "removeFriend",
                       initiatorID: userID,
                       targetID: friend.id,

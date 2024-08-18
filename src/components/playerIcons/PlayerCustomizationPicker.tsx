@@ -178,7 +178,7 @@ function PlayerCustomizationPicker({
         onClick={() => {
           // if user is connected to room
           if (connectedToRoom) {
-            socket.emit("updatePlayerMetadata", {
+            socket.volatile.emit("updatePlayerMetadata", {
               newPlayerMetadata: {
                 ...playerMetadata[userID],
                 avatarPath,
@@ -336,7 +336,7 @@ function PlayerCustomizationPicker({
         onClick={() => {
           // if user is connected to room
           if (connectedToRoom) {
-            socket.emit("updatePlayerMetadata", {
+            socket.volatile.emit("updatePlayerMetadata", {
               newPlayerMetadata: {
                 ...playerMetadata[userID],
                 deckHueRotation:

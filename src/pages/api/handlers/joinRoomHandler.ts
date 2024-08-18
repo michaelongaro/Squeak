@@ -63,7 +63,7 @@ export function joinRoomHandler(
 
       io.in(code).emit("roomConfigUpdated", room.roomConfig);
 
-      // TODO: this prob errors out if not defined in inital socket.emit("joinRoom") right?
+      // TODO: this prob errors out if not defined in inital socket.volatile.emit("joinRoom") right?
       callback?.(undefined);
 
       await prisma.room.update({

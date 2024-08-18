@@ -82,7 +82,7 @@ function useScoreboardData() {
 
       //   if (userID !== playerIDToStartNextRound) return;
 
-      //   socket.emit("resetGame", {
+      //   socket.volatile.emit("resetGame", {
       //     roomCode: roomConfig.code,
       //     gameIsFinished: gameWinnerID !== null,
       //   });

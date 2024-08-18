@@ -477,7 +477,7 @@ function Card({
       const boardCell = gameData?.board?.[row]?.[col] || null;
 
       if (cardPlacementIsValid(boardCell, value, suit, true)) {
-        socket.emit("proposedCardDrop", {
+        socket.volatile.emit("proposedCardDrop", {
           card: {
             value,
             suit,
@@ -500,7 +500,7 @@ function Card({
         gameData.players?.[userID]?.squeakHand?.[idx]?.slice(-1)[0] || null;
 
       if (cardPlacementIsValid(bottomSqueakStackCard, value, suit, false)) {
-        socket.emit("proposedCardDrop", {
+        socket.volatile.emit("proposedCardDrop", {
           card: {
             value,
             suit,
@@ -536,7 +536,7 @@ function Card({
             1 &&
         cardPlacementIsValid(boardCell, value, suit, true)
       ) {
-        socket.emit("proposedCardDrop", {
+        socket.volatile.emit("proposedCardDrop", {
           card: {
             value,
             suit,
@@ -565,7 +565,7 @@ function Card({
         gameData?.players?.[userID!]?.squeakHand?.[idx]?.slice(-1)[0] || null;
 
       if (cardPlacementIsValid(parentSqueakStackCard, value, suit, false)) {
-        socket.emit("proposedCardDrop", {
+        socket.volatile.emit("proposedCardDrop", {
           card: {
             value,
             suit,

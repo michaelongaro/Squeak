@@ -13,7 +13,7 @@ function useAttachUnloadEventListener() {
   useEffect(() => {
     function leaveRoomOnPageClose() {
       if (connectedToRoom) {
-        socket.emit("leaveRoom", {
+        socket.volatile.emit("leaveRoom", {
           playerID: userID,
           roomCode: roomConfig.code,
           playerWasKicked: false,
@@ -21,7 +21,7 @@ function useAttachUnloadEventListener() {
       }
 
       if (isSignedIn) {
-        socket.emit("modifyFriendData", {
+        socket.volatile.emit("modifyFriendData", {
           action: "goOffline",
           initiatorID: userID,
         });

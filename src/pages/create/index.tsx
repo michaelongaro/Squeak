@@ -140,7 +140,7 @@ function CreateRoom() {
       setPlayerMetadata(playerMetadata);
 
       if (isSignedIn) {
-        socket.emit("modifyFriendData", {
+        socket.volatile.emit("modifyFriendData", {
           action: "createRoom",
           initiatorID: userID,
           roomCode: roomConfig.code,
@@ -182,7 +182,7 @@ function CreateRoom() {
             setStartRoundCountdownValue(1);
 
             setTimeout(() => {
-              socket.emit("startGame", {
+              socket.volatile.emit("startGame", {
                 roomCode: roomConfig.code,
                 firstRound: true,
               });
@@ -219,7 +219,7 @@ function CreateRoom() {
   function createRoom() {
     if (roomConfig && userID) {
       setTimeout(() => {
-        socket.emit("createRoom", roomConfig, playerMetadata[userID]);
+        socket.volatile.emit("createRoom", roomConfig, playerMetadata[userID]);
       }, 1000);
     }
   }
@@ -227,7 +227,7 @@ function CreateRoom() {
   function updateRoomConfig(key: string, value: any) {
     setRoomConfig({ ...roomConfig, [key]: value });
     if (connectedToRoom) {
-      socket.emit("updateRoomConfig", {
+      socket.volatile.emit("updateRoomConfig", {
         ...roomConfig,
         [key]: value,
       });
@@ -594,7 +594,7 @@ function CreateRoom() {
                         onClick={() => {
                           const botID = cryptoRandomString({ length: 16 });
 
-                          socket.emit("joinRoom", {
+                          socket.volatile.emit("joinRoom", {
                             code: roomConfig.code,
                             userID: botID,
                             playerMetadata: getNewBotMetadata(),
@@ -668,7 +668,7 @@ function CreateRoom() {
                     disabled={roomConfig.playersInRoom < 2}
                     onClick={() => {
                       setStartGameButtonText("Loading");
-                      socket.emit("broadcastRoomActionCountdown", {
+                      socket.volatile.emit("broadcastRoomActionCountdown", {
                         code: roomConfig.code,
                         hostUserID: userID,
                         type: "startRound",

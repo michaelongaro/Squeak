@@ -37,7 +37,7 @@ function useReceiveFriendData() {
       if (playerID === userID) {
         // send "go online" emit if friendData hasn't been initialized yet
         if (isSignedIn && friendData === undefined) {
-          socket.emit("modifyFriendData", {
+          socket.volatile.emit("modifyFriendData", {
             action: "goOnline",
             initiatorID: userID,
           });
