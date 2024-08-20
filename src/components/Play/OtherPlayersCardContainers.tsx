@@ -7,9 +7,8 @@ import { FaRedoAlt } from "react-icons/fa";
 import classes from "./OtherPlayersCardContainers.module.css";
 import useRotatePlayerDecks from "../../hooks/useRotatePlayerDecks";
 import Buzzer from "./Buzzer";
-import Image from "next/image";
-import disconnectIcon from "../../../public/disconnect/disconnect.svg";
 import { AnimatePresence } from "framer-motion";
+import DisconnectIcon from "~/components/ui/DisconnectIcon";
 
 interface IOtherPlayersCardContainers {
   orderedClassNames: (string | undefined)[];
@@ -571,16 +570,7 @@ function OtherPlayersCardContainers({
           </div>
 
           {gameData.playerIDsThatLeftMidgame.includes(playerID) && (
-            <Image
-              style={{
-                top: "50%",
-                left: "50%",
-                transform: "translate(-50%, -50%)",
-              }}
-              src={disconnectIcon}
-              alt={"player has disconnected icon"}
-              className="absolute z-[150] h-14 w-14"
-            />
+            <DisconnectIcon className="absolute left-1/2 top-1/2 size-14 -translate-x-1/2 -translate-y-1/2" />
           )}
         </div>
       ))}

@@ -36,6 +36,7 @@ interface IPlayerIcon {
   playerIsHost?: boolean;
   style?: CSSProperties;
   transparentBackground?: boolean;
+  forWhilePlayingDrawer?: boolean;
 }
 
 function PlayerIcon({
@@ -52,6 +53,7 @@ function PlayerIcon({
   playerIsHost,
   style,
   transparentBackground,
+  forWhilePlayingDrawer,
 }: IPlayerIcon) {
   const userID = useUserIDContext();
 
@@ -70,14 +72,28 @@ function PlayerIcon({
           key={`playerIcon${playerID}`}
           // layout={"position"} TODO: would like to add this, however when bringing up <Drawer> to
           // add/kick player it causes the player icon to shift around
-          initial={{ opacity: 0, scale: 0.75, width: 0 }}
-          animate={{ opacity: 1, scale: 1, width: "auto" }}
-          exit={{ opacity: 0, scale: 0, width: 0 }}
-          transition={{ duration: 0.15 }}
+          initial={{
+            opacity: 0,
+            scale: 0.75,
+            width: 0,
+          }}
+          animate={{
+            opacity: 1,
+            scale: 1,
+            width: "auto",
+          }}
+          exit={{
+            opacity: 0,
+            scale: 0,
+            width: 0,
+          }}
+          transition={{
+            duration: 0.15,
+          }}
           style={{
             ...style,
           }}
-          className="baseVertFlex shrink-0 text-lightGreen"
+          className={`baseVertFlex shrink-0 ${forWhilePlayingDrawer ? "text-darkGreen" : "text-lightGreen"}`}
         >
           <div
             style={{
@@ -341,20 +357,22 @@ function PlayerIcon({
             <div className="baseVertFlex relative mt-2 w-16 gap-1">
               {/* <p className="text-sm italic underline">Difficulty</p> */}
               <div className="baseFlex w-full gap-2">
-                <div className="h-2 w-full rounded-md bg-lightGreen transition-all"></div>
+                <div
+                  className={`h-2 w-full rounded-md transition-all ${forWhilePlayingDrawer ? "bg-darkGreen" : "bg-lightGreen"}`}
+                ></div>
                 <div
                   className={`${
                     playerMetadata.botDifficulty === "Medium" ||
                     playerMetadata.botDifficulty === "Hard"
-                      ? "bg-lightGreen"
-                      : "bg-lightGreen/20"
+                      ? `${forWhilePlayingDrawer ? "bg-darkGreen" : "bg-lightGreen"}`
+                      : `${forWhilePlayingDrawer ? "bg-darkGreen/20" : "bg-lightGreen/20"}`
                   } h-2 w-full rounded-md transition-all`}
                 ></div>
                 <div
                   className={`${
                     playerMetadata.botDifficulty === "Hard"
-                      ? "bg-lightGreen"
-                      : "bg-lightGreen/20"
+                      ? `${forWhilePlayingDrawer ? "bg-darkGreen" : "bg-lightGreen"}`
+                      : `${forWhilePlayingDrawer ? "bg-darkGreen/20" : "bg-lightGreen/20"}`
                   } h-2 w-full rounded-md transition-all`}
                 ></div>
               </div>

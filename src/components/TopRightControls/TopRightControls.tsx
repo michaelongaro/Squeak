@@ -51,6 +51,7 @@ import {
   DrawerPortal,
   DrawerTrigger,
 } from "~/components/ui/drawer";
+import { FaUsers } from "react-icons/fa";
 import FriendsList from "../modals/FriendsList";
 import { useRouter } from "next/router";
 import { Label } from "~/components/ui/label";
@@ -64,6 +65,14 @@ import { useUserIDContext } from "~/context/UserIDContext";
 import Filter from "bad-words";
 import PlayerIcon from "../playerIcons/PlayerIcon";
 import { type User } from "@prisma/client";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "~/components/ui/accordion";
+import { BsFillVolumeUpFill } from "react-icons/bs";
+import DisconnectIcon from "~/components/ui/DisconnectIcon";
 
 const filter = new Filter();
 
@@ -1924,15 +1933,23 @@ function WhilePlayingDrawer({
   showVotingOptionButtons,
   setShowVotingOptionButtons,
 }: IWhilePlayingDrawer) {
+  const { playerMetadata, roomConfig, gameData } = useRoomContext();
+
   return (
-    <div className="baseVertFlex w-full">
+    <div className="baseVertFlex h-[410px] w-full !justify-start overflow-y-auto">
       <div className="baseVertFlex w-full !items-start gap-2 border-darkGreen px-2 py-4">
-        <Label className="pl-1 text-base">Volume</Label>
+        <Label className="baseFlex gap-2 pl-1 text-base">
+          <BsFillVolumeUpFill className="size-5 shrink-0" />
+          Volume
+        </Label>
         <AudioLevelSlider forMobile />
       </div>
 
       <div className="baseVertFlex w-full !items-start gap-2 border-t-[1px] border-darkGreen px-2 py-4">
-        <Label className="pl-1 text-base">Voting</Label>
+        <Label className="baseFlex gap-2 pl-1 text-base">
+          <MdHowToVote className="size-5" />
+          Voting
+        </Label>
         <VotingModal
           showVotingOptionButtons={showVotingOptionButtons}
           setShowVotingOptionButtons={setShowVotingOptionButtons}
@@ -1941,6 +1958,66 @@ function WhilePlayingDrawer({
           forDrawer
         />
       </div>
+
+      <Accordion type="single" collapsible className="w-full">
+        <AccordionItem value="item-1" className="text-darkGreen">
+          <AccordionTrigger>
+            <Button
+              variant={"drawer"}
+              className="baseFlex !w-full !justify-start gap-2 border-t-[1px] border-darkGreen !py-4"
+            >
+              <FaUsers className="size-5" />
+              Players
+            </Button>
+          </AccordionTrigger>
+          <AccordionContent className="w-full">
+            <div
+              className={`sm:baseVertFlex grid grid-cols-2 py-4 ${
+                roomConfig.playersInRoom > 2 ? "grid-rows-2" : "grid-rows-1"
+              } w-full !items-start !justify-start gap-8 overflow-y-auto !text-darkGreen sm:flex sm:!flex-row`}
+            >
+              {Object.keys(playerMetadata)?.map((playerID) => (
+                <div className="relative" key={playerID}>
+                  <div
+                    style={{
+                      opacity: gameData.playerIDsThatLeftMidgame.includes(
+                        playerID,
+                      )
+                        ? 0.25
+                        : 1,
+                    }}
+                  >
+                    <PlayerIcon
+                      avatarPath={
+                        playerMetadata[playerID]?.avatarPath ||
+                        "/avatars/rabbit.svg"
+                      }
+                      borderColor={
+                        playerMetadata[playerID]?.color ||
+                        "oklch(64.02% 0.171 15.38)"
+                      }
+                      playerID={playerID}
+                      playerIsHost={playerID === roomConfig.hostUserID}
+                      showAddFriendButton={false}
+                      username={playerMetadata[playerID]?.username}
+                      size={"3rem"}
+                      playerMetadata={playerMetadata[playerID]}
+                      forWhilePlayingDrawer
+                    />
+                  </div>
+
+                  {gameData.playerIDsThatLeftMidgame.includes(playerID) && (
+                    <DisconnectIcon
+                      darkGreenStroke
+                      className="absolute left-1/2 top-1/2 size-12 -translate-x-1/2 -translate-y-1/2"
+                    />
+                  )}
+                </div>
+              ))}
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
 
       <div className="baseFlex w-full border-t-[1px] border-darkGreen px-2 py-4">
         <AlertDialog>
