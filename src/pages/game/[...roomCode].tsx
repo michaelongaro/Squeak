@@ -245,7 +245,9 @@ function Play() {
         {showShufflingCountdown && <ShufflingCountdownModal />}
       </AnimatePresence>
 
-      <AnimatePresence mode={"wait"}>{true && <Scoreboard />}</AnimatePresence>
+      <AnimatePresence mode={"wait"}>
+        {showScoreboard && <Scoreboard />}
+      </AnimatePresence>
     </motion.div>
   );
 }
