@@ -65,12 +65,14 @@ function PlayerIcon({
 
   return (
     <>
-      {avatarPath && borderColor ? (
+      {avatarPath && borderColor && (
         <motion.div
           key={`playerIcon${playerID}`}
-          initial={{ opacity: 0, scale: 0.75 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.75 }}
+          // layout={"position"} TODO: would like to add this, however when bringing up <Drawer> to
+          // add/kick player it causes the player icon to shift around
+          initial={{ opacity: 0, scale: 0.75, width: 0 }}
+          animate={{ opacity: 1, scale: 1, width: "auto" }}
+          exit={{ opacity: 0, scale: 0, width: 0 }}
           transition={{ duration: 0.15 }}
           style={{
             ...style,
@@ -322,7 +324,7 @@ function PlayerIcon({
           </div>
 
           {username && (
-            <div className="baseFlex mt-2 gap-2">
+            <div className="baseFlex mt-2 gap-2 whitespace-nowrap text-nowrap">
               {playerIsHost && (
                 <FaCrown
                   size={"0.9rem"}
@@ -385,8 +387,6 @@ function PlayerIcon({
             </div>
           )}
         </motion.div>
-      ) : (
-        <div className="size-11 animate-pulse rounded-[50%] bg-muted/50"></div>
       )}
     </>
   );

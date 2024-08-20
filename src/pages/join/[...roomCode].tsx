@@ -429,7 +429,7 @@ function JoinRoom() {
                     <IoSettingsSharp size={"1.25rem"} />
                     Room settings
                   </legend>
-                  <div className="xs:gap-x-24 grid grid-cols-2 grid-rows-4 items-center gap-x-12 gap-y-2 text-nowrap p-2">
+                  <div className="grid grid-cols-2 grid-rows-4 items-center gap-x-12 gap-y-2 text-nowrap p-2 xs:gap-x-24">
                     <div>Points to win:</div>
                     {roomConfig?.pointsToWin}
 
@@ -515,35 +515,37 @@ function JoinRoom() {
                           : "grid-rows-1"
                       } !items-start !justify-start gap-8 sm:flex sm:!flex-row`}
                     >
-                      {Object.keys(playerMetadata)?.map((playerID) => (
-                        <PlayerIcon
-                          key={playerID}
-                          avatarPath={
-                            playerMetadata[playerID]?.avatarPath ||
-                            "/avatars/rabbit.svg"
-                          }
-                          borderColor={
-                            playerMetadata[playerID]?.color ||
-                            "oklch(64.02% 0.171 15.38)"
-                          }
-                          playerID={playerID}
-                          playerIsHost={playerID === roomConfig.hostUserID}
-                          showAddFriendButton={
-                            isSignedIn &&
-                            userID !== playerID &&
-                            friendData !== undefined &&
-                            friendData.friendIDs.indexOf(playerID) === -1 &&
-                            authenticatedUsers
-                              ? authenticatedUsers.findIndex(
-                                  (player) => player.userId === playerID,
-                                ) !== -1
-                              : false
-                          }
-                          username={playerMetadata[playerID]?.username}
-                          size={"3rem"}
-                          playerMetadata={playerMetadata[playerID]}
-                        />
-                      ))}
+                      <AnimatePresence mode={"popLayout"}>
+                        {Object.keys(playerMetadata)?.map((playerID) => (
+                          <PlayerIcon
+                            key={playerID}
+                            avatarPath={
+                              playerMetadata[playerID]?.avatarPath ||
+                              "/avatars/rabbit.svg"
+                            }
+                            borderColor={
+                              playerMetadata[playerID]?.color ||
+                              "oklch(64.02% 0.171 15.38)"
+                            }
+                            playerID={playerID}
+                            playerIsHost={playerID === roomConfig.hostUserID}
+                            showAddFriendButton={
+                              isSignedIn &&
+                              userID !== playerID &&
+                              friendData !== undefined &&
+                              friendData.friendIDs.indexOf(playerID) === -1 &&
+                              authenticatedUsers
+                                ? authenticatedUsers.findIndex(
+                                    (player) => player.userId === playerID,
+                                  ) !== -1
+                                : false
+                            }
+                            username={playerMetadata[playerID]?.username}
+                            size={"3rem"}
+                            playerMetadata={playerMetadata[playerID]}
+                          />
+                        ))}
+                      </AnimatePresence>
                     </div>
 
                     <div className="h-[2px] w-full rounded-md bg-white"></div>
@@ -600,7 +602,7 @@ function JoinRoom() {
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
                       transition={{ duration: 0.5 }}
-                      className="xs:max-w-none !inline-block max-w-[300px] !items-baseline gap-1"
+                      className="!inline-block max-w-[300px] !items-baseline gap-1 xs:max-w-none"
                     >
                       <p className="inline-block items-baseline text-center">
                         <span>

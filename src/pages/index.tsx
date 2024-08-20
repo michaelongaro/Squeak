@@ -61,15 +61,20 @@ function MainOptions() {
 
           {isSignedIn ? (
             <div className="baseFlex gap-4">
-              <PlayerIcon
-                avatarPath={user?.avatarPath}
-                borderColor={user?.color}
-                size={"2.75rem"}
-              />
               {user?.username ? (
-                <div className="text-lightGreen">{user?.username}</div>
+                <>
+                  <PlayerIcon
+                    avatarPath={user?.avatarPath}
+                    borderColor={user?.color}
+                    size={"2.75rem"}
+                  />
+                  <div className="text-lightGreen">{user?.username}</div>
+                </>
               ) : (
-                <div className="h-6 w-28 animate-pulse rounded-md bg-muted/50"></div>
+                <>
+                  <div className="size-11 animate-pulse rounded-[50%] bg-muted/50"></div>
+                  <div className="h-6 w-28 animate-pulse rounded-md bg-muted/50"></div>
+                </>
               )}
             </div>
           ) : (
