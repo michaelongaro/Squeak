@@ -20,6 +20,7 @@ import { castVoteHandler } from "./handlers/castVoteHandler";
 import { rejoinRoomHandler } from "./handlers/rejoinRoomHandler";
 import { oldRoomCleanupCron } from "~/pages/api/handlers/oldRoomCleanupCron";
 import { broadcastRoomActionCountdown } from "~/pages/api/handlers/broadcastRoomActionCountdown";
+import { gracefulReconnectHandler } from "~/pages/api/handlers/gracefulReconnectHandler";
 
 // TODO: is there a better way to type these?
 export interface IFriendsData {
@@ -216,6 +217,8 @@ export default function SocketHandler(req, res) {
 
   const onConnection = (socket: Socket) => {
     // pregame/room handlers
+    gracefulReconnectHandler(io, socket);
+
     createRoomHandler(io, socket, roomData, miscRoomData);
 
     joinRoomHandler(io, socket, roomData);

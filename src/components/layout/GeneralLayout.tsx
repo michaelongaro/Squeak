@@ -11,6 +11,7 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import useResetPlayerStateUponPageLoad from "~/hooks/useResetPlayerStateUponPageLoad";
 import { useInitializeAudioContext } from "~/hooks/useInitializeAudioContext";
+import useGracefullyReconnectToSocket from "~/hooks/useGracefullyReconnectToSocket";
 
 const montserrat = Montserrat({
   weight: "variable",
@@ -65,6 +66,7 @@ function GeneralLayout({ children }: GeneralLayout) {
     }, 2500);
   }, []);
 
+  useGracefullyReconnectToSocket();
   usePlayerLeftRoom();
   useRejoinRoom();
   useResetPlayerStateUponPageLoad();
