@@ -6,6 +6,7 @@ interface IFormattedStats {
 }
 
 interface IFormattedStat {
+  id: string;
   username: string;
   color: string;
   avatarPath: string;
@@ -128,6 +129,7 @@ export const usersRouter = createTRPCRouter({
     try {
       const allUsers = await ctx.prisma.user.findMany({
         select: {
+          id: true,
           username: true,
           color: true,
           avatarPath: true,
@@ -146,6 +148,7 @@ export const usersRouter = createTRPCRouter({
       // plugging in all the stats from each user into the leaderboardStats object
       allUsers.forEach((user) => {
         const baseUserMetadata = {
+          id: user.id,
           username: user.username,
           color: user.color,
           avatarPath: user.avatarPath,
