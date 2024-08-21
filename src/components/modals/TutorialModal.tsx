@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, type ReactNode } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { IoClose } from "react-icons/io5";
@@ -6,16 +6,20 @@ import { AiOutlineInfoCircle } from "react-icons/ai";
 import { HiExternalLink } from "react-icons/hi";
 import useOnClickOutside from "../../hooks/useOnClickOutside";
 import labeledPlayerContainer from "../../../public/tutorial/labeledPlayerContainer.png";
+import mobileLabeledPlayerContainer from "../../../public/tutorial/mobileLabeledPlayerContainer.png";
 import boardPlacementExample from "../../../public/tutorial/boardPlacementExample.png";
 import { GiClubs, GiHearts, GiSpades } from "react-icons/gi";
 import squeakStackPlacementExample from "../../../public/tutorial/squeakStackPlacementExample.png";
 import { Button } from "~/components/ui/button";
+import { useRoomContext } from "~/context/RoomContext";
 
 interface ITutorialModal {
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 function TutorialModal({ setShowModal }: ITutorialModal) {
+  const { viewportLabel } = useRoomContext();
+
   const [labeledPlayerContainerLoaded, setLabeledPlayerContainerLoaded] =
     useState(false);
   const [boardPlacementExampleLoaded, setBoardPlacementExampleLoaded] =
@@ -48,9 +52,9 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
         animate={{ scale: 1 }}
         exit={{ scale: 0.95 }}
         transition={{ duration: 0.15 }}
-        className="baseVertFlex relative h-[95%] w-[95%] !justify-start gap-8 overflow-y-scroll rounded-md rounded-t-md border-2 border-white bg-gradient-to-br from-green-800 to-green-850 shadow-lg tablet:max-h-[90dvh] tablet:max-w-4xl"
+        className="baseVertFlex relative h-[95%] w-[95%] !justify-start overflow-y-scroll rounded-md rounded-t-md border-2 border-white bg-gradient-to-br from-green-800 to-green-850 shadow-lg tablet:max-h-[90dvh] tablet:max-w-4xl"
       >
-        <div className="baseFlex sticky left-0 top-0 z-10 w-full border-b border-white bg-gradient-to-br from-green-800 to-green-850 py-3 shadow-lg sm:py-4 tablet:max-w-4xl">
+        <div className="baseFlex sticky left-0 top-0 z-10 w-full rounded-t-md border-b border-white bg-gradient-to-br from-green-800 to-green-850 py-3 shadow-lg sm:py-4 tablet:max-w-4xl">
           <div className="baseFlex gap-2 text-lg font-medium text-lightGreen lg:text-xl">
             <AiOutlineInfoCircle size={"1.5rem"} />
             How to play
@@ -66,14 +70,13 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
           </Button>
         </div>
 
-        <div className="baseVertFlex w-full !justify-start gap-8 p-4 md:p-8 tablet:max-w-3xl">
-          <fieldset className="rounded-md border-2 border-white p-4">
-            <legend className="pl-4 pr-4 text-left text-base text-lightGreen lg:text-lg">
-              Preparation
-            </legend>
-
+        <div className="baseVertFlex w-full !justify-start gap-8 p-4 py-8 md:p-8 tablet:max-w-3xl">
+          <DynamicSectionContainer
+            viewportLabel={viewportLabel}
+            title={"Preparation"}
+          >
             <div className="baseVertFlex gap-4">
-              <div className="w-auto p-4 pt-0 text-sm text-lightGreen lg:w-[725px] lg:text-base">
+              <div className="w-auto pt-0 text-sm text-lightGreen lg:w-[725px] lg:text-base tablet:p-4">
                 <p>
                   Squeak is a multiplayer rendition of Solitaire, otherwise
                   known as
@@ -99,7 +102,11 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
               </div>
 
               <Image
-                src={labeledPlayerContainer}
+                src={
+                  viewportLabel.includes("mobile")
+                    ? mobileLabeledPlayerContainer
+                    : labeledPlayerContainer
+                }
                 alt={"Example of a player's card placement with labels"}
                 className={`rounded-md shadow-lg ${
                   labeledPlayerContainerLoaded
@@ -110,32 +117,28 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
                 onLoad={() => setLabeledPlayerContainerLoaded(true)}
               />
             </div>
-          </fieldset>
+          </DynamicSectionContainer>
 
-          <fieldset className="mt-4 rounded-md border-2 border-white p-4">
-            <legend className="pl-4 pr-4 text-left text-base text-lightGreen lg:text-lg">
-              Objective
-            </legend>
-            <p className="w-auto p-4 pt-0 text-sm text-lightGreen lg:w-[725px] lg:text-base">
+          <DynamicSectionContainer
+            viewportLabel={viewportLabel}
+            title={"Objective"}
+          >
+            <p className="w-auto pt-0 text-sm text-lightGreen lg:w-[725px] lg:text-base tablet:p-4">
               The goal of each round is to accrue as many points as possible and
               empty your Squeak deck, which reveals your Squeak button. When
               pressed, it ends the current round and adds ten extra points to
               your total. You may delay pressing the Squeak button indefinitely
               if you think you can still get more points.
             </p>
-          </fieldset>
+          </DynamicSectionContainer>
 
-          <fieldset className="mt-4 rounded-md border-2 border-white p-4">
-            <legend className="pl-4 pr-4 text-left text-base text-lightGreen lg:text-lg">
-              Rules
-            </legend>
-
-            <div className="baseVertFlex w-auto !justify-start gap-8 p-4 pt-0 text-sm text-lightGreen sm:gap-4 lg:w-[725px] lg:text-base">
-              <div className="baseVertFlex w-full !items-start !justify-start gap-4 sm:!flex-row">
-                <div className="baseFlex size-[30px] rounded-full border-2 border-white sm:h-[35px] sm:w-[37px]">
-                  1
-                </div>
-                <div className="baseVertFlex w-full gap-4">
+          <DynamicSectionContainer
+            viewportLabel={viewportLabel}
+            title={"Rules"}
+          >
+            <ul className="baseVertFlex w-auto list-disc !justify-start gap-8 pl-4 pt-0 text-sm text-lightGreen sm:gap-4 lg:w-[725px] lg:text-base tablet:p-4 tablet:pl-8">
+              <li>
+                <div className="baseVertFlex w-full !items-start !justify-start gap-4 sm:!flex-row sm:gap-8">
                   <p>
                     To earn points, you must place cards on piles on the board.
                     Each pile must start with an ace, and every card placed
@@ -173,12 +176,9 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
                     onLoad={() => setBoardPlacementExampleLoaded(true)}
                   />
                 </div>
-              </div>
-              <div className="baseVertFlex w-full !items-start !justify-start gap-4 sm:!flex-row">
-                <div className="baseFlex size-[30px] rounded-full border-2 border-white sm:h-[35px] sm:w-[37px]">
-                  2
-                </div>
-                <div className="baseVertFlex w-full gap-4">
+              </li>
+              <li>
+                <div className="baseVertFlex w-full !items-start !justify-start gap-4 sm:!flex-row sm:gap-8">
                   <p>
                     You may place cards on your squeak piles as well, however
                     each card must be of{" "}
@@ -217,24 +217,21 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
                     onLoad={() => setSqueakStackPlacementExampleLoaded(true)}
                   />
                 </div>
-              </div>
-              <div className="baseVertFlex w-full !items-start !justify-start gap-4 sm:!flex-row">
-                <div className="baseFlex size-[30px] rounded-full border-2 border-white sm:h-[35px] sm:w-[37px]">
-                  3
-                </div>
+              </li>
+              <li>
                 <p className="w-full">
                   There are no turns in Squeak, you may place cards anywhere at
                   any time as long as they follow the above rules.
                 </p>
-              </div>
-            </div>
-          </fieldset>
+              </li>
+            </ul>
+          </DynamicSectionContainer>
 
-          <fieldset className="mt-4 rounded-md border-2 border-white p-4">
-            <legend className="pl-4 pr-4 text-left text-base text-lightGreen lg:text-lg">
-              Scoring
-            </legend>
-            <ul className="baseVertFlex w-auto list-disc !items-start gap-4 p-4 pl-8 pt-0 text-sm text-lightGreen lg:w-[725px] lg:text-base">
+          <DynamicSectionContainer
+            viewportLabel={viewportLabel}
+            title={"Scoring"}
+          >
+            <ul className="baseVertFlex w-auto list-disc !items-start gap-4 pl-4 pt-0 text-sm text-lightGreen lg:w-[725px] lg:text-base tablet:p-4 tablet:pl-8">
               <li>
                 Points are calculated after the end of each round. Each card a
                 player placed onto a board pile is worth one point.
@@ -249,13 +246,13 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
                 threshold, that player has won and the game is over.
               </li>
             </ul>
-          </fieldset>
+          </DynamicSectionContainer>
 
-          <fieldset className="mt-4 rounded-md border-2 border-white p-4">
-            <legend className="pl-4 pr-4 text-left text-base text-lightGreen lg:text-lg">
-              Voting
-            </legend>
-            <ul className="baseVertFlex w-auto list-disc !items-start gap-4 p-4 pl-8 pt-0 text-sm text-lightGreen lg:w-[725px] lg:text-base">
+          <DynamicSectionContainer
+            viewportLabel={viewportLabel}
+            title={"Voting"}
+          >
+            <ul className="baseVertFlex w-auto list-disc !items-start gap-4 pl-4 pt-0 text-sm text-lightGreen lg:w-[725px] lg:text-base tablet:p-4 tablet:pl-8">
               <li>
                 If a player feels that no one has a valid move to make, they may
                 start a vote to rotate everyone&apos;s deck by one card. This
@@ -269,7 +266,7 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
               </li>
               <li>Votes require every player to agree in order to pass.</li>
             </ul>
-          </fieldset>
+          </DynamicSectionContainer>
         </div>
       </motion.div>
     </motion.div>
@@ -277,3 +274,35 @@ function TutorialModal({ setShowModal }: ITutorialModal) {
 }
 
 export default TutorialModal;
+
+interface IDynamicSectionContainer {
+  viewportLabel: "mobile" | "mobileLarge" | "tablet" | "desktop";
+  title: string;
+  children: ReactNode;
+}
+
+function DynamicSectionContainer({
+  viewportLabel,
+  title,
+  children,
+}: IDynamicSectionContainer) {
+  return (
+    <>
+      {viewportLabel.includes("mobile") ? (
+        <div className="baseVertFlex w-full !items-start gap-2 px-2">
+          <p className="text-base font-medium text-lightGreen underline underline-offset-2">
+            {title}
+          </p>
+          {children}
+        </div>
+      ) : (
+        <fieldset className="mt-4 rounded-md border-2 border-white p-4">
+          <legend className="pl-4 pr-4 text-left text-base text-lightGreen lg:text-lg">
+            {title}
+          </legend>
+          {children}
+        </fieldset>
+      )}
+    </>
+  );
+}
