@@ -110,7 +110,7 @@ function CreateRoom() {
     if (!configAndMetadataInitialized && userID && !connectedToRoom) {
       setRoomConfig({
         ...roomConfig,
-        code: cryptoRandomString({ length: 6 }),
+        code: cryptoRandomString({ length: 6, type: "numeric" }),
         playerIDsInRoom: [userID],
         hostUsername: playerMetadata[userID]?.username || "",
         hostUserID: userID,

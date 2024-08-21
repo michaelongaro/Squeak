@@ -268,7 +268,7 @@ function JoinRoom() {
             <div className="baseFlex !justify-between gap-3">
               <label>Room code</label>
               <Input
-                type="text"
+                type="tel"
                 placeholder="optional"
                 className={`${
                   roomCode.length === 0 ? "italic text-gray-300" : ""
@@ -337,10 +337,7 @@ function JoinRoom() {
             className={`h-11 font-medium !transition-all ${
               joinButtonText === "Game has already started."
                 ? "w-[250px]"
-                : joinButtonText === "Room not found." ||
-                    joinButtonText === "Room is full."
-                  ? "w-[175px]"
-                  : "w-[122.75px]"
+                : "w-[175px]"
             }`}
           >
             <AnimatePresence mode={"popLayout"} initial={false}>
