@@ -211,7 +211,7 @@ function LeaderboardModal({ setShowModal }: ILeaderboardModal) {
                       className="baseFlex h-[420px] w-full"
                     >
                       <div
-                        className="inline-block size-16 animate-spin rounded-full border-[2px] border-lightGreen border-t-transparent text-lightGreen"
+                        className="inline-block size-12 animate-spin rounded-full border-[2px] border-lightGreen border-t-transparent text-lightGreen sm:size-16"
                         role="status"
                         aria-label="loading"
                       >
