@@ -1,9 +1,4 @@
-import { useState, useRef, useCallback } from "react";
-import React from "react";
-import Draggable, {
-  type DraggableData,
-  type DraggableEvent,
-} from "react-draggable";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { socket } from "~/pages/_app";
 import { useUserIDContext } from "../../context/UserIDContext";
 import { useRoomContext } from "../../context/RoomContext";
@@ -31,6 +26,18 @@ interface ICardComponent {
   width?: number;
   height?: number;
   manuallyShowSpecificCardFront?: number;
+}
+
+interface IPosition {
+  x: number;
+  y: number;
+}
+
+function formatOffsetPosition(offset: IPosition | undefined) {
+  if (offset === undefined) {
+    return "translate(0px, 0px)";
+  }
+  return `translate(${offset.x}px, ${offset.y}px)`;
 }
 
 export interface IMoveCard {
@@ -80,7 +87,12 @@ function Card({
     setHoldingASqueakCard,
   } = useRoomContext();
 
-  const [cardOffsetPosition, setCardOffsetPosition] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [cardOffsetPosition, setCardOffsetPosition] = useState<IPosition>({
+    x: 0,
+    y: 0,
+  });
+  const [dragStart, setDragStart] = useState<IPosition>({ x: 0, y: 0 });
   const [forceShowCardFront, setForceShowCardFront] = useState(false);
 
   const cardRef = useRef<HTMLDivElement>(null);
@@ -166,7 +178,7 @@ function Card({
           });
         }
 
-        if (origin === "squeakDeck" && ownerID) {
+        if (origin === "squeakHand" && ownerID) {
           setSqueakDeckBeingMovedProgramatically({
             ...squeakDeckBeingMovedProgramatically,
             [ownerID]: false,
@@ -197,7 +209,7 @@ function Card({
         });
       }
 
-      if (origin === "squeakDeck" && ownerID) {
+      if (origin === "squeakHand" && ownerID) {
         setSqueakDeckBeingMovedProgramatically({
           ...squeakDeckBeingMovedProgramatically,
           [ownerID]: true,
@@ -260,7 +272,7 @@ function Card({
 
       if (origin === "hand" && ownerID === userID) {
         setHoldingADeckCard(false);
-      } else if (origin === "squeakDeck" && ownerID === userID) {
+      } else if (origin === "squeakHand" && ownerID === userID) {
         setHoldingASqueakCard(false);
       }
 
@@ -448,28 +460,37 @@ function Card({
     moveCard,
   });
 
-  function moveCardBackToOriginWithSound(originSqueakStackIndex?: number) {
-    moveCard({
-      newPosition: { x: 0, y: 0 },
-      flip: false,
-      rotate: false,
-    });
+  const moveCardBackToOriginWithSound = useCallback(
+    (originSqueakStackIndex?: number) => {
+      moveCard({
+        newPosition: { x: 0, y: 0 },
+        flip: false,
+        rotate: false,
+      });
 
-    if (!audioContext || !masterVolumeGainNode) return;
+      if (!audioContext || !masterVolumeGainNode) return;
 
-    // dropping squeak stack card back on original stack is allowed, therefore
-    // don't play the not allowed sound
-    if (hoveredSqueakStack !== originSqueakStackIndex) {
-      const source = audioContext.createBufferSource();
-      source.buffer = notAllowedMoveBuffer;
-      source.detune.value = -650;
+      // dropping squeak stack card back on original stack is allowed, therefore
+      // don't play the not allowed sound
+      if (hoveredSqueakStack !== originSqueakStackIndex) {
+        const source = audioContext.createBufferSource();
+        source.buffer = notAllowedMoveBuffer;
+        source.detune.value = -650;
 
-      source.connect(masterVolumeGainNode);
-      source.start();
-    }
-  }
+        source.connect(masterVolumeGainNode);
+        source.start();
+      }
+    },
+    [
+      audioContext,
+      hoveredSqueakStack,
+      masterVolumeGainNode,
+      moveCard,
+      notAllowedMoveBuffer,
+    ],
+  );
 
-  function dropHandler() {
+  const dropHandler = useCallback(() => {
     // hand start + board end
     if (holdingADeckCard && hoveredCell && value && suit) {
       const [row, col] = hoveredCell;
@@ -588,27 +609,128 @@ function Card({
         rotate: false,
       });
     }
-  }
+  }, [
+    gameData?.board,
+    gameData.players,
+    holdingADeckCard,
+    holdingASqueakCard,
+    hoveredCell,
+    hoveredSqueakStack,
+    moveCard,
+    moveCardBackToOriginWithSound,
+    originIndexForHeldSqueakCard,
+    roomConfig.code,
+    squeakStackLocation,
+    suit,
+    userID,
+    value,
+  ]);
 
-  function dragHandler(e: DraggableEvent, data: DraggableData) {
-    setCardOffsetPosition({
-      x: data.x,
-      y: data.y,
-    });
-
-    if (squeakStackLocation && ownerID) {
-      setHeldSqueakStackLocation({
-        ...heldSqueakStackLocation,
-        [ownerID!]: {
-          squeakStack: squeakStackLocation,
-          location: {
-            x: data.x,
-            y: data.y,
-          },
-        },
+  const dragHandler = useCallback(
+    (x: number, y: number) => {
+      setCardOffsetPosition({
+        x,
+        y,
       });
+
+      if (squeakStackLocation && ownerID) {
+        setHeldSqueakStackLocation({
+          ...heldSqueakStackLocation,
+          [ownerID!]: {
+            squeakStack: squeakStackLocation,
+            location: {
+              x,
+              y,
+            },
+          },
+        });
+      }
+    },
+    [
+      heldSqueakStackLocation,
+      ownerID,
+      setHeldSqueakStackLocation,
+      squeakStackLocation,
+    ],
+  );
+
+  const handleDragStart = useCallback(
+    (clientX: number, clientY: number) => {
+      if (!draggable) return;
+      setIsDragging(true);
+      setDragStart({
+        x: clientX - cardOffsetPosition.x,
+        y: clientY - cardOffsetPosition.y,
+      });
+    },
+    [draggable, cardOffsetPosition],
+  );
+
+  const handleDragMove = useCallback(
+    (clientX: number, clientY: number) => {
+      if (!isDragging) return;
+      const newX = clientX - dragStart.x;
+      const newY = clientY - dragStart.y;
+      setCardOffsetPosition({ x: newX, y: newY });
+      dragHandler(newX, newY);
+    },
+    [dragStart, dragHandler, isDragging],
+  );
+
+  const handleDragEnd = useCallback(() => {
+    setIsDragging(false);
+    dropHandler();
+  }, [dropHandler]);
+
+  const handleMouseDown = useCallback(
+    (e: React.MouseEvent) => {
+      handleDragStart(e.clientX, e.clientY);
+    },
+    [handleDragStart],
+  );
+
+  const handleMouseMove = useCallback(
+    (e: MouseEvent) => {
+      handleDragMove(e.clientX, e.clientY);
+    },
+    [handleDragMove],
+  );
+
+  const handleTouchStart = useCallback(
+    (e: React.TouchEvent) => {
+      const touch = e.touches[0];
+      if (!touch) return;
+
+      handleDragStart(touch.clientX, touch.clientY);
+    },
+    [handleDragStart],
+  );
+
+  const handleTouchMove = useCallback(
+    (e: TouchEvent) => {
+      const touch = e.touches[0];
+      if (!touch) return;
+
+      handleDragMove(touch.clientX, touch.clientY);
+    },
+    [handleDragMove],
+  );
+
+  useEffect(() => {
+    if (isDragging) {
+      window.addEventListener("mousemove", handleMouseMove);
+      window.addEventListener("mouseup", handleDragEnd);
+      window.addEventListener("touchmove", handleTouchMove);
+      window.addEventListener("touchend", handleDragEnd);
     }
-  }
+
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleDragEnd);
+      window.removeEventListener("touchmove", handleTouchMove);
+      window.removeEventListener("touchend", handleDragEnd);
+    };
+  }, [isDragging, handleMouseMove, handleDragEnd, handleTouchMove]);
 
   function getTransitionStyles() {
     let transitionStyles = "";
@@ -650,70 +772,71 @@ function Card({
   return (
     <>
       {(showCardBack || value || suit) && (
-        <Draggable
-          disabled={!draggable}
-          onDrag={(e, data) => dragHandler(e, data)}
-          position={
-            inMovingSqueakStack
-              ? heldSqueakStackLocation?.[ownerID || ""]?.location
-              : cardOffsetPosition
-          }
-          onStop={() => dropHandler()}
+        <div
+          ref={cardRef}
+          style={{
+            width: width,
+            height: height,
+            transition: getTransitionStyles(),
+            willChange:
+              cardOffsetPosition.x === 0 && cardOffsetPosition.y === 0
+                ? "auto"
+                : "transform",
+            zIndex:
+              inMovingSqueakStack ||
+              cardOffsetPosition.x !== 0 ||
+              cardOffsetPosition.y !== 0
+                ? 150
+                : origin === "deck"
+                  ? 50
+                  : 100, // makes sure child cards stay on top whenever moving
+            transform: formatOffsetPosition(
+              inMovingSqueakStack
+                ? heldSqueakStackLocation?.[ownerID || ""]?.location
+                : cardOffsetPosition,
+            ),
+            touchAction: "none",
+          }}
+          className={`baseFlex relative h-full w-full select-none !items-start ${
+            draggable && "cursor-grab hover:active:cursor-grabbing"
+          }`}
+          onMouseDown={handleMouseDown}
+          onTouchStart={handleTouchStart}
         >
-          <div
-            ref={cardRef}
+          <img
+            ref={imageRef}
             style={{
               width: width,
               height: height,
-              transition: getTransitionStyles(),
-              zIndex:
-                inMovingSqueakStack ||
-                cardOffsetPosition.x !== 0 ||
-                cardOffsetPosition.y !== 0
-                  ? 150
-                  : origin === "deck"
-                    ? 50
-                    : 100, // makes sure child cards stay on top whenever moving
+              filter:
+                showCardBack && !forceShowCardFront
+                  ? `hue-rotate(${hueRotation}deg)`
+                  : "none",
+              transform:
+                userID === ownerID &&
+                origin !== "deck" &&
+                origin !== "squeakDeck" &&
+                (inMovingSqueakStack ||
+                  cardOffsetPosition.x !== 0 ||
+                  cardOffsetPosition.y !== 0)
+                  ? "scale(1.05)"
+                  : "scale(1)",
+              transition: "transform 325ms ease-out",
             }}
-            className={`baseFlex relative h-full w-full select-none !items-start ${
-              draggable && "cursor-grab hover:active:cursor-grabbing"
-            }`}
-          >
-            <img
-              ref={imageRef}
-              style={{
-                width: width,
-                height: height,
-                filter:
-                  showCardBack && !forceShowCardFront
-                    ? `hue-rotate(${hueRotation}deg)`
-                    : "none",
-                transform:
-                  userID === ownerID &&
-                  origin !== "deck" &&
-                  origin !== "squeakDeck" &&
-                  (inMovingSqueakStack ||
-                    cardOffsetPosition.x !== 0 ||
-                    cardOffsetPosition.y !== 0)
-                    ? "scale(1.05)"
-                    : "scale(1)",
-                transition: "transform 325ms ease-out",
-              }}
-              className="cardDimensions pointer-events-none select-none rounded-[0.15rem]"
-              src={
-                showCardBack && !forceShowCardFront
-                  ? (cardAssets["cardBack"] as StaticImageData).src
-                  : getCardAssetPath().src
-              }
-              alt={
-                showCardBack && !forceShowCardFront
-                  ? "Back of card"
-                  : `${value}${suit} card`
-              }
-              draggable="false"
-            />
-          </div>
-        </Draggable>
+            className="cardDimensions pointer-events-none select-none rounded-[0.15rem]"
+            src={
+              showCardBack && !forceShowCardFront
+                ? (cardAssets["cardBack"] as StaticImageData).src
+                : getCardAssetPath().src
+            }
+            alt={
+              showCardBack && !forceShowCardFront
+                ? "Back of card"
+                : `${value}${suit} card`
+            }
+            draggable="false"
+          />
+        </div>
       )}
     </>
   );

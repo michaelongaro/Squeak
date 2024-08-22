@@ -103,7 +103,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
     return `${(20 - squeakStackLength) * cardIdx}px`;
   }
 
-  function pointerMoveHandler(e: PointerEvent<HTMLDivElement>) {
+  function pointerMoveHandler(clientX: number, clientY: number) {
     if (userID === null) return;
 
     const squeakHand0 = document
@@ -121,31 +121,31 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
 
     if (squeakHand0 && squeakHand1 && squeakHand2 && squeakHand3) {
       if (
-        e.clientX > squeakHand0.left &&
-        e.clientX < squeakHand0.right &&
-        e.clientY > squeakHand0.top &&
-        e.clientY < squeakHand0.bottom
+        clientX > squeakHand0.left &&
+        clientX < squeakHand0.right &&
+        clientY > squeakHand0.top &&
+        clientY < squeakHand0.bottom
       ) {
         setHoveredSqueakStack(0);
       } else if (
-        e.clientX > squeakHand1.left &&
-        e.clientX < squeakHand1.right &&
-        e.clientY > squeakHand1.top &&
-        e.clientY < squeakHand1.bottom
+        clientX > squeakHand1.left &&
+        clientX < squeakHand1.right &&
+        clientY > squeakHand1.top &&
+        clientY < squeakHand1.bottom
       ) {
         setHoveredSqueakStack(1);
       } else if (
-        e.clientX > squeakHand2.left &&
-        e.clientX < squeakHand2.right &&
-        e.clientY > squeakHand2.top &&
-        e.clientY < squeakHand2.bottom
+        clientX > squeakHand2.left &&
+        clientX < squeakHand2.right &&
+        clientY > squeakHand2.top &&
+        clientY < squeakHand2.bottom
       ) {
         setHoveredSqueakStack(2);
       } else if (
-        e.clientX > squeakHand3.left &&
-        e.clientX < squeakHand3.right &&
-        e.clientY > squeakHand3.top &&
-        e.clientY < squeakHand3.bottom
+        clientX > squeakHand3.left &&
+        clientX < squeakHand3.right &&
+        clientY > squeakHand3.top &&
+        clientY < squeakHand3.bottom
       ) {
         setHoveredSqueakStack(3);
       } else {
@@ -176,7 +176,14 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
     <div
       id={"playerContainer"}
       className={`${cardContainerClass} rounded-md bg-gradient-to-br from-green-800 to-green-850`}
-      onPointerMove={(e) => pointerMoveHandler(e)}
+      onMouseMove={(e) => pointerMoveHandler(e.clientX, e.clientY)}
+      onTouchMove={(e) => {
+        if (e.touches.length > 0) {
+          const touch = e.touches[0];
+          if (!touch) return;
+          pointerMoveHandler(touch.clientX, touch.clientY);
+        }
+      }}
     >
       {userID && (
         <div
