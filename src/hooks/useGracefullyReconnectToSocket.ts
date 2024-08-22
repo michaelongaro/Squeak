@@ -23,12 +23,19 @@ function useGracefullyReconnectToSocket() {
       }
     }
 
+    function handleForceReload() {
+      window.location.reload();
+    }
+
     socket.on("connect", handleGracefullyReconnectToRoom);
+    socket.on("forceReload", handleForceReload);
 
     return () => {
       socket.off("connect", handleGracefullyReconnectToRoom);
+      socket.off("forceReload", handleForceReload);
     };
   }, [roomConfig.code, connectedToRoom, userID]);
+  ``;
 }
 
 export default useGracefullyReconnectToSocket;

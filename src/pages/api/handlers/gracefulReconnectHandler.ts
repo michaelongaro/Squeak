@@ -19,6 +19,8 @@ export function gracefulReconnectHandler(io: Server, socket: Socket) {
 
       if (room) {
         socket.join(roomCode);
+      } else {
+        io.in(roomCode).emit("forceReload");
       }
     },
   );
