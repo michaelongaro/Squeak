@@ -172,9 +172,11 @@ function PlayerCustomizationPicker({
             ? "auto"
             : "none",
         }}
+        // TODO: still extremely confused as to why rapidly changing values seems to be throttled
+        // on mobile/with touch events...
         className="relative shrink-0 rounded-[50%] outline-offset-4 transition-all"
-        onPointerEnter={() => setHoveredTooltip(["avatar", index])}
-        onPointerLeave={() => setHoveredTooltip(null)}
+        onMouseEnter={() => setHoveredTooltip(["avatar", index])}
+        onMouseLeave={() => setHoveredTooltip(null)}
         onClick={() => {
           // if user is connected to room
           if (connectedToRoom) {
@@ -238,9 +240,11 @@ function PlayerCustomizationPicker({
             cursor: deckVariantIndex !== 0 ? "pointer" : "auto",
             pointerEvents: deckVariantIndex !== 0 ? "auto" : "none",
           }}
+          // TODO: still extremely confused as to why rapidly changing values seems to be throttled
+          // on mobile/with touch events...
           className="relative shrink-0 rounded-sm outline-offset-4 transition-all"
-          onPointerEnter={() => setHoveringOnFrontCardTooltip(0)}
-          onPointerLeave={() => setHoveringOnFrontCardTooltip(null)}
+          onMouseEnter={() => setHoveringOnFrontCardTooltip(0)}
+          onMouseLeave={() => setHoveringOnFrontCardTooltip(null)}
           onClick={() => {
             updateLocalStoragePlayerMetadata({
               avatarPath: playerMetadata[userID]?.avatarPath || "",
@@ -330,9 +334,11 @@ function PlayerCustomizationPicker({
             ? "auto"
             : "none",
         }}
+        // TODO: still extremely confused as to why rapidly changing values seems to be throttled
+        // on mobile/with touch events...
         className="relative shrink-0 rounded-sm outline-offset-4 transition-all"
-        onPointerEnter={() => setHoveredTooltip(["back", index])}
-        onPointerLeave={() => setHoveredTooltip(null)}
+        onMouseEnter={() => setHoveredTooltip(["back", index])}
+        onMouseLeave={() => setHoveredTooltip(null)}
         onClick={() => {
           // if user is connected to room
           if (connectedToRoom) {
