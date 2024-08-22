@@ -546,87 +546,72 @@ function CreateRoom() {
                     roomConfig.playersInRoom > 2 ? "grid-rows-2" : "grid-rows-1"
                   } !items-start !justify-start gap-8 sm:flex sm:!flex-row`}
                 >
-                  <AnimatePresence mode={"popLayout"}>
-                    {Object.keys(playerMetadata)?.map((playerID) => (
-                      <PlayerIcon
-                        key={playerID}
-                        avatarPath={
-                          playerMetadata[playerID]?.avatarPath ||
-                          "/avatars/rabbit.svg"
-                        }
-                        borderColor={
-                          playerMetadata[playerID]?.color ||
-                          "oklch(64.02% 0.171 15.38)"
-                        }
-                        username={playerMetadata[playerID]?.username}
-                        playerID={playerID}
-                        size={"3rem"}
-                        playerIsHost={playerID === roomConfig.hostUserID}
-                        showAddFriendButton={
-                          isSignedIn &&
-                          userID !== playerID &&
-                          friendData !== undefined &&
-                          friendData.friendIDs.indexOf(playerID) === -1 &&
-                          authenticatedUsers
-                            ? authenticatedUsers.findIndex(
-                                (player) => player.userId === playerID,
-                              ) !== -1
-                            : false
-                        }
-                        showRemovePlayerFromRoomButton={userID !== playerID}
-                        playerMetadata={playerMetadata[playerID]}
-                        roomHostIsRendering={true}
-                      />
-                    ))}
-                  </AnimatePresence>
+                  {Object.keys(playerMetadata)?.map((playerID) => (
+                    <PlayerIcon
+                      key={playerID}
+                      avatarPath={
+                        playerMetadata[playerID]?.avatarPath ||
+                        "/avatars/rabbit.svg"
+                      }
+                      borderColor={
+                        playerMetadata[playerID]?.color ||
+                        "oklch(64.02% 0.171 15.38)"
+                      }
+                      username={playerMetadata[playerID]?.username}
+                      playerID={playerID}
+                      size={"3rem"}
+                      playerIsHost={playerID === roomConfig.hostUserID}
+                      showAddFriendButton={
+                        isSignedIn &&
+                        userID !== playerID &&
+                        friendData !== undefined &&
+                        friendData.friendIDs.indexOf(playerID) === -1 &&
+                        authenticatedUsers
+                          ? authenticatedUsers.findIndex(
+                              (player) => player.userId === playerID,
+                            ) !== -1
+                          : false
+                      }
+                      showRemovePlayerFromRoomButton={userID !== playerID}
+                      playerMetadata={playerMetadata[playerID]}
+                      roomHostIsRendering={true}
+                    />
+                  ))}
 
                   {/* Add bot button */}
-                  <AnimatePresence mode={"wait"}>
-                    {Object.keys(playerMetadata).length <
-                      roomConfig.maxPlayers && (
-                      <motion.div
-                        key={"addBotButton"}
-                        initial={{
-                          opacity: 0,
-                          scale: 0.75,
-                          width: 0,
-                          padding: 0,
-                        }}
-                        animate={{
-                          opacity: 1,
-                          scale: 1,
-                          width: "auto",
-                          padding: "8px",
-                        }}
-                        // exit={{
-                        //   opacity: 0,
-                        //   scale: 0,
-                        //   width: 0,
-                        //   padding: 0,
-                        // }}
-                        // TODO: fix the interaction between <PlayerIcon>s entering/exiting
-                        transition={{ delay: 0.15, duration: 0.15 }}
-                        className="baseFlex size-full !items-start p-2 sm:w-auto"
-                      >
-                        <Button
-                          variant={"secondary"}
-                          onClick={() => {
-                            const botID = cryptoRandomString({ length: 16 });
+                  {Object.keys(playerMetadata).length <
+                    roomConfig.maxPlayers && (
+                    <motion.div
+                      key={"addBotButton"}
+                      initial={{
+                        opacity: 0,
+                        scale: 0.75,
+                      }}
+                      animate={{
+                        opacity: 1,
+                        scale: 1,
+                      }}
+                      transition={{ duration: 0.15 }}
+                      className="baseFlex !items-start"
+                    >
+                      <Button
+                        variant={"secondary"}
+                        onClick={() => {
+                          const botID = cryptoRandomString({ length: 16 });
 
-                            socket.volatile.emit("joinRoom", {
-                              code: roomConfig.code,
-                              userID: botID,
-                              playerMetadata: getNewBotMetadata(),
-                            });
-                          }}
-                          className="baseVertFlex size-16 gap-1.5 whitespace-nowrap text-xs"
-                        >
-                          <FaRobot size={"1.5rem"} />
-                          Add bot
-                        </Button>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+                          socket.volatile.emit("joinRoom", {
+                            code: roomConfig.code,
+                            userID: botID,
+                            playerMetadata: getNewBotMetadata(),
+                          });
+                        }}
+                        className="baseVertFlex size-16 gap-1.5 whitespace-nowrap text-xs"
+                      >
+                        <FaRobot size={"1.5rem"} />
+                        Add bot
+                      </Button>
+                    </motion.div>
+                  )}
                 </div>
 
                 <div className="h-[2px] w-full rounded-md bg-white"></div>
