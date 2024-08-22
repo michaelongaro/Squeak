@@ -79,6 +79,11 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const [isActive, setIsActive] = useState(false);
     const [brightness, setBrightness] = useState(1);
 
+    // Prevents the suit accents from showing on touch devices, since
+    // they only show for a fraction of a second, causing a flicker
+    const [overrideHideSuitAccents, setOverrideHideSuitAccents] =
+      useState(false);
+
     const dynamicOpacity = disabled ? 0.25 : 1;
 
     // TODO: can probably simplify these below outside of secondary variant most likely?
@@ -240,8 +245,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           }}
           onPointerDown={() => {
             setBrightness(0.75);
-            setIsActive(true); // TODO: maybe make separate state to differentiate from when to show
-            // card suit accents so they don't show on pointer down?
+            setIsActive(true);
           }}
           onPointerUp={() => {
             setBrightness(1);
@@ -249,6 +253,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           }}
           onPointerEnter={() => {
             setIsActive(true);
+            setOverrideHideSuitAccents(false);
           }}
           onPointerLeave={() => {
             setBrightness(1);
@@ -256,6 +261,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           }}
           onTouchStart={() => {
             setBrightness(0.75);
+            setOverrideHideSuitAccents(true);
             setIsActive(true);
           }}
           onTouchEnd={() => {
@@ -290,7 +296,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         >
           {children}
 
-          {showCardSuitAccents && (
+          {!overrideHideSuitAccents && showCardSuitAccents && (
             <>
               <GiClubs
                 className={`absolute left-1 top-1 size-[0.9rem] rotate-[315deg] text-darkGreen ${isActive || forceActive ? "opacity-100" : "opacity-0"}`}
