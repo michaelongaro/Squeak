@@ -6,9 +6,9 @@ import { socket } from "~/pages/_app";
 export const config = {
   api: {
     responseLimit: false,
-    externalResolver: true,
   },
 };
+// externalResolver: true,
 
 export default async function handler(
   req: NextApiRequest,
