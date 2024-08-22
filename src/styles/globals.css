@@ -138,49 +138,12 @@
   * {
     @apply border-border;
   }
-
-  /* body {
-    @apply bg-background text-foreground;
-  } */
 }
 
-/* Firefox */
 * {
   scrollbar-width: thin;
-  scrollbar-color: #b8ffb8 #003800;
 }
 
-/* Chrome, Edge and Safari */
-*::-webkit-scrollbar {
-  width: 15px;
-  width: 15px;
-}
-
-*::-webkit-scrollbar-track {
-  border-radius: 10px;
-  background-color: #003800;
-}
-
-*::-webkit-scrollbar-track:hover {
-  background-color: #003800;
-}
-
-*::-webkit-scrollbar-track:active {
-  background-color: #003800;
-}
-
-*::-webkit-scrollbar-thumb {
-  border-radius: 10px;
-  background-color: #b8ffb8;
-}
-
-*::-webkit-scrollbar-thumb:hover {
-  background-color: #a1dea1;
-}
-
-*::-webkit-scrollbar-thumb:active {
-  background-color: #8bc18b;
-}
 
 body {
   background-color: transparent;
