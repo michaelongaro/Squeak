@@ -106,9 +106,9 @@ function LeaderboardDialog({ setShowDialog }: ILeaderboardDialog) {
             >
               <CarouselContent className="baseFlex relative w-full !justify-evenly">
                 {leaderboardCategories.map((name, index) => (
-                  <CarouselItem key={name} className="px-0">
+                  <CarouselItem key={name}>
                     <p
-                      className={`select-none text-center text-lg font-medium text-lightGreen transition-all xs:whitespace-nowrap xs:text-nowrap xs:text-xl ${
+                      className={`mx-2 select-none text-center text-lg font-medium text-lightGreen transition-all xs:whitespace-nowrap xs:text-nowrap xs:text-xl ${
                         carouselApi?.selectedScrollSnap() === index
                           ? ""
                           : "opacity-50"
