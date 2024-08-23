@@ -53,9 +53,10 @@ function voteReceived({
   voteDirection,
 }: IVoteReceived) {
   const players = roomData[roomCode]?.players;
+  const game = gameData[roomCode];
   const miscRoomDataObj = miscRoomData[roomCode];
 
-  if (!players || !miscRoomDataObj) return;
+  if (!players || !game || !miscRoomDataObj) return;
 
   // immediately return if vote is for a different category than the current one
   // being voted on (this would only happen during a race condition)
@@ -70,10 +71,13 @@ function voteReceived({
     miscRoomDataObj.voteType = voteType;
     miscRoomDataObj.currentVotes.push("agree");
 
-    // any bots in the room will automatically vote yes
+    // any players who left midgame/bots in the room will automatically vote yes
     const playerIDs = Object.keys(players);
     playerIDs.forEach((playerID) => {
-      if (players[playerID]?.botDifficulty !== undefined) {
+      if (
+        game.playerIDsThatLeftMidgame.includes(playerID) ||
+        players[playerID]?.botDifficulty !== undefined
+      ) {
         miscRoomDataObj.currentVotes.push("agree");
       }
     });
