@@ -6,7 +6,7 @@ import {
 import PlayerCustomizationPicker from "../playerIcons/PlayerCustomizationPicker";
 import PlayerCustomizationPreview from "../playerIcons/PlayerCustomizationPreview";
 import { type IRoomPlayersMetadata } from "~/pages/api/socket";
-import { type ILocalPlayerSettings } from "../modals/SettingsAndStats/UserSettingsAndStatsModal";
+import { type ILocalPlayerSettings } from "../dialogs/SettingsAndStats/UserSettingsAndStatsDialog";
 
 interface IPlayerCustomizationPopover {
   type: "avatar" | "front" | "back";

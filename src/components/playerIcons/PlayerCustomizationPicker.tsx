@@ -11,7 +11,7 @@ import { avatarPaths } from "../../utils/avatarPaths";
 import { deckHueRotations } from "../../utils/deckHueRotations";
 import { oklchToDeckHueRotations } from "../../utils/oklchToDeckHueRotations";
 import Card from "../Play/Card";
-import { type ILocalPlayerSettings } from "../modals/SettingsAndStats/UserSettingsAndStatsModal";
+import { type ILocalPlayerSettings } from "../dialogs/SettingsAndStats/UserSettingsAndStatsDialog";
 import PlayerIcon from "./PlayerIcon";
 import { updateLocalStoragePlayerMetadata } from "~/utils/updateLocalStoragePlayerMetadata";
 

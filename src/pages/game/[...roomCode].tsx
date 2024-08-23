@@ -3,8 +3,8 @@ import { socket } from "~/pages/_app";
 import Board from "~/components/Play/Board";
 import PlayerCardContainer from "~/components/Play/PlayerCardContainer";
 import OtherPlayersCardContainers from "~/components/Play/OtherPlayersCardContainers";
-import Scoreboard from "~/components/modals/Scoreboard/Scoreboard";
-import ShufflingCountdownModal from "~/components/modals/ShufflingCountdownModal";
+import Scoreboard from "~/components/dialogs/Scoreboard/Scoreboard";
+import ShufflingCountdownDialog from "~/components/dialogs/ShufflingCountdownDialog";
 import useStartAnotherRoundHandler from "../../hooks/useStartAnotherRoundHandler";
 import useReturnToRoomHandler from "../../hooks/useReturnToRoomHandler";
 import { AnimatePresence, motion } from "framer-motion";
@@ -15,11 +15,12 @@ import useScoreboardData from "../../hooks/useScoreboardData";
 import OtherPlayerIcons from "~/components/Play/OtherPlayerIcons";
 import classes from "~/components/Play/Play.module.css";
 import useSyncClientWithServer from "../../hooks/useSyncClientWithServer";
-import MiniMobileVotingModal from "~/components/modals/MiniMobileVotingModal";
+import MobileVotingPreview from "~/components/dialogs/MobileVotingPreview";
 import { type Room } from "@prisma/client";
 import { useRouter } from "next/router";
 import { useAuth } from "@clerk/nextjs";
 import { api } from "~/utils/api";
+import { Dialog } from "~/components/ui/dialog";
 import UnableToJoinRoom from "~/components/Play/UnableToJoinRoom";
 
 function Play() {
@@ -38,8 +39,8 @@ function Play() {
     setShowShufflingCountdown,
     showShufflingCountdown,
     voteType,
-    showVotingModal,
-    setShowVotingModal,
+    showVotingDialog,
+    setShowVotingDialog,
     connectedToRoom,
     viewportLabel,
     setShowScoreboard,
@@ -62,11 +63,11 @@ function Play() {
       setRoom(roomResult);
     } else {
       if (roomResult === "Room not found.") {
-        setShowRoomNotFoundModal(true);
+        setShowRoomNotFoundDialog(true);
       } else if (roomResult === "Room is full.") {
-        setShowRoomIsFullModal(true);
+        setShowRoomIsFullDialog(true);
       } else if (roomResult === "Game has already started.") {
-        setShowGameAlreadyStartedModal(true);
+        setShowGameAlreadyStartedDialog(true);
       }
     }
   }, [roomResult]);
@@ -78,9 +79,9 @@ function Play() {
     dynamicInitializationFlowStarted,
     setDynamicInitializationFlowStarted,
   ] = useState(false);
-  const [showRoomNotFoundModal, setShowRoomNotFoundModal] = useState(false);
-  const [showRoomIsFullModal, setShowRoomIsFullModal] = useState(false);
-  const [showGameAlreadyStartedModal, setShowGameAlreadyStartedModal] =
+  const [showRoomNotFoundDialog, setShowRoomNotFoundDialog] = useState(false);
+  const [showRoomIsFullDialog, setShowRoomIsFullDialog] = useState(false);
+  const [showGameAlreadyStartedDialog, setShowGameAlreadyStartedDialog] =
     useState(false);
 
   useStartAnotherRoundHandler();
@@ -122,7 +123,7 @@ function Play() {
     connectedToRoom,
   ]);
 
-  // will only actually show shuffling countdown modal if user renders this component with
+  // will only actually show shuffling countdown dialog if user renders this component with
   // the init game state in gameData, instead of always showing whenever connecting/reconnecting to game
   useEffect(() => {
     if (initialEffectRan) return;
@@ -169,19 +170,19 @@ function Play() {
   }, [setShowScoreboard]);
 
   if (
-    showRoomNotFoundModal ||
-    showRoomIsFullModal ||
-    showGameAlreadyStartedModal
+    showRoomNotFoundDialog ||
+    showRoomIsFullDialog ||
+    showGameAlreadyStartedDialog
   ) {
-    const headerText = showRoomNotFoundModal
+    const headerText = showRoomNotFoundDialog
       ? "Room not found"
-      : showRoomIsFullModal
+      : showRoomIsFullDialog
         ? "Room is full"
         : "Game in progress";
 
-    const bodyText = showRoomNotFoundModal
+    const bodyText = showRoomNotFoundDialog
       ? "The room you are looking for does not exist."
-      : showRoomIsFullModal
+      : showRoomIsFullDialog
         ? "The room you are trying to join is full."
         : "The room you are trying to join is has already started its game.";
 
@@ -203,7 +204,7 @@ function Play() {
         id={"playContainer"}
         className={`${classes.fullBoardGrid} relative z-[150]`}
         onClick={() => {
-          if (showVotingModal && voteType === null) setShowVotingModal(false);
+          if (showVotingDialog && voteType === null) setShowVotingDialog(false);
         }}
       >
         {viewportLabel !== "desktop" ? (
@@ -237,17 +238,17 @@ function Play() {
 
       <AnimatePresence mode={"wait"}>
         {voteType !== null && viewportLabel.includes("mobile") && (
-          <MiniMobileVotingModal />
+          <MobileVotingPreview />
         )}
       </AnimatePresence>
 
-      <AnimatePresence mode={"wait"}>
-        {showShufflingCountdown && <ShufflingCountdownModal />}
-      </AnimatePresence>
+      <Dialog open={showShufflingCountdown}>
+        <ShufflingCountdownDialog />
+      </Dialog>
 
-      <AnimatePresence mode={"wait"}>
-        {showScoreboard && <Scoreboard />}
-      </AnimatePresence>
+      <Dialog open={showScoreboard}>
+        <Scoreboard />
+      </Dialog>
     </motion.div>
   );
 }

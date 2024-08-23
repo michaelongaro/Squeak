@@ -3,12 +3,12 @@ import { api } from "~/utils/api";
 import { SignInButton, SignUpButton, useAuth } from "@clerk/nextjs";
 import { AnimatePresence, motion } from "framer-motion";
 import { useUserIDContext } from "~/context/UserIDContext";
-import TutorialModal from "~/components/modals/TutorialModal";
+import TutorialDialog from "~/components/dialogs/TutorialDialog";
 import { TbDoorEnter } from "react-icons/tb";
 import { AiOutlinePlusCircle, AiOutlineInfoCircle } from "react-icons/ai";
 import { IoStatsChart } from "react-icons/io5";
 import PlayerIcon from "~/components/playerIcons/PlayerIcon";
-import LeaderboardModal from "~/components/modals/LeaderboardModal";
+import LeaderboardDialog from "~/components/dialogs/LeaderboardDialog";
 import { HiExternalLink } from "react-icons/hi";
 import Image from "next/image";
 import logo from "public/logo/squeakLogo.svg";
@@ -19,6 +19,7 @@ import useInitializeUserStats from "~/hooks/useInitializeUserStats";
 import usePostSignUpRegistration from "~/hooks/usePostSignUpRegistration";
 import { useRoomContext } from "~/context/RoomContext";
 import Link from "next/link";
+import { Dialog, DialogTrigger } from "~/components/ui/dialog";
 
 function MainOptions() {
   const { isSignedIn } = useAuth();
@@ -33,8 +34,8 @@ function MainOptions() {
   const { viewportLabel } = useRoomContext();
 
   const [hoveringOnAboutMe, setHoveringOnAboutMe] = useState(false);
-  const [showTutorialModal, setShowTutorialModal] = useState(false);
-  const [showLeaderboardModal, setShowLeaderboardModal] = useState(false);
+  const [showTutorialDialog, setShowTutorialDialog] = useState(false);
+  const [showLeaderboardDialog, setShowLeaderboardDialog] = useState(false);
 
   useReceiveFriendData();
   useInitializeUserStats();
@@ -94,15 +95,24 @@ function MainOptions() {
           )}
 
           <div className="baseVertFlex mt-8 gap-4">
-            <Button
-              variant={"secondary"}
-              showCardSuitAccents
-              onClick={() => setShowTutorialModal(true)}
-              className="baseFlex h-16 w-full !justify-start gap-5"
+            <Dialog
+              open={showTutorialDialog}
+              onOpenChange={(isOpen) => setShowTutorialDialog(isOpen)}
             >
-              <AiOutlineInfoCircle size={"1.5rem"} />
-              How to play
-            </Button>
+              <DialogTrigger asChild>
+                <Button
+                  variant={"secondary"}
+                  showCardSuitAccents
+                  onClick={() => setShowTutorialDialog(true)}
+                  className="baseFlex h-16 w-full !justify-start gap-5"
+                >
+                  <AiOutlineInfoCircle size={"1.5rem"} />
+                  How to play
+                </Button>
+              </DialogTrigger>
+
+              <TutorialDialog setShowDialog={setShowTutorialDialog} />
+            </Dialog>
 
             <Button
               variant={"secondary"}
@@ -124,15 +134,24 @@ function MainOptions() {
               Join room
             </Button>
 
-            <Button
-              variant={"secondary"}
-              showCardSuitAccents
-              onClick={() => setShowLeaderboardModal(true)}
-              className="baseFlex h-16 w-full !justify-start gap-5"
+            <Dialog
+              open={showLeaderboardDialog}
+              onOpenChange={(isOpen) => setShowLeaderboardDialog(isOpen)}
             >
-              <IoStatsChart size={"1.5rem"} />
-              Leaderboard
-            </Button>
+              <DialogTrigger asChild>
+                <Button
+                  variant={"secondary"}
+                  showCardSuitAccents
+                  onClick={() => setShowLeaderboardDialog(true)}
+                  className="baseFlex h-16 w-full !justify-start gap-5"
+                >
+                  <IoStatsChart size={"1.5rem"} />
+                  Leaderboard
+                </Button>
+              </DialogTrigger>
+
+              <LeaderboardDialog setShowDialog={setShowLeaderboardDialog} />
+            </Dialog>
           </div>
         </div>
       )}
@@ -190,18 +209,6 @@ function MainOptions() {
           Privacy Policy
         </Link>
       </Button>
-
-      <AnimatePresence mode={"wait"}>
-        {showTutorialModal && (
-          <TutorialModal setShowModal={setShowTutorialModal} />
-        )}
-      </AnimatePresence>
-
-      <AnimatePresence mode={"wait"}>
-        {showLeaderboardModal && (
-          <LeaderboardModal setShowModal={setShowLeaderboardModal} />
-        )}
-      </AnimatePresence>
     </motion.div>
   );
 }

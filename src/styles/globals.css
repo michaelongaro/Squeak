@@ -49,7 +49,7 @@
   animation-play-state: paused;
 }
 
-.countdownTimerMiniMobileModal {
+.countdownTimerMobileVotingPreview {
   background: conic-gradient(transparent var(--cooldown-percent), hsl(120deg 100% 86%) 0);
   border-radius: 50%;
   width: 1rem;

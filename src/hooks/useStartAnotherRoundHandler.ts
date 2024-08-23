@@ -47,7 +47,7 @@ function useStartAnotherRoundHandler() {
             firstRound: false,
           });
         }
-      }, 200); // waiting for scoreboard modal to close
+      }, 200); // waiting for scoreboard dialog to close
     }
   }, [
     dataFromBackend,

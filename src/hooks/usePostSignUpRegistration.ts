@@ -20,10 +20,8 @@ function usePostSignUpRegistration() {
 
   useEffect(() => {
     if (isLoadingQuery || !isSignedIn || isUserRegistered || !user) return;
-    addNewUser({
-      userId: user.id,
-      imageUrl: user.imageUrl,
-    });
+
+    addNewUser(user.id);
   }, [isLoadingQuery, isSignedIn, isUserRegistered, user, addNewUser]);
 
   return null;

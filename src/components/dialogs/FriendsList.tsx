@@ -33,10 +33,10 @@ const customButtonStyles = {
 };
 
 interface IFriendsList {
-  setShowFriendsListModal: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowFriendsListDialog: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-function FriendsList({ setShowFriendsListModal }: IFriendsList) {
+function FriendsList({ setShowFriendsListDialog }: IFriendsList) {
   const userID = useUserIDContext();
   const { push } = useRouter();
 
@@ -93,12 +93,12 @@ function FriendsList({ setShowFriendsListModal }: IFriendsList) {
 
   useOnClickOutside({
     ref: modalRef,
-    setShowModal: setShowFriendsListModal,
+    setShowDialog: setShowFriendsListDialog,
   });
 
   return (
     <motion.div
-      key={"friendsListModal"}
+      key={"friendsListDialog"}
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.95 }}
@@ -299,7 +299,7 @@ function FriendsList({ setShowFriendsListModal }: IFriendsList) {
           <div
             // style={{
             //   paddingBottom:
-            //     showingDeleteFriendConfirmationModal && friends.length > 0
+            //     showingDeleteFriendConfirmationDialog && friends.length > 0
             //       ? "7rem"
             //       : "3rem",
             // }}

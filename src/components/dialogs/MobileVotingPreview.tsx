@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useRoomContext } from "~/context/RoomContext";
 
-function MiniMobileVotingModal() {
+function MobileVotingPreview() {
   const { playerMetadata, currentVotes, showVotingOptionButtons } =
     useRoomContext();
 
@@ -28,7 +28,7 @@ function MiniMobileVotingModal() {
 
   return (
     <motion.div
-      key={"miniMobileVotingModal"}
+      key={"miniMobileVotingDialog"}
       initial={{ opacity: 0 }}
       animate={{ opacity: showVotingOptionButtons ? 0 : 1 }}
       // ^ don't want this to be showing when toast is showing
@@ -39,7 +39,7 @@ function MiniMobileVotingModal() {
       }}
       className="baseFlex absolute left-4 z-[200] w-3/4 max-w-xl !justify-start gap-2"
     >
-      <div className="countdownTimerMiniMobileModal"></div>
+      <div className="countdownTimerMobileVotingPreview"></div>
       <p className="text-sm text-lightGreen">Vote</p>
 
       <div className="baseFlex w-full max-w-64 gap-4 px-4 py-2">
@@ -66,4 +66,4 @@ function MiniMobileVotingModal() {
   );
 }
 
-export default MiniMobileVotingModal;
+export default MobileVotingPreview;

@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure, protectedProcedure } from "../trpc";
+import { clerkClient } from "@clerk/nextjs/server";
 
 interface IFormattedStats {
   [category: string]: IFormattedStat[];
@@ -67,18 +68,12 @@ export const usersRouter = createTRPCRouter({
     }),
 
   create: protectedProcedure
-    .input(
-      z.object({
-        userId: z.string(),
-        imageUrl: z.string(),
-      }),
-    )
-    .mutation(async ({ input, ctx }) => {
+    .input(z.string())
+    .mutation(async ({ input: userId, ctx }) => {
       await ctx.prisma.user
         .create({
           data: {
-            userId: input.userId,
-            imageUrl: input.imageUrl,
+            userId,
           },
         })
         .catch((err) => {
@@ -104,6 +99,11 @@ export const usersRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       try {
+        console.log(input.userId, ctx.auth.userId);
+        if (input.userId !== ctx.auth.userId) {
+          throw new Error("Unauthorized");
+        }
+
         await ctx.prisma.user.update({
           where: {
             userId: input.userId, // TODO: gotta update all of these occurances...
@@ -121,6 +121,30 @@ export const usersRouter = createTRPCRouter({
       } catch (error) {
         console.log(error);
       }
+    }),
+
+  delete: protectedProcedure
+    .input(z.string())
+    .mutation(async ({ ctx, input: userId }) => {
+      if (userId !== ctx.auth.userId) {
+        throw new Error("Unauthorized");
+      }
+
+      // Delete user's stats
+      await ctx.prisma.stats.deleteMany({
+        where: {
+          userID: userId, // TODO: fix inconsistencies with userId vs userID later
+        },
+      });
+
+      await clerkClient().users.deleteUser(userId);
+
+      // deleteMany instead of delete because prisma throws an error if the row doesn't exist
+      return ctx.prisma.user.deleteMany({
+        where: {
+          userId,
+        },
+      });
     }),
 
   // TODO: you should probably just update the main leaderboard ranking arrays

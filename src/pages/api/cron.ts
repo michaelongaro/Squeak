@@ -29,10 +29,11 @@ export default async function handler(
     socket.on("connect", async () => {
       console.log("Socket connected to cron");
 
+      // room is considered old if it was created >= 4 hours ago
       const oldRooms = await prisma.room.findMany({
         where: {
           createdAt: {
-            lte: new Date(Date.now() - 1000 * 60 * 60 * 24), // 24 hours ago or older
+            lte: new Date(Date.now() - 1000 * 60 * 60 * 4),
           },
         },
         select: {

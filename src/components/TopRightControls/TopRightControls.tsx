@@ -7,9 +7,9 @@ import {
   type IRoomPlayersMetadata,
   type IRoomPlayer,
 } from "../../pages/api/socket";
-import UserSettingsAndStatsModal, {
+import UserSettingsAndStatsDialog, {
   type ILocalPlayerSettings,
-} from "../modals/SettingsAndStats/UserSettingsAndStatsModal";
+} from "../dialogs/SettingsAndStats/UserSettingsAndStatsDialog";
 import { IoSettingsSharp } from "react-icons/io5";
 import { TbDoorExit } from "react-icons/tb";
 import { FiMail } from "react-icons/fi";
@@ -52,7 +52,7 @@ import {
   DrawerTrigger,
 } from "~/components/ui/drawer";
 import { FaUsers } from "react-icons/fa";
-import FriendsList from "../modals/FriendsList";
+import FriendsList from "../dialogs/FriendsList";
 import { useRouter } from "next/router";
 import { Label } from "~/components/ui/label";
 import { Button } from "~/components/ui/button";
@@ -65,6 +65,7 @@ import { useUserIDContext } from "~/context/UserIDContext";
 import Filter from "bad-words";
 import PlayerIcon from "../playerIcons/PlayerIcon";
 import { type User } from "@prisma/client";
+import { Dialog, DialogTrigger } from "~/components/ui/dialog";
 import {
   Accordion,
   AccordionContent,
@@ -92,13 +93,13 @@ function TopRightControls() {
   const { asPath } = useRouter();
 
   const {
-    showSettingsModal,
-    setShowSettingsModal,
+    showSettingsDialog,
+    setShowSettingsDialog,
     newInviteNotification,
     voteType,
     votingIsLockedOut,
-    showVotingModal,
-    setShowVotingModal,
+    showVotingDialog,
+    setShowVotingDialog,
     showVotingOptionButtons,
     setShowVotingOptionButtons,
     viewportLabel,
@@ -127,7 +128,7 @@ function TopRightControls() {
       showVotingOptionButtons
     ) {
       toast.custom((t) => (
-        <VotingModalToast
+        <VotingDialogToast
           isVisible={t.visible}
           showVotingOptionButtons={showVotingOptionButtons}
           setShowVotingOptionButtons={setShowVotingOptionButtons}
@@ -141,10 +142,10 @@ function TopRightControls() {
   useEffect(() => {
     if (!voteWasStarted && voteType !== null) {
       setVoteWasStarted(true);
-      setShowVotingModal(true);
+      setShowVotingDialog(true);
     } else if (voteWasStarted && voteType === null) {
       setVoteWasStarted(false);
-      setShowVotingModal(false);
+      setShowVotingDialog(false);
 
       setTimeout(() => {
         setShowVotingOptionButtons(true);
@@ -153,7 +154,7 @@ function TopRightControls() {
   }, [
     voteWasStarted,
     voteType,
-    setShowVotingModal,
+    setShowVotingDialog,
     setShowVotingOptionButtons,
   ]);
 
@@ -232,19 +233,30 @@ function TopRightControls() {
           <TooltipProvider>
             <Tooltip open={showSettingsUnauthTooltip}>
               <TooltipTrigger asChild>
-                <Button
-                  variant={"secondary"}
-                  disabled={!isSignedIn}
-                  includeMouseEvents
-                  onClick={() => {
-                    if (isSignedIn) {
-                      setShowSettingsModal(true);
-                    }
-                  }}
-                  className="h-[40px] w-[40px] md:h-[44px] md:w-[44px]"
+                <Dialog
+                  open={showSettingsDialog}
+                  onOpenChange={(isOpen) => setShowSettingsDialog(isOpen)}
                 >
-                  <IoSettingsSharp size={"1.5rem"} />
-                </Button>
+                  <DialogTrigger asChild>
+                    <Button
+                      variant={"secondary"}
+                      disabled={!isSignedIn}
+                      includeMouseEvents
+                      onClick={() => {
+                        if (isSignedIn) {
+                          setShowSettingsDialog(true);
+                        }
+                      }}
+                      className="h-[40px] w-[40px] md:h-[44px] md:w-[44px]"
+                    >
+                      <IoSettingsSharp size={"1.5rem"} />
+                    </Button>
+                  </DialogTrigger>
+
+                  <UserSettingsAndStatsDialog
+                    setShowDialog={setShowSettingsDialog}
+                  />
+                </Dialog>
               </TooltipTrigger>
               <TooltipContent
                 side={"left"}
@@ -297,7 +309,7 @@ function TopRightControls() {
           <div className="absolute right-0 top-[60px]">
             <Button
               variant={"secondary"}
-              onClick={() => setShowVotingModal(true)}
+              onClick={() => setShowVotingDialog(true)}
               className="absolute right-0 top-0 size-11"
             >
               <MdHowToVote size={"1.5rem"} />
@@ -314,8 +326,8 @@ function TopRightControls() {
             )}
 
             <AnimatePresence mode="wait">
-              {showVotingModal && (
-                <VotingModal
+              {showVotingDialog && (
+                <VotingDialog
                   showVotingOptionButtons={showVotingOptionButtons}
                   setShowVotingOptionButtons={setShowVotingOptionButtons}
                 />
@@ -379,24 +391,18 @@ function TopRightControls() {
 
           <AnimatePresence mode={"wait"}>
             {showFriendsList && (
-              <FriendsList setShowFriendsListModal={setShowFriendsList} />
+              <FriendsList setShowFriendsListDialog={setShowFriendsList} />
             )}
           </AnimatePresence>
         </div>
       )}
-
-      <AnimatePresence mode={"wait"}>
-        {showSettingsModal && (
-          <UserSettingsAndStatsModal setShowModal={setShowSettingsModal} />
-        )}
-      </AnimatePresence>
     </div>
   );
 }
 
 export default TopRightControls;
 
-interface IVotingModal {
+interface IVotingDialog {
   showVotingOptionButtons: boolean;
   setShowVotingOptionButtons: React.Dispatch<React.SetStateAction<boolean>>;
   setShowDrawer?: React.Dispatch<React.SetStateAction<boolean>>;
@@ -404,13 +410,13 @@ interface IVotingModal {
   forDrawer?: boolean;
 }
 
-function VotingModal({
+function VotingDialog({
   showVotingOptionButtons,
   setShowVotingOptionButtons,
   setShowDrawer,
   forMobile,
   forDrawer,
-}: IVotingModal) {
+}: IVotingDialog) {
   const {
     roomConfig,
     playerMetadata,
@@ -447,7 +453,7 @@ function VotingModal({
 
   return (
     <motion.div
-      key={"votingModal"}
+      key={"votingDialog"}
       initial={{
         opacity: forMobile ? 1 : 0,
         width: forMobile ? "100%" : "10rem",
@@ -472,7 +478,7 @@ function VotingModal({
           <AnimatePresence mode="wait">
             {voteType !== null && (
               <motion.div
-                key={"votingModalProgressRing"}
+                key={"votingDialogProgressRing"}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
@@ -498,7 +504,7 @@ function VotingModal({
         <AnimatePresence mode="wait">
           {voteType !== null && (
             <motion.div
-              key={"votingModalVoteCount"}
+              key={"votingDialogVoteCount"}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.3 }}
@@ -531,7 +537,7 @@ function VotingModal({
         <AnimatePresence mode="wait">
           {showVotingOptionButtons && (
             <motion.div
-              key={"votingModalVoteButtons"}
+              key={"votingDialogVoteButtons"}
               initial={{
                 opacity: 1,
                 height: "auto",
@@ -677,23 +683,23 @@ function VotingModal({
   );
 }
 
-interface IVotingModalToast {
+interface IVotingDialogToast {
   isVisible: boolean;
   showVotingOptionButtons: boolean;
   setShowVotingOptionButtons: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 // needed to extract this to custom component because the exit animations weren't working on the toast
-function VotingModalToast({
+function VotingDialogToast({
   isVisible,
   showVotingOptionButtons,
   setShowVotingOptionButtons,
-}: IVotingModalToast) {
+}: IVotingDialogToast) {
   return (
     <AnimatePresence>
       {isVisible && (
         <motion.div
-          key={"votingModalToast"}
+          key={"votingDialogToast"}
           initial={{ opacity: 0, translateY: "-100%" }}
           animate={{ opacity: 1, translateY: "0%" }}
           exit={{ opacity: 0, translateY: "-100%" }}
@@ -703,7 +709,7 @@ function VotingModalToast({
           }}
           className={`baseFlex pointer-events-auto h-full w-full max-w-96 rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5`}
         >
-          <VotingModal
+          <VotingDialog
             showVotingOptionButtons={showVotingOptionButtons}
             setShowVotingOptionButtons={setShowVotingOptionButtons}
             forMobile
@@ -961,6 +967,8 @@ function DrawerSettings({
   setRenderedView,
 }: IDrawerSettings) {
   const userID = useUserIDContext();
+  const { signOut } = useAuth();
+
   const {
     playerMetadata,
     setPlayerMetadata,
@@ -1083,6 +1091,22 @@ function DrawerSettings({
     setAbleToSave(false);
   }
 
+  const { mutate: deleteUser } = api.users.delete.useMutation({
+    onSuccess: async () => {
+      setTimeout(() => setDeleteButtonText("Account deleted"), 2000);
+
+      setTimeout(() => {
+        void signOut({ redirectUrl: "/" });
+      }, 4000);
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+
+  const [showDeleteUserDialog, setShowDeleteUserDialog] = useState(false);
+  const [deleteButtonText, setDeleteButtonText] = useState("Delete account");
+
   const [focusedInInput, setFocusedInInput] = useState<boolean>(false);
 
   return (
@@ -1103,6 +1127,7 @@ function DrawerSettings({
           <Label>Username</Label>
           <div className="relative">
             <Input
+              disabled={saveButtonText !== "Save"}
               type="text"
               placeholder="username"
               className="!ring-offset-white focus-visible:ring-2"
@@ -1156,7 +1181,9 @@ function DrawerSettings({
           </div>
         </div>
 
-        <div className="baseVertFlex h-full w-screen">
+        <div
+          className={`baseVertFlex h-full w-screen transition-opacity ${saveButtonText !== "Save" ? "opacity-50" : "opacity-100"}`}
+        >
           {settingsViewLabels.map((label) => (
             <Button
               key={label}
@@ -1202,6 +1229,7 @@ function DrawerSettings({
           </Label>
           <Switch
             id="squeakPileOnLeft"
+            disabled={saveButtonText !== "Save"}
             checked={localPlayerSettings.squeakPileOnLeft}
             onCheckedChange={() =>
               setLocalPlayerSettings((prevSettings) => ({
@@ -1227,6 +1255,7 @@ function DrawerSettings({
           </Label>
           <Switch
             id="enableDesktopNotifications"
+            disabled={saveButtonText !== "Save"}
             checked={localPlayerSettings.desktopNotifications}
             onCheckedChange={() => {
               Notification.requestPermission().then((result) => {
@@ -1242,64 +1271,166 @@ function DrawerSettings({
           />
         </div>
 
-        <Button
-          disabled={
-            !ableToSave || usernameIsProfane || saveButtonText === "Saving"
-          }
-          onClick={() => {
-            setSaveButtonText("Saving");
-            updateUserHandler();
-          }}
-          className="my-4 h-[2.75rem] w-[10rem] !py-6"
-        >
-          <AnimatePresence mode={"popLayout"} initial={false}>
-            <motion.div
-              key={saveButtonText}
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 20 }}
-              transition={{
-                duration: 0.25,
-              }}
-              className="baseFlex h-[2.75rem] w-[10rem] gap-2 !py-6"
-            >
-              {saveButtonText}
-              {saveButtonText === "Save" && <IoSave size={"1.25rem"} />}
-              {saveButtonText === "Saving" && (
-                <div
-                  className="inline-block size-4 animate-spin rounded-full border-[2px] border-darkGreen border-t-transparent text-darkGreen"
-                  role="status"
-                  aria-label="loading"
+        <div className="baseFlex w-full gap-4">
+          <AlertDialog open={showDeleteUserDialog}>
+            <AlertDialogTrigger asChild>
+              <Button
+                variant={"destructive"}
+                disabled={saveButtonText !== "Save"}
+                className={`baseFlex h-12 gap-2 text-destructive`}
+                onClick={() => setShowDeleteUserDialog(true)}
+              >
+                <FaTrashAlt />
+                Delete account
+              </Button>
+            </AlertDialogTrigger>
+
+            <AlertDialogContent>
+              <AlertDialogTitle className="font-semibold">
+                Delete account
+              </AlertDialogTitle>
+
+              <AlertDialogDescription className="baseVertFlex mb-8 gap-4">
+                <p>
+                  Are you sure you want to delete your account? This action is
+                  <span className="font-semibold italic">
+                    {" "}
+                    irreversible
+                  </span>{" "}
+                  and all of your data will be lost.
+                </p>
+              </AlertDialogDescription>
+
+              <AlertDialogFooter className="baseFlex w-full !flex-row !justify-between gap-2">
+                <Button
+                  variant="secondary"
+                  onClick={() => setShowDeleteUserDialog(false)}
+                  className="!px-4"
                 >
-                  <span className="sr-only">Loading...</span>
-                </div>
-              )}
-              {saveButtonText === "Saved" && (
-                <svg
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                  className="text-offwhite size-5"
+                  Cancel
+                </Button>
+                <Button
+                  variant={"destructive"}
+                  disabled={deleteButtonText !== "Delete account"}
+                  onClick={() => {
+                    setDeleteButtonText("Deleting account");
+                    deleteUser(userID);
+                  }}
                 >
-                  <motion.path
-                    initial={{ pathLength: 0 }}
-                    animate={{ pathLength: 1 }}
-                    transition={{
-                      delay: 0.2,
-                      type: "tween",
-                      ease: "easeOut",
-                      duration: 0.3,
-                    }}
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
-              )}
-            </motion.div>
-          </AnimatePresence>
-        </Button>
+                  <AnimatePresence mode={"popLayout"} initial={false}>
+                    <motion.div
+                      key={deleteButtonText}
+                      layout
+                      initial={{ opacity: 0, y: -20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 20 }}
+                      transition={{
+                        duration: 0.25,
+                      }}
+                      className="baseFlex gap-2"
+                    >
+                      <FaTrashAlt />
+
+                      {deleteButtonText}
+
+                      {deleteButtonText === "Deleting account" && (
+                        <div
+                          className="text-offwhite inline-block size-4 animate-spin rounded-full border-[2px] border-white border-t-transparent"
+                          role="status"
+                          aria-label="loading"
+                        >
+                          <span className="sr-only">Loading...</span>
+                        </div>
+                      )}
+                      {deleteButtonText === "Account deleted" && (
+                        <svg
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          strokeWidth={2}
+                          className="text-offwhite size-4"
+                        >
+                          <motion.path
+                            initial={{ pathLength: 0 }}
+                            animate={{ pathLength: 1 }}
+                            transition={{
+                              delay: 0.2,
+                              type: "tween",
+                              ease: "easeOut",
+                              duration: 0.3,
+                            }}
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M5 13l4 4L19 7"
+                          />
+                        </svg>
+                      )}
+                    </motion.div>
+                  </AnimatePresence>
+                </Button>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+
+          <Button
+            disabled={
+              !ableToSave || usernameIsProfane || saveButtonText === "Saving"
+            }
+            onClick={() => {
+              setSaveButtonText("Saving");
+              updateUserHandler();
+            }}
+            className="my-4 h-[2.75rem] w-[10rem] !py-6"
+          >
+            <AnimatePresence mode={"popLayout"} initial={false}>
+              <motion.div
+                key={saveButtonText}
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 20 }}
+                transition={{
+                  duration: 0.25,
+                }}
+                className="baseFlex h-[2.75rem] w-[10rem] gap-2 !py-6"
+              >
+                {saveButtonText}
+                {saveButtonText === "Save" && <IoSave size={"1.25rem"} />}
+                {saveButtonText === "Saving" && (
+                  <div
+                    className="inline-block size-4 animate-spin rounded-full border-[2px] border-darkGreen border-t-transparent text-darkGreen"
+                    role="status"
+                    aria-label="loading"
+                  >
+                    <span className="sr-only">Loading...</span>
+                  </div>
+                )}
+                {saveButtonText === "Saved" && (
+                  <svg
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                    className="text-offwhite size-5"
+                  >
+                    <motion.path
+                      initial={{ pathLength: 0 }}
+                      animate={{ pathLength: 1 }}
+                      transition={{
+                        delay: 0.2,
+                        type: "tween",
+                        ease: "easeOut",
+                        duration: 0.3,
+                      }}
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                )}
+              </motion.div>
+            </AnimatePresence>
+          </Button>
+        </div>
       </div>
     </>
   );
@@ -1950,7 +2081,7 @@ function WhilePlayingDrawer({
           <MdHowToVote className="size-5" />
           Voting
         </Label>
-        <VotingModal
+        <VotingDialog
           showVotingOptionButtons={showVotingOptionButtons}
           setShowVotingOptionButtons={setShowVotingOptionButtons}
           setShowDrawer={setShowDrawer}

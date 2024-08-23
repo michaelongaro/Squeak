@@ -2,14 +2,14 @@ import { useEffect } from "react";
 
 interface IOnClickOutside {
   ref: React.RefObject<HTMLDivElement>;
-  setShowModal: (showSettingsModal: boolean) => void;
+  setShowDialog: (showSettingsDialog: boolean) => void;
 }
 
 // TODO: eventually migrate this to shadcnui Dialog component..
 
 export default function useOnClickOutside({
   ref,
-  setShowModal,
+  setShowDialog,
 }: IOnClickOutside) {
   useEffect(() => {
     const clickListener = (event: PointerEvent) => {
@@ -27,14 +27,14 @@ export default function useOnClickOutside({
 
       // If the click is outside the ref element, close the modal
       if (!ref.current?.contains(event.target as Node)) {
-        setShowModal(false);
+        setShowDialog(false);
       }
     };
 
     const keydownListener = (event: KeyboardEvent) => {
       // @ts-expect-error - event.target is not always an element
       if (event.key === "Escape" && event.target?.tagName !== "INPUT") {
-        setShowModal(false);
+        setShowDialog(false);
       }
     };
 
@@ -45,5 +45,5 @@ export default function useOnClickOutside({
       document.removeEventListener("pointerdown", clickListener);
       document.removeEventListener("keydown", keydownListener);
     };
-  }, [ref, setShowModal]);
+  }, [ref, setShowDialog]);
 }

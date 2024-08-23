@@ -26,8 +26,8 @@ function resetCooldownPercentages() {
       className: "drawerCooldownVoteTimer",
     },
     {
-      selector: ".countdownTimerMiniMobileModal",
-      className: "countdownTimerMiniMobileModal",
+      selector: ".countdownTimerMobileVotingPreview",
+      className: "countdownTimerMobileVotingPreview",
     },
   ];
 
@@ -89,7 +89,7 @@ function useVoteHasBeenCast() {
               },
               viewportLabel.includes("mobile") ? 500 : 0,
             );
-            // waiting for <MiniMobileVotingModal /> to animate out first.
+            // waiting for <MobileVotingPreview /> to animate out first.
             // Not an issue with regular voting modal on tablet+
 
             setVotingIsLockedOut(true);
@@ -120,7 +120,7 @@ function useVoteHasBeenCast() {
             },
             viewportLabel.includes("mobile") ? 500 : 0,
           );
-          // waiting for <MiniMobileVotingModal /> to animate out first.
+          // waiting for <MobileVotingPreview /> to animate out first.
           // Not an issue with regular voting modal on tablet+
 
           setVotingLockoutStartTimestamp(Date.now());

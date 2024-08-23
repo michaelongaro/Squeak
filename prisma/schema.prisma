@@ -36,9 +36,10 @@ model Stats {
 }
 
 model User {
-  id       String  @id @default(cuid())
-  userId   String  @unique // used from Clerk
-  imageUrl String?
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  userId String @unique // used from Clerk
 
   // user metadata
   username             String  @default("New user")

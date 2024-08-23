@@ -4,13 +4,25 @@ import {
   type IRoomPlayersMetadata,
   type IRoomPlayer,
 } from "../../../pages/api/socket";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogTrigger,
+  AlertDialogTitle,
+} from "~/components/ui/alert-dialog";
 import { AnimatePresence, motion } from "framer-motion";
-import { type ILocalPlayerSettings } from "./UserSettingsAndStatsModal";
+import { type ILocalPlayerSettings } from "./UserSettingsAndStatsDialog";
 import Filter from "bad-words";
 import { Switch } from "~/components/ui/switch";
 import { Label } from "~/components/ui/label";
 import { Input } from "~/components/ui/input";
 import PlayerCustomizationPopover from "~/components/popovers/PlayerCustomizationPopover";
+import { Button } from "~/components/ui/button";
+import { FaTrashAlt } from "react-icons/fa";
+import { api } from "~/utils/api";
+import { useAuth } from "@clerk/nextjs";
 
 const filter = new Filter();
 
@@ -25,6 +37,7 @@ interface ISettings {
   >;
   usernameIsProfane: boolean;
   setUsernameIsProfane: React.Dispatch<React.SetStateAction<boolean>>;
+  saveButtonText: string;
 }
 
 function Settings({
@@ -34,19 +47,39 @@ function Settings({
   setLocalPlayerSettings,
   usernameIsProfane,
   setUsernameIsProfane,
+  saveButtonText,
 }: ISettings) {
   const userID = useUserIDContext();
+  const { signOut } = useAuth();
+
+  const { mutate: deleteUser } = api.users.delete.useMutation({
+    onSuccess: async () => {
+      setTimeout(() => setDeleteButtonText("Account deleted"), 2000);
+
+      setTimeout(() => {
+        void signOut({ redirectUrl: "/" });
+      }, 4000);
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
 
   const [focusedInInput, setFocusedInInput] = useState<boolean>(false);
 
+  const [showDeleteUserDialog, setShowDeleteUserDialog] = useState(false);
+  const [deleteButtonText, setDeleteButtonText] = useState("Delete account");
+  const [hoveringOnDeleteButton, setHoveringOnDeleteButton] = useState(false);
+
   return (
-    <div className="baseVertFlex w-[700px] bg-gradient-to-br from-green-800 to-green-850 p-8 text-lightGreen">
+    <div className="baseVertFlex relative w-[700px] bg-gradient-to-br from-green-800 to-green-850 p-8 text-lightGreen">
       <div className="baseVertFlex gap-8">
         <div className="baseFlex gap-2">
           <Label htmlFor="username">Username</Label>
           <div className="relative">
             <Input
               id="username"
+              disabled={saveButtonText !== "Save"}
               type="text"
               placeholder="username"
               maxLength={16}
@@ -97,7 +130,9 @@ function Settings({
           </div>
         </div>
 
-        <div className="baseFlex gap-12">
+        <div
+          className={`baseFlex gap-12 transition-opacity ${saveButtonText !== "Save" ? "opacity-50" : "opacity-100"}`}
+        >
           <div className="baseVertFlex gap-2">
             <PlayerCustomizationPopover
               type={"avatar"}
@@ -140,6 +175,7 @@ function Settings({
           </Label>
           <Switch
             id="squeakPileOnLeft"
+            disabled={saveButtonText !== "Save"}
             checked={localPlayerSettings.squeakPileOnLeft}
             onCheckedChange={() =>
               setLocalPlayerSettings((prevSettings) => ({
@@ -165,6 +201,7 @@ function Settings({
           </Label>
           <Switch
             id="enableDesktopNotifications"
+            disabled={saveButtonText !== "Save"}
             checked={localPlayerSettings.desktopNotifications}
             onCheckedChange={() => {
               Notification.requestPermission().then((result) => {
@@ -180,6 +217,127 @@ function Settings({
           />
         </div>
       </div>
+
+      <AlertDialog open={showDeleteUserDialog}>
+        <AlertDialogTrigger asChild>
+          <Button
+            variant={"destructive"}
+            disabled={saveButtonText !== "Save"}
+            className={`baseFlex !absolute right-[13px] top-[13px] min-w-[36px] !px-2 transition-all ${hoveringOnDeleteButton ? "gap-2" : "gap-0"} `}
+            onMouseEnter={() => setHoveringOnDeleteButton(true)}
+            onMouseLeave={() => setHoveringOnDeleteButton(false)}
+            onClick={() => setShowDeleteUserDialog(true)}
+          >
+            <FaTrashAlt />
+            <AnimatePresence>
+              {hoveringOnDeleteButton && (
+                <motion.div
+                  key={"deleteAccountText"}
+                  initial={{
+                    opacity: 0,
+                    width: 0,
+                  }}
+                  animate={{
+                    opacity: 1,
+                    width: "auto",
+                  }}
+                  exit={{
+                    opacity: 0,
+                    width: 0,
+                  }}
+                  transition={{ duration: 0.3, ease: "easeOut" }}
+                  className="text-sm"
+                >
+                  Delete account
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </Button>
+        </AlertDialogTrigger>
+
+        <AlertDialogContent>
+          <AlertDialogTitle className="font-semibold">
+            Delete account
+          </AlertDialogTitle>
+
+          <AlertDialogDescription className="baseVertFlex mb-8 gap-4">
+            <p>
+              Are you sure you want to delete your account? This action is
+              <span className="font-semibold italic"> irreversible</span> and
+              all of your data will be lost.
+            </p>
+          </AlertDialogDescription>
+
+          <AlertDialogFooter className="baseFlex w-full !flex-row !justify-between gap-2">
+            <Button
+              variant="secondary"
+              onClick={() => setShowDeleteUserDialog(false)}
+              className="!px-4"
+            >
+              Cancel
+            </Button>
+            <Button
+              variant={"destructive"}
+              disabled={deleteButtonText !== "Delete account"}
+              onClick={() => {
+                setDeleteButtonText("Deleting account");
+                deleteUser(userID);
+              }}
+            >
+              <AnimatePresence mode={"popLayout"} initial={false}>
+                <motion.div
+                  key={deleteButtonText}
+                  layout
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 20 }}
+                  transition={{
+                    duration: 0.25,
+                  }}
+                  className="baseFlex gap-2"
+                >
+                  <FaTrashAlt />
+
+                  {deleteButtonText}
+
+                  {deleteButtonText === "Deleting account" && (
+                    <div
+                      className="text-offwhite inline-block size-4 animate-spin rounded-full border-[2px] border-white border-t-transparent"
+                      role="status"
+                      aria-label="loading"
+                    >
+                      <span className="sr-only">Loading...</span>
+                    </div>
+                  )}
+                  {deleteButtonText === "Account deleted" && (
+                    <svg
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                      className="text-offwhite size-4"
+                    >
+                      <motion.path
+                        initial={{ pathLength: 0 }}
+                        animate={{ pathLength: 1 }}
+                        transition={{
+                          delay: 0.2,
+                          type: "tween",
+                          ease: "easeOut",
+                          duration: 0.3,
+                        }}
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                  )}
+                </motion.div>
+              </AnimatePresence>
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

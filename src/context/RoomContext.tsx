@@ -61,8 +61,8 @@ interface IRoomContext {
     React.SetStateAction<GainNode | null>
   >;
 
-  showSettingsModal: boolean;
-  setShowSettingsModal: React.Dispatch<React.SetStateAction<boolean>>;
+  showSettingsDialog: boolean;
+  setShowSettingsDialog: React.Dispatch<React.SetStateAction<boolean>>;
   roomConfig: IRoomConfig;
   setRoomConfig: React.Dispatch<React.SetStateAction<IRoomConfig>>;
   playerMetadata: IRoomPlayersMetadata;
@@ -153,8 +153,8 @@ interface IRoomContext {
   >;
   votingIsLockedOut: boolean;
   setVotingIsLockedOut: React.Dispatch<React.SetStateAction<boolean>>;
-  showVotingModal: boolean;
-  setShowVotingModal: React.Dispatch<React.SetStateAction<boolean>>;
+  showVotingDialog: boolean;
+  setShowVotingDialog: React.Dispatch<React.SetStateAction<boolean>>;
   passiveVoteResolutionTimerId: NodeJS.Timeout | undefined;
   setPassiveVoteResolutionTimerId: React.Dispatch<
     React.SetStateAction<NodeJS.Timeout | undefined>
@@ -205,7 +205,7 @@ export function RoomProvider(props: { children: React.ReactNode }) {
   const [currentVolume, setCurrentVolume] = useState<number | null>(null);
   const [deckVariantIndex, setDeckVariantIndex] = useState<number>(0);
 
-  const [showSettingsModal, setShowSettingsModal] = useState<boolean>(false);
+  const [showSettingsDialog, setShowSettingsDialog] = useState<boolean>(false);
 
   const [roomConfig, setRoomConfig] = useState<IRoomConfig>({
     pointsToWin: 100,
@@ -287,7 +287,7 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     "rotateDecks" | "finishRound" | null
   >(null);
   const [votingIsLockedOut, setVotingIsLockedOut] = useState(false);
-  const [showVotingModal, setShowVotingModal] = useState(false);
+  const [showVotingDialog, setShowVotingDialog] = useState(false);
   const [passiveVoteResolutionTimerId, setPassiveVoteResolutionTimerId] =
     useState<NodeJS.Timeout | undefined>();
   const [votingLockoutStartTimestamp, setVotingLockoutStartTimestamp] =
@@ -455,8 +455,8 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     otherPlayerCardMoveBuffer,
     squeakButtonPressBuffer,
     confettiPopBuffer,
-    showSettingsModal,
-    setShowSettingsModal,
+    showSettingsDialog,
+    setShowSettingsDialog,
     roomConfig,
     setRoomConfig,
     playerMetadata,
@@ -513,8 +513,8 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     setVoteType,
     votingIsLockedOut,
     setVotingIsLockedOut,
-    showVotingModal,
-    setShowVotingModal,
+    showVotingDialog,
+    setShowVotingDialog,
     passiveVoteResolutionTimerId,
     setPassiveVoteResolutionTimerId,
     votingLockoutStartTimestamp,

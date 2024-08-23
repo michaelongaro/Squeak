@@ -4,12 +4,18 @@ import { useRoomContext } from "../../context/RoomContext";
 import Card from "../Play/Card";
 import { motion, useAnimation } from "framer-motion";
 import AnimatedNumbers from "~/components/ui/AnimatedNumbers";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
+import {
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+} from "~/components/ui/dialog";
 
 const deck = Array.from({ length: 15 }, () => ({ suit: "S", value: "2" }));
 const repeatCount = 2;
 const delayBetweenIterations = 1000;
 
-function ShufflingCountdownModal() {
+function ShufflingCountdownDialog() {
   const userID = useUserIDContext();
 
   const {
@@ -46,60 +52,53 @@ function ShufflingCountdownModal() {
   ]);
 
   return (
-    <motion.div
-      key={"shufflingCountdownModal"}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.35 }}
-      className="baseFlex absolute left-0 top-0 z-[200] h-full w-full bg-black bg-opacity-60"
-    >
-      <motion.div
-        key={"shufflingCountdownModalInner"}
-        initial={{ scale: 0.95 }}
-        animate={{ scale: 1 }}
-        exit={{ scale: 0.95 }}
-        transition={{ duration: 0.15, delay: 0.2 }}
-        className="h-fit w-80 rounded-lg border-2 border-lightGreen bg-gradient-to-br from-green-800 to-green-850 px-16 py-8 font-medium text-lightGreen shadow-md sm:w-96"
-      >
-        <div className="baseVertFlex gap-8">
-          <div className="baseVertFlex gap-2">
-            <div className="text-xl">Round {gameData.currentRound}</div>
-            <div className="text-lightGreen/75">Shuffling decks</div>
-          </div>
+    <DialogContent className="z-[500] h-fit w-80 rounded-lg border-2 border-lightGreen bg-gradient-to-br from-green-800 to-green-850 px-16 py-8 font-medium text-lightGreen shadow-md sm:w-96">
+      <VisuallyHidden>
+        <DialogTitle>
+          Shuffling deck for round {gameData.currentRound}
+        </DialogTitle>
+        <DialogDescription>
+          The decks are being shuffled for the upcoming round
+        </DialogDescription>
+      </VisuallyHidden>
 
-          <div
-            style={{
-              perspective: "450px",
-              transformStyle: "preserve-3d",
-            }}
-            className="z-[2] mt-4 h-[115px] w-full tablet:h-[165px]"
-          >
-            {deck.map((card, index) => (
-              <AnimatedShufflingCard
-                key={`animatedShufflingCard${index}`}
-                index={index + 1} // seems to fix bug where the first card skipped animation entirely
-                hueRotation={playerMetadata[userID]?.deckHueRotation || 0}
-              />
-            ))}
-          </div>
-
-          <div className="baseFlex gap-2">
-            <div>Round will begin in:</div>
-
-            <AnimatedNumbers
-              value={countdownTimerValue}
-              padding={2}
-              fontSize={18}
-            />
-          </div>
+      <div className="baseVertFlex gap-8">
+        <div className="baseVertFlex gap-2">
+          <div className="text-xl">Round {gameData.currentRound}</div>
+          <div className="text-lightGreen/75">Shuffling decks</div>
         </div>
-      </motion.div>
-    </motion.div>
+
+        <div
+          style={{
+            perspective: "450px",
+            transformStyle: "preserve-3d",
+          }}
+          className="z-[2] mt-4 h-[115px] w-full tablet:h-[165px]"
+        >
+          {deck.map((card, index) => (
+            <AnimatedShufflingCard
+              key={`animatedShufflingCard${index}`}
+              index={index + 1} // seems to fix bug where the first card skipped animation entirely
+              hueRotation={playerMetadata[userID]?.deckHueRotation || 0}
+            />
+          ))}
+        </div>
+
+        <div className="baseFlex gap-2">
+          <div>Round will begin in:</div>
+
+          <AnimatedNumbers
+            value={countdownTimerValue}
+            padding={2}
+            fontSize={18}
+          />
+        </div>
+      </div>
+    </DialogContent>
   );
 }
 
-export default ShufflingCountdownModal;
+export default ShufflingCountdownDialog;
 
 function AnimatedShufflingCard({
   index,

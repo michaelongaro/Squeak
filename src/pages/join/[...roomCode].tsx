@@ -64,10 +64,11 @@ function JoinRoom() {
     dynamicInitializationFlowStarted,
     setDynamicInitializationFlowStarted,
   ] = useState(false);
-  const [showRoomNotFoundModal, setShowRoomNotFoundModal] = useState(false);
-  const [showUsernamePromptModal, setShowUsernamePromptModal] = useState(false);
-  const [showRoomIsFullModal, setShowRoomIsFullModal] = useState(false);
-  const [showGameAlreadyStartedModal, setShowGameAlreadyStartedModal] =
+  const [showRoomNotFoundDialog, setShowRoomNotFoundDialog] = useState(false);
+  const [showUsernamePromptDialog, setShowUsernamePromptDialog] =
+    useState(false);
+  const [showRoomIsFullDialog, setShowRoomIsFullDialog] = useState(false);
+  const [showGameAlreadyStartedDialog, setShowGameAlreadyStartedDialog] =
     useState(false);
 
   const [copyRoomCodeButtonText, setCopyRoomCodeButtonText] =
@@ -94,11 +95,11 @@ function JoinRoom() {
       setRoom(roomResult);
     } else {
       if (roomResult === "Room not found.") {
-        setShowRoomNotFoundModal(true);
+        setShowRoomNotFoundDialog(true);
       } else if (roomResult === "Room is full.") {
-        setShowRoomIsFullModal(true);
+        setShowRoomIsFullDialog(true);
       } else if (roomResult === "Game has already started.") {
-        setShowGameAlreadyStartedModal(true);
+        setShowGameAlreadyStartedDialog(true);
       }
     }
   }, [roomResult]);
@@ -183,7 +184,7 @@ function JoinRoom() {
         },
       );
 
-      setShowUsernamePromptModal(false);
+      setShowUsernamePromptDialog(false);
     }
 
     // player was not a part of the room, joining since game hasn't started
@@ -204,7 +205,7 @@ function JoinRoom() {
 
         setConnectedToRoom(true);
       } else {
-        setShowUsernamePromptModal(true);
+        setShowUsernamePromptDialog(true);
       }
     }
   }, [
@@ -241,19 +242,19 @@ function JoinRoom() {
   ]);
 
   if (
-    showRoomNotFoundModal ||
-    showRoomIsFullModal ||
-    showGameAlreadyStartedModal
+    showRoomNotFoundDialog ||
+    showRoomIsFullDialog ||
+    showGameAlreadyStartedDialog
   ) {
-    const headerText = showRoomNotFoundModal
+    const headerText = showRoomNotFoundDialog
       ? "Room not found"
-      : showRoomIsFullModal
+      : showRoomIsFullDialog
         ? "Room is full"
         : "Game in progress";
 
-    const bodyText = showRoomNotFoundModal
+    const bodyText = showRoomNotFoundDialog
       ? "The room you are looking for does not exist."
-      : showRoomIsFullModal
+      : showRoomIsFullDialog
         ? "The room you are trying to join is full."
         : "The room you are trying to join is has already started its game.";
 
@@ -270,9 +271,9 @@ function JoinRoom() {
       className="baseVertFlex relative min-h-[100dvh] pb-16 tablet:pt-16"
     >
       <AnimatePresence mode={"wait"}>
-        {showUsernamePromptModal && room && (
+        {showUsernamePromptDialog && room && (
           <motion.div
-            key={"usernamePromptModal"}
+            key={"usernamePromptDialog"}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -307,9 +308,9 @@ function JoinRoom() {
                           },
                           (response?: "roomIsFull") => {
                             if (response === "roomIsFull") {
-                              setShowRoomIsFullModal(true);
+                              setShowRoomIsFullDialog(true);
                             } else {
-                              setShowUsernamePromptModal(false);
+                              setShowUsernamePromptDialog(false);
                               setConnectedToRoom(true);
                             }
                           },
@@ -370,9 +371,9 @@ function JoinRoom() {
                   },
                   (response?: "roomIsFull") => {
                     if (response === "roomIsFull") {
-                      setShowRoomIsFullModal(true);
+                      setShowRoomIsFullDialog(true);
                     } else {
-                      setShowUsernamePromptModal(false);
+                      setShowUsernamePromptDialog(false);
                       setConnectedToRoom(true);
                     }
                   },
@@ -386,7 +387,7 @@ function JoinRoom() {
         )}
 
         {connectedToRoom &&
-          !showUsernamePromptModal &&
+          !showUsernamePromptDialog &&
           Object.keys(playerMetadata).length > 1 && (
             <motion.div
               key={"mainJoinRoomContent"}
