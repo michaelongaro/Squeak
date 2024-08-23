@@ -230,7 +230,7 @@ function JoinRoom() {
                       } as IRoomPlayer,
                     });
                   }}
-                  value={playerMetadata[userID]?.username}
+                  value={playerMetadata[userID]?.username || ""}
                 />
                 <div
                   style={{

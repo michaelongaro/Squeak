@@ -96,7 +96,7 @@ function Settings({
                   } as IRoomPlayer,
                 }));
               }}
-              value={localPlayerMetadata[userID]?.username}
+              value={localPlayerMetadata[userID]?.username || ""}
             />
 
             <div

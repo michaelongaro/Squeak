@@ -331,7 +331,7 @@ function CreateRoom() {
                     });
                     updateRoomConfig("hostUsername", e.target.value);
                   }}
-                  value={playerMetadata[userID]?.username}
+                  value={playerMetadata[userID]?.username || ""}
                 />
                 <div
                   style={{
