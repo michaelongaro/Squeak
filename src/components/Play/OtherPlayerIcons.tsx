@@ -9,13 +9,15 @@ function OtherPlayerIcons() {
 
   const { gameData, playerMetadata, viewportLabel } = useRoomContext();
 
-  const topPlayerIconRef = useRef<HTMLDivElement>(null);
+  const firstTopPlayerIconRef = useRef<HTMLDivElement>(null);
   const leftPlayerIconRef = useRef<HTMLDivElement>(null);
   const rightPlayerIconRef = useRef<HTMLDivElement>(null);
+  const secondTopPlayerIconRef = useRef<HTMLDivElement>(null);
 
   const [absolutePositioning, setAbsolutePositioning] = useState<
     { top: string; left: string }[]
   >([
+    { top: "0px", left: "0px" },
     { top: "0px", left: "0px" },
     { top: "0px", left: "0px" },
     { top: "0px", left: "0px" },
@@ -44,6 +46,7 @@ function OtherPlayerIcons() {
           { top: "0px", left: "0px" },
           { top: "0px", left: "0px" },
           { top: "0px", left: "0px" },
+          { top: "0px", left: "0px" },
         ];
 
         const withinIconOnlyViewportRange =
@@ -59,18 +62,18 @@ function OtherPlayerIcons() {
             ?.getBoundingClientRect();
 
           if (i === 0 && playerContainer) {
-            const topPlayerIconWidth =
-              topPlayerIconRef.current?.getBoundingClientRect().width || 0;
+            const firstTopPlayerIconWidth =
+              firstTopPlayerIconRef.current?.getBoundingClientRect().width || 0;
 
             if (withinIconOnlyViewportRange) {
               tempAbsolutePositioning[0] = {
                 top: `${playerContainer.top - 15}px`, // gets a 13px offset from closest edge of board
-                left: `${playerContainer.left - topPlayerIconWidth / 4}px`,
+                left: `${playerContainer.left - firstTopPlayerIconWidth / 4}px`,
               };
             } else {
               tempAbsolutePositioning[0] = {
                 top: `${playerContainer.top + 15}px`,
-                left: `${playerContainer.left - topPlayerIconWidth - 15}px`,
+                left: `${playerContainer.left - firstTopPlayerIconWidth - 15}px`,
               };
             }
           } else if (i === 1 && playerContainer) {
@@ -80,7 +83,7 @@ function OtherPlayerIcons() {
             if (withinIconOnlyViewportRange) {
               tempAbsolutePositioning[1] = {
                 top: `${playerContainer.top}px`,
-                left: `${playerContainer.left - leftPlayerIconWidth / 4 - 8}px`, // gets a 13px offset from closest edge of board
+                left: `${playerContainer.left - leftPlayerIconWidth / 2 - 8}px`, // gets a 13px offset from closest edge of board
               };
             } else {
               tempAbsolutePositioning[1] = {
@@ -95,12 +98,28 @@ function OtherPlayerIcons() {
             if (withinIconOnlyViewportRange) {
               tempAbsolutePositioning[2] = {
                 top: `${playerContainer.top}px`,
-                left: `${playerContainer.left - 8}px`, // gets a 13px offset from closest edge of board
+                left: `${playerContainer.left + rightPlayerIconWidth / 2 - 12}px`, // gets a 13px offset from closest edge of board
               };
             } else {
               tempAbsolutePositioning[2] = {
                 top: `${playerContainer.top - 85}px`,
                 left: `${playerContainer.right - rightPlayerIconWidth - 15}px`,
+              };
+            }
+          } else if (i === 3 && playerContainer) {
+            const secondTopPlayerIconWidth =
+              secondTopPlayerIconRef.current?.getBoundingClientRect().width ||
+              0;
+
+            if (withinIconOnlyViewportRange) {
+              tempAbsolutePositioning[3] = {
+                top: `${playerContainer.top - 15}px`, // gets a 13px offset from closest edge of board
+                left: `${playerContainer.left - secondTopPlayerIconWidth / 4}px`,
+              };
+            } else {
+              tempAbsolutePositioning[3] = {
+                top: `${playerContainer.top + 15}px`,
+                left: `${playerContainer.left - secondTopPlayerIconWidth - 15}px`,
               };
             }
           }
@@ -126,7 +145,7 @@ function OtherPlayerIcons() {
             !playerIDsShowingSqueakButton[otherPlayerIDs[0]]) && (
             <motion.div
               key={`otherPlayerIcon${otherPlayerIDs[0]}`}
-              ref={topPlayerIconRef}
+              ref={firstTopPlayerIconRef}
               initial={{ scale: 0.75 }}
               animate={{ scale: 1 }}
               exit={{ scale: 0.75 }}
@@ -194,7 +213,7 @@ function OtherPlayerIcons() {
       </AnimatePresence>
 
       <AnimatePresence mode="wait">
-        {otherPlayerIDs.length === 3 &&
+        {otherPlayerIDs.length >= 3 &&
           otherPlayerIDs[2] &&
           (viewportLabel === "desktop" ||
             !playerIDsShowingSqueakButton[otherPlayerIDs[2]]) && (
@@ -224,6 +243,43 @@ function OtherPlayerIcons() {
                   "oklch(64.02% 0.171 15.38)"
                 }
                 username={playerMetadata[otherPlayerIDs[2]]?.username}
+                size={"3rem"}
+              />
+            </motion.div>
+          )}
+      </AnimatePresence>
+
+      <AnimatePresence mode="wait">
+        {otherPlayerIDs.length === 4 &&
+          otherPlayerIDs[3] &&
+          (viewportLabel === "desktop" ||
+            !playerIDsShowingSqueakButton[otherPlayerIDs[3]]) && (
+            <motion.div
+              key={`otherPlayerIcon${otherPlayerIDs[3]}`}
+              ref={secondTopPlayerIconRef}
+              initial={{ scale: 0.75 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.75 }}
+              style={{
+                ...absolutePositioning[3],
+                opacity: gameData.playerIDsThatLeftMidgame.includes(
+                  otherPlayerIDs[3],
+                )
+                  ? 0.25
+                  : 1,
+              }}
+              className="absolute transition-opacity"
+            >
+              <PlayerIcon
+                avatarPath={
+                  playerMetadata[otherPlayerIDs[3]]?.avatarPath ||
+                  "/avatars/rabbit.svg"
+                }
+                borderColor={
+                  playerMetadata[otherPlayerIDs[3]]?.color ||
+                  "oklch(64.02% 0.171 15.38)"
+                }
+                username={playerMetadata[otherPlayerIDs[3]]?.username}
                 size={"3rem"}
               />
             </motion.div>

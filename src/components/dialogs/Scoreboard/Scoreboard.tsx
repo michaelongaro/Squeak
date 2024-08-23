@@ -28,6 +28,7 @@ const ranking: IRanking = {
   2: "2nd",
   3: "3rd",
   4: "4th",
+  5: "5th",
 };
 
 interface IPlayerColorVariants {
@@ -166,9 +167,9 @@ function Scoreboard() {
             },
             {
               spread: viewportLabel.includes("mobile") ? 45 : 30,
-              startVelocity: 35,
+              startVelocity: 30,
               angle: viewportLabel.includes("mobile") ? 45 : 135,
-              zIndex: 200,
+              zIndex: 500,
             },
             {
               particleCount: 100,
@@ -187,16 +188,16 @@ function Scoreboard() {
             },
             {
               spread: viewportLabel.includes("mobile") ? 45 : 30,
-              startVelocity: 35,
+              startVelocity: 30,
               angle: viewportLabel.includes("mobile") ? 135 : 45,
-              zIndex: 200,
+              zIndex: 500,
             },
             {
               particleCount: 100,
             },
           ),
         );
-      }, 300); // waiting for the motion.divs to be rendered with +100ms of delay
+      }, 350); // waiting for the motion.divs to be rendered with +150ms of delay
     }, 6500);
 
     setTimeout(() => {
@@ -662,7 +663,7 @@ function Scoreboard() {
                     animate={{ opacity: 1, width: "auto", scale: 1 }}
                     exit={{ opacity: 0, width: 0, scale: 0 }}
                     transition={{ duration: 0.2, ease: "easeInOut" }}
-                    className="baseFlex absolute left-2 top-4"
+                    className="baseFlex absolute left-2 top-4 z-[500]"
                   >
                     {/* left confetti cannon */}
                     <Image
@@ -722,7 +723,7 @@ function Scoreboard() {
                     animate={{ opacity: 1, width: "auto", scale: 1 }}
                     exit={{ opacity: 0, width: 0, scale: 0 }}
                     transition={{ duration: 0.2, ease: "easeInOut" }}
-                    className="baseFlex absolute right-2 top-4"
+                    className="baseFlex absolute right-2 top-4 z-[500]"
                   >
                     <Image
                       ref={rightConfettiCannonRef}
@@ -886,7 +887,7 @@ function Scoreboard() {
   }
 
   return (
-    <DialogContent className="z-[500] h-[95%] w-[95%] rounded-lg border-2 border-lightGreen bg-gradient-to-br from-green-800 to-green-850 p-4 text-lightGreen shadow-md tablet:h-[85%] tablet:w-[85%] desktop:h-[75%] desktop:w-[75%]">
+    <DialogContent className="z-[500] h-[95%] w-[95%] rounded-lg border-2 border-lightGreen bg-gradient-to-br from-green-800 to-green-850 p-4 text-lightGreen shadow-md tablet:h-auto tablet:w-[85%] desktop:w-[75%]">
       <VisuallyHidden>
         <DialogTitle>
           {scoreboardMetadata?.gameWinnerID ? "Game over!" : "Round over!"}
@@ -897,7 +898,7 @@ function Scoreboard() {
       </VisuallyHidden>
 
       {scoreboardMetadata?.playerRoundDetails && (
-        <div className="baseVertFlex relative h-full gap-2 desktop:gap-8">
+        <div className="baseVertFlex relative h-full gap-2 tablet:gap-6">
           <div className="baseFlex absolute left-2 top-2 gap-2">
             <div>Round {gameData.currentRound}</div>
 

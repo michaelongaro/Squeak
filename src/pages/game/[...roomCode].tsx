@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { socket } from "~/pages/_app";
 import Board from "~/components/Play/Board";
 import PlayerCardContainer from "~/components/Play/PlayerCardContainer";
@@ -169,6 +169,27 @@ function Play() {
     };
   }, [setShowScoreboard]);
 
+  const boardContainerClass = useMemo(() => {
+    return roomConfig.playersInRoom === 5
+      ? classes.fivePlayers
+      : classes.fourPlayers;
+  }, [roomConfig.playersInRoom]);
+
+  const playerClassNames = useMemo(() => {
+    return roomConfig.playersInRoom === 5
+      ? [
+          classes.topPlayerCard1,
+          classes.leftPlayerCards,
+          classes.rightPlayerCards,
+          classes.topPlayerCard2,
+        ]
+      : [
+          classes.topPlayerCards,
+          classes.leftPlayerCards,
+          classes.rightPlayerCards,
+        ];
+  }, [roomConfig.playersInRoom]);
+
   if (
     showRoomNotFoundDialog ||
     showRoomIsFullDialog ||
@@ -189,7 +210,13 @@ function Play() {
     return <UnableToJoinRoom header={headerText} body={bodyText} />;
   }
 
-  if (Object.keys(gameData).length === 0) return null;
+  if (
+    Object.keys(gameData).length === 0 ||
+    boardContainerClass === undefined ||
+    playerClassNames === undefined
+  ) {
+    return null;
+  }
 
   return (
     <motion.div
@@ -202,32 +229,20 @@ function Play() {
     >
       <div
         id={"playContainer"}
-        className={`${classes.fullBoardGrid} relative z-[150]`}
+        className={`${classes.fullBoardGrid} ${boardContainerClass} relative z-[150]`}
         onClick={() => {
           if (showVotingDialog && voteType === null) setShowVotingDialog(false);
         }}
       >
         {viewportLabel !== "desktop" ? (
-          <div className={classes.boardContainer}>
+          <div className={`${classes.boardContainer} ${boardContainerClass}`}>
             <Board />
-            <OtherPlayersCardContainers
-              orderedClassNames={[
-                classes.topPlayerCards,
-                classes.leftPlayerCards,
-                classes.rightPlayerCards,
-              ]}
-            />
+            <OtherPlayersCardContainers orderedClassNames={playerClassNames} />
           </div>
         ) : (
           <>
             <Board />
-            <OtherPlayersCardContainers
-              orderedClassNames={[
-                classes.topPlayerCards,
-                classes.leftPlayerCards,
-                classes.rightPlayerCards,
-              ]}
-            />
+            <OtherPlayersCardContainers orderedClassNames={playerClassNames} />
           </>
         )}
 

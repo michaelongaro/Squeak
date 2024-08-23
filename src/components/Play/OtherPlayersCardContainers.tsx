@@ -18,6 +18,7 @@ const internalOrderedGridClassNames = [
   classes.topInnerGridContainer,
   classes.leftInnerGridContainer,
   classes.rightInnerGridContainer,
+  classes.topInnerGridContainer,
 ];
 
 const cardClassMap = {
@@ -27,7 +28,7 @@ const cardClassMap = {
   3: classes.squeakHand3,
 };
 
-const rotationOrder = [180, 90, 270];
+const rotationOrder = [180, 90, 270, 180];
 
 function OtherPlayersCardContainers({
   orderedClassNames,
@@ -51,11 +52,9 @@ function OtherPlayersCardContainers({
   );
 
   const [topOffsetsFromBoard, setTopOffsetsFromBoard] = useState([
-    -9999,
-    -9999,
-    -9999, // making sure that the inital render doesn't for a brief moment show
-    // the other player's cards on the screen
-  ]);
+    -9999, -9999, -9999, -9999,
+  ]); // making sure that the inital render doesn't for a brief moment show
+  // the other player's cards on the screen
 
   useEffect(() => {
     const boardElement = document.getElementById("board");

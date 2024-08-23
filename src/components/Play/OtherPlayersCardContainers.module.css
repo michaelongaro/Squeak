@@ -11,12 +11,7 @@
   grid-template-areas:
     ". squeakDeck squeakHand0 squeakHand1 squeakHand2 squeakHand3"
     "playerDeck playerHand . . . .";
-  /* very well might just want all hmm how the heck would you do that with a grid to have
-     all of the containers stacked on top of each other nicely */
-
   padding: 0;
-  /* width: 0; */
-  /* height: 0; */
   width: 100%;
   height: 100%;
 }
@@ -27,8 +22,6 @@
   .topInnerGridContainer,
   .leftInnerGridContainer,
   .rightInnerGridContainer {
-    /* width: 48px;
-    height: 80px; */
     width: 100%;
     height: 100%;
   }

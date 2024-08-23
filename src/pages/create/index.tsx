@@ -447,16 +447,17 @@ function CreateRoom() {
 
             <Label>Players:</Label>
             <Radio
-              values={[2, 3, 4]}
-              disabledIndicies={[0, 1, 2].slice(
+              values={[2, 3, 4, 5]}
+              disabledIndicies={[0, 1, 2, 3].slice(
                 0,
                 Math.max(0, Object.keys(playerMetadata).length - 2),
               )}
-              currentValueIndex={[2, 3, 4].indexOf(roomConfig.maxPlayers)}
+              currentValueIndex={[2, 3, 4, 5, 6].indexOf(roomConfig.maxPlayers)}
               onClickFunctions={[
                 () => updateRoomConfig("maxPlayers", 2),
                 () => updateRoomConfig("maxPlayers", 3),
                 () => updateRoomConfig("maxPlayers", 4),
+                () => updateRoomConfig("maxPlayers", 5),
               ]}
             />
 

@@ -32,6 +32,15 @@
 
 .topPlayerCards {
   grid-area: topPlayerCards;
+  justify-content: center;
+}
+
+.topPlayerCard1 {
+  grid-area: topPlayerCard1;
+}
+
+.topPlayerCard2 {
+  grid-area: topPlayerCard2;
 }
 
 .leftPlayerCards {
@@ -48,16 +57,27 @@
 
 .boardContainer {
   display: grid;
-  grid-template-columns: 0fr 1fr 0fr;
   grid-template-rows: 0fr 1fr;
-  grid-template-areas:
-    ". topPlayerCards ."
-    "leftPlayerCards board rightPlayerCards";
   place-items: center;
   place-content: center;
   width: 100%;
   height: 100%;
   max-width: 750px;
+}
+
+.boardContainer.fourPlayers {
+  grid-template-columns: 0fr 1fr 0fr;
+  grid-template-areas:
+    ". topPlayerCards ."
+    "leftPlayerCards board rightPlayerCards";
+}
+
+.boardContainer.fivePlayers {
+  grid-template-columns: 0fr 0.5fr 0.5fr 0fr;
+  grid-template-areas:
+    "leftPlayerCards topPlayerCard1 topPlayerCard2 rightPlayerCards"
+    "leftPlayerCards board board rightPlayerCards"
+    "leftPlayerCards currentPlayerCards currentPlayerCards rightPlayerCards";
 }
 
 .board {
@@ -75,7 +95,7 @@
   }
 }
 
-/* allowed to show avatars for other user's on left/top/right of board */
+
 @media (min-height: 700px) and (min-width: 1000px) {
   .fullBoardGrid {
     gap: 1rem;
@@ -83,20 +103,15 @@
   }
 
   .boardContainer {
-    /* assuming 100px is size of avatar */
-    /* not 100% sure on hardcoding 750px but it was getting way too large
-       at 1200px+ on the width */
-    grid-template-columns: 100px 750px 100px;
     grid-template-rows: 100px 1fr;
-    grid-template-areas:
-      ". topPlayerCards ."
-      "leftPlayerCards board rightPlayerCards";
     max-width: 750px;
   }
 
   .leftPlayerCards,
   .rightPlayerCards,
-  .topPlayerCards {
+  .topPlayerCards,
+  .topPlayerCard1,
+  .topPlayerCard2 {
     height: 50px;
     width: 50px
   }
@@ -110,17 +125,29 @@
     display: grid;
     overflow: hidden;
     grid-template-rows: 0.25fr 0.5fr 0.25fr;
-    grid-template-columns: 0.25fr 0.5fr 0.25fr;
-    grid-template-areas:
-      "leftPlayerCards topPlayerCards rightPlayerCards"
-      "leftPlayerCards board rightPlayerCards"
-      "leftPlayerCards currentPlayerCards rightPlayerCards";
     place-items: center;
     place-content: center;
     gap: 1rem;
     padding: 0;
     margin-top: 0;
   }
+
+  .fullBoardGrid.fourPlayers {
+    grid-template-columns: 0.25fr 0.5fr 0.25fr;
+    grid-template-areas:
+      "leftPlayerCards topPlayerCards rightPlayerCards"
+      "leftPlayerCards board rightPlayerCards"
+      "leftPlayerCards currentPlayerCards rightPlayerCards";
+  }
+
+  .fullBoardGrid.fivePlayers {
+    grid-template-columns: 0.05fr 0.45fr 0.45fr 0.05fr;
+    grid-template-areas:
+      "leftPlayerCards topPlayerCard1 topPlayerCard2 rightPlayerCards"
+      "leftPlayerCards board board rightPlayerCards"
+      "leftPlayerCards currentPlayerCards currentPlayerCards rightPlayerCards";
+  }
+
 
   .boardContainer {
     display: block;
@@ -133,12 +160,13 @@
     justify-items: center;
     height: 100% !important;
     max-width: 950px;
-    /* ^ could maybe do 100% but idk how stretched it would look on ultrawide viewports */
   }
 
   .leftPlayerCards,
   .rightPlayerCards,
-  .topPlayerCards {
+  .topPlayerCards,
+  .topPlayerCard1,
+  .topPlayerCard2 {
     position: relative;
     top: auto;
     left: auto;
@@ -146,7 +174,9 @@
     transform: none;
   }
 
-  .topPlayerCards {
+  .topPlayerCards,
+  .topPlayerCard1,
+  .topPlayerCard2 {
     height: 210px;
     width: 502px;
   }
