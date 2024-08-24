@@ -253,7 +253,6 @@ function Card({
             image.style.willChange = "transform, filter";
 
             card.style.transition = "all 325ms ease-out, filter 163ms";
-            card.style.pointerEvents = "none";
             image.style.transition = "transform 163ms ease-out";
             image.style.transform = "scale(1)";
           }
@@ -263,7 +262,6 @@ function Card({
         imageRef.current.style.willChange = "transform, filter";
 
         cardRef.current.style.transition = "all 325ms ease-out, filter 163ms";
-        cardRef.current.style.pointerEvents = "none";
         imageRef.current.style.transition = "transform 163ms ease-out";
         imageRef.current.style.transform = "scale(1)";
       }
@@ -662,8 +660,28 @@ function Card({
         x: clientX - cardOffsetPosition.x,
         y: clientY - cardOffsetPosition.y,
       });
+
+      if (squeakStackLocation && ownerID) {
+        setHeldSqueakStackLocation({
+          ...heldSqueakStackLocation,
+          [ownerID!]: {
+            squeakStack: squeakStackLocation,
+            location: {
+              x: 0,
+              y: 0,
+            },
+          },
+        });
+      }
     },
-    [draggable, cardOffsetPosition],
+    [
+      draggable,
+      cardOffsetPosition,
+      heldSqueakStackLocation,
+      ownerID,
+      setHeldSqueakStackLocation,
+      squeakStackLocation,
+    ],
   );
 
   const handleDragMove = useCallback(
@@ -816,7 +834,8 @@ function Card({
                 userID === ownerID &&
                 origin !== "deck" &&
                 origin !== "squeakDeck" &&
-                (inMovingSqueakStack ||
+                (isDragging ||
+                  inMovingSqueakStack ||
                   cardOffsetPosition.x !== 0 ||
                   cardOffsetPosition.y !== 0)
                   ? "scale(1.05)"
