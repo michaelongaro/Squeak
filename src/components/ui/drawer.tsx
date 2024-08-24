@@ -46,7 +46,7 @@ const DrawerContent = React.forwardRef<
       )}
       {...props}
     >
-      <div className="baseFlex h-6 w-full border-b-2 border-darkGreen shadow-md">
+      <div className="baseFlex h-6 w-full border-b-2 border-darkGreen">
         <div className="mx-auto my-1 h-1.5 w-[55px] rounded-full bg-darkGreen" />
       </div>
       {children}

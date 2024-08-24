@@ -737,8 +737,6 @@ function MainDrawer({ status, setShowDrawer }: IMainDrawer) {
 
   const [friendBeingViewed, setFriendBeingViewed] = useState<User | null>(null);
 
-  // TODO: idk you can add the motion.div to opacity + scale up icon + label later if you think it's necessary
-
   function getDrawerHeight() {
     switch (renderedView) {
       case "Settings":
@@ -756,7 +754,7 @@ function MainDrawer({ status, setShowDrawer }: IMainDrawer) {
       case "back":
         return "430px";
       default:
-        return status === "unauthenticated" ? "384px" : "438px";
+        return status === "unauthenticated" ? "389px" : "412px";
     }
   }
 
@@ -808,32 +806,34 @@ function MainDrawer({ status, setShowDrawer }: IMainDrawer) {
               <AudioLevelSlider forMobile />
             </div>
 
-            {status === "authenticated" && (
-              <div className="baseFlex w-full px-2 pt-4">
-                <Button
-                  variant={"secondary"}
-                  onClick={() => {
-                    setShowDrawer(false);
-                    signOut();
-                  }}
-                  className="h-10 w-32"
-                >
-                  Log out
-                </Button>
-              </div>
-            )}
+            <div className="baseFlex w-full !justify-around py-4">
+              {status === "authenticated" && (
+                <div className="baseFlex !items-center px-2">
+                  <Button
+                    variant={"secondary"}
+                    onClick={() => {
+                      setShowDrawer(false);
+                      signOut();
+                    }}
+                    className="h-10 w-32"
+                  >
+                    Log out
+                  </Button>
+                </div>
+              )}
 
-            <div className="baseFlex mr-2 gap-1.5 py-2 text-sm">
-              Made by
-              <a
-                href="https://michaelongaro.com"
-                target="_blank"
-                rel="noreferrer"
-                className="baseFlex !items-end gap-1 underline underline-offset-4"
-              >
-                Michael Ongaro
-                <HiExternalLink size={"1rem"} />
-              </a>
+              <div className="baseFlex mr-2 !flex-nowrap gap-1.5 text-sm">
+                Made by
+                <a
+                  href="https://michaelongaro.com"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="baseFlex !items-end gap-1 underline underline-offset-4"
+                >
+                  Michael Ongaro
+                  <HiExternalLink size={"1rem"} />
+                </a>
+              </div>
             </div>
           </motion.div>
         )}
