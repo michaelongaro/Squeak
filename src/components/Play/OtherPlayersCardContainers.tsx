@@ -62,7 +62,7 @@ function OtherPlayersCardContainers({
 
     const updateOffsets = () => {
       const { top, left } = boardElement.getBoundingClientRect();
-      setTopOffsetsFromBoard([top, left, left]);
+      setTopOffsetsFromBoard([top, left, left, top]);
     };
 
     const mutationObserver = new MutationObserver(updateOffsets);
