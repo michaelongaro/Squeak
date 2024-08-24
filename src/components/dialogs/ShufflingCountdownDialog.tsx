@@ -52,7 +52,7 @@ function ShufflingCountdownDialog() {
   ]);
 
   return (
-    <DialogContent className="z-[500] h-fit w-80 rounded-lg border-2 border-lightGreen bg-gradient-to-br from-green-800 to-green-850 px-16 py-8 font-medium text-lightGreen shadow-md sm:w-96">
+    <DialogContent className="z-[500] w-80 rounded-lg border-2 border-lightGreen bg-gradient-to-br from-green-800 to-green-850 px-16 py-8 font-medium text-lightGreen shadow-md sm:w-96">
       <VisuallyHidden>
         <DialogTitle>
           Shuffling deck for round {gameData.currentRound}
@@ -178,12 +178,12 @@ function AnimatedShufflingCard({
           });
           if (!isMountedRef.current) return;
           await controls.start({
-            y: topPosition * 1.5 - 30,
+            y: topPosition * 1.75 - 40,
             transition: { duration: 0.5, ease: "easeInOut" },
           });
           if (!isMountedRef.current) return;
           await controls.start({
-            y: topPosition * 1.5 - 30.01,
+            y: topPosition * 1.75 - 40.01,
             transition: { duration: 0.35, ease: "easeInOut" },
           });
           if (!isMountedRef.current) return;
