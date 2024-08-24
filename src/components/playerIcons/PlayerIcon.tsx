@@ -37,6 +37,7 @@ interface IPlayerIcon {
   style?: CSSProperties;
   transparentBackground?: boolean;
   forWhilePlayingDrawer?: boolean;
+  animatePresence?: boolean;
 }
 
 function PlayerIcon({
@@ -54,6 +55,7 @@ function PlayerIcon({
   style,
   transparentBackground,
   forWhilePlayingDrawer,
+  animatePresence,
 }: IPlayerIcon) {
   const userID = useUserIDContext();
 
@@ -75,13 +77,24 @@ function PlayerIcon({
           initial={{
             opacity: 0,
             scale: 0.75,
+            width: animatePresence ? 0 : "auto",
+            height: animatePresence ? 0 : "auto",
           }}
           animate={{
             opacity: 1,
             scale: 1,
+            width: "auto",
+            height: "auto",
+          }}
+          exit={{
+            opacity: 0,
+            scale: 0.75,
+            width: 0,
+            height: 0,
           }}
           transition={{
             duration: 0.15,
+            opacity: { duration: 0.05 },
           }}
           style={{
             ...style,

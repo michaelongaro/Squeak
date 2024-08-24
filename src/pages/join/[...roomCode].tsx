@@ -503,7 +503,7 @@ function JoinRoom() {
                   </Button>
                 </fieldset>
                 <fieldset className="rounded-md border-2 border-white p-4">
-                  <legend className="baseFlex gap-2 pl-4 pr-4 text-left text-lg">
+                  <legend className="baseFlex gap-2 px-4 text-left text-lg">
                     <FaUsers size={"1.25rem"} className="ml-1" />
                     Players
                     <div className="tracking-tighter">{`( ${roomConfig.playersInRoom} / ${roomConfig.maxPlayers} )`}</div>
@@ -544,6 +544,7 @@ function JoinRoom() {
                             username={playerMetadata[playerID]?.username}
                             size={"3rem"}
                             playerMetadata={playerMetadata[playerID]}
+                            animatePresence={true}
                           />
                         ))}
                       </AnimatePresence>

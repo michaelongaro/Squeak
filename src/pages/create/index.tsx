@@ -534,85 +534,75 @@ function CreateRoom() {
         </fieldset>
 
         {connectedToRoom ? (
-          <div className="baseVertFlex gap-4 text-lightGreen">
+          <div className="baseVertFlex gap-4 pt-4 text-lightGreen">
             <fieldset className="w-[350px] rounded-md border-2 border-white p-4 sm:min-w-max">
-              <legend className="baseFlex gap-2 pl-4 pr-4 text-left text-lg">
-                <FaUsers size={"1.25rem"} className="ml-1" />
-                Players
-                <div className="tracking-tighter">{`( ${roomConfig.playersInRoom} / ${roomConfig.maxPlayers} )`}</div>
+              <legend className="baseFlex h-7 gap-4 px-2 sm:px-4">
+                <div className="baseFlex gap-2 text-lg">
+                  <FaUsers size={"1.25rem"} className="ml-1" />
+                  Players
+                  <div className="tracking-tighter">{`( ${roomConfig.playersInRoom} / ${roomConfig.maxPlayers} )`}</div>
+                </div>
+
+                <Button
+                  variant={"secondary"}
+                  disabled={
+                    Object.keys(playerMetadata).length === roomConfig.maxPlayers
+                  }
+                  onClick={() => {
+                    const botID = cryptoRandomString({ length: 16 });
+
+                    socket.volatile.emit("joinRoom", {
+                      code: roomConfig.code,
+                      userID: botID,
+                      playerMetadata: getNewBotMetadata(),
+                    });
+                  }}
+                  className="baseFlex gap-2 whitespace-nowrap !px-4 text-xs"
+                >
+                  <FaRobot size={"1.5rem"} />
+                  Add bot
+                </Button>
               </legend>
               <div className="baseVertFlex gap-6 p-2">
                 <div
                   className={`sm:baseVertFlex grid grid-cols-2 ${
                     roomConfig.playersInRoom > 2 ? "grid-rows-2" : "grid-rows-1"
-                  } !items-start !justify-start gap-8 sm:flex sm:!flex-row`}
+                  } !items-start !justify-start gap-8 overflow-hidden p-4 pb-0 sm:flex sm:!flex-row`}
                 >
-                  {Object.keys(playerMetadata)?.map((playerID) => (
-                    <PlayerIcon
-                      key={playerID}
-                      avatarPath={
-                        playerMetadata[playerID]?.avatarPath ||
-                        "/avatars/rabbit.svg"
-                      }
-                      borderColor={
-                        playerMetadata[playerID]?.color ||
-                        "oklch(64.02% 0.171 15.38)"
-                      }
-                      username={playerMetadata[playerID]?.username}
-                      playerID={playerID}
-                      size={"3rem"}
-                      playerIsHost={playerID === roomConfig.hostUserID}
-                      showAddFriendButton={
-                        isSignedIn &&
-                        userID !== playerID &&
-                        friendData !== undefined &&
-                        friendData.friendIDs.indexOf(playerID) === -1 &&
-                        authenticatedUsers
-                          ? authenticatedUsers.findIndex(
-                              (player) => player.userId === playerID,
-                            ) !== -1
-                          : false
-                      }
-                      showRemovePlayerFromRoomButton={userID !== playerID}
-                      playerMetadata={playerMetadata[playerID]}
-                      roomHostIsRendering={true}
-                    />
-                  ))}
-
-                  {/* Add bot button */}
-                  {Object.keys(playerMetadata).length <
-                    roomConfig.maxPlayers && (
-                    <motion.div
-                      key={"addBotButton"}
-                      initial={{
-                        opacity: 0,
-                        scale: 0.75,
-                      }}
-                      animate={{
-                        opacity: 1,
-                        scale: 1,
-                      }}
-                      transition={{ duration: 0.15 }}
-                      className="baseFlex !items-start"
-                    >
-                      <Button
-                        variant={"secondary"}
-                        onClick={() => {
-                          const botID = cryptoRandomString({ length: 16 });
-
-                          socket.volatile.emit("joinRoom", {
-                            code: roomConfig.code,
-                            userID: botID,
-                            playerMetadata: getNewBotMetadata(),
-                          });
-                        }}
-                        className="baseVertFlex size-16 gap-1.5 whitespace-nowrap text-xs"
-                      >
-                        <FaRobot size={"1.5rem"} />
-                        Add bot
-                      </Button>
-                    </motion.div>
-                  )}
+                  <AnimatePresence mode="popLayout">
+                    {Object.keys(playerMetadata)?.map((playerID) => (
+                      <PlayerIcon
+                        key={playerID}
+                        avatarPath={
+                          playerMetadata[playerID]?.avatarPath ||
+                          "/avatars/rabbit.svg"
+                        }
+                        borderColor={
+                          playerMetadata[playerID]?.color ||
+                          "oklch(64.02% 0.171 15.38)"
+                        }
+                        username={playerMetadata[playerID]?.username}
+                        playerID={playerID}
+                        size={"3rem"}
+                        playerIsHost={playerID === roomConfig.hostUserID}
+                        showAddFriendButton={
+                          isSignedIn &&
+                          userID !== playerID &&
+                          friendData !== undefined &&
+                          friendData.friendIDs.indexOf(playerID) === -1 &&
+                          authenticatedUsers
+                            ? authenticatedUsers.findIndex(
+                                (player) => player.userId === playerID,
+                              ) !== -1
+                            : false
+                        }
+                        showRemovePlayerFromRoomButton={userID !== playerID}
+                        playerMetadata={playerMetadata[playerID]}
+                        roomHostIsRendering={true}
+                        animatePresence={true}
+                      />
+                    ))}
+                  </AnimatePresence>
                 </div>
 
                 <div className="h-[2px] w-full rounded-md bg-white"></div>
