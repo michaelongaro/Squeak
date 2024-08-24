@@ -1,8 +1,11 @@
-import { useState, useLayoutEffect, useRef } from "react";
+import { useState, useLayoutEffect, useRef, useMemo, useCallback } from "react";
 import { useUserIDContext } from "../../context/UserIDContext";
 import { useRoomContext } from "../../context/RoomContext";
 import PlayerIcon from "../playerIcons/PlayerIcon";
 import { AnimatePresence, motion } from "framer-motion";
+
+// This component was previously rerendering/reinitalizing the resize event listener on every render
+// so below is (maybe an overkill?) conservative implementation
 
 function OtherPlayerIcons() {
   const userID = useUserIDContext();
@@ -14,6 +17,9 @@ function OtherPlayerIcons() {
   const rightPlayerIconRef = useRef<HTMLDivElement>(null);
   const secondTopPlayerIconRef = useRef<HTMLDivElement>(null);
 
+  const [prevViewportWidth, setPrevViewportWidth] = useState<number>(0);
+  const [prevViewportHeight, setPrevViewportHeight] = useState<number>(0);
+
   const [absolutePositioning, setAbsolutePositioning] = useState<
     { top: string; left: string }[]
   >([
@@ -23,118 +29,128 @@ function OtherPlayerIcons() {
     { top: "0px", left: "0px" },
   ]);
 
-  const otherPlayerIDs = Object.keys(gameData.players).filter(
-    (playerID) => playerID !== userID,
+  const otherPlayerIDs = useMemo(
+    () =>
+      Object.keys(gameData.players).filter((playerID) => playerID !== userID),
+    [gameData.players, userID],
   );
 
-  // maybe turn into actual state?
-  const playerIDsShowingSqueakButton: {
-    [playerID: string]: boolean;
-  } = {};
+  const playerIDsShowingSqueakButton = useMemo(() => {
+    const result: { [playerID: string]: boolean } = {};
+    for (const id of otherPlayerIDs) {
+      result[id] = gameData.players[id]?.squeakDeck.length === 0;
+    }
+    return result;
+  }, [otherPlayerIDs, gameData.players]);
 
-  for (const id of otherPlayerIDs) {
-    playerIDsShowingSqueakButton[id] =
-      gameData.players[id]?.squeakDeck.length === 0;
-  }
+  const handleResizeRef = useRef<() => void>();
 
-  // probably easier to adj offsets for squeak button based on initial position of
-  // containers, and only recalculate if those values have changed
-  useLayoutEffect(() => {
-    function handleResize() {
-      setTimeout(() => {
-        const tempAbsolutePositioning = [
-          { top: "0px", left: "0px" },
-          { top: "0px", left: "0px" },
-          { top: "0px", left: "0px" },
-          { top: "0px", left: "0px" },
-        ];
-
-        const withinIconOnlyViewportRange =
-          (window.innerWidth >= 1000 && window.innerWidth <= 1500) ||
-          (window.innerHeight >= 700 && window.innerHeight <= 800);
-
-        for (let i = 0; i < otherPlayerIDs.length; i++) {
-          const playerID = otherPlayerIDs[i];
-          if (!playerID) continue;
-
-          const playerContainer = document
-            .getElementById(`${playerID}container`)
-            ?.getBoundingClientRect();
-
-          if (i === 0 && playerContainer) {
-            const firstTopPlayerIconWidth =
-              firstTopPlayerIconRef.current?.getBoundingClientRect().width || 0;
-
-            if (withinIconOnlyViewportRange) {
-              tempAbsolutePositioning[0] = {
-                top: `${playerContainer.top - 15}px`, // gets a 13px offset from closest edge of board
-                left: `${playerContainer.left - firstTopPlayerIconWidth / 4}px`,
-              };
-            } else {
-              tempAbsolutePositioning[0] = {
-                top: `${playerContainer.top + 15}px`,
-                left: `${playerContainer.left - firstTopPlayerIconWidth - 15}px`,
-              };
-            }
-          } else if (i === 1 && playerContainer) {
-            const leftPlayerIconWidth =
-              leftPlayerIconRef.current?.getBoundingClientRect().width || 0;
-
-            if (withinIconOnlyViewportRange) {
-              tempAbsolutePositioning[1] = {
-                top: `${playerContainer.top}px`,
-                left: `${playerContainer.left - leftPlayerIconWidth / 2 - 8}px`, // gets a 13px offset from closest edge of board
-              };
-            } else {
-              tempAbsolutePositioning[1] = {
-                top: `${playerContainer.bottom + 15}px`,
-                left: `${playerContainer.left}px`, // + 15 too ?
-              };
-            }
-          } else if (i === 2 && playerContainer) {
-            const rightPlayerIconWidth =
-              rightPlayerIconRef.current?.getBoundingClientRect().width || 0;
-
-            if (withinIconOnlyViewportRange) {
-              tempAbsolutePositioning[2] = {
-                top: `${playerContainer.top}px`,
-                left: `${playerContainer.left + rightPlayerIconWidth / 2 - 12}px`, // gets a 13px offset from closest edge of board
-              };
-            } else {
-              tempAbsolutePositioning[2] = {
-                top: `${playerContainer.top - 85}px`,
-                left: `${playerContainer.right - rightPlayerIconWidth - 15}px`,
-              };
-            }
-          } else if (i === 3 && playerContainer) {
-            const secondTopPlayerIconWidth =
-              secondTopPlayerIconRef.current?.getBoundingClientRect().width ||
-              0;
-
-            if (withinIconOnlyViewportRange) {
-              tempAbsolutePositioning[3] = {
-                top: `${playerContainer.top - 15}px`, // gets a 13px offset from closest edge of board
-                left: `${playerContainer.left - secondTopPlayerIconWidth / 4}px`,
-              };
-            } else {
-              tempAbsolutePositioning[3] = {
-                top: `${playerContainer.top + 15}px`,
-                left: `${playerContainer.left - secondTopPlayerIconWidth - 15}px`,
-              };
-            }
-          }
-        }
-
-        setAbsolutePositioning(tempAbsolutePositioning);
-      }, 50);
+  handleResizeRef.current = useCallback(() => {
+    if (
+      prevViewportWidth === window.innerWidth &&
+      prevViewportHeight === window.innerHeight
+    ) {
+      console.log("same values");
+      return;
     }
 
-    handleResize();
+    console.log("handling resize");
 
-    window.addEventListener("resize", handleResize);
+    const tempAbsolutePositioning = [
+      { top: "0px", left: "0px" },
+      { top: "0px", left: "0px" },
+      { top: "0px", left: "0px" },
+      { top: "0px", left: "0px" },
+    ];
 
-    return () => window.removeEventListener("resize", handleResize);
-  }, [absolutePositioning, otherPlayerIDs, gameData.players]);
+    const withinIconOnlyViewportRange =
+      (window.innerWidth >= 1000 && window.innerWidth <= 1500) ||
+      (window.innerHeight >= 700 && window.innerHeight <= 800);
+
+    for (let i = 0; i < otherPlayerIDs.length; i++) {
+      const playerID = otherPlayerIDs[i];
+      if (!playerID) continue;
+
+      const playerContainer = document
+        .getElementById(`${playerID}container`)
+        ?.getBoundingClientRect();
+
+      if (i === 0 && playerContainer) {
+        const firstTopPlayerIconWidth =
+          firstTopPlayerIconRef.current?.getBoundingClientRect().width || 0;
+
+        if (withinIconOnlyViewportRange) {
+          tempAbsolutePositioning[0] = {
+            top: `${playerContainer.top - 15}px`, // gets a 13px offset from closest edge of board
+            left: `${playerContainer.left - firstTopPlayerIconWidth / 4}px`,
+          };
+        } else {
+          tempAbsolutePositioning[0] = {
+            top: `${playerContainer.top + 15}px`,
+            left: `${playerContainer.left - firstTopPlayerIconWidth - 15}px`,
+          };
+        }
+      } else if (i === 1 && playerContainer) {
+        const leftPlayerIconWidth =
+          leftPlayerIconRef.current?.getBoundingClientRect().width || 0;
+
+        if (withinIconOnlyViewportRange) {
+          tempAbsolutePositioning[1] = {
+            top: `${playerContainer.top}px`,
+            left: `${playerContainer.left - leftPlayerIconWidth / 2 - 8}px`, // gets a 13px offset from closest edge of board
+          };
+        } else {
+          tempAbsolutePositioning[1] = {
+            top: `${playerContainer.bottom + 15}px`,
+            left: `${playerContainer.left}px`, // + 15 too ?
+          };
+        }
+      } else if (i === 2 && playerContainer) {
+        const rightPlayerIconWidth =
+          rightPlayerIconRef.current?.getBoundingClientRect().width || 0;
+
+        if (withinIconOnlyViewportRange) {
+          tempAbsolutePositioning[2] = {
+            top: `${playerContainer.top}px`,
+            left: `${playerContainer.left + rightPlayerIconWidth / 2 - 12}px`, // gets a 13px offset from closest edge of board
+          };
+        } else {
+          tempAbsolutePositioning[2] = {
+            top: `${playerContainer.top - 85}px`,
+            left: `${playerContainer.right - rightPlayerIconWidth - 15}px`,
+          };
+        }
+      } else if (i === 3 && playerContainer) {
+        const secondTopPlayerIconWidth =
+          secondTopPlayerIconRef.current?.getBoundingClientRect().width || 0;
+
+        if (withinIconOnlyViewportRange) {
+          tempAbsolutePositioning[3] = {
+            top: `${playerContainer.top - 15}px`, // gets a 13px offset from closest edge of board
+            left: `${playerContainer.left - secondTopPlayerIconWidth / 4}px`,
+          };
+        } else {
+          tempAbsolutePositioning[3] = {
+            top: `${playerContainer.top + 15}px`,
+            left: `${playerContainer.left - secondTopPlayerIconWidth - 15}px`,
+          };
+        }
+      }
+
+      setAbsolutePositioning(tempAbsolutePositioning);
+      setPrevViewportWidth(window.innerWidth);
+      setPrevViewportHeight(window.innerHeight);
+    }
+  }, [prevViewportWidth, prevViewportHeight, otherPlayerIDs]);
+
+  useLayoutEffect(() => {
+    handleResizeRef.current?.();
+
+    const resizeListener = () => handleResizeRef.current?.();
+    window.addEventListener("resize", resizeListener);
+
+    return () => window.removeEventListener("resize", resizeListener);
+  }, []);
 
   return (
     <>
