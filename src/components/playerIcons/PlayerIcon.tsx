@@ -361,7 +361,6 @@ function PlayerIcon({
           {/* difficulty toggle button that rotates through easy, medium, and hard */}
           {playerMetadata?.botDifficulty && (
             <div className="baseVertFlex relative mt-2 w-16 gap-1">
-              {/* <p className="text-sm italic underline">Difficulty</p> */}
               <div className="baseFlex w-full gap-2">
                 <div
                   className={`h-2 w-full rounded-md transition-all ${forWhilePlayingDrawer ? "bg-darkGreen" : "bg-lightGreen"}`}
@@ -401,7 +400,7 @@ function PlayerIcon({
                       },
                     });
                   }}
-                  className="mt-2 h-4 w-min !px-2 !py-3 text-sm"
+                  className="mt-2 h-4 w-20 !px-2 !py-3 text-sm"
                 >
                   {playerMetadata.botDifficulty}
                 </Button>
