@@ -43,18 +43,15 @@ function OtherPlayerIcons() {
     return result;
   }, [otherPlayerIDs, gameData.players]);
 
-  const handleResizeRef = useRef<() => void>();
+  const isComponentMounted = useRef(true);
 
-  handleResizeRef.current = useCallback(() => {
+  const handleResize = useCallback(() => {
     if (
       prevViewportWidth === window.innerWidth &&
       prevViewportHeight === window.innerHeight
     ) {
-      console.log("same values");
       return;
     }
-
-    console.log("handling resize");
 
     const tempAbsolutePositioning = [
       { top: "0px", left: "0px" },
@@ -144,13 +141,15 @@ function OtherPlayerIcons() {
   }, [prevViewportWidth, prevViewportHeight, otherPlayerIDs]);
 
   useLayoutEffect(() => {
-    handleResizeRef.current?.();
+    handleResize();
 
-    const resizeListener = () => handleResizeRef.current?.();
-    window.addEventListener("resize", resizeListener);
+    window.addEventListener("resize", handleResize);
 
-    return () => window.removeEventListener("resize", resizeListener);
-  }, []);
+    return () => {
+      isComponentMounted.current = false;
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [handleResize]);
 
   return (
     <>
