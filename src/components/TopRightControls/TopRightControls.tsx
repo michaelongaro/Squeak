@@ -279,7 +279,7 @@ function TopRightControls() {
                 <TbDoorExit size={"1.5rem"} />
               </Button>
             </AlertDialogTrigger>
-            <AlertDialogContent className="baseVertFlex gap-8">
+            <AlertDialogContent className="baseVertFlex z-[500] gap-8">
               <AlertDialogHeader>
                 <AlertDialogTitle className="text-center">
                   Are you sure you want to leave the game?
@@ -776,7 +776,7 @@ function MainDrawer({ status, setShowDrawer }: IMainDrawer) {
             transition={{
               duration: 0.3,
             }}
-            className="baseVertFlex w-screen"
+            className="baseVertFlex w-full"
           >
             {mainViewLabels.map((label) => (
               <Button
@@ -806,23 +806,21 @@ function MainDrawer({ status, setShowDrawer }: IMainDrawer) {
               <AudioLevelSlider forMobile />
             </div>
 
-            <div className="baseFlex w-full !justify-around py-4">
+            <div className="baseFlex w-full max-w-sm !justify-around py-4">
               {status === "authenticated" && (
-                <div className="baseFlex !items-center px-2">
-                  <Button
-                    variant={"secondary"}
-                    onClick={() => {
-                      setShowDrawer(false);
-                      signOut();
-                    }}
-                    className="h-10 w-32"
-                  >
-                    Log out
-                  </Button>
-                </div>
+                <Button
+                  variant={"text"}
+                  onClick={() => {
+                    setShowDrawer(false);
+                    signOut();
+                  }}
+                  className="h-10 !px-0 text-darkGreen underline underline-offset-4"
+                >
+                  Log out
+                </Button>
               )}
 
-              <div className="baseFlex mr-2 !flex-nowrap gap-1.5 text-sm">
+              <div className="baseFlex !flex-nowrap gap-1.5 text-sm">
                 Made by
                 <a
                   href="https://michaelongaro.com"
@@ -851,7 +849,7 @@ function MainDrawer({ status, setShowDrawer }: IMainDrawer) {
               duration: 0.3,
             }}
             className={
-              "baseVertFlex color-darkGreen relative h-full w-screen bg-zinc-200"
+              "baseVertFlex color-darkGreen relative h-full w-full bg-zinc-200"
             }
           >
             {renderedView === "Settings" && (
@@ -890,7 +888,7 @@ function MainDrawer({ status, setShowDrawer }: IMainDrawer) {
             transition={{
               duration: 0.3,
             }}
-            className={"baseVertFlex relative h-full w-screen bg-zinc-200"}
+            className={"baseVertFlex relative h-full w-full bg-zinc-200"}
           >
             <div className="absolute left-0 top-0 z-10 h-8 w-full bg-zinc-200">
               <Button
@@ -930,7 +928,7 @@ function MainDrawer({ status, setShowDrawer }: IMainDrawer) {
               duration: 0.3,
             }}
             className={
-              "baseVertFlex relative h-full w-screen !justify-end bg-zinc-200"
+              "baseVertFlex relative h-full w-full !justify-end bg-zinc-200"
             }
           >
             <FriendActions
@@ -1182,7 +1180,7 @@ function DrawerSettings({
         </div>
 
         <div
-          className={`baseVertFlex h-full w-screen transition-opacity ${saveButtonText !== "Save" ? "opacity-50" : "opacity-100"}`}
+          className={`baseVertFlex h-full w-full transition-opacity ${saveButtonText !== "Save" ? "opacity-50" : "opacity-100"}`}
         >
           {settingsViewLabels.map((label) => (
             <Button
@@ -1280,8 +1278,8 @@ function DrawerSettings({
                 className={`baseFlex h-12 gap-2 text-destructive`}
                 onClick={() => setShowDeleteUserDialog(true)}
               >
-                <FaTrashAlt />
                 Delete account
+                <FaTrashAlt />
               </Button>
             </AlertDialogTrigger>
 
@@ -1329,9 +1327,9 @@ function DrawerSettings({
                       }}
                       className="baseFlex gap-2"
                     >
-                      <FaTrashAlt />
-
                       {deleteButtonText}
+
+                      {deleteButtonText === "Delete account" && <FaTrashAlt />}
 
                       {deleteButtonText === "Deleting account" && (
                         <div
@@ -2158,7 +2156,7 @@ function WhilePlayingDrawer({
               Leave game
             </Button>
           </AlertDialogTrigger>
-          <AlertDialogContent>
+          <AlertDialogContent className="z-[500]">
             <AlertDialogHeader className="baseFlex w-full">
               <AlertDialogTitle className="w-64 sm:w-auto">
                 Are you sure you want to leave the game?
