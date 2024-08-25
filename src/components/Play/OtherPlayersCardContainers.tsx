@@ -419,38 +419,31 @@ function OtherPlayersCardContainers({
             >
               {gameData.players[playerID]!.squeakDeck.length > 0 && (
                 <div className="relative h-full w-full">
-                  {gameData.players[playerID]?.squeakDeck.map(
-                    (card, cardIdx) => (
-                      <div
-                        key={`${playerID}squeakDeckCard${card.suit}${card.value}`}
-                        style={{
-                          zIndex:
-                            cardIdx ===
-                              gameData.players[playerID]!.squeakDeck.length -
-                                1 &&
-                            squeakDeckBeingMovedProgramatically[playerID] &&
-                            !cardBeingMovedProgramatically[playerID]
-                              ? 150
-                              : 90,
-                        }}
-                        className="absolute left-0 top-0 h-full w-full select-none"
-                      >
-                        <Card
-                          value={card.value}
-                          suit={card.suit}
-                          showCardBack={true} // this would need to be changed halfway through card flip
-                          draggable={false}
-                          ownerID={playerID}
-                          hueRotation={
-                            playerMetadata[playerID]?.deckHueRotation || 0
-                          }
-                          startID={`${playerID}squeakDeck`}
-                          origin={"squeakDeck"}
-                          rotation={rotationOrder[idx] as number}
-                        />
-                      </div>
-                    ),
-                  )}
+                  {gameData.players[playerID]?.squeakDeck.map((card) => (
+                    <div
+                      key={`${playerID}squeakDeckCard${card.suit}${card.value}`}
+                      style={{
+                        zIndex: squeakDeckBeingMovedProgramatically[playerID]
+                          ? 140 // 140 since the card shouldn't be above any moving cards, which are at 150
+                          : 90, // otherwise default to 90 so regular cards fly above this whole deck
+                      }}
+                      className="absolute left-0 top-0 h-full w-full select-none"
+                    >
+                      <Card
+                        value={card.value}
+                        suit={card.suit}
+                        showCardBack={true} // this would need to be changed halfway through card flip
+                        draggable={false}
+                        ownerID={playerID}
+                        hueRotation={
+                          playerMetadata[playerID]?.deckHueRotation || 0
+                        }
+                        startID={`${playerID}squeakDeck`}
+                        origin={"squeakDeck"}
+                        rotation={rotationOrder[idx] as number}
+                      />
+                    </div>
+                  ))}
                 </div>
               )}
 

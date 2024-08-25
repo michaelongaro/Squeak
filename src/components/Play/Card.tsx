@@ -178,7 +178,7 @@ function Card({
           });
         }
 
-        if (origin === "squeakHand" && ownerID) {
+        if (origin === "squeakDeck" && ownerID) {
           setSqueakDeckBeingMovedProgramatically({
             ...squeakDeckBeingMovedProgramatically,
             [ownerID]: false,
@@ -209,7 +209,7 @@ function Card({
         });
       }
 
-      if (origin === "squeakHand" && ownerID) {
+      if (origin === "squeakDeck" && ownerID) {
         setSqueakDeckBeingMovedProgramatically({
           ...squeakDeckBeingMovedProgramatically,
           [ownerID]: true,

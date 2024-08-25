@@ -280,19 +280,13 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
           >
             {gameData.players[userID]!.squeakDeck.length > 0 && (
               <div className="relative h-full w-full">
-                {gameData.players[userID]?.squeakDeck.map((card, cardIdx) => (
+                {gameData.players[userID]?.squeakDeck.map((card) => (
                   <div
                     key={`${userID}squeakDeckCard${card.suit}${card.value}`}
                     style={{
-                      zIndex:
-                        cardIdx ===
-                          gameData.players[userID]!.squeakDeck.length - 1 &&
-                        squeakDeckBeingMovedProgramatically[userID] &&
-                        !holdingADeckCard &&
-                        !holdingASqueakCard &&
-                        !cardBeingMovedProgramatically[userID]
-                          ? 150
-                          : 90,
+                      zIndex: squeakDeckBeingMovedProgramatically[userID]
+                        ? 140 // 140 since the card shouldn't be above any moving cards, which are at 150
+                        : 90, // otherwise default to 90 so regular cards fly above this whole deck
                     }}
                     className="absolute left-0 top-0 h-full w-full select-none"
                   >
