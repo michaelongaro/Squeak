@@ -88,7 +88,7 @@ function GeneralLayout({ children }: GeneralLayout) {
           <meta
             name="description"
             content="Welcome to Squeak! A fun, fast-paced multiplayer rendition of solitaire.
-                   Games can be played with 2-4 players, lasting around 20 minutes."
+                   Games can be played with 2-5 players, lasting around 20 minutes."
           />
           {/* makes it so page can't be overscrolled (which is the default iOS scrolling implemenation) */}
           <meta
@@ -102,7 +102,7 @@ function GeneralLayout({ children }: GeneralLayout) {
           <meta
             property="og:description"
             content="Welcome to Squeak! A fun, fast-paced multiplayer rendition of solitaire.
-                   Games can be played with 2-4 players, lasting around 20 minutes."
+                   Games can be played with 2-5 players, lasting around 20 minutes."
           />
           <meta property="og:type" content="website" />
           <meta

@@ -75,7 +75,7 @@ function TutorialDialog({ setShowDialog }: ITutorialDialog) {
                   Nerts
                   <HiExternalLink size={"1.25rem"} />
                 </a>
-                . Games can be played with 2-4 players, where each player starts
+                . Games can be played with 2-5 players, where each player starts
                 with a regular deck of cards. After shuffling, each player
                 places 13 cards in their &quot;Squeak deck&quot;, with an
                 additional four cards from their deck face up beside it. These
