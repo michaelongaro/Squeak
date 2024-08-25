@@ -52,49 +52,56 @@ function ShufflingCountdownDialog() {
   ]);
 
   return (
-    <DialogContent className="z-[500] w-80 rounded-lg border-2 border-lightGreen bg-gradient-to-br from-green-800 to-green-850 px-16 py-8 font-medium text-lightGreen shadow-md sm:w-96">
-      <VisuallyHidden>
-        <DialogTitle>
-          Shuffling deck for round {gameData.currentRound}
-        </DialogTitle>
-        <DialogDescription>
-          The decks are being shuffled for the upcoming round
-        </DialogDescription>
-      </VisuallyHidden>
+    <motion.div
+      key={"shufflingCountdownDialog"}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
+      <DialogContent className="z-[500] w-80 rounded-lg border-2 border-lightGreen bg-gradient-to-br from-green-800 to-green-850 px-16 py-8 font-medium text-lightGreen shadow-md sm:w-96">
+        <VisuallyHidden>
+          <DialogTitle>
+            Shuffling deck for round {gameData.currentRound}
+          </DialogTitle>
+          <DialogDescription>
+            The decks are being shuffled for the upcoming round
+          </DialogDescription>
+        </VisuallyHidden>
 
-      <div className="baseVertFlex gap-8">
-        <div className="baseVertFlex gap-2">
-          <div className="text-xl">Round {gameData.currentRound}</div>
-          <div className="text-lightGreen/75">Shuffling decks</div>
-        </div>
+        <div className="baseVertFlex gap-8">
+          <div className="baseVertFlex gap-2">
+            <div className="text-xl">Round {gameData.currentRound}</div>
+            <div className="text-lightGreen/75">Shuffling decks</div>
+          </div>
 
-        <div
-          style={{
-            perspective: "450px",
-            transformStyle: "preserve-3d",
-          }}
-          className="z-[2] mt-4 h-[115px] w-full tablet:h-[165px]"
-        >
-          {deck.map((card, index) => (
-            <AnimatedShufflingCard
-              key={`animatedShufflingCard${index}`}
-              index={index + 1} // seems to fix bug where the first card skipped animation entirely
-              hueRotation={playerMetadata[userID]?.deckHueRotation || 0}
+          <div
+            style={{
+              perspective: "450px",
+              transformStyle: "preserve-3d",
+            }}
+            className="z-[2] mt-4 h-[115px] w-full tablet:h-[165px]"
+          >
+            {deck.map((card, index) => (
+              <AnimatedShufflingCard
+                key={`animatedShufflingCard${index}`}
+                index={index + 1} // seems to fix bug where the first card skipped animation entirely
+                hueRotation={playerMetadata[userID]?.deckHueRotation || 0}
+              />
+            ))}
+          </div>
+
+          <div className="baseFlex gap-2">
+            <div>Round will begin in:</div>
+
+            <AnimatedNumbers
+              value={countdownTimerValue}
+              padding={2}
+              fontSize={18}
             />
-          ))}
+          </div>
         </div>
-
-        <div className="baseFlex gap-2">
-          <div>Round will begin in:</div>
-
-          <AnimatedNumbers
-            value={countdownTimerValue}
-            padding={2}
-            fontSize={18}
-          />
-        </div>
-      </div>
-    </DialogContent>
+      </DialogContent>
+    </motion.div>
   );
 }
 

@@ -258,11 +258,13 @@ function Play() {
       </AnimatePresence>
 
       <Dialog open={showShufflingCountdown}>
-        <ShufflingCountdownDialog />
+        <AnimatePresence>
+          {showShufflingCountdown && <ShufflingCountdownDialog />}
+        </AnimatePresence>
       </Dialog>
 
       <Dialog open={showScoreboard}>
-        <Scoreboard />
+        <AnimatePresence>{showScoreboard && <Scoreboard />}</AnimatePresence>
       </Dialog>
     </motion.div>
   );
