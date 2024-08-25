@@ -29,6 +29,8 @@ import PlayerCustomizationDrawer from "~/components/drawers/PlayerCustomizationD
 import { Label } from "~/components/ui/label";
 import { Button } from "~/components/ui/button";
 import { useRouter } from "next/router";
+import { avatarPaths } from "~/utils/avatarPaths";
+import { oklchToDeckHueRotations } from "~/utils/oklchToDeckHueRotations";
 
 const filter = new Filter();
 
@@ -235,22 +237,30 @@ function CreateRoom() {
   }
 
   function getNewBotMetadata() {
-    let uniqueBotName = "";
+    let randomBotName = "";
     do {
-      uniqueBotName = botNames[
+      randomBotName = botNames[
         Math.floor(Math.random() * botNames.length)
       ] as string;
     } while (
       Object.values(playerMetadata).findIndex(
-        (player) => player?.username === uniqueBotName,
+        (player) => player?.username === randomBotName,
       ) !== -1
     );
 
+    const randomAvatarPath =
+      avatarPaths[Math.floor(Math.random() * avatarPaths.length)];
+
+    const oklchToDeckArray = Object.entries(oklchToDeckHueRotations);
+    const [randomColor, randomDeckHueRotation] = oklchToDeckArray[
+      Math.floor(Math.random() * oklchToDeckArray.length)
+    ] as [string, number];
+
     return {
-      username: uniqueBotName,
-      avatarPath: "/avatars/rabbit.svg",
-      color: "oklch(64.02% 0.171 15.38)",
-      deckHueRotation: 232,
+      username: randomBotName,
+      avatarPath: randomAvatarPath,
+      color: randomColor,
+      deckHueRotation: randomDeckHueRotation,
       botDifficulty: "Medium",
     } as IRoomPlayer;
   }
