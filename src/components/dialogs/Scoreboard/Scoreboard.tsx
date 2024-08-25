@@ -87,6 +87,9 @@ function Scoreboard() {
   >(null);
   const [showCountdown, setShowCountdown] = useState<boolean>(false);
 
+  const [confettiPopperShrink, setConfettiPopperShrink] =
+    useState<boolean>(false);
+
   const leftConfettiCannonRef = useRef<HTMLImageElement>(null);
   const rightConfettiCannonRef = useRef<HTMLImageElement>(null);
 
@@ -135,6 +138,16 @@ function Scoreboard() {
 
     setTimeout(() => {
       setShowConfettiPoppers(true);
+
+      // slightly shrink the confetti poppers while they are firing for
+      // a more realistic effect
+      setTimeout(() => {
+        setConfettiPopperShrink(true);
+
+        setTimeout(() => {
+          setConfettiPopperShrink(false);
+        }, 250);
+      }, 200);
 
       setTimeout(() => {
         if (audioContext && masterVolumeGainNode) {
@@ -399,9 +412,9 @@ function Scoreboard() {
                   // when the game starts
                   className="order-[-2] grid w-full max-w-xl place-items-center"
                 >
-                  <FaTrophy className="-mr-5 size-4 text-lightGreen" />
+                  <FaTrophy className="size-4 text-lightGreen" />
                   <div className="font-semibold">Player</div>
-                  <div className="mr-4 font-semibold">Total</div>
+                  <div className="mr-[21px] font-semibold">Total</div>
                 </div>
 
                 {sortedPlayerRoundDetails.map((player) => (
@@ -427,7 +440,7 @@ function Scoreboard() {
                           playerColorVariants[player.playerID]?.textColor ??
                           "black",
                       }}
-                      className="grid h-8 w-full grid-cols-1 items-center justify-items-start rounded-l-md pl-5"
+                      className="baseFlex h-8 w-full items-center rounded-l-md"
                     >
                       <AnimatePresence mode={"wait"}>
                         {showNewRankings && (
@@ -485,7 +498,7 @@ function Scoreboard() {
                           "white",
                         color: playerColorVariants[player.playerID]?.textColor,
                       }}
-                      className="baseFlex h-8 w-full !justify-end rounded-r-md pr-5"
+                      className="baseFlex h-8 w-full rounded-r-md pr-[21px]"
                     >
                       <AnimatedNumbers
                         value={
@@ -677,8 +690,11 @@ function Scoreboard() {
                         style={{
                           filter:
                             "drop-shadow(rgba(0,0,0, 0.10) 0px 0px 0.5rem)",
+                          transform: confettiPopperShrink
+                            ? "scale(0.75) rotate(225deg)"
+                            : "scale(1) rotate(225deg)",
                         }}
-                        className="h-6 w-6 rotate-[225deg] transition-all"
+                        className="h-6 w-6 transition-all"
                         src={confettiPopper}
                         alt={"left celebratory confetti cannon"}
                       />
@@ -738,8 +754,11 @@ function Scoreboard() {
                         style={{
                           filter:
                             "drop-shadow(rgba(0,0,0, 0.10) 0px 0px 0.5rem)",
+                          transform: confettiPopperShrink
+                            ? "scale(0.75) rotate(135deg)"
+                            : "scale(1) rotate(135deg)",
                         }}
-                        className="h-6 w-6 rotate-[135deg] transition-all"
+                        className="h-6 w-6 transition-all"
                         src={confettiPopper}
                         alt={"right celebratory confetti cannon"}
                       />
@@ -1124,8 +1143,11 @@ function Scoreboard() {
                       ref={leftConfettiCannonRef}
                       style={{
                         filter: "drop-shadow(rgba(0,0,0, 0.10) 0px 0px 0.5rem)",
+                        transform: confettiPopperShrink
+                          ? "scale(0.75) rotate(135deg)"
+                          : "scale(1) rotate(135deg)",
                       }}
-                      className="h-8 w-8 rotate-[135deg] transition-all"
+                      className="h-8 w-8 transition-all"
                       src={confettiPopper}
                       alt={"left celebratory confetti cannon"}
                     />
@@ -1180,8 +1202,11 @@ function Scoreboard() {
                       ref={rightConfettiCannonRef}
                       style={{
                         filter: "drop-shadow(rgba(0,0,0, 0.10) 0px 0px 0.5rem)",
+                        transform: confettiPopperShrink
+                          ? "scale(0.75) rotate(225deg)"
+                          : "scale(1) rotate(225deg)",
                       }}
-                      className="h-8 w-8 rotate-[225deg] transition-all"
+                      className="h-8 w-8 transition-all"
                       src={confettiPopper}
                       alt={"right celebratory confetti cannon"}
                     />
