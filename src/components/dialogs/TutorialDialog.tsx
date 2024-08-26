@@ -34,7 +34,7 @@ function TutorialDialog({ setShowDialog }: ITutorialDialog) {
   ] = useState(false);
 
   return (
-    <DialogContent className="baseVertFlex z-[500] h-[95%] w-[95%] !justify-start overflow-y-scroll rounded-md rounded-t-md border-2 border-white bg-gradient-to-br from-green-800 to-green-850 shadow-lg tablet:max-h-[90dvh] tablet:max-w-4xl">
+    <DialogContent className="baseVertFlex h-[95%] w-[95%] !justify-start overflow-y-scroll rounded-md rounded-t-md border-2 border-white bg-gradient-to-br from-green-800 to-green-850 shadow-lg tablet:max-h-[90dvh] tablet:max-w-4xl">
       <VisuallyHidden>
         <DialogTitle>How to play</DialogTitle>
         <DialogDescription>Learn how to play Squeak</DialogDescription>

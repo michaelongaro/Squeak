@@ -255,7 +255,7 @@ function Settings({
           </Button>
         </AlertDialogTrigger>
 
-        <AlertDialogContent className="z-[500]">
+        <AlertDialogContent>
           <AlertDialogTitle className="font-semibold">
             Delete account
           </AlertDialogTitle>

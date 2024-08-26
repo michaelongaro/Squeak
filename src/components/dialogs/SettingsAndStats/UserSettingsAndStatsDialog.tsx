@@ -164,7 +164,7 @@ function UserSettingsAndStatsDialog({
   }
 
   return (
-    <DialogContent className="baseVertFlex z-[500] w-fit rounded-md border-2 border-white shadow-md">
+    <DialogContent className="baseVertFlex w-fit rounded-md border-2 border-white shadow-md">
       <VisuallyHidden>
         <DialogTitle>{showSettings ? "Settings" : "Statistics"}</DialogTitle>
         <DialogDescription>

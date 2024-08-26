@@ -379,7 +379,7 @@ function Scoreboard() {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
       >
-        <DialogContent className="z-[500] w-[95%] rounded-lg border-2 border-lightGreen bg-gradient-to-br from-green-800 to-green-850 p-4 text-lightGreen shadow-md tablet:h-[75%] tablet:w-[75%]">
+        <DialogContent className="w-[95%] rounded-lg border-2 border-lightGreen bg-gradient-to-br from-green-800 to-green-850 p-4 text-lightGreen shadow-md tablet:h-[75%] tablet:w-[75%]">
           <VisuallyHidden>
             <DialogTitle>
               {scoreboardMetadata?.gameWinnerID ? "Game over!" : "Round over!"}
@@ -922,7 +922,7 @@ function Scoreboard() {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
     >
-      <DialogContent className="z-[500] h-[95%] w-[95%] rounded-lg border-2 border-lightGreen bg-gradient-to-br from-green-800 to-green-850 p-4 text-lightGreen shadow-md tablet:h-auto tablet:w-[85%] desktop:w-[75%]">
+      <DialogContent className="h-[95%] w-[95%] rounded-lg border-2 border-lightGreen bg-gradient-to-br from-green-800 to-green-850 p-4 text-lightGreen shadow-md tablet:h-auto tablet:w-[85%] desktop:w-[75%]">
         <VisuallyHidden>
           <DialogTitle>
             {scoreboardMetadata?.gameWinnerID ? "Game over!" : "Round over!"}

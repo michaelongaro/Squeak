@@ -71,7 +71,7 @@ function LeaderboardDialog({ setShowDialog }: ILeaderboardDialog) {
   ];
 
   return (
-    <DialogContent className="baseVertFlex z-[500] max-h-[90vh] w-[93vw] !justify-start overflow-hidden rounded-md border-2 border-white shadow-md lg:w-auto">
+    <DialogContent className="baseVertFlex max-h-[90vh] w-[93vw] !justify-start overflow-hidden rounded-md border-2 border-white shadow-md lg:w-auto">
       <VisuallyHidden>
         <DialogTitle>Leaderboard</DialogTitle>
         <DialogDescription>

@@ -279,7 +279,7 @@ function TopRightControls() {
                 <TbDoorExit size={"1.5rem"} />
               </Button>
             </AlertDialogTrigger>
-            <AlertDialogContent className="baseVertFlex z-[500] gap-8">
+            <AlertDialogContent className="baseVertFlex gap-8">
               <AlertDialogHeader>
                 <AlertDialogTitle className="text-center">
                   Are you sure you want to leave the game?
@@ -754,7 +754,7 @@ function MainDrawer({ status, setShowDrawer }: IMainDrawer) {
       case "back":
         return "430px";
       default:
-        return status === "unauthenticated" ? "389px" : "412px";
+        return "388px";
     }
   }
 
@@ -806,7 +806,7 @@ function MainDrawer({ status, setShowDrawer }: IMainDrawer) {
               <AudioLevelSlider forMobile />
             </div>
 
-            <div className="baseFlex w-full max-w-sm !justify-around py-4">
+            <div className="baseFlex my-2 h-8 w-full max-w-sm !justify-around">
               {status === "authenticated" && (
                 <Button
                   variant={"text"}
@@ -814,7 +814,7 @@ function MainDrawer({ status, setShowDrawer }: IMainDrawer) {
                     setShowDrawer(false);
                     signOut();
                   }}
-                  className="h-10 !px-0 text-darkGreen underline underline-offset-4"
+                  className="h-8 !px-0 !py-0 text-darkGreen underline underline-offset-4"
                 >
                   Log out
                 </Button>
@@ -2156,7 +2156,7 @@ function WhilePlayingDrawer({
               Leave game
             </Button>
           </AlertDialogTrigger>
-          <AlertDialogContent className="z-[500]">
+          <AlertDialogContent>
             <AlertDialogHeader className="baseFlex w-full">
               <AlertDialogTitle className="w-64 sm:w-auto">
                 Are you sure you want to leave the game?
