@@ -104,9 +104,9 @@ function LeaderboardDialog({ setShowDialog }: ILeaderboardDialog) {
               }}
               className="w-full max-w-[70%] sm:max-w-[400px]"
             >
-              <CarouselContent className="baseFlex relative w-full !justify-evenly">
-                {leaderboardCategories.map((name, index) => (
-                  <CarouselItem key={name}>
+              <CarouselContent className="items-center !justify-between">
+                {leaderboardCategories.map((categoryName, index) => (
+                  <CarouselItem key={index}>
                     <p
                       className={`mx-2 select-none text-center text-lg font-medium text-lightGreen transition-all xs:whitespace-nowrap xs:text-nowrap xs:text-xl ${
                         carouselApi?.selectedScrollSnap() === index
@@ -114,7 +114,7 @@ function LeaderboardDialog({ setShowDialog }: ILeaderboardDialog) {
                           : "opacity-50"
                       }`}
                     >
-                      {name}
+                      {categoryName}
                     </p>
                   </CarouselItem>
                 ))}
