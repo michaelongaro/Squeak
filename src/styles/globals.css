@@ -150,6 +150,7 @@ body {
   /* ^ for when backgroundTexture is still loading */
   background-image: url("/backgroundTexture/backgroundTexture.png");
   background-repeat: repeat;
+  user-select: none !important;
 }
 
 .topBackFacingCardInDeck {
