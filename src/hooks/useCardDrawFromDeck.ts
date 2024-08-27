@@ -3,6 +3,7 @@ import { socket } from "~/pages/_app";
 import { useRoomContext } from "../context/RoomContext";
 import { type IDrawFromDeck } from "../pages/api/socket";
 import { type IMoveCard } from "../components/Play/Card";
+import { useUserIDContext } from "~/context/UserIDContext";
 
 interface IUseCardDrawFromDeck {
   value?: string;
@@ -24,7 +25,13 @@ function useCardDrawFromDeck({
   rotation,
   moveCard,
 }: IUseCardDrawFromDeck) {
-  const { setGameData } = useRoomContext();
+  const userID = useUserIDContext();
+
+  const {
+    setGameData,
+    otherPlayerIDsDrawingFromDeck,
+    setOtherPlayerIDsDrawingFromDeck,
+  } = useRoomContext();
 
   const [dataFromBackend, setDataFromBackend] = useState<IDrawFromDeck | null>(
     null,
@@ -57,6 +64,19 @@ function useCardDrawFromDeck({
       )
         return;
 
+      if (ownerID !== userID) {
+        setOtherPlayerIDsDrawingFromDeck([
+          ...otherPlayerIDsDrawingFromDeck,
+          playerID,
+        ]);
+
+        setTimeout(() => {
+          setOtherPlayerIDsDrawingFromDeck((currentIDs) =>
+            currentIDs.filter((id) => id !== ownerID),
+          );
+        }, 100);
+      }
+
       const endID = `${ownerID}hand`;
 
       const endLocation = document
@@ -74,7 +94,18 @@ function useCardDrawFromDeck({
         });
       }
     }
-  }, [dataFromBackend, moveCard, setGameData, rotation, suit, ownerID, value]);
+  }, [
+    dataFromBackend,
+    moveCard,
+    setGameData,
+    rotation,
+    suit,
+    ownerID,
+    value,
+    setOtherPlayerIDsDrawingFromDeck,
+    otherPlayerIDsDrawingFromDeck,
+    userID,
+  ]);
 }
 
 export default useCardDrawFromDeck;

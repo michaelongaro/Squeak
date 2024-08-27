@@ -45,6 +45,7 @@ function OtherPlayersCardContainers({
     roomConfig,
     squeakStackDragAlterations,
     viewportLabel,
+    otherPlayerIDsDrawingFromDeck,
   } = useRoomContext();
 
   const otherPlayerIDs = Object.keys(gameData.players).filter(
@@ -492,10 +493,32 @@ function OtherPlayersCardContainers({
               </>
             </div>
 
-            <div className={`${classes.playerDeck} cardDimensions select-none`}>
+            <div
+              style={{
+                filter: otherPlayerIDsDrawingFromDeck.includes(playerID)
+                  ? "brightness(0.8)"
+                  : "none",
+                transition: "filter 75ms ease-in-out",
+              }}
+              className={`${classes.playerDeck} cardDimensions select-none`}
+            >
               <div id={`${playerID}deck`} className="h-full w-full">
                 {gameData?.players[playerID]?.deck.length ? (
-                  <div className="relative h-full w-full select-none">
+                  <div
+                    style={{
+                      zIndex:
+                        cardBeingMovedProgramatically[playerID] === true
+                          ? 150
+                          : 100,
+                      transform: otherPlayerIDsDrawingFromDeck.includes(
+                        playerID,
+                      )
+                        ? "scale(0.95)"
+                        : "none",
+                      transition: "transform 100ms ease-in-out",
+                    }}
+                    className="relative h-full w-full select-none"
+                  >
                     <>
                       <div
                         onAnimationEnd={() => setDecksAreBeingRotated(false)}
@@ -539,7 +562,10 @@ function OtherPlayersCardContainers({
                     </>
                   </div>
                 ) : (
-                  <div className="grid select-none grid-cols-1 items-center justify-items-center">
+                  <div
+                    // no scale here since we immediately update the game state when resetting the deck. not really sure of a workaround without a decent refactor
+                    className="grid select-none grid-cols-1 items-center justify-items-center"
+                  >
                     <div className="col-start-1 row-start-1">
                       <FaRedoAlt size={"1.5rem"} />
                     </div>

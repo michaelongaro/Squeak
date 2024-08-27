@@ -415,7 +415,13 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
               }}
             >
               {gameData?.players[userID]?.deck?.length ? (
-                <div className="relative h-full w-full select-none">
+                <div
+                  style={{
+                    transform: pointerDownOnDeck ? "scale(0.95)" : "none",
+                    transition: "transform 150ms ease-in-out ",
+                  }}
+                  className="relative h-full w-full select-none"
+                >
                   <>
                     <div
                       onAnimationEnd={() => setDecksAreBeingRotated(false)}
@@ -459,7 +465,13 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                   </>
                 </div>
               ) : (
-                <div className="grid cursor-pointer select-none grid-cols-1 items-center justify-items-center">
+                <div
+                  style={{
+                    transform: pointerDownOnDeck ? "scale(0.95)" : "none",
+                    transition: "transform 150ms ease-in-out ",
+                  }}
+                  className="grid cursor-pointer select-none grid-cols-1 items-center justify-items-center"
+                >
                   <div className="col-start-1 row-start-1 select-none">
                     <FaRedoAlt className="scale-x-flip size-6" />
                   </div>

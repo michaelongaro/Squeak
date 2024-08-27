@@ -110,6 +110,10 @@ interface IRoomContext {
   setShowShufflingCountdown: React.Dispatch<React.SetStateAction<boolean>>;
   connectedToRoom: boolean;
   setConnectedToRoom: React.Dispatch<React.SetStateAction<boolean>>;
+  otherPlayerIDsDrawingFromDeck: string[];
+  setOtherPlayerIDsDrawingFromDeck: React.Dispatch<
+    React.SetStateAction<string[]>
+  >;
 
   currentVolume: number | null;
   setCurrentVolume: React.Dispatch<React.SetStateAction<number | null>>;
@@ -256,6 +260,8 @@ export function RoomProvider(props: { children: React.ReactNode }) {
   );
 
   const [connectedToRoom, setConnectedToRoom] = useState<boolean>(false);
+  const [otherPlayerIDsDrawingFromDeck, setOtherPlayerIDsDrawingFromDeck] =
+    useState<string[]>([]);
 
   const [showScoreboard, setShowScoreboard] = useState<boolean>(false);
   const [showShufflingCountdown, setShowShufflingCountdown] =
@@ -485,6 +491,8 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     setDecksAreBeingRotated,
     playerIDWhoSqueaked,
     setPlayerIDWhoSqueaked,
+    otherPlayerIDsDrawingFromDeck,
+    setOtherPlayerIDsDrawingFromDeck,
     showScoreboard,
     setShowScoreboard,
     showShufflingCountdown,
