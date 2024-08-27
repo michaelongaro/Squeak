@@ -172,7 +172,7 @@ function TopRightControls() {
         >
           <DrawerTrigger onClick={() => setShowDrawer(true)}>
             <IoSettingsSharp
-              className={`size-5 text-lightGreen transition-all active:brightness-50 ${showDrawer ? "rotate-[25deg]" : ""}`}
+              className={`size-5 text-lightGreen transition-all duration-200 active:brightness-50 ${showDrawer ? "rotate-[25deg]" : ""}`}
             />
           </DrawerTrigger>
         </div>
