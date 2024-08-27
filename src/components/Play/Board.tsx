@@ -3,7 +3,7 @@ import { useRoomContext } from "../../context/RoomContext";
 import useTrackHoverOverBoardCells from "../../hooks/useTrackHoverOverBoardCells";
 import BoardCell from "./BoardCell";
 import classes from "./Play.module.css";
-
+import { createPortal } from "react-dom";
 export interface IGetBoxShadowStyles {
   id: string;
   rowIdx?: number;
@@ -18,6 +18,7 @@ function Board() {
     holdingASqueakCard,
     proposedCardBoxShadow,
     hoveredCell,
+    setProposedCardBoxShadow,
   } = useRoomContext();
 
   useTrackHoverOverBoardCells();
@@ -28,8 +29,6 @@ function Board() {
   // on the same deck cell. Below states and effect are a workaround to manually reset these states
   // after the card has been played. This is not ideal, but seemingly works okay.
 
-  const [cardDropApprovedBoxShadowID, setCardDropApprovedBoxShadowID] =
-    useState<string | null>(null);
   const [plusOneIndicatorID, setPlusOneIndicatorID] = useState<string | null>(
     null,
   );
@@ -40,11 +39,9 @@ function Board() {
       proposedCardBoxShadow.boxShadowValue ===
         "0px 0px 4px 3px hsl(120, 100%, 86%)"
     ) {
-      setCardDropApprovedBoxShadowID(proposedCardBoxShadow.id);
-
       setTimeout(() => {
-        setCardDropApprovedBoxShadowID(null);
-      }, 150); // standard duration of box shadow transition
+        setProposedCardBoxShadow(null);
+      }, 300); // standard duration of box shadow transition
 
       setPlusOneIndicatorID(proposedCardBoxShadow.id);
 
@@ -55,10 +52,10 @@ function Board() {
     }
 
     return () => {
-      setCardDropApprovedBoxShadowID(null);
+      setProposedCardBoxShadow(null);
       setPlusOneIndicatorID(null);
     };
-  }, [proposedCardBoxShadow]);
+  }, [proposedCardBoxShadow, setProposedCardBoxShadow]);
 
   function getBoxShadowStyles({
     id,
@@ -94,14 +91,11 @@ function Board() {
               key={`board${rowIdx}${colIdx}`}
               id={`parentCell${rowIdx}${colIdx}`}
               style={{
-                boxShadow:
-                  cardDropApprovedBoxShadowID === `cell${rowIdx}${colIdx}`
-                    ? "0px 0px 4px 3px hsl(120, 100%, 86%)"
-                    : getBoxShadowStyles({
-                        id: `cell${rowIdx}${colIdx}`,
-                        rowIdx,
-                        colIdx,
-                      }),
+                boxShadow: getBoxShadowStyles({
+                  id: `cell${rowIdx}${colIdx}`,
+                  rowIdx,
+                  colIdx,
+                }),
                 opacity:
                   hoveredCell?.[0] === rowIdx &&
                   hoveredCell?.[1] === colIdx &&
