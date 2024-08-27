@@ -394,7 +394,7 @@ function Scoreboard() {
               <div className="baseFlex w-full !items-start !justify-between">
                 <div className="text-xl font-semibold">Scoreboard</div>
 
-                <div className="baseVertFlex !items-end text-sm">
+                <div className="baseVertFlex !items-end text-sm opacity-80">
                   <div>Round {gameData.currentRound}</div>
                   <div>Goal: {roomConfig.pointsToWin} points</div>
                 </div>
@@ -934,7 +934,7 @@ function Scoreboard() {
 
         {scoreboardMetadata?.playerRoundDetails && (
           <div className="baseVertFlex relative h-full gap-2 tablet:gap-6">
-            <div className="baseFlex absolute left-2 top-2 gap-2">
+            <div className="baseFlex absolute left-2 top-2 gap-2 opacity-80">
               <div>Round {gameData.currentRound}</div>
 
               <div className="h-4 w-[1px] rounded-md bg-lightGreen"></div>
