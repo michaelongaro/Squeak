@@ -8,6 +8,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useRoomContext } from "../../../context/RoomContext";
 import PlayerIcon from "../../playerIcons/PlayerIcon";
 import { FaTrophy } from "react-icons/fa6";
+import { BiArrowBack } from "react-icons/bi";
 import confettiPopper from "../../../../public/scoreboard/confettiPopper.svg";
 import { useUserIDContext } from "../../../context/UserIDContext";
 import { type IPlayerRoundDetails } from "../../../pages/api/handlers/roundOverHandler";
@@ -818,9 +819,12 @@ function Scoreboard() {
                               className="baseFlex h-11 w-[14rem] gap-4"
                             >
                               {hostActionButtonText}
+                              {hostActionButtonText !== "Loading" && (
+                                <BiArrowBack className="scale-x-flip size-4" />
+                              )}
                               {hostActionButtonText === "Loading" && (
                                 <div
-                                  className="inline-block size-4 animate-spin rounded-full border-[2px] border-darkGreen border-t-transparent text-darkGreen"
+                                  className="ml-1 inline-block size-4 animate-spin rounded-full border-[2px] border-darkGreen border-t-transparent text-darkGreen"
                                   role="status"
                                   aria-label="loading"
                                 >
@@ -1263,12 +1267,15 @@ function Scoreboard() {
                             transition={{
                               duration: 0.25,
                             }}
-                            className="baseFlex h-11 w-[14rem] gap-4"
+                            className="baseFlex h-11 w-[14rem] gap-2"
                           >
                             {hostActionButtonText}
+                            {hostActionButtonText !== "Loading" && (
+                              <BiArrowBack className="scale-x-flip size-4" />
+                            )}
                             {hostActionButtonText === "Loading" && (
                               <div
-                                className="inline-block size-4 animate-spin rounded-full border-[2px] border-darkGreen border-t-transparent text-darkGreen"
+                                className="ml-1 inline-block size-4 animate-spin rounded-full border-[2px] border-darkGreen border-t-transparent text-darkGreen"
                                 role="status"
                                 aria-label="loading"
                               >

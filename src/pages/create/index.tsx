@@ -691,12 +691,15 @@ function CreateRoom() {
                         transition={{
                           duration: 0.25,
                         }}
-                        className="baseFlex h-11 w-[14rem] gap-4"
+                        className="baseFlex h-11 w-[14rem] gap-2"
                       >
                         {startGameButtonText}
+                        {startGameButtonText === "Start game" && (
+                          <BiArrowBack className="scale-x-flip size-4" />
+                        )}
                         {startGameButtonText === "Loading" && (
                           <div
-                            className="inline-block size-4 animate-spin rounded-full border-[2px] border-darkGreen border-t-transparent text-darkGreen"
+                            className="ml-1 inline-block size-4 animate-spin rounded-full border-[2px] border-darkGreen border-t-transparent text-darkGreen"
                             role="status"
                             aria-label="loading"
                           >
