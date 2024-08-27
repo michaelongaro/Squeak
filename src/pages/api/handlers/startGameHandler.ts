@@ -131,47 +131,44 @@ export function startGameHandler(
 
       if (!miscRoomDataObj) return;
 
-      setTimeout(
-        () => {
-          for (const index in Object.keys(currentRoomPlayers)) {
-            const playerID = Object.keys(currentRoomPlayers)[parseInt(index)];
-            const player = currentRoomPlayers[playerID || ""];
-            const botDifficulty = player?.botDifficulty;
+      setTimeout(() => {
+        for (const index in Object.keys(currentRoomPlayers)) {
+          const playerID = Object.keys(currentRoomPlayers)[parseInt(index)];
+          const player = currentRoomPlayers[playerID || ""];
+          const botDifficulty = player?.botDifficulty;
 
-            if (!player || !playerID || botDifficulty === undefined) continue;
+          if (!player || !playerID || botDifficulty === undefined) continue;
 
-            let botInterval: NodeJS.Timeout | null = null;
-            setTimeout(
-              () => {
-                // TODO: could probably move this directly to happen when bot joins a room in joinHandler.ts
-                if (
-                  miscRoomDataObj.blacklistedSqueakCards[playerID] === undefined
-                ) {
-                  miscRoomDataObj.blacklistedSqueakCards[playerID] = {};
-                }
+          let botInterval: NodeJS.Timeout | null = null;
+          setTimeout(
+            () => {
+              // TODO: could probably move this directly to happen when bot joins a room in joinHandler.ts
+              if (
+                miscRoomDataObj.blacklistedSqueakCards[playerID] === undefined
+              ) {
+                miscRoomDataObj.blacklistedSqueakCards[playerID] = {};
+              }
 
-                botInterval = setInterval(
-                  () =>
-                    botMoveHandler(
-                      io,
-                      roomCode,
-                      gameData,
-                      roomData,
-                      miscRoomData,
-                      playerID,
-                    ),
-                  botDifficultyDelay[botDifficulty] +
-                    (Math.floor(Math.random() * 1000) - 500), // random offset by +- 500ms to make bot moves less predictable
-                );
+              botInterval = setInterval(
+                () =>
+                  botMoveHandler(
+                    io,
+                    roomCode,
+                    gameData,
+                    roomData,
+                    miscRoomData,
+                    playerID,
+                  ),
+                botDifficultyDelay[botDifficulty] +
+                  (Math.floor(Math.random() * 1000) - 500), // random offset by +- 500ms to make bot moves less predictable
+              );
 
-                if (botInterval) miscRoomDataObj.botIntervals.push(botInterval);
-              },
-              1500 * parseInt(index),
-            ); // TODO: still test out better variations with delay..
-          }
-        },
-        firstRound ? 7500 : 6000,
-      ); // roughly the time it takes for the cards to be dealt to the players on client side
+              if (botInterval) miscRoomDataObj.botIntervals.push(botInterval);
+            },
+            1500 * parseInt(index),
+          ); // TODO: still test out better variations with delay..
+        }
+      }, 5000); // roughly the time it takes for the cards to be dealt to the players on client side
 
       if (firstRound && prisma) {
         io.in(roomCode).emit("navigateToPlayScreen", {
