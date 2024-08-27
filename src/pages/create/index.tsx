@@ -48,6 +48,7 @@ const botNames = [
   "Bot Andrew",
   "Bot Gilbert",
   "Bot Anthony",
+  "Bot Amber",
 ];
 
 export interface IRoomConfig {
