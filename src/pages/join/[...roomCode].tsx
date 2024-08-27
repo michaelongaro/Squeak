@@ -514,7 +514,7 @@ function JoinRoom() {
                         roomConfig.playersInRoom > 2
                           ? "grid-rows-2"
                           : "grid-rows-1"
-                      } !items-start !justify-start overflow-hidden sm:flex sm:!flex-row`}
+                      } !items-start !justify-start sm:flex sm:!flex-row`}
                     >
                       <AnimatePresence mode={"popLayout"}>
                         {Object.keys(playerMetadata)?.map((playerID) => (
