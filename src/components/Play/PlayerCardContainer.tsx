@@ -1,4 +1,4 @@
-import { useState, useEffect, type PointerEvent } from "react";
+import { useState, useEffect } from "react";
 import { socket } from "~/pages/_app";
 import { useUserIDContext } from "../../context/UserIDContext";
 import { useRoomContext } from "../../context/RoomContext";
@@ -39,7 +39,6 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
     setDecksAreBeingRotated,
     originIndexForHeldSqueakCard,
     setHoldingADeckCard,
-    cardBeingMovedProgramatically,
     squeakDeckBeingMovedProgramatically,
     setOriginIndexForHeldSqueakCard,
     setHoldingASqueakCard,
@@ -104,7 +103,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
   }
 
   function pointerMoveHandler(clientX: number, clientY: number) {
-    if (userID === null) return;
+    if (userID === null || (!holdingADeckCard && !holdingASqueakCard)) return;
 
     const squeakHand0 = document
       .getElementById(`${userID}squeakHand0`)
