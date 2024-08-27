@@ -66,6 +66,16 @@ function GeneralLayout({ children }: GeneralLayout) {
     }, 2500);
   }, []);
 
+  // there was a semi-niche sequence on mobile where user could accidentally end up
+  // selecting the entire page while playing a game, so this prevents that
+  useEffect(() => {
+    if (asPath.includes("/game")) {
+      document.body.style.userSelect = "none";
+    } else {
+      document.body.style.userSelect = "auto";
+    }
+  }, [asPath]);
+
   useGracefullyReconnectToSocket();
   usePlayerLeftRoom();
   useRejoinRoom();
