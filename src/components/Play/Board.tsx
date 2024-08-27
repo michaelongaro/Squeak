@@ -50,11 +50,6 @@ function Board() {
       }, 500); // trying to make sure the animation completes before hiding the indicator
       // this has been a recurring problem despite multiple approaches to fix it
     }
-
-    return () => {
-      setProposedCardBoxShadow(null);
-      setPlusOneIndicatorID(null);
-    };
   }, [proposedCardBoxShadow, setProposedCardBoxShadow]);
 
   function getBoxShadowStyles({

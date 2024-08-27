@@ -31,7 +31,7 @@ function BoardCell({ card, rowIdx, colIdx, plusOneIndicatorID }: IBoardCell) {
         const { top, left, width: cardWidth } = cell.getBoundingClientRect();
 
         const leftOffsetFromCard =
-          window.innerWidth >= 1500 && window.innerHeight >= 800 ? 10 : 4;
+          window.innerWidth >= 1500 && window.innerHeight >= 800 ? 10 : 6;
 
         setAbsoluteTopLeftOffset({
           x: left + cardWidth + leftOffsetFromCard,
@@ -78,10 +78,10 @@ function BoardCell({ card, rowIdx, colIdx, plusOneIndicatorID }: IBoardCell) {
                 on the body rather than within the z-0 constraints of the board cell. */}
             {createPortal(
               <motion.div
-                key={`board${rowIdx}${colIdx}AnimatedPlusOneIndicator`}
+                key={`cell${rowIdx}${colIdx}AnimatedPlusOneIndicator`}
                 initial={{ opacity: 0, scale: 0.9, y: 10 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.9, y: -5 }}
+                exit={{ opacity: 0, scale: 0.9, y: -10 }}
                 transition={{
                   duration: 0.5,
                   ease: "easeInOut",
@@ -95,7 +95,7 @@ function BoardCell({ card, rowIdx, colIdx, plusOneIndicatorID }: IBoardCell) {
                 +1
               </motion.div>,
               document.body,
-              `board${rowIdx}${colIdx}AnimatedPlusOneIndicator`,
+              `cell${rowIdx}${colIdx}AnimatedPlusOneIndicatorPortal`,
             )}
           </>
         )}
