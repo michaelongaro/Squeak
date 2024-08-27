@@ -76,25 +76,38 @@ function PlayerIcon({
           // add/kick player it causes the player icon to shift around
           initial={{
             opacity: 0,
-            scale: 0.75,
+            scale: 0,
             width: animatePresence ? 0 : "auto",
             height: animatePresence ? 0 : "auto",
+            margin: animatePresence
+              ? viewportLabel.includes("mobile")
+                ? "1rem"
+                : "0 1rem"
+              : 0,
           }}
           animate={{
             opacity: 1,
             scale: 1,
             width: "auto",
             height: "auto",
+            margin: animatePresence
+              ? viewportLabel.includes("mobile")
+                ? "1rem"
+                : "0 1rem"
+              : 0,
           }}
           exit={{
             opacity: 0,
-            scale: 0.75,
+            scale: 0,
             width: 0,
             height: 0,
+            margin: "0",
           }}
           transition={{
-            duration: 0.15,
-            opacity: { duration: 0.05 },
+            duration: 0.3,
+            opacity: { duration: 0.15 },
+            scale: { duration: 0.15 },
+            ease: "easeOut",
           }}
           style={{
             ...style,
@@ -346,7 +359,9 @@ function PlayerIcon({
           </div>
 
           {username && (
-            <div className="baseFlex mt-2 gap-2 whitespace-nowrap text-nowrap">
+            <div
+              className={`baseFlex mt-2 gap-2 whitespace-nowrap text-nowrap ${forWhilePlayingDrawer ? "mb-4" : ""}`}
+            >
               {playerIsHost && (
                 <FaCrown
                   size={"0.9rem"}
@@ -359,7 +374,7 @@ function PlayerIcon({
           )}
 
           {/* difficulty toggle button that rotates through easy, medium, and hard */}
-          {playerMetadata?.botDifficulty && (
+          {!forWhilePlayingDrawer && playerMetadata?.botDifficulty && (
             <div className="baseVertFlex relative mt-2 w-16 gap-1">
               <div className="baseFlex w-full gap-2">
                 <div

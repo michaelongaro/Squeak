@@ -510,11 +510,11 @@ function JoinRoom() {
                   </legend>
                   <div className="baseVertFlex gap-6 p-2">
                     <div
-                      className={`sm:baseVertFlex grid grid-cols-2 ${
+                      className={`grid grid-cols-2 ${
                         roomConfig.playersInRoom > 2
                           ? "grid-rows-2"
                           : "grid-rows-1"
-                      } !items-start !justify-start gap-8 sm:flex sm:!flex-row`}
+                      } !items-start !justify-start overflow-hidden sm:flex sm:!flex-row`}
                     >
                       <AnimatePresence mode={"popLayout"}>
                         {Object.keys(playerMetadata)?.map((playerID) => (

@@ -2099,11 +2099,11 @@ function WhilePlayingDrawer({
               Players
             </Button>
           </AccordionTrigger>
-          <AccordionContent className="w-full">
+          <AccordionContent className="baseFlex w-full">
             <div
-              className={`sm:baseVertFlex grid grid-cols-2 py-4 ${
+              className={`grid grid-cols-2 py-4 ${
                 roomConfig.playersInRoom > 2 ? "grid-rows-2" : "grid-rows-1"
-              } w-full !items-start !justify-start gap-8 overflow-y-auto !text-darkGreen sm:flex sm:!flex-row`}
+              } w-full max-w-sm !items-start !justify-start overflow-y-auto !text-darkGreen`}
             >
               {Object.keys(playerMetadata)?.map((playerID) => (
                 <div className="relative" key={playerID}>
