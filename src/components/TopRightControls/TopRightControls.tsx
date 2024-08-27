@@ -57,6 +57,7 @@ import { useRouter } from "next/router";
 import { Label } from "~/components/ui/label";
 import { Button } from "~/components/ui/button";
 import { Switch } from "~/components/ui/switch";
+import { FaForwardStep } from "react-icons/fa6";
 import { Input } from "~/components/ui/input";
 import { IoStatsChart } from "react-icons/io5";
 import PlayerCustomizationPreview from "../playerIcons/PlayerCustomizationPreview";
@@ -171,8 +172,7 @@ function TopRightControls() {
         >
           <DrawerTrigger onClick={() => setShowDrawer(true)}>
             <IoSettingsSharp
-              size={"1.25rem"}
-              className="text-lightGreen transition-all active:brightness-50"
+              className={`size-5 text-lightGreen transition-all active:brightness-50 ${showDrawer ? "rotate-[25deg]" : ""}`}
             />
           </DrawerTrigger>
         </div>
@@ -562,10 +562,10 @@ function VotingDialog({
                 paddingTop: { duration: 0.3 },
                 paddingBottom: { duration: 0.3 },
               }}
-              className="baseFlex w-full px-4"
+              className="baseFlex w-full px-3 xs:px-4"
             >
               {voteType === null ? (
-                <div className="baseFlex w-full gap-4 tablet:!flex-col">
+                <div className="baseFlex w-full gap-2 xs:gap-4 tablet:!flex-col">
                   <div className="relative h-12 w-full">
                     <Button
                       variant={"secondary"}
@@ -584,7 +584,7 @@ function VotingDialog({
                       className="absolute left-0 top-0 h-12 w-full gap-[0.8rem] text-sm"
                     >
                       Rotate decks
-                      <FaArrowsRotate size={"1rem"} />
+                      <FaArrowsRotate className="size-4" />
                     </Button>
 
                     {votingIsLockedOut && (
@@ -617,7 +617,7 @@ function VotingDialog({
                       className="absolute left-0 top-0 h-12 w-full gap-[0.8rem] whitespace-nowrap text-sm"
                     >
                       Finish the round
-                      <FaArrowsRotate size={"1rem"} />
+                      <FaForwardStep className="size-4" />
                     </Button>
 
                     {votingIsLockedOut && (
