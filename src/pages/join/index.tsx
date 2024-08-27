@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useCallback, useEffect, useState } from "react";
 import { IoHome } from "react-icons/io5";
 import PublicRooms from "~/components/JoinRoom/PublicRooms";
-import PlayerCustomizationDrawer from "~/components/drawers/PlayerCustomizationDrawer";
+import PlayerCustomizationSheet from "~/components/sheets/PlayerCustomizationSheet";
 import PlayerCustomizationPreview from "~/components/playerIcons/PlayerCustomizationPreview";
 import PlayerCustomizationPopover from "~/components/popovers/PlayerCustomizationPopover";
 import { Button } from "~/components/ui/button";
@@ -317,7 +317,7 @@ function JoinRoom() {
                   />
                 </div>
               </div>
-              <PlayerCustomizationDrawer />
+              <PlayerCustomizationSheet />
             </div>
           )}
         </div>

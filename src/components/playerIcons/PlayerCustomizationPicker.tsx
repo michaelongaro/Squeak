@@ -24,7 +24,7 @@ interface IPlayerCustomizationPicker {
   setLocalPlayerSettings?: React.Dispatch<
     React.SetStateAction<ILocalPlayerSettings>
   >;
-  forDrawer?: boolean;
+  forSheet?: boolean;
 }
 
 function PlayerCustomizationPicker({
@@ -32,7 +32,7 @@ function PlayerCustomizationPicker({
   localPlayerMetadata,
   setLocalPlayerMetadata,
   setLocalPlayerSettings,
-  forDrawer,
+  forSheet,
 }: IPlayerCustomizationPicker) {
   const userID = useUserIDContext();
 
@@ -419,7 +419,7 @@ function PlayerCustomizationPicker({
               : type === "back"
                 ? "h-[22rem] w-[22rem] grid-cols-3 grid-rows-3 md:h-[18rem] md:w-[25rem] md:grid-cols-4 md:grid-rows-2"
                 : "h-[10rem] w-[15rem] grid-cols-2 grid-rows-1"
-          } ${forDrawer ? "bg-zinc-200" : "white"} grid place-items-center rounded-md p-4 transition-all`}
+          } ${forSheet ? "bg-zinc-200" : "white"} grid place-items-center rounded-md p-4 transition-all`}
         >
           {renderTooltip()}
         </div>

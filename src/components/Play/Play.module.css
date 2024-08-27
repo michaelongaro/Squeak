@@ -10,7 +10,7 @@
   gap: 0.5rem;
   padding: 3rem 0.75rem 0.5rem 0.75rem;
   /* ^ for the mini voting container results and space to render settings cog
-     for <Drawer /> */
+     for <Sheet /> */
 }
 
 .currentPlayerCards,

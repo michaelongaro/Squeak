@@ -35,7 +35,7 @@ const config = {
         "green-850": "hsl(143, 61%, 21%)",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
-        mobileDrawerInput: "hsl(var(--mobile-drawer-input))",
+        mobileSheetInput: "hsl(var(--mobile-sheet-input))",
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",

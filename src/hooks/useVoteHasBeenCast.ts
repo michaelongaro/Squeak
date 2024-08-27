@@ -22,8 +22,8 @@ function resetCooldownPercentages() {
     { selector: ".countdownTimerToast", className: "countdownTimerToast" },
     { selector: ".cooldownVoteTimer", className: "cooldownVoteTimer" },
     {
-      selector: ".drawerCooldownVoteTimer",
-      className: "drawerCooldownVoteTimer",
+      selector: ".sheetCooldownVoteTimer",
+      className: "sheetCooldownVoteTimer",
     },
     {
       selector: ".countdownTimerMobileVotingPreview",

@@ -40,7 +40,7 @@
   animation: timer 30s linear;
 }
 
-.drawerCooldownVoteTimer {
+.sheetCooldownVoteTimer {
   background: conic-gradient(transparent var(--cooldown-percent), rgba(0, 0, 0, 0.5) 0);
   border-radius: 0.375rem;
   width: 100%;
@@ -94,7 +94,7 @@
     --input: 214.3 31.8% 91.4%;
     --ring: 222.2 84% 4.9%;
 
-    --mobile-drawer-input: 120 100% 18%;
+    --mobile-sheet-input: 120 100% 18%;
 
     --radius: 0.5rem;
   }
@@ -128,7 +128,7 @@
     --input: 214.3 31.8% 91.4%;
     --ring: 222.2 84% 4.9%;
 
-    --mobile-drawer-input: 120 100% 18%;
+    --mobile-sheet-input: 120 100% 18%;
 
     --radius: 0.5rem;
   }

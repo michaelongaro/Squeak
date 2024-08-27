@@ -7,7 +7,7 @@ import { type IRoomPlayersMetadata } from "~/pages/api/socket";
 
 interface IPlayerCustomizationPicker {
   renderedView: "avatar" | "front" | "back";
-  forDrawer?: boolean;
+  forSheet?: boolean;
   forCreateAndJoin?: boolean;
   useDarkerFont?: boolean;
   transparentAvatarBackground?: boolean;
@@ -16,7 +16,7 @@ interface IPlayerCustomizationPicker {
 }
 function PlayerCustomizationPreview({
   renderedView,
-  forDrawer,
+  forSheet,
   forCreateAndJoin,
   useDarkerFont,
   transparentAvatarBackground,
@@ -47,7 +47,7 @@ function PlayerCustomizationPreview({
         {renderDescriptionText && (
           <p
             style={{
-              paddingTop: forDrawer ? "0" : "0.85rem",
+              paddingTop: forSheet ? "0" : "0.85rem",
             }}
             className={`${useDarkerFont ? "text-lg font-semibold text-darkGreen" : "text-lightGreen"}`}
           >
@@ -76,7 +76,7 @@ function PlayerCustomizationPreview({
                 : "text-lightGreen"
             }`}
           >
-            {forDrawer ? "Card back" : "Back"}
+            {forSheet ? "Card back" : "Back"}
           </p>
         )}
       </>
@@ -105,7 +105,7 @@ function PlayerCustomizationPreview({
               : "text-lightGreen"
           }`}
         >
-          {forDrawer ? "Card front" : "Front"}
+          {forSheet ? "Card front" : "Front"}
         </p>
       )}
     </>

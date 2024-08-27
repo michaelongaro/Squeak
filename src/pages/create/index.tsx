@@ -25,7 +25,7 @@ import Filter from "bad-words";
 import useLeaveRoom from "../../hooks/useLeaveRoom";
 import PlayerCustomizationPopover from "~/components/popovers/PlayerCustomizationPopover";
 import PlayerCustomizationPreview from "~/components/playerIcons/PlayerCustomizationPreview";
-import PlayerCustomizationDrawer from "~/components/drawers/PlayerCustomizationDrawer";
+import PlayerCustomizationSheet from "~/components/sheets/PlayerCustomizationSheet";
 import { Label } from "~/components/ui/label";
 import { Button } from "~/components/ui/button";
 import { useRouter } from "next/router";
@@ -414,7 +414,7 @@ function CreateRoom() {
                     />
                   </div>
                 </div>
-                <PlayerCustomizationDrawer />
+                <PlayerCustomizationSheet />
               </div>
             )}
           </div>
@@ -655,7 +655,7 @@ function CreateRoom() {
                         />
                       </div>
                     </div>
-                    <PlayerCustomizationDrawer />
+                    <PlayerCustomizationSheet />
                   </div>
                 )}
               </div>

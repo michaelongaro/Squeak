@@ -3,11 +3,11 @@ import { useState } from "react";
 import { FaPaintRoller } from "react-icons/fa";
 import { Button } from "~/components/ui/button";
 import {
-  Drawer,
-  DrawerContent,
-  DrawerPortal,
-  DrawerTrigger,
-} from "~/components/ui/drawer";
+  Sheet,
+  SheetContent,
+  SheetPortal,
+  SheetTrigger,
+} from "~/components/ui/sheet";
 import { useRoomContext } from "~/context/RoomContext";
 import PlayerCustomizationPicker from "../playerIcons/PlayerCustomizationPicker";
 import PlayerCustomizationPreview from "../playerIcons/PlayerCustomizationPreview";
@@ -15,7 +15,7 @@ import { IoIosArrowForward } from "react-icons/io";
 
 const viewLabels = ["avatar", "front", "back"] as const;
 
-function PlayerCustomizationDrawer() {
+function PlayerCustomizationSheet() {
   const { playerMetadata } = useRoomContext();
 
   const [renderedView, setRenderedView] = useState<
@@ -36,15 +36,15 @@ function PlayerCustomizationDrawer() {
   }
 
   return (
-    <Drawer onOpenChange={() => setRenderedView(undefined)}>
-      <DrawerTrigger asChild>
+    <Sheet onOpenChange={() => setRenderedView(undefined)}>
+      <SheetTrigger asChild>
         <Button variant="secondary" className="gap-2 !px-4">
           Customize
           <FaPaintRoller className="size-4" />
         </Button>
-      </DrawerTrigger>
-      <DrawerPortal>
-        <DrawerContent
+      </SheetTrigger>
+      <SheetPortal>
+        <SheetContent
           style={{
             zIndex: 250,
             // height: "100%", ah this could be tricky to get right here
@@ -74,7 +74,7 @@ function PlayerCustomizationDrawer() {
                   {viewLabels.map((label) => (
                     <Button
                       key={label}
-                      variant="drawer"
+                      variant="sheet"
                       style={{
                         borderTopWidth: label === "avatar" ? "0px" : "1px",
                       }}
@@ -95,7 +95,7 @@ function PlayerCustomizationDrawer() {
                             renderedView={label}
                             useDarkerFont
                             transparentAvatarBackground
-                            forDrawer
+                            forSheet
                           />
                         </motion.div>
                       )}
@@ -134,15 +134,15 @@ function PlayerCustomizationDrawer() {
                         ? "Card front"
                         : "Card back"}
                   </p>
-                  <PlayerCustomizationPicker type={renderedView} forDrawer />
+                  <PlayerCustomizationPicker type={renderedView} forSheet />
                 </motion.div>
               )}
             </AnimatePresence>
           </div>
-        </DrawerContent>
-      </DrawerPortal>
-    </Drawer>
+        </SheetContent>
+      </SheetPortal>
+    </Sheet>
   );
 }
 
-export default PlayerCustomizationDrawer;
+export default PlayerCustomizationSheet;

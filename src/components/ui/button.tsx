@@ -24,7 +24,7 @@ const buttonVariants = cva(
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-lightGreen underline-offset-4 hover:underline",
         text: "text-lightGreen",
-        drawer:
+        sheet:
           "text-darkGreen border-darkGreen bg-zinc-200 w-full !rounded-none h-full baseFlex relative z-[500] w-full py-4",
       },
       size: {
@@ -126,7 +126,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       );
     }
 
-    if (variant === "drawer") {
+    if (variant === "sheet") {
       return (
         <Comp
           onPointerDown={() => {

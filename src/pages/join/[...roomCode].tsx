@@ -8,7 +8,7 @@ import { FaUsers } from "react-icons/fa";
 import { TbDoorEnter } from "react-icons/tb";
 import { IoSettingsSharp } from "react-icons/io5";
 import { MdCopyAll } from "react-icons/md";
-import PlayerCustomizationDrawer from "~/components/drawers/PlayerCustomizationDrawer";
+import PlayerCustomizationSheet from "~/components/sheets/PlayerCustomizationSheet";
 import PlayerCustomizationPreview from "~/components/playerIcons/PlayerCustomizationPreview";
 import PlayerIcon from "~/components/playerIcons/PlayerIcon";
 import PlayerCustomizationPopover from "~/components/popovers/PlayerCustomizationPopover";
@@ -590,7 +590,7 @@ function JoinRoom() {
                             />
                           </div>
                         </div>
-                        <PlayerCustomizationDrawer />
+                        <PlayerCustomizationSheet />
                       </div>
                     )}
                   </div>

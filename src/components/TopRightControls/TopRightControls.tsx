@@ -45,12 +45,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
-import {
-  Drawer,
-  DrawerContent,
-  DrawerPortal,
-  DrawerTrigger,
-} from "~/components/ui/drawer";
 import { FaUsers } from "react-icons/fa";
 import FriendsList from "../dialogs/FriendsList";
 import { useRouter } from "next/router";
@@ -75,6 +69,12 @@ import {
 } from "~/components/ui/accordion";
 import { BsFillVolumeUpFill } from "react-icons/bs";
 import DisconnectIcon from "~/components/ui/DisconnectIcon";
+import {
+  Sheet,
+  SheetContent,
+  SheetPortal,
+  SheetTrigger,
+} from "~/components/ui/sheet";
 
 const filter = new Filter();
 
@@ -115,7 +115,7 @@ function TopRightControls() {
 
   const [voteWasStarted, setVoteWasStarted] = useState(false);
 
-  const [showDrawer, setShowDrawer] = useState(false);
+  const [showSheet, setShowSheet] = useState(false);
 
   const [showSettingsUnauthTooltip, setShowSettingsUnauthTooltip] =
     useState(false);
@@ -161,37 +161,34 @@ function TopRightControls() {
 
   if (viewportLabel.includes("mobile")) {
     return (
-      <Drawer
-        open={showDrawer}
-        onOpenChange={(isOpen) => setShowDrawer(isOpen)}
-      >
+      <Sheet open={showSheet} onOpenChange={(isOpen) => setShowSheet(isOpen)}>
         <div
           className={`baseFlex fixed right-2 !z-[150] h-8 w-8 ${
             !asPath.includes("/game") ? "top-3" : "top-1.5"
           }`}
         >
-          <DrawerTrigger onClick={() => setShowDrawer(true)}>
+          <SheetTrigger onClick={() => setShowSheet(true)}>
             <IoSettingsSharp
-              className={`size-5 text-lightGreen transition-all duration-200 active:brightness-50 ${showDrawer ? "rotate-[25deg]" : ""}`}
+              className={`size-5 text-lightGreen transition-all duration-200 active:brightness-50 ${showSheet ? "rotate-[25deg]" : ""}`}
             />
-          </DrawerTrigger>
+          </SheetTrigger>
         </div>
-        <DrawerPortal>
-          <DrawerContent
+        <SheetPortal>
+          <SheetContent
             style={{
               zIndex: 250,
             }}
             className="text-darkGreen"
           >
             {asPath.includes("/game") ? (
-              <WhilePlayingDrawer
-                setShowDrawer={setShowDrawer}
+              <WhilePlayingSheet
+                setShowSheet={setShowSheet}
                 leaveRoom={leaveRoom}
                 showVotingOptionButtons={showVotingOptionButtons}
                 setShowVotingOptionButtons={setShowVotingOptionButtons}
               />
             ) : (
-              <MainDrawer
+              <MainSheet
                 status={
                   isLoaded
                     ? isSignedIn
@@ -199,12 +196,12 @@ function TopRightControls() {
                       : "unauthenticated"
                     : "loading"
                 }
-                setShowDrawer={setShowDrawer}
+                setShowSheet={setShowSheet}
               />
             )}
-          </DrawerContent>
-        </DrawerPortal>
-      </Drawer>
+          </SheetContent>
+        </SheetPortal>
+      </Sheet>
     );
   }
 
@@ -405,17 +402,17 @@ export default TopRightControls;
 interface IVotingDialog {
   showVotingOptionButtons: boolean;
   setShowVotingOptionButtons: React.Dispatch<React.SetStateAction<boolean>>;
-  setShowDrawer?: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowSheet?: React.Dispatch<React.SetStateAction<boolean>>;
   forMobile?: boolean;
-  forDrawer?: boolean;
+  forSheet?: boolean;
 }
 
 function VotingDialog({
   showVotingOptionButtons,
   setShowVotingOptionButtons,
-  setShowDrawer,
+  setShowSheet,
   forMobile,
-  forDrawer,
+  forSheet,
 }: IVotingDialog) {
   const {
     roomConfig,
@@ -431,7 +428,7 @@ function VotingDialog({
 
   useEffect(() => {
     if (
-      forDrawer &&
+      forSheet &&
       votingLockoutStartTimestamp &&
       rotateDecksButtonRef.current &&
       finishRoundButtonRef.current
@@ -445,7 +442,7 @@ function VotingDialog({
       finishRoundButtonRef.current!.style.animationPlayState = "running";
     }
   }, [
-    forDrawer,
+    forSheet,
     votingLockoutStartTimestamp,
     finishRoundButtonRef,
     rotateDecksButtonRef,
@@ -468,11 +465,11 @@ function VotingDialog({
     >
       {/* voting modal */}
       <div
-        className={`baseVertFlex rounded-md border-2 bg-darkGreen ${forDrawer ? "border-darkGreen" : "border-lightGreen"} `}
+        className={`baseVertFlex rounded-md border-2 bg-darkGreen ${forSheet ? "border-darkGreen" : "border-lightGreen"} `}
       >
         <div
           className={`baseFlex w-full gap-4 bg-lightGreen px-4 py-2 text-darkGreen ${
-            forDrawer ? "rounded-sm" : ""
+            forSheet ? "rounded-sm" : ""
           }`}
         >
           <AnimatePresence mode="wait">
@@ -573,7 +570,7 @@ function VotingDialog({
                         setShowVotingOptionButtons(false);
 
                         toast.dismiss();
-                        setShowDrawer?.(false);
+                        setShowSheet?.(false);
 
                         socket.volatile.emit("castVote", {
                           roomCode: roomConfig.code,
@@ -594,7 +591,7 @@ function VotingDialog({
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ duration: 0.15 }}
-                        className="drawerCooldownVoteTimer absolute right-0 top-0"
+                        className="sheetCooldownVoteTimer absolute right-0 top-0"
                       ></motion.div>
                     )}
                   </div>
@@ -606,7 +603,7 @@ function VotingDialog({
                         setShowVotingOptionButtons(false);
 
                         toast.dismiss();
-                        setShowDrawer?.(false);
+                        setShowSheet?.(false);
 
                         socket.volatile.emit("castVote", {
                           roomCode: roomConfig.code,
@@ -627,7 +624,7 @@ function VotingDialog({
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ duration: 0.15 }}
-                        className="drawerCooldownVoteTimer absolute right-0 top-0"
+                        className="sheetCooldownVoteTimer absolute right-0 top-0"
                       ></motion.div>
                     )}
                   </div>
@@ -640,7 +637,7 @@ function VotingDialog({
                       setShowVotingOptionButtons(false);
 
                       toast.dismiss();
-                      setShowDrawer?.(false);
+                      setShowSheet?.(false);
 
                       socket.volatile.emit("castVote", {
                         roomCode: roomConfig.code,
@@ -660,7 +657,7 @@ function VotingDialog({
                       setShowVotingOptionButtons(false);
 
                       toast.dismiss();
-                      setShowDrawer?.(false);
+                      setShowSheet?.(false);
 
                       socket.volatile.emit("castVote", {
                         roomCode: roomConfig.code,
@@ -720,12 +717,12 @@ function VotingDialogToast({
   );
 }
 
-interface IMainDrawer {
+interface IMainSheet {
   status: "authenticated" | "loading" | "unauthenticated";
-  setShowDrawer: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowSheet: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-function MainDrawer({ status, setShowDrawer }: IMainDrawer) {
+function MainSheet({ status, setShowSheet }: IMainSheet) {
   const { signOut } = useAuth();
 
   const [renderedView, setRenderedView] = useState<allViewLabels | undefined>();
@@ -737,7 +734,7 @@ function MainDrawer({ status, setShowDrawer }: IMainDrawer) {
 
   const [friendBeingViewed, setFriendBeingViewed] = useState<User | null>(null);
 
-  function getDrawerHeight() {
+  function getSheetHeight() {
     switch (renderedView) {
       case "Settings":
         return "500px";
@@ -761,7 +758,7 @@ function MainDrawer({ status, setShowDrawer }: IMainDrawer) {
   return (
     <div
       style={{
-        height: getDrawerHeight(),
+        height: getSheetHeight(),
         transition: "height 0.3s ease-in-out",
       }}
       className="baseVertFlex w-full"
@@ -769,7 +766,7 @@ function MainDrawer({ status, setShowDrawer }: IMainDrawer) {
       <AnimatePresence mode="popLayout" initial={false}>
         {renderedView === undefined && (
           <motion.div
-            key="mainDrawerTopButtons"
+            key="mainSheetTopButtons"
             initial={{ opacity: 0, translateX: "-100%" }}
             animate={{ opacity: 1, translateX: "0%" }}
             exit={{ opacity: 0, translateX: "-100%" }}
@@ -781,7 +778,7 @@ function MainDrawer({ status, setShowDrawer }: IMainDrawer) {
             {mainViewLabels.map((label) => (
               <Button
                 key={label}
-                variant={"drawer"}
+                variant={"sheet"}
                 disabled={status === "unauthenticated"}
                 style={{
                   borderTopWidth: label === "Settings" ? "0px" : "1px",
@@ -811,7 +808,7 @@ function MainDrawer({ status, setShowDrawer }: IMainDrawer) {
                 <Button
                   variant={"text"}
                   onClick={() => {
-                    setShowDrawer(false);
+                    setShowSheet(false);
                     signOut();
                   }}
                   className="h-8 !px-0 !py-0 text-darkGreen underline underline-offset-4"
@@ -853,7 +850,7 @@ function MainDrawer({ status, setShowDrawer }: IMainDrawer) {
             }
           >
             {renderedView === "Settings" && (
-              <DrawerSettings
+              <SheetSettings
                 setRenderedView={setRenderedView}
                 localPlayerMetadata={localPlayerMetadata}
                 setLocalPlayerMetadata={setLocalPlayerMetadata}
@@ -863,14 +860,14 @@ function MainDrawer({ status, setShowDrawer }: IMainDrawer) {
             )}
 
             {renderedView === "Statistics" && (
-              <DrawerStatistics setRenderedView={setRenderedView} />
+              <SheetStatistics setRenderedView={setRenderedView} />
             )}
 
             {renderedView === "Friends list" && (
-              <DrawerFriendsList
+              <SheetFriendsList
                 setRenderedView={setRenderedView}
                 setFriendBeingViewed={setFriendBeingViewed}
-                setShowDrawer={setShowDrawer}
+                setShowSheet={setShowSheet}
               />
             )}
           </motion.div>
@@ -910,7 +907,7 @@ function MainDrawer({ status, setShowDrawer }: IMainDrawer) {
             </p>
             <PlayerCustomizationPicker
               type={renderedView}
-              forDrawer
+              forSheet
               localPlayerMetadata={localPlayerMetadata}
               setLocalPlayerMetadata={setLocalPlayerMetadata}
               setLocalPlayerSettings={setLocalPlayerSettings}
@@ -934,7 +931,7 @@ function MainDrawer({ status, setShowDrawer }: IMainDrawer) {
             <FriendActions
               friend={friendBeingViewed}
               setRenderedView={setRenderedView}
-              setShowDrawer={setShowDrawer}
+              setShowSheet={setShowSheet}
             />
           </motion.div>
         )}
@@ -943,7 +940,7 @@ function MainDrawer({ status, setShowDrawer }: IMainDrawer) {
   );
 }
 
-interface IDrawerSettings {
+interface ISheetSettings {
   localPlayerMetadata: IRoomPlayersMetadata;
   setLocalPlayerMetadata: React.Dispatch<
     React.SetStateAction<IRoomPlayersMetadata>
@@ -957,13 +954,13 @@ interface IDrawerSettings {
   >;
 }
 
-function DrawerSettings({
+function SheetSettings({
   localPlayerMetadata,
   localPlayerSettings,
   setLocalPlayerMetadata,
   setLocalPlayerSettings,
   setRenderedView,
-}: IDrawerSettings) {
+}: ISheetSettings) {
   const userID = useUserIDContext();
   const { signOut } = useAuth();
 
@@ -1185,7 +1182,7 @@ function DrawerSettings({
           {settingsViewLabels.map((label) => (
             <Button
               key={label}
-              variant="drawer"
+              variant="sheet"
               style={{
                 borderBottomWidth: label === "back" ? "1px" : "0px",
               }}
@@ -1203,7 +1200,7 @@ function DrawerSettings({
               >
                 <PlayerCustomizationPreview
                   renderedView={label}
-                  forDrawer
+                  forSheet
                   useDarkerFont
                   transparentAvatarBackground
                   localPlayerMetadata={localPlayerMetadata}
@@ -1450,13 +1447,13 @@ interface IFilteredStats {
   totalGamesPlayed: number;
 }
 
-interface IDrawerStatistics {
+interface ISheetStatistics {
   setRenderedView: React.Dispatch<
     React.SetStateAction<allViewLabels | undefined>
   >;
 }
 
-function DrawerStatistics({ setRenderedView }: IDrawerStatistics) {
+function SheetStatistics({ setRenderedView }: ISheetStatistics) {
   const userID = useUserIDContext();
 
   const { data: userStats } = api.stats.getStatsByID.useQuery(userID);
@@ -1533,19 +1530,19 @@ function DrawerStatistics({ setRenderedView }: IDrawerStatistics) {
   );
 }
 
-interface IDrawerFriendsList {
+interface ISheetFriendsList {
   setRenderedView: React.Dispatch<
     React.SetStateAction<allViewLabels | undefined>
   >;
   setFriendBeingViewed: React.Dispatch<React.SetStateAction<User | null>>;
-  setShowDrawer: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowSheet: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-function DrawerFriendsList({
+function SheetFriendsList({
   setRenderedView,
   setFriendBeingViewed,
-  setShowDrawer,
-}: IDrawerFriendsList) {
+  setShowSheet,
+}: ISheetFriendsList) {
   const userID = useUserIDContext();
   const { push } = useRouter();
 
@@ -1762,7 +1759,7 @@ function DrawerFriendsList({
 
                       setConnectedToRoom(true);
 
-                      setShowDrawer(false);
+                      setShowSheet(false);
                     }}
                     className="gap-2 !p-2"
                   >
@@ -1811,7 +1808,7 @@ function DrawerFriendsList({
                 .map((friend, index) => (
                   <Button
                     key={friend.id}
-                    variant={"drawer"}
+                    variant={"sheet"}
                     style={{
                       zIndex: friends.length - index,
                     }}
@@ -1863,13 +1860,13 @@ interface IFriendActions {
   setRenderedView: React.Dispatch<
     React.SetStateAction<allViewLabels | undefined>
   >;
-  setShowDrawer: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowSheet: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 function FriendActions({
   friend,
   setRenderedView,
-  setShowDrawer,
+  setShowSheet,
 }: IFriendActions) {
   const userID = useUserIDContext();
   const { push } = useRouter();
@@ -1911,7 +1908,7 @@ function FriendActions({
         </div>
 
         <Button
-          variant="drawer"
+          variant="sheet"
           disabled={
             !friend.online ||
             friend.status === "in a game" ||
@@ -1940,7 +1937,7 @@ function FriendActions({
         </Button>
 
         <Button
-          variant="drawer"
+          variant="sheet"
           disabled={
             !friend.online ||
             friend.roomCode === null ||
@@ -1977,7 +1974,7 @@ function FriendActions({
 
             setConnectedToRoom(true);
 
-            setShowDrawer(false);
+            setShowSheet(false);
           }}
         >
           <div className="baseFlex w-full gap-4">
@@ -1989,7 +1986,7 @@ function FriendActions({
         <AlertDialog>
           <AlertDialogTrigger asChild>
             <Button
-              variant="drawer"
+              variant="sheet"
               showArrow={false}
               style={{
                 borderColor: buttonIsActive
@@ -2049,19 +2046,19 @@ function FriendActions({
   );
 }
 
-interface IWhilePlayingDrawer {
-  setShowDrawer: React.Dispatch<React.SetStateAction<boolean>>;
+interface IWhilePlayingSheet {
+  setShowSheet: React.Dispatch<React.SetStateAction<boolean>>;
   leaveRoom: () => void;
   showVotingOptionButtons: boolean;
   setShowVotingOptionButtons: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-function WhilePlayingDrawer({
-  setShowDrawer,
+function WhilePlayingSheet({
+  setShowSheet,
   leaveRoom,
   showVotingOptionButtons,
   setShowVotingOptionButtons,
-}: IWhilePlayingDrawer) {
+}: IWhilePlayingSheet) {
   const { playerMetadata, roomConfig, gameData } = useRoomContext();
 
   return (
@@ -2082,9 +2079,9 @@ function WhilePlayingDrawer({
         <VotingDialog
           showVotingOptionButtons={showVotingOptionButtons}
           setShowVotingOptionButtons={setShowVotingOptionButtons}
-          setShowDrawer={setShowDrawer}
+          setShowSheet={setShowSheet}
           forMobile
-          forDrawer
+          forSheet
         />
       </div>
 
@@ -2092,7 +2089,7 @@ function WhilePlayingDrawer({
         <AccordionItem value="item-1" className="text-darkGreen">
           <AccordionTrigger>
             <Button
-              variant={"drawer"}
+              variant={"sheet"}
               className="baseFlex !w-full !justify-start gap-2 border-t-[1px] border-darkGreen !py-4"
             >
               <FaUsers className="size-5" />
@@ -2131,7 +2128,7 @@ function WhilePlayingDrawer({
                       username={playerMetadata[playerID]?.username}
                       size={"3rem"}
                       playerMetadata={playerMetadata[playerID]}
-                      forWhilePlayingDrawer
+                      forWhilePlayingSheet
                     />
                   </div>
 
@@ -2173,7 +2170,7 @@ function WhilePlayingDrawer({
                   variant={"destructive"}
                   className="m-0 w-24"
                   onClick={() => {
-                    setShowDrawer(false);
+                    setShowSheet(false);
                     leaveRoom();
                   }}
                 >

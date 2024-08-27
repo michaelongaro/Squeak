@@ -19,7 +19,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "~/components/ui/popover";
-import { Drawer, DrawerTrigger, DrawerContent } from "~/components/ui/drawer";
+import { Sheet, SheetTrigger, SheetContent } from "~/components/ui/sheet";
 import { FiMail } from "react-icons/fi";
 
 interface IPlayerIcon {
@@ -36,7 +36,7 @@ interface IPlayerIcon {
   playerIsHost?: boolean;
   style?: CSSProperties;
   transparentBackground?: boolean;
-  forWhilePlayingDrawer?: boolean;
+  forWhilePlayingSheet?: boolean;
   animatePresence?: boolean;
 }
 
@@ -54,7 +54,7 @@ function PlayerIcon({
   playerIsHost,
   style,
   transparentBackground,
-  forWhilePlayingDrawer,
+  forWhilePlayingSheet,
   animatePresence,
 }: IPlayerIcon) {
   const userID = useUserIDContext();
@@ -63,8 +63,8 @@ function PlayerIcon({
 
   const [friendInviteSent, setFriendInviteSent] = useState(false);
   const [popoverOpen, setPopoverOpen] = useState(false);
-  const [kickPlayerDrawerOpen, setKickPlayerDrawerOpen] = useState(false);
-  const [sendFriendInviteDrawerOpen, setSendFriendInviteDrawerOpen] =
+  const [kickPlayerSheetOpen, setKickPlayerSheetOpen] = useState(false);
+  const [sendFriendInviteSheetOpen, setSendFriendInviteSheetOpen] =
     useState(false);
 
   return (
@@ -72,8 +72,7 @@ function PlayerIcon({
       {avatarPath && borderColor && (
         <motion.div
           key={`playerIcon${playerID}`}
-          // layout={"position"} TODO: would like to add this, however when bringing up <Drawer> to
-          // add/kick player it causes the player icon to shift around
+          layout={"position"}
           initial={{
             opacity: 0,
             scale: 0,
@@ -112,7 +111,7 @@ function PlayerIcon({
           style={{
             ...style,
           }}
-          className={`baseVertFlex shrink-0 ${forWhilePlayingDrawer ? "text-darkGreen" : "text-lightGreen"}`}
+          className={`baseVertFlex shrink-0 ${forWhilePlayingSheet ? "text-darkGreen" : "text-lightGreen"}`}
         >
           <div
             style={{
@@ -138,19 +137,19 @@ function PlayerIcon({
               <>
                 {viewportLabel.includes("mobile") ? (
                   <div className="absolute left-0 top-0 h-0 w-0">
-                    <Drawer
-                      open={sendFriendInviteDrawerOpen}
+                    <Sheet
+                      open={sendFriendInviteSheetOpen}
                       onOpenChange={(open) => {
-                        if (!open) setSendFriendInviteDrawerOpen(false);
+                        if (!open) setSendFriendInviteSheetOpen(false);
                       }}
                     >
-                      <DrawerTrigger asChild>
+                      <SheetTrigger asChild>
                         <Button
                           variant={"secondary"}
                           disabled={friendInviteSent}
                           className="absolute left-[-1rem] top-[-0.75rem] h-[30px] w-[30px] rounded-[50%] p-0"
                           onClick={() => {
-                            setSendFriendInviteDrawerOpen(true);
+                            setSendFriendInviteSheetOpen(true);
                           }}
                         >
                           {friendInviteSent ? (
@@ -159,8 +158,8 @@ function PlayerIcon({
                             <AiOutlinePlus size={"1rem"} />
                           )}
                         </Button>
-                      </DrawerTrigger>
-                      <DrawerContent>
+                      </SheetTrigger>
+                      <SheetContent>
                         <div className="baseVertFlex gap-4 p-4">
                           <p className="max-w-64 text-center text-lg text-darkGreen">
                             Send friend invite to &ldquo;{username}&rdquo;?
@@ -179,7 +178,7 @@ function PlayerIcon({
                               setFriendInviteSent(true);
                               setTimeout(() => {
                                 setFriendInviteSent(false);
-                                setSendFriendInviteDrawerOpen(false);
+                                setSendFriendInviteSheetOpen(false);
                               }, 1000);
                             }}
                           >
@@ -187,8 +186,8 @@ function PlayerIcon({
                             <FiMail size={"1rem"} />
                           </Button>
                         </div>
-                      </DrawerContent>
-                    </Drawer>
+                      </SheetContent>
+                    </Sheet>
                   </div>
                 ) : (
                   <div className="absolute left-0 top-0 h-0 w-0">
@@ -237,24 +236,24 @@ function PlayerIcon({
               <>
                 {viewportLabel.includes("mobile") ? (
                   <div className="absolute left-0 top-0 h-0 w-0">
-                    <Drawer
-                      open={kickPlayerDrawerOpen}
+                    <Sheet
+                      open={kickPlayerSheetOpen}
                       onOpenChange={(open) => {
-                        if (!open) setKickPlayerDrawerOpen(false);
+                        if (!open) setKickPlayerSheetOpen(false);
                       }}
                     >
-                      <DrawerTrigger asChild>
+                      <SheetTrigger asChild>
                         <Button
                           variant={"destructive"}
                           className="absolute right-[-2rem] top-[-0.75rem] h-[30px] w-[30px] rounded-[50%] p-0"
                           onClick={() => {
-                            setKickPlayerDrawerOpen(true);
+                            setKickPlayerSheetOpen(true);
                           }}
                         >
                           <AiOutlineClose size={"1rem"} />
                         </Button>
-                      </DrawerTrigger>
-                      <DrawerContent>
+                      </SheetTrigger>
+                      <SheetContent>
                         <div className="baseVertFlex gap-4 p-4">
                           <p className="max-w-64 text-center text-lg text-darkGreen">
                             Are you sure you want to kick &ldquo;{username}
@@ -263,7 +262,7 @@ function PlayerIcon({
                           <Button
                             variant={"destructive"}
                             onClick={() => {
-                              setKickPlayerDrawerOpen(false);
+                              setKickPlayerSheetOpen(false);
 
                               setTimeout(() => {
                                 if (!playerID) return;
@@ -278,8 +277,8 @@ function PlayerIcon({
                             Kick
                           </Button>
                         </div>
-                      </DrawerContent>
-                    </Drawer>
+                      </SheetContent>
+                    </Sheet>
                   </div>
                 ) : (
                   <div className="absolute right-[1rem] top-[-0.75rem] h-0 w-0">
@@ -360,7 +359,7 @@ function PlayerIcon({
 
           {username && (
             <div
-              className={`baseFlex mt-2 gap-2 whitespace-nowrap text-nowrap ${forWhilePlayingDrawer ? "mb-4" : ""}`}
+              className={`baseFlex mt-2 gap-2 whitespace-nowrap text-nowrap ${forWhilePlayingSheet ? "mb-4" : ""}`}
             >
               {playerIsHost && (
                 <FaCrown
@@ -374,25 +373,25 @@ function PlayerIcon({
           )}
 
           {/* difficulty toggle button that rotates through easy, medium, and hard */}
-          {!forWhilePlayingDrawer && playerMetadata?.botDifficulty && (
+          {!forWhilePlayingSheet && playerMetadata?.botDifficulty && (
             <div className="baseVertFlex relative mt-2 w-16 gap-1">
               <div className="baseFlex w-full gap-2">
                 <div
-                  className={`h-2 w-full rounded-md transition-all ${forWhilePlayingDrawer ? "bg-darkGreen" : "bg-lightGreen"}`}
+                  className={`h-2 w-full rounded-md transition-all ${forWhilePlayingSheet ? "bg-darkGreen" : "bg-lightGreen"}`}
                 ></div>
                 <div
                   className={`${
                     playerMetadata.botDifficulty === "Medium" ||
                     playerMetadata.botDifficulty === "Hard"
-                      ? `${forWhilePlayingDrawer ? "bg-darkGreen" : "bg-lightGreen"}`
-                      : `${forWhilePlayingDrawer ? "bg-darkGreen/20" : "bg-lightGreen/20"}`
+                      ? `${forWhilePlayingSheet ? "bg-darkGreen" : "bg-lightGreen"}`
+                      : `${forWhilePlayingSheet ? "bg-darkGreen/20" : "bg-lightGreen/20"}`
                   } h-2 w-full rounded-md transition-all`}
                 ></div>
                 <div
                   className={`${
                     playerMetadata.botDifficulty === "Hard"
-                      ? `${forWhilePlayingDrawer ? "bg-darkGreen" : "bg-lightGreen"}`
-                      : `${forWhilePlayingDrawer ? "bg-darkGreen/20" : "bg-lightGreen/20"}`
+                      ? `${forWhilePlayingSheet ? "bg-darkGreen" : "bg-lightGreen"}`
+                      : `${forWhilePlayingSheet ? "bg-darkGreen/20" : "bg-lightGreen/20"}`
                   } h-2 w-full rounded-md transition-all`}
                 ></div>
               </div>
