@@ -13,8 +13,12 @@ function useLeaveRoom({ routeToNavigateTo }: IUseLeaveRoom) {
   const userID = useUserIDContext();
   const { push } = useRouter();
 
-  const { roomConfig, connectedToRoom, setResetPlayerStateUponPageLoad } =
-    useRoomContext();
+  const {
+    roomConfig,
+    connectedToRoom,
+    setResetPlayerStateUponPageLoad,
+    setShowUserWasKickedDialog,
+  } = useRoomContext();
 
   function leaveRoom(playerWasKicked = false) {
     setResetPlayerStateUponPageLoad(true);
@@ -24,7 +28,10 @@ function useLeaveRoom({ routeToNavigateTo }: IUseLeaveRoom) {
       // Emit "leaveRoom" event only if the player is leaving voluntarily.
       // If the player was kicked, the server will automatically emit
       // a "playerHasLeftRoom" event.
-      if (!playerWasKicked) {
+
+      if (playerWasKicked) {
+        setShowUserWasKickedDialog(true);
+      } else {
         socket.volatile.emit("leaveRoom", {
           playerID: userID,
           roomCode: roomConfig.code,

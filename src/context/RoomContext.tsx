@@ -63,6 +63,9 @@ interface IRoomContext {
 
   showSettingsDialog: boolean;
   setShowSettingsDialog: React.Dispatch<React.SetStateAction<boolean>>;
+  showUserWasKickedDialog: boolean;
+  setShowUserWasKickedDialog: React.Dispatch<React.SetStateAction<boolean>>;
+
   roomConfig: IRoomConfig;
   setRoomConfig: React.Dispatch<React.SetStateAction<IRoomConfig>>;
   playerMetadata: IRoomPlayersMetadata;
@@ -210,6 +213,8 @@ export function RoomProvider(props: { children: React.ReactNode }) {
   const [deckVariantIndex, setDeckVariantIndex] = useState<number>(0);
 
   const [showSettingsDialog, setShowSettingsDialog] = useState<boolean>(false);
+  const [showUserWasKickedDialog, setShowUserWasKickedDialog] =
+    useState<boolean>(false);
 
   const [roomConfig, setRoomConfig] = useState<IRoomConfig>({
     pointsToWin: 100,
@@ -463,6 +468,8 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     confettiPopBuffer,
     showSettingsDialog,
     setShowSettingsDialog,
+    showUserWasKickedDialog,
+    setShowUserWasKickedDialog,
     roomConfig,
     setRoomConfig,
     playerMetadata,

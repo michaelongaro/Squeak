@@ -4,6 +4,7 @@ import { Montserrat } from "next/font/google";
 import { Toaster, ToastBar } from "react-hot-toast";
 import TopRightControls from "../TopRightControls/TopRightControls";
 import { cardAssets } from "~/utils/cardAssetPaths";
+import { IoSadSharp } from "react-icons/io5";
 import usePlayerLeftRoom from "~/hooks/usePlayerLeftRoom";
 import useAttachUnloadEventListener from "~/hooks/useAttachUnloadEventListener";
 import useRejoinRoom from "~/hooks/useRejoinRoom";
@@ -12,6 +13,14 @@ import { useRouter } from "next/router";
 import useResetPlayerStateUponPageLoad from "~/hooks/useResetPlayerStateUponPageLoad";
 import { useInitializeAudioContext } from "~/hooks/useInitializeAudioContext";
 import useGracefullyReconnectToSocket from "~/hooks/useGracefullyReconnectToSocket";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogTitle,
+  AlertDialogDescription,
+} from "~/components/ui/alert-dialog";
+import { useRoomContext } from "~/context/RoomContext";
+import { Button } from "~/components/ui/button";
 
 const montserrat = Montserrat({
   weight: "variable",
@@ -43,6 +52,9 @@ interface GeneralLayout {
 
 function GeneralLayout({ children }: GeneralLayout) {
   const { asPath } = useRouter();
+
+  const { showUserWasKickedDialog, setShowUserWasKickedDialog } =
+    useRoomContext();
 
   // prevents iOS overscrolling on the /game page for better UX while playing
   useEffect(() => {
@@ -124,6 +136,30 @@ function GeneralLayout({ children }: GeneralLayout) {
         <AnimatePresence mode="wait">{children}</AnimatePresence>
 
         <TopRightControls />
+
+        <AlertDialog open={showUserWasKickedDialog}>
+          <AlertDialogContent>
+            <AlertDialogTitle className="baseVertFlex gap-2 font-semibold">
+              <IoSadSharp className="size-6" />
+              You were kicked
+            </AlertDialogTitle>
+
+            <AlertDialogDescription className="baseVertFlex mb-4 text-center">
+              <p className="w-48 xs:w-auto">
+                The room owner has kicked you from the room.
+              </p>
+            </AlertDialogDescription>
+
+            <div className="baseFlex w-full">
+              <Button
+                onClick={() => setShowUserWasKickedDialog(false)}
+                className="w-3/4"
+              >
+                I understand
+              </Button>
+            </div>
+          </AlertDialogContent>
+        </AlertDialog>
 
         <Toaster
           position={"top-center"}
