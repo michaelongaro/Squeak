@@ -352,7 +352,7 @@ export function RoomProvider(props: { children: React.ReactNode }) {
 
     localStorage.setItem("squeak-volume", currentVolume.toString());
 
-    const fixedVolume = currentVolume * 0.01;
+    const fixedVolume = currentVolume * 0.005;
     masterVolumeGainNode.gain.value = Number(fixedVolume.toFixed(2));
   }, [currentVolume, masterVolumeGainNode]);
 
@@ -362,8 +362,8 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     if (storedVolume) {
       setCurrentVolume(parseFloat(storedVolume));
     } else {
-      localStorage.setItem("squeak-volume", "50");
-      setCurrentVolume(50);
+      localStorage.setItem("squeak-volume", "25");
+      setCurrentVolume(25);
     }
   }, []);
 
