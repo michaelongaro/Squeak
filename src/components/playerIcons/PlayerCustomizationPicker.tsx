@@ -214,8 +214,9 @@ function PlayerCustomizationPicker({
           size="4rem"
           transparentBackground
         />
-        {getMetadataOfPlayerByAttribute(avatarPath, "avatar") !==
-          playerMetadata[userID]?.color &&
+        {connectedToRoom &&
+          getMetadataOfPlayerByAttribute(avatarPath, "avatar") !==
+            playerMetadata[userID]?.color &&
           getMetadataOfPlayerByAttribute(avatarPath, "avatar") !== "" && (
             <div
               style={{
@@ -224,7 +225,7 @@ function PlayerCustomizationPicker({
                   "avatar",
                 ),
               }}
-              className="absolute bottom-[-0.75rem] right-[-0.75rem] h-4 w-4 rounded-[50%]"
+              className="absolute bottom-[-0.25rem] right-[-0.25rem] h-4 w-4 rounded-[50%]"
             ></div>
           )}
       </div>
@@ -394,8 +395,9 @@ function PlayerCustomizationPicker({
           }
         />
 
-        {getMetadataOfPlayerByAttribute(color, "back") !==
-          playerMetadata[userID]?.avatarPath &&
+        {connectedToRoom &&
+          getMetadataOfPlayerByAttribute(color, "back") !==
+            playerMetadata[userID]?.avatarPath &&
           getMetadataOfPlayerByAttribute(color, "back") !== "" && (
             <div className="absolute bottom-[-0.75rem] right-[-0.75rem] z-[150] h-12 w-12 rounded-[50%] outline outline-[1px] outline-zinc-200">
               <PlayerIcon
