@@ -75,6 +75,13 @@ import {
   SheetPortal,
   SheetTrigger,
 } from "~/components/ui/sheet";
+import {
+  MdSignalCellularConnectedNoInternet1Bar,
+  MdSignalCellular1Bar,
+  MdSignalCellular2Bar,
+  MdSignalCellular3Bar,
+  MdSignalCellular4Bar,
+} from "react-icons/md";
 
 const filter = new Filter();
 
@@ -2059,10 +2066,28 @@ function WhilePlayingSheet({
   showVotingOptionButtons,
   setShowVotingOptionButtons,
 }: IWhilePlayingSheet) {
-  const { playerMetadata, roomConfig, gameData } = useRoomContext();
+  const { playerMetadata, roomConfig, gameData, playerPing } = useRoomContext();
 
   return (
     <div className="baseVertFlex h-[410px] w-full !justify-start overflow-y-auto">
+      <div className="baseFlex absolute left-3 top-2 z-[500] gap-2 text-xs text-darkGreen">
+        {playerPing === null && <MdSignalCellularConnectedNoInternet1Bar />}
+
+        {playerPing !== null && playerPing < 50 && <MdSignalCellular4Bar />}
+
+        {playerPing !== null && playerPing >= 50 && playerPing < 150 && (
+          <MdSignalCellular3Bar />
+        )}
+
+        {playerPing !== null && playerPing >= 150 && playerPing < 300 && (
+          <MdSignalCellular2Bar />
+        )}
+
+        {playerPing !== null && playerPing >= 300 && <MdSignalCellular1Bar />}
+
+        <p>{playerPing === null ? "Offline" : `${playerPing} ms`}</p>
+      </div>
+
       <div className="baseVertFlex w-full !items-start gap-2 border-darkGreen px-2 py-4">
         <Label className="baseFlex gap-2 pl-1 text-base">
           <BsFillVolumeUpFill className="size-5 shrink-0" />

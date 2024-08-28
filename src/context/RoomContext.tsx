@@ -132,6 +132,9 @@ interface IRoomContext {
   mirrorPlayerContainer: boolean;
   setMirrorPlayerContainer: React.Dispatch<React.SetStateAction<boolean>>;
 
+  playerPing: number | null;
+  setPlayerPing: React.Dispatch<React.SetStateAction<number | null>>;
+
   scoreboardMetadata: IScoreboardMetadata | null;
   setScoreboardMetadata: React.Dispatch<
     React.SetStateAction<IScoreboardMetadata | null>
@@ -271,6 +274,9 @@ export function RoomProvider(props: { children: React.ReactNode }) {
   const [showScoreboard, setShowScoreboard] = useState<boolean>(false);
   const [showShufflingCountdown, setShowShufflingCountdown] =
     useState<boolean>(false);
+
+  // null represents a player who doesn't have a connection to the server
+  const [playerPing, setPlayerPing] = useState<number | null>(0);
 
   const [scoreboardMetadata, setScoreboardMetadata] =
     useState<IScoreboardMetadata | null>(null);
@@ -504,6 +510,8 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     setShowScoreboard,
     showShufflingCountdown,
     setShowShufflingCountdown,
+    playerPing,
+    setPlayerPing,
     scoreboardMetadata,
     setScoreboardMetadata,
     connectedToRoom,

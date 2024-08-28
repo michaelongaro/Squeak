@@ -258,6 +258,10 @@ export default function SocketHandler(req, res) {
       socket.leave(roomCode);
     });
 
+    socket.on("measurePlayerPing", (_, ack) => {
+      ack(Date.now());
+    });
+
     // friends handlers
     initializePlayerInFriendsObject(io, socket, friendsData);
 

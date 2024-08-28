@@ -22,6 +22,19 @@ import { useAuth } from "@clerk/nextjs";
 import { api } from "~/utils/api";
 import { Dialog } from "~/components/ui/dialog";
 import UnableToJoinRoom from "~/components/Play/UnableToJoinRoom";
+import {
+  Tooltip,
+  TooltipProvider,
+  TooltipContent,
+  TooltipTrigger,
+} from "~/components/ui/tooltip";
+import {
+  MdSignalCellularConnectedNoInternet1Bar,
+  MdSignalCellular1Bar,
+  MdSignalCellular2Bar,
+  MdSignalCellular3Bar,
+  MdSignalCellular4Bar,
+} from "react-icons/md";
 
 function Play() {
   const { isLoaded } = useAuth();
@@ -44,6 +57,8 @@ function Play() {
     connectedToRoom,
     viewportLabel,
     setShowScoreboard,
+    playerPing,
+    setPlayerPing,
   } = useRoomContext();
 
   const { data: roomResult } = api.rooms.findRoomByCode.useQuery(
@@ -163,6 +178,40 @@ function Play() {
     playerMetadata,
   ]);
 
+  // heartbeat ping interval to update player's ping to the server
+  useEffect(() => {
+    if (!userID || roomCode === undefined) return;
+
+    const pingInterval = setInterval(() => {
+      socket.volatile.emit(
+        "measurePlayerPing",
+        undefined,
+        (serverTimestamp: number) => {
+          if (typeof serverTimestamp === "number") {
+            setPlayerPing(Math.max(Date.now() - serverTimestamp, 0));
+          }
+        },
+      );
+    }, 5000);
+
+    return () => {
+      clearInterval(pingInterval);
+    };
+  }, [userID, roomCode, setPlayerPing]);
+
+  useEffect(() => {
+    function handleGoingOffline() {
+      setPlayerPing(null);
+    }
+
+    // don't need to add "online" listener because the ping will be updated when the user goes back online
+    document.addEventListener("offline", handleGoingOffline);
+
+    return () => {
+      document.removeEventListener("offline", handleGoingOffline);
+    };
+  }, [setPlayerPing]);
+
   useEffect(() => {
     return () => {
       setShowScoreboard(false); // makes sure to reset this state when leaving the page
@@ -249,7 +298,45 @@ function Play() {
         <PlayerCardContainer cardContainerClass={classes.currentPlayerCards} />
       </div>
 
-      {!viewportLabel.includes("mobile") && <OtherPlayerIcons />}
+      {!viewportLabel.includes("mobile") && (
+        <>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger className="absolute left-4 top-4 z-[500] text-lightGreen">
+                {playerPing === null && (
+                  <MdSignalCellularConnectedNoInternet1Bar />
+                )}
+
+                {playerPing !== null && playerPing < 50 && (
+                  <MdSignalCellular4Bar />
+                )}
+
+                {playerPing !== null &&
+                  playerPing >= 50 &&
+                  playerPing < 150 && <MdSignalCellular3Bar />}
+
+                {playerPing !== null &&
+                  playerPing >= 150 &&
+                  playerPing < 300 && <MdSignalCellular2Bar />}
+
+                {playerPing !== null && playerPing >= 300 && (
+                  <MdSignalCellular1Bar />
+                )}
+              </TooltipTrigger>
+
+              <TooltipContent
+                side={"right"}
+                sideOffset={8}
+                className="baseFlex z-[500] gap-2 rounded-md border-2 bg-gradient-to-br from-green-800 to-green-850 px-4 py-1 text-lightGreen"
+              >
+                <p>{playerPing === null ? "Offline" : `${playerPing} ms`}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+
+          <OtherPlayerIcons />
+        </>
+      )}
 
       <AnimatePresence mode={"wait"}>
         {voteType !== null && viewportLabel.includes("mobile") && (
