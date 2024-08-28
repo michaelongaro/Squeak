@@ -61,23 +61,39 @@ function MainOptions() {
           />
 
           {isSignedIn ? (
-            <div className="baseFlex gap-4">
+            <AnimatePresence mode={"popLayout"}>
               {user?.username ? (
-                <>
-                  <PlayerIcon
-                    avatarPath={user?.avatarPath}
-                    borderColor={user?.color}
-                    size={"2.75rem"}
-                  />
-                  <div className="text-lightGreen">{user?.username}</div>
-                </>
+                <motion.div
+                  key={"loadedUser"}
+                  initial={{ opacity: 0, scale: 0.5 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.5 }}
+                  transition={{ duration: 0.25 }}
+                  className="baseFlex gap-4"
+                >
+                  <>
+                    <PlayerIcon
+                      avatarPath={user?.avatarPath}
+                      borderColor={user?.color}
+                      size={"2.75rem"}
+                    />
+                    <div className="text-lightGreen">{user?.username}</div>
+                  </>
+                </motion.div>
               ) : (
-                <>
+                <motion.div
+                  key={"loadingUser"}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0, scale: 0.5 }}
+                  transition={{ duration: 0.15 }}
+                  className="baseFlex gap-4"
+                >
                   <div className="size-11 animate-pulse rounded-[50%] bg-muted/50"></div>
                   <div className="h-6 w-28 animate-pulse rounded-md bg-muted/50"></div>
-                </>
+                </motion.div>
               )}
-            </div>
+            </AnimatePresence>
           ) : (
             <div className="baseFlex gap-4">
               <SignUpButton mode="modal">
