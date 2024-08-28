@@ -34,6 +34,7 @@ export function createRoomHandler(
         preventOtherPlayersFromSqueaking: false,
         botIntervals: [],
         blacklistedSqueakCards: {},
+        scoreboardMetadata: null,
         currentVotes: [],
         voteType: null,
       };

@@ -23,10 +23,20 @@ export function resetGameHandler(
   miscRoomData: IMiscRoomData,
 ) {
   async function resetGame({ gameIsFinished, roomCode }: IResetGame) {
-    const miscRoomDataObj = miscRoomData[roomCode];
+    if (miscRoomData[roomCode]) {
+      const boardTimestamps = Array.from({ length: 4 }, () =>
+        Array.from({ length: 5 }, () => 0),
+      );
 
-    if (miscRoomDataObj) {
-      miscRoomDataObj.preventOtherPlayersFromSqueaking = false;
+      miscRoomData[roomCode] = {
+        boardTimestamps,
+        preventOtherPlayersFromSqueaking: false,
+        botIntervals: [],
+        blacklistedSqueakCards: {},
+        scoreboardMetadata: null,
+        currentVotes: [],
+        voteType: null,
+      };
     }
 
     const room = roomData[roomCode];

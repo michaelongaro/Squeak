@@ -10,8 +10,14 @@ import { type IRejoinData } from "./../pages/api/socket";
 function useRejoinRoom() {
   const userID = useUserIDContext();
 
-  const { setRoomConfig, setPlayerMetadata, setGameData, setConnectedToRoom } =
-    useRoomContext();
+  const {
+    setRoomConfig,
+    setPlayerMetadata,
+    setGameData,
+    setConnectedToRoom,
+    setShowScoreboard,
+    setScoreboardMetadata,
+  } = useRoomContext();
 
   const [dataFromBackend, setDataFromBackend] = useState<IRejoinData | null>(
     null,
@@ -34,6 +40,7 @@ function useRejoinRoom() {
         roomConfig,
         gameData,
         players,
+        scoreboardMetadata,
       } = dataFromBackend;
 
       // TODO/FYI: this is fine w/ your current setup since you are sending
@@ -46,6 +53,11 @@ function useRejoinRoom() {
       setPlayerMetadata(players);
       setGameData(gameData);
 
+      if (scoreboardMetadata) {
+        setShowScoreboard(true);
+        setScoreboardMetadata(scoreboardMetadata);
+      }
+
       setConnectedToRoom(true);
     }
   }, [
@@ -54,6 +66,8 @@ function useRejoinRoom() {
     setPlayerMetadata,
     setRoomConfig,
     setConnectedToRoom,
+    setShowScoreboard,
+    setScoreboardMetadata,
     userID,
   ]);
 }

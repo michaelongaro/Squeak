@@ -80,7 +80,6 @@ export function generateAndEmitScoreboard({
   const playerCards = gameData[roomCode]?.players;
   const pointsToWin = roomData[roomCode]?.roomConfig.pointsToWin;
   const players = roomData[roomCode]?.players;
-  // don't like this var name
   const miscRoomDataObj = miscRoomData[roomCode];
 
   if (
@@ -279,6 +278,12 @@ export function generateAndEmitScoreboard({
       )![1],
     });
   }
+
+  miscRoomDataObj.scoreboardMetadata = {
+    gameWinnerID,
+    roundWinnerID,
+    playerRoundDetails,
+  };
 
   io.in(roomCode).emit("scoreboardMetadata", {
     playSqueakSound: playerWhoSqueakedID !== "",

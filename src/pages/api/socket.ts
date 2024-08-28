@@ -4,6 +4,7 @@ import {
   type IPlayerCards,
   type ICard,
 } from "../../utils/generateDeckAndSqueakCards";
+import { type IScoreboardMetadata } from "./handlers/roundOverHandler";
 import { drawFromDeckHandler } from "./handlers/drawFromDeckHandler";
 import { proposedCardDropHandler } from "./handlers/proposedCardDropHandler";
 import { roundOverHandler } from "./handlers/roundOverHandler";
@@ -60,6 +61,10 @@ interface IMiscRoomMetadata {
   blacklistedSqueakCards: {
     [playerID: string]: IBlacklistedSqueakCards;
   };
+
+  // only used in case someone is rejoining a room while scoreboard is showing
+  // and needs the calculated round metadata
+  scoreboardMetadata: IScoreboardMetadata | null;
 
   // related to voting
   currentVotes: ("agree" | "disagree")[];
@@ -188,6 +193,7 @@ export interface IRejoinData {
   roomConfig: IRoomConfig;
   players: IRoomPlayersMetadata;
   gameData: IGameMetadata;
+  scoreboardMetadata: IScoreboardMetadata | null;
 }
 
 const roomData: IRoomData = {};
@@ -244,7 +250,7 @@ export default function SocketHandler(req, res) {
 
     castVoteHandler(io, socket, gameData, miscRoomData, roomData);
 
-    rejoinRoomHandler(io, socket, gameData, roomData);
+    rejoinRoomHandler(io, socket, gameData, roomData, miscRoomData);
 
     oldRoomCleanupCron(io, socket, gameData, roomData, miscRoomData);
 

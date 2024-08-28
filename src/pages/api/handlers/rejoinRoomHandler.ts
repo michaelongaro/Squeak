@@ -4,6 +4,7 @@ import {
   type IGameData,
   type IRejoinData,
   type IRoomData,
+  type IMiscRoomData,
 } from "../socket";
 
 interface IJoinRoomConfig {
@@ -16,6 +17,7 @@ export function rejoinRoomHandler(
   socket: Socket,
   gameData: IGameData,
   roomData: IRoomData,
+  miscRoomData: IMiscRoomData,
 ) {
   socket.on(
     "rejoinRoom",
@@ -23,8 +25,9 @@ export function rejoinRoomHandler(
       const room = roomData[code];
       const players = roomData[code]?.players;
       const game = gameData[code];
+      const miscRoomDataObj = miscRoomData[code];
 
-      if (!room || !players) return;
+      if (!room || !players || !miscRoomDataObj) return;
 
       socket.join(code);
 
@@ -39,6 +42,7 @@ export function rejoinRoomHandler(
         roomConfig: room.roomConfig,
         gameData: game === undefined ? ({} as IGameMetadata) : game,
         players: room.players,
+        scoreboardMetadata: miscRoomDataObj.scoreboardMetadata,
       };
 
       io.in(code).emit("rejoinData", rejoinData);
