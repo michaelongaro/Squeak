@@ -27,7 +27,9 @@ function PlayerCustomizationPopover({
 }: IPlayerCustomizationPopover) {
   return (
     <Popover>
-      <PopoverTrigger className="transition-[filter] hover:brightness-75">
+      <PopoverTrigger
+        className={`transition-[filter] hover:brightness-75 ${type === "avatar" ? "pb-1" : ""}`}
+      >
         <PlayerCustomizationPreview
           renderedView={type}
           renderDescriptionText={false}

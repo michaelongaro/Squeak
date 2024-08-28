@@ -381,7 +381,7 @@ function CreateRoom() {
               <div className="baseFlex gap-12 text-lightGreen">
                 <div className="baseVertFlex gap-2">
                   <PlayerCustomizationPopover type={"avatar"} />
-                  <p className="mt-[0.25rem]">Avatar</p>
+                  <p className="mt-[0.3rem]">Avatar</p>
                 </div>
                 <div className="baseVertFlex gap-2">
                   <PlayerCustomizationPopover type={"front"} />
@@ -622,7 +622,7 @@ function CreateRoom() {
                   <div className="baseFlex gap-12 text-lightGreen">
                     <div className="baseVertFlex gap-2">
                       <PlayerCustomizationPopover type={"avatar"} />
-                      <p className="mt-[0.25rem]">Avatar</p>
+                      <p className="mt-[0.3rem]">Avatar</p>
                     </div>
                     <div className="baseVertFlex gap-2">
                       <PlayerCustomizationPopover type={"front"} />
@@ -696,7 +696,7 @@ function CreateRoom() {
                       >
                         {startGameButtonText}
                         {startGameButtonText === "Start game" && (
-                          <BiArrowBack className="scale-x-flip size-4" />
+                          <BiArrowBack className="size-4 scale-x-flip" />
                         )}
                         {startGameButtonText === "Loading" && (
                           <div

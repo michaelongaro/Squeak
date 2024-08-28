@@ -41,7 +41,7 @@ function PlayerCustomizationPreview({
           size="3rem" // hopefully doesn't mess up positioning near player container on play
           transparentBackground={transparentAvatarBackground}
           style={{
-            marginTop: forCreateAndJoin ? "0.55rem" : 0,
+            paddingTop: forCreateAndJoin ? "0.55rem" : 0,
           }}
         />
         {renderDescriptionText && (

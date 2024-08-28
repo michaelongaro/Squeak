@@ -139,7 +139,7 @@ function Settings({
               localPlayerMetadata={localPlayerMetadata}
               setLocalPlayerMetadata={setLocalPlayerMetadata}
             />
-            <p className="mt-[0.25rem] text-lightGreen">Avatar</p>
+            <p className="mt-[0.3rem] text-lightGreen">Avatar</p>
           </div>
           <div className="baseVertFlex gap-2">
             <PlayerCustomizationPopover
