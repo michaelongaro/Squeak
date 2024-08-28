@@ -43,7 +43,7 @@ function cardPlacementIsValid(
   currentCell: ICard | null,
   value: string,
   suit: string,
-  forBoard: boolean
+  forBoard: boolean,
 ): boolean {
   const proposedNumValue = valueToNumberMap[value as validCardValues];
   const baseNumValue = currentCell
@@ -77,6 +77,11 @@ function cardPlacementIsValid(
       baseNumSuit % 2 !== proposedNumSuit % 2
     )
       return true;
+  }
+  // it is legal to place a card on an empty squeak stack, only possible
+  // if player has no more squeak cards to draw from.
+  else if (!forBoard && currentCell === null) {
+    return true;
   }
 
   return false;
