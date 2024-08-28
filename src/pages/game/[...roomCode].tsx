@@ -205,10 +205,10 @@ function Play() {
     }
 
     // don't need to add "online" listener because the ping will be updated when the user goes back online
-    document.addEventListener("offline", handleGoingOffline);
+    window.addEventListener("offline", handleGoingOffline);
 
     return () => {
-      document.removeEventListener("offline", handleGoingOffline);
+      window.removeEventListener("offline", handleGoingOffline);
     };
   }, [setPlayerPing]);
 
