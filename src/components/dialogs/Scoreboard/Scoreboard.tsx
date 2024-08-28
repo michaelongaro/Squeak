@@ -147,8 +147,8 @@ function Scoreboard() {
 
         setTimeout(() => {
           setConfettiPopperShrink(false);
-        }, 250);
-      }, 200);
+        }, 300);
+      }, 350);
 
       setTimeout(() => {
         if (audioContext && masterVolumeGainNode) {
@@ -180,13 +180,14 @@ function Scoreboard() {
               },
             },
             {
-              spread: viewportLabel.includes("mobile") ? 45 : 30,
-              startVelocity: 30,
-              angle: viewportLabel.includes("mobile") ? 45 : 135,
+              spread: viewportLabel.includes("mobile") ? 45 : 50,
+              startVelocity: viewportLabel.includes("mobile") ? 40 : 50,
+              angle: 45,
+              drift: 0.25,
               zIndex: 500,
             },
             {
-              particleCount: 100,
+              particleCount: viewportLabel.includes("mobile") ? 100 : 200,
             },
           ),
         );
@@ -201,17 +202,18 @@ function Scoreboard() {
               },
             },
             {
-              spread: viewportLabel.includes("mobile") ? 45 : 30,
-              startVelocity: 30,
-              angle: viewportLabel.includes("mobile") ? 135 : 45,
+              spread: viewportLabel.includes("mobile") ? 45 : 50,
+              startVelocity: viewportLabel.includes("mobile") ? 40 : 50,
+              angle: 135,
+              drift: -0.25,
               zIndex: 500,
             },
             {
-              particleCount: 100,
+              particleCount: viewportLabel.includes("mobile") ? 100 : 200,
             },
           ),
         );
-      }, 350); // waiting for the motion.divs to be rendered with +150ms of delay
+      }, 800); // waiting for the motion.divs to be rendered with +150ms of delay
     }, 6500);
 
     setTimeout(() => {
@@ -820,7 +822,7 @@ function Scoreboard() {
                             >
                               {hostActionButtonText}
                               {hostActionButtonText !== "Loading" && (
-                                <BiArrowBack className="scale-x-flip size-4" />
+                                <BiArrowBack className="size-4 scale-x-flip" />
                               )}
                               {hostActionButtonText === "Loading" && (
                                 <div
@@ -1148,8 +1150,8 @@ function Scoreboard() {
                       style={{
                         filter: "drop-shadow(rgba(0,0,0, 0.10) 0px 0px 0.5rem)",
                         transform: confettiPopperShrink
-                          ? "scale(0.75) rotate(135deg)"
-                          : "scale(1) rotate(135deg)",
+                          ? "scale(0.75) rotate(225deg)"
+                          : "scale(1) rotate(225deg)",
                       }}
                       className="h-8 w-8 transition-all"
                       src={confettiPopper}
@@ -1207,8 +1209,8 @@ function Scoreboard() {
                       style={{
                         filter: "drop-shadow(rgba(0,0,0, 0.10) 0px 0px 0.5rem)",
                         transform: confettiPopperShrink
-                          ? "scale(0.75) rotate(225deg)"
-                          : "scale(1) rotate(225deg)",
+                          ? "scale(0.75) rotate(135deg)"
+                          : "scale(1) rotate(135deg)",
                       }}
                       className="h-8 w-8 transition-all"
                       src={confettiPopper}
@@ -1271,7 +1273,7 @@ function Scoreboard() {
                           >
                             {hostActionButtonText}
                             {hostActionButtonText !== "Loading" && (
-                              <BiArrowBack className="scale-x-flip size-4" />
+                              <BiArrowBack className="size-4 scale-x-flip" />
                             )}
                             {hostActionButtonText === "Loading" && (
                               <div
