@@ -29,12 +29,12 @@ import {
   TooltipTrigger,
 } from "~/components/ui/tooltip";
 import {
-  MdSignalCellularConnectedNoInternet1Bar,
-  MdSignalCellular1Bar,
-  MdSignalCellular2Bar,
-  MdSignalCellular3Bar,
-  MdSignalCellular4Bar,
-} from "react-icons/md";
+  TbAntennaBarsOff,
+  TbAntennaBars2,
+  TbAntennaBars3,
+  TbAntennaBars4,
+  TbAntennaBars5,
+} from "react-icons/tb";
 
 function Play() {
   const { isLoaded } = useAuth();
@@ -303,24 +303,22 @@ function Play() {
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger className="absolute left-4 top-4 z-[500] text-lightGreen">
-                {playerPing === null && (
-                  <MdSignalCellularConnectedNoInternet1Bar />
-                )}
+                {playerPing === null && <TbAntennaBarsOff className="size-8" />}
 
                 {playerPing !== null && playerPing < 50 && (
-                  <MdSignalCellular4Bar />
+                  <TbAntennaBars5 className="size-8" />
                 )}
 
                 {playerPing !== null &&
                   playerPing >= 50 &&
-                  playerPing < 150 && <MdSignalCellular3Bar />}
+                  playerPing < 150 && <TbAntennaBars4 className="size-8" />}
 
                 {playerPing !== null &&
                   playerPing >= 150 &&
-                  playerPing < 300 && <MdSignalCellular2Bar />}
+                  playerPing < 300 && <TbAntennaBars3 className="size-8" />}
 
                 {playerPing !== null && playerPing >= 300 && (
-                  <MdSignalCellular1Bar />
+                  <TbAntennaBars2 className="size-8" />
                 )}
               </TooltipTrigger>
 

@@ -76,12 +76,12 @@ import {
   SheetTrigger,
 } from "~/components/ui/sheet";
 import {
-  MdSignalCellularConnectedNoInternet1Bar,
-  MdSignalCellular1Bar,
-  MdSignalCellular2Bar,
-  MdSignalCellular3Bar,
-  MdSignalCellular4Bar,
-} from "react-icons/md";
+  TbAntennaBarsOff,
+  TbAntennaBars2,
+  TbAntennaBars3,
+  TbAntennaBars4,
+  TbAntennaBars5,
+} from "react-icons/tb";
 
 const filter = new Filter();
 
@@ -2070,20 +2070,24 @@ function WhilePlayingSheet({
 
   return (
     <div className="baseVertFlex h-[410px] w-full !justify-start overflow-y-auto">
-      <div className="baseFlex absolute left-3 top-2 z-[500] gap-2 text-xs text-darkGreen">
-        {playerPing === null && <MdSignalCellularConnectedNoInternet1Bar />}
+      <div className="baseFlex absolute left-[9px] top-1.5 z-[500] gap-2 text-xs text-darkGreen">
+        {playerPing === null && <TbAntennaBarsOff className="size-5" />}
 
-        {playerPing !== null && playerPing < 50 && <MdSignalCellular4Bar />}
+        {playerPing !== null && playerPing < 50 && (
+          <TbAntennaBars5 className="size-5" />
+        )}
 
         {playerPing !== null && playerPing >= 50 && playerPing < 150 && (
-          <MdSignalCellular3Bar />
+          <TbAntennaBars4 className="size-5" />
         )}
 
         {playerPing !== null && playerPing >= 150 && playerPing < 300 && (
-          <MdSignalCellular2Bar />
+          <TbAntennaBars3 className="size-5" />
         )}
 
-        {playerPing !== null && playerPing >= 300 && <MdSignalCellular1Bar />}
+        {playerPing !== null && playerPing >= 300 && (
+          <TbAntennaBars2 className="size-5" />
+        )}
 
         <p>{playerPing === null ? "Offline" : `${playerPing} ms`}</p>
       </div>
