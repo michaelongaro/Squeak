@@ -222,54 +222,68 @@ function TopRightControls() {
       } fixed right-1 top-1 z-[190] !min-w-fit gap-3 sm:gap-4 lg:right-4 lg:top-4`}
     >
       {!asPath.includes("/game") && (
-        <div
-          onPointerEnter={() => {
-            if (!isSignedIn) {
-              setShowSettingsUnauthTooltip(true);
-            }
-          }}
-          onPointerLeave={() => {
-            if (!isSignedIn) {
-              setShowSettingsUnauthTooltip(false);
-            }
-          }}
-        >
-          <TooltipProvider>
-            <Tooltip open={showSettingsUnauthTooltip}>
-              <TooltipTrigger asChild>
-                <Dialog
-                  open={showSettingsDialog}
-                  onOpenChange={(isOpen) => setShowSettingsDialog(isOpen)}
-                >
-                  <DialogTrigger asChild>
+        <div className="relative h-[40px] w-[40px] md:h-[44px] md:w-[44px]">
+          <div
+            onPointerEnter={() => {
+              if (!isSignedIn) {
+                console.log("showing settings unauth tooltip");
+                setShowSettingsUnauthTooltip(true);
+              }
+            }}
+            onPointerLeave={() => {
+              if (!isSignedIn) {
+                console.log("hiding settings unauth tooltip");
+                setShowSettingsUnauthTooltip(false);
+              }
+            }}
+          >
+            <TooltipProvider>
+              <Tooltip open={showSettingsUnauthTooltip}>
+                <TooltipTrigger asChild>
+                  {/* below is not ideal, but tooltip wouldn't show w/ Dialog being rendered */}
+                  {isSignedIn ? (
+                    <Dialog
+                      open={showSettingsDialog}
+                      onOpenChange={(isOpen) => setShowSettingsDialog(isOpen)}
+                    >
+                      <DialogTrigger asChild>
+                        <Button
+                          variant={"secondary"}
+                          disabled={!isSignedIn}
+                          includeMouseEvents
+                          onClick={() => setShowSettingsDialog(true)}
+                          className="h-[40px] w-[40px] md:h-[44px] md:w-[44px]"
+                        >
+                          <IoSettingsSharp size={"1.5rem"} />
+                        </Button>
+                      </DialogTrigger>
+
+                      <UserSettingsAndStatsDialog
+                        setShowDialog={setShowSettingsDialog}
+                      />
+                    </Dialog>
+                  ) : (
                     <Button
                       variant={"secondary"}
                       disabled={!isSignedIn}
                       includeMouseEvents
-                      onClick={() => {
-                        if (isSignedIn) {
-                          setShowSettingsDialog(true);
-                        }
-                      }}
+                      onClick={() => setShowSettingsDialog(true)}
                       className="h-[40px] w-[40px] md:h-[44px] md:w-[44px]"
                     >
                       <IoSettingsSharp size={"1.5rem"} />
                     </Button>
-                  </DialogTrigger>
-
-                  <UserSettingsAndStatsDialog
-                    setShowDialog={setShowSettingsDialog}
-                  />
-                </Dialog>
-              </TooltipTrigger>
-              <TooltipContent
-                side={"left"}
-                className="border-2 border-lightGreen bg-darkGreen text-lightGreen"
-              >
-                <p>Log in to access</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+                  )}
+                </TooltipTrigger>
+                <TooltipContent
+                  side={"left"}
+                  sideOffset={8}
+                  className="border-2 border-lightGreen bg-darkGreen text-lightGreen"
+                >
+                  <p>Log in to access</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
         </div>
       )}
 
@@ -370,6 +384,7 @@ function TopRightControls() {
                 </TooltipTrigger>
                 <TooltipContent
                   side={"left"}
+                  sideOffset={8}
                   className="border-2 border-lightGreen bg-darkGreen text-lightGreen"
                 >
                   <p>Log in to access</p>
