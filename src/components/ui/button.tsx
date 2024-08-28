@@ -91,25 +91,19 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     if (variant === "text") {
       return (
         <Comp
-          onPointerDown={() => {
-            setBrightness(0.65);
-          }}
-          onPointerUp={() => {
-            setBrightness(1);
-          }}
           onPointerEnter={() => {
             setBrightness(0.75);
           }}
           onPointerLeave={() => {
             setBrightness(1);
           }}
-          onTouchStart={() => {
-            setBrightness(0.65);
-          }}
-          onTouchEnd={() => {
+          onPointerCancel={() => {
             setBrightness(1);
           }}
-          onTouchCancel={() => {
+          onPointerDown={() => {
+            setBrightness(0.65);
+          }}
+          onPointerUp={() => {
             setBrightness(1);
           }}
           style={{
@@ -129,22 +123,19 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     if (variant === "sheet") {
       return (
         <Comp
-          onPointerDown={() => {
+          onPointerEnter={() => {
             setIsActive(true);
-          }}
-          onPointerUp={() => {
-            setIsActive(false);
           }}
           onPointerLeave={() => {
             setIsActive(false);
           }}
-          onTouchStart={() => {
-            setIsActive(true);
-          }}
-          onTouchEnd={() => {
+          onPointerCancel={() => {
             setIsActive(false);
           }}
-          onTouchCancel={() => {
+          onPointerDown={() => {
+            setIsActive(true);
+          }}
+          onPointerUp={() => {
             setIsActive(false);
           }}
           className={cn(

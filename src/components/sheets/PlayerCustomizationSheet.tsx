@@ -69,7 +69,7 @@ function PlayerCustomizationSheet() {
                   transition={{
                     duration: 0.3,
                   }}
-                  className="baseVertFlex h-full w-screen"
+                  className="baseVertFlex h-full w-full"
                 >
                   {viewLabels.map((label) => (
                     <Button
@@ -113,11 +113,8 @@ function PlayerCustomizationSheet() {
                   exit={{ opacity: 0, translateX: "100%" }}
                   transition={{
                     duration: 0.3,
-                    // delay: 0.3,
                   }}
-                  className={
-                    "baseVertFlex relative h-full w-screen bg-zinc-200"
-                  }
+                  className={"baseVertFlex relative h-full w-full bg-zinc-200"}
                 >
                   <Button
                     variant={"text"}

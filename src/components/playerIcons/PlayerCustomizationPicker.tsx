@@ -50,12 +50,13 @@ function PlayerCustomizationPicker({
   const setPlayerMetadata = setLocalPlayerMetadata ?? storeSetPlayerMetadata;
   const connectedToRoom = localPlayerMetadata ? false : storeConnectedToRoom;
 
-  const [hoveredTooltip, setHoveredTooltip] = useState<
-    ["avatar" | "back", number] | null
-  >(null);
-  const [hoveringOnFrontCardTooltip, setHoveringOnFrontCardTooltip] = useState<
-    number | null
-  >(null);
+  const [hoveredTooltip, setHoveredTooltip] = useState<{
+    type: "avatar" | "front" | "back";
+    index: number;
+  } | null>(null);
+
+  const [scaledDownElementIndex, setScaledDownElementIndex] =
+    useState<number>(-1);
 
   const [userAvatarIndex, setUserAvatarIndex] = useState<number>(-1);
   const [userDeckIndex, setUserDeckIndex] = useState<number>(-1);
@@ -78,7 +79,7 @@ function PlayerCustomizationPicker({
   }, [playerMetadata, userID]);
 
   function isTooltipOptionAvailable(
-    type: "avatar" | "back",
+    type: "avatar" | "front" | "back",
     index: number,
   ): boolean {
     if (type === "avatar") {
@@ -88,6 +89,8 @@ function PlayerCustomizationPicker({
           (metadata) => metadata.avatarPath !== avatarPaths[index],
         )
       );
+    } else if (type === "front") {
+      return deckVariantIndex !== index;
     }
 
     return (
@@ -98,26 +101,23 @@ function PlayerCustomizationPicker({
     );
   }
 
-  function calculateOutline(type: "avatar" | "back", index: number): string {
+  function calculateOutline(
+    type: "avatar" | "front" | "back",
+    index: number,
+  ): string {
     if (
       (type === "avatar" && userAvatarIndex === index) ||
+      (type === "front" && deckVariantIndex === index) ||
       (type === "back" && userDeckIndex === index)
-    )
+    ) {
       return "4px solid hsl(120deg 100% 18%)";
+    }
 
     if (!isTooltipOptionAvailable(type, index)) return "4px solid transparent";
 
     return hoveredTooltip &&
-      hoveredTooltip[0] === type &&
-      hoveredTooltip[1] === index
-      ? "4px solid hsl(120deg 100% 40%)"
-      : "4px solid transparent";
-  }
-
-  function calculateOutlineCardFront(index: number): string {
-    if (deckVariantIndex === index) return "4px solid hsl(120deg 100% 18%)";
-
-    return hoveringOnFrontCardTooltip === index
+      hoveredTooltip.type === type &&
+      hoveredTooltip.index === index
       ? "4px solid hsl(120deg 100% 40%)"
       : "4px solid transparent";
   }
@@ -172,11 +172,33 @@ function PlayerCustomizationPicker({
             ? "auto"
             : "none",
         }}
-        // TODO: still extremely confused as to why rapidly changing values seems to be throttled
-        // on mobile/with touch events...
         className="relative shrink-0 rounded-[50%] outline-offset-4 transition-all"
-        onMouseEnter={() => setHoveredTooltip(["avatar", index])}
-        onMouseLeave={() => setHoveredTooltip(null)}
+        onPointerEnter={(e) => {
+          if (e.pointerType === "mouse") {
+            setHoveredTooltip({ type: "avatar", index });
+          }
+
+          setScaledDownElementIndex(index);
+        }}
+        onPointerLeave={(e) => {
+          if (e.pointerType === "mouse") {
+            setHoveredTooltip(null);
+          }
+
+          setScaledDownElementIndex(-1);
+        }}
+        onPointerCancel={(e) => {
+          if (e.pointerType === "mouse") {
+            setHoveredTooltip(null);
+          }
+
+          setScaledDownElementIndex(-1);
+        }}
+        onPointerDown={(e) => {
+          if (e.pointerType === "mouse") {
+            setScaledDownElementIndex(index);
+          }
+        }}
         onClick={() => {
           // if user is connected to room
           if (connectedToRoom) {
@@ -208,12 +230,16 @@ function PlayerCustomizationPicker({
           }
         }}
       >
-        <PlayerIcon
-          avatarPath={avatarPath}
-          borderColor={"transparent"}
-          size="4rem"
-          transparentBackground
-        />
+        <div
+          className={`transition-transform ${scaledDownElementIndex === index ? "scale-95" : ""}`}
+        >
+          <PlayerIcon
+            avatarPath={avatarPath}
+            borderColor={"transparent"}
+            size="4rem"
+            transparentBackground
+          />
+        </div>
         {connectedToRoom &&
           getMetadataOfPlayerByAttribute(avatarPath, "avatar") !==
             playerMetadata[userID]?.color &&
@@ -233,93 +259,84 @@ function PlayerCustomizationPicker({
   }
 
   function renderCardFrontTooltip() {
+    const cardFrontIndicies = [0, 1];
+
     return (
       <>
-        <div
-          style={{
-            outline: calculateOutlineCardFront(0),
-            cursor: deckVariantIndex !== 0 ? "pointer" : "auto",
-            pointerEvents: deckVariantIndex !== 0 ? "auto" : "none",
-          }}
-          // TODO: still extremely confused as to why rapidly changing values seems to be throttled
-          // on mobile/with touch events...
-          className="relative shrink-0 rounded-sm outline-offset-4 transition-all"
-          onMouseEnter={() => setHoveringOnFrontCardTooltip(0)}
-          onMouseLeave={() => setHoveringOnFrontCardTooltip(null)}
-          onClick={() => {
-            updateLocalStoragePlayerMetadata({
-              avatarPath: playerMetadata[userID]?.avatarPath || "",
-              color: playerMetadata[userID]?.color || "",
-              deckVariantIndex: 0,
-              deckHueRotation: playerMetadata[userID]?.deckHueRotation || 0,
-            });
+        {cardFrontIndicies.map((index) => (
+          <div
+            key={index}
+            style={{
+              outline: calculateOutline("front", index),
+              cursor: deckVariantIndex !== index ? "pointer" : "auto",
+              pointerEvents: deckVariantIndex !== index ? "auto" : "none",
+            }}
+            className="relative shrink-0 rounded-sm outline-offset-4 transition-all"
+            onPointerEnter={(e) => {
+              if (e.pointerType === "mouse") {
+                setHoveredTooltip({ type: "front", index });
+              }
 
-            setDeckVariantIndex(0);
+              setScaledDownElementIndex(index);
+            }}
+            onPointerLeave={(e) => {
+              if (e.pointerType === "mouse") {
+                setHoveredTooltip(null);
+              }
 
-            if (setLocalPlayerSettings === undefined) return;
+              setScaledDownElementIndex(-1);
+            }}
+            onPointerCancel={(e) => {
+              if (e.pointerType === "mouse") {
+                setHoveredTooltip(null);
+              }
 
-            setLocalPlayerSettings((localPlayerSettings) => {
-              return {
-                ...localPlayerSettings,
-                deckVariantIndex: 0,
-              };
-            });
-          }}
-        >
-          <Card
-            value={"8"}
-            suit={"C"}
-            showCardBack={false}
-            draggable={false}
-            rotation={0}
-            width={64}
-            height={87}
-            hueRotation={0}
-            manuallyShowSpecificCardFront={0}
-          />
-        </div>
+              setScaledDownElementIndex(-1);
+            }}
+            onPointerDown={(e) => {
+              if (e.pointerType === "mouse") {
+                setScaledDownElementIndex(index);
+              }
+            }}
+            onClick={() => {
+              updateLocalStoragePlayerMetadata({
+                avatarPath: playerMetadata[userID]?.avatarPath || "",
+                color: playerMetadata[userID]?.color || "",
+                deckVariantIndex: index,
+                deckHueRotation: playerMetadata[userID]?.deckHueRotation || 0,
+              });
 
-        <div
-          style={{
-            outline: calculateOutlineCardFront(1),
-            cursor: deckVariantIndex !== 1 ? "pointer" : "auto",
-            pointerEvents: deckVariantIndex !== 1 ? "auto" : "none",
-          }}
-          className="relative rounded-sm outline-offset-4 transition-all"
-          onPointerEnter={() => setHoveringOnFrontCardTooltip(1)}
-          onPointerLeave={() => setHoveringOnFrontCardTooltip(null)}
-          onClick={() => {
-            updateLocalStoragePlayerMetadata({
-              avatarPath: playerMetadata[userID]?.avatarPath || "",
-              color: playerMetadata[userID]?.color || "",
-              deckVariantIndex: 1,
-              deckHueRotation: playerMetadata[userID]?.deckHueRotation || 0,
-            });
+              setDeckVariantIndex(index);
 
-            setDeckVariantIndex(1);
+              if (setLocalPlayerSettings === undefined) return;
 
-            if (setLocalPlayerSettings === undefined) return;
-
-            setLocalPlayerSettings((localPlayerSettings) => {
-              return {
-                ...localPlayerSettings,
-                deckVariantIndex: 1,
-              };
-            });
-          }}
-        >
-          <Card
-            value={"8"}
-            suit={"C"}
-            showCardBack={false}
-            draggable={false}
-            rotation={0}
-            width={64}
-            height={87}
-            hueRotation={0}
-            manuallyShowSpecificCardFront={1}
-          />
-        </div>
+              setLocalPlayerSettings((localPlayerSettings) => {
+                return {
+                  ...localPlayerSettings,
+                  deckVariantIndex: index,
+                };
+              });
+            }}
+          >
+            <div
+              className={`transition-transform ${
+                scaledDownElementIndex === index ? "scale-95" : ""
+              }`}
+            >
+              <Card
+                value={"8"}
+                suit={"C"}
+                showCardBack={false}
+                draggable={false}
+                rotation={0}
+                width={64}
+                height={87}
+                hueRotation={0}
+                manuallyShowSpecificCardFront={index}
+              />
+            </div>
+          </div>
+        ))}
       </>
     );
   }
@@ -335,11 +352,33 @@ function PlayerCustomizationPicker({
             ? "auto"
             : "none",
         }}
-        // TODO: still extremely confused as to why rapidly changing values seems to be throttled
-        // on mobile/with touch events...
         className="relative shrink-0 rounded-sm outline-offset-4 transition-all"
-        onMouseEnter={() => setHoveredTooltip(["back", index])}
-        onMouseLeave={() => setHoveredTooltip(null)}
+        onPointerEnter={(e) => {
+          if (e.pointerType === "mouse") {
+            setHoveredTooltip({ type: "back", index });
+          }
+
+          setScaledDownElementIndex(index);
+        }}
+        onPointerLeave={(e) => {
+          if (e.pointerType === "mouse") {
+            setHoveredTooltip(null);
+          }
+
+          setScaledDownElementIndex(-1);
+        }}
+        onPointerCancel={(e) => {
+          if (e.pointerType === "mouse") {
+            setHoveredTooltip(null);
+          }
+
+          setScaledDownElementIndex(-1);
+        }}
+        onPointerDown={(e) => {
+          if (e.pointerType === "mouse") {
+            setScaledDownElementIndex(index);
+          }
+        }}
         onClick={() => {
           // if user is connected to room
           if (connectedToRoom) {
@@ -382,18 +421,22 @@ function PlayerCustomizationPicker({
           }
         }}
       >
-        <Card
-          showCardBack={true}
-          draggable={false}
-          rotation={0}
-          width={64}
-          height={87}
-          hueRotation={
-            oklchToDeckHueRotations[
-              color as keyof typeof oklchToDeckHueRotations // seems hacky
-            ]
-          }
-        />
+        <div
+          className={`transition-transform ${scaledDownElementIndex === index ? "scale-95" : ""}`}
+        >
+          <Card
+            showCardBack={true}
+            draggable={false}
+            rotation={0}
+            width={64}
+            height={87}
+            hueRotation={
+              oklchToDeckHueRotations[
+                color as keyof typeof oklchToDeckHueRotations // seems hacky
+              ]
+            }
+          />
+        </div>
 
         {connectedToRoom &&
           getMetadataOfPlayerByAttribute(color, "back") !==
@@ -419,7 +462,7 @@ function PlayerCustomizationPicker({
             type === "avatar"
               ? "h-[18rem] w-[18rem] grid-cols-3 grid-rows-3 md:h-[20rem] md:w-[20rem]"
               : type === "back"
-                ? "h-[22rem] w-[22rem] grid-cols-3 grid-rows-3 md:h-[18rem] md:w-[25rem] md:grid-cols-4 md:grid-rows-2"
+                ? "h-[22rem] w-[22rem] grid-cols-3 grid-rows-3 gap-4 md:h-[18rem] md:w-[25rem] md:grid-cols-4 md:grid-rows-2 tablet:gap-0"
                 : "h-[10rem] w-[15rem] grid-cols-2 grid-rows-1"
           } ${forSheet ? "bg-zinc-200" : "white"} grid place-items-center rounded-md p-4 transition-all`}
         >
