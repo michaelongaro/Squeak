@@ -22,6 +22,7 @@ function Buzzer({ playerID, roomCode, interactive }: IBuzzer) {
     playerMetadata,
     playerIDWhoSqueaked,
     viewportLabel,
+    showScoreboard,
   } = useRoomContext();
 
   const [hoveringOnButton, setHoveringOnButton] = useState<boolean>(false);
@@ -32,7 +33,9 @@ function Buzzer({ playerID, roomCode, interactive }: IBuzzer) {
     useState<boolean>(false);
 
   useEffect(() => {
-    if (playerIDWhoSqueaked !== playerID) return;
+    // this effect would constantly trigger if volume was being changed while scoreboard was open
+    // (although that was an edge case since the scoreboard being open should prevent volume changes)
+    if (playerIDWhoSqueaked !== playerID || showScoreboard) return;
 
     if (playerIDWhoSqueaked !== userID) {
       // simulating a pointer click on the button to trigger the animation
@@ -58,7 +61,7 @@ function Buzzer({ playerID, roomCode, interactive }: IBuzzer) {
         pageContainer.style.overflow = "auto";
       }
     }, 1000);
-  }, [playerIDWhoSqueaked, playerID, currentVolume, userID]);
+  }, [playerIDWhoSqueaked, playerID, currentVolume, userID, showScoreboard]);
 
   return (
     <motion.div
