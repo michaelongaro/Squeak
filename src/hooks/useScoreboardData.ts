@@ -74,19 +74,6 @@ function useScoreboardData() {
         },
         playSqueakSound ? 1000 : 0,
       ); // waiting for pulsing animation to finish
-
-      // setTimeout(() => {
-      //   // this whole block needs to be in response to "Start next round" button click
-
-      //   setPlayerIDWhoSqueaked(null);
-
-      //   if (userID !== playerIDToStartNextRound) return;
-
-      //   socket.volatile.emit("resetGame", {
-      //     roomCode: roomConfig.code,
-      //     gameIsFinished: gameWinnerID !== null,
-      //   });
-      // }, 14500);
     }
   }, [
     dataFromBackend,
