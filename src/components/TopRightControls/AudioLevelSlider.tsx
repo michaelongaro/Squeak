@@ -58,7 +58,7 @@ function AudioLevelSlider({ forMobile }: IAudioLevelSlider) {
             max: 100,
           }),
           margin: hovered || forMobile ? "0 0.5rem" : "0",
-          width: hovered || forMobile ? (forMobile ? "100%" : "10rem") : "0rem",
+          width: hovered || forMobile ? (forMobile ? "100%" : "9rem") : "0rem",
         }}
         className="ml-2 mr-2 h-[7px] rounded-[0.1rem] transition-all"
       >
@@ -80,11 +80,7 @@ function AudioLevelSlider({ forMobile }: IAudioLevelSlider) {
                 height: hovered || forMobile ? "6px" : "0px",
                 opacity: hovered || forMobile ? "1" : "0",
                 width:
-                  hovered || forMobile
-                    ? forMobile
-                      ? "100%"
-                      : "10rem"
-                    : "0rem",
+                  hovered || forMobile ? (forMobile ? "100%" : "9rem") : "0rem",
                 transition: "width 0.2s",
               }}
             >
