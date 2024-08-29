@@ -510,11 +510,10 @@ function JoinRoom() {
                   </legend>
                   <div className="baseVertFlex gap-6 p-2">
                     <div
-                      className={`grid grid-cols-2 ${
-                        roomConfig.playersInRoom > 2
-                          ? "grid-rows-2"
-                          : "grid-rows-1"
-                      } !items-start !justify-start sm:flex sm:!flex-row`}
+                      style={{
+                        gridTemplateRows: "auto",
+                      }}
+                      className={`grid grid-cols-2 !items-start !justify-start sm:flex sm:!flex-row`}
                     >
                       <AnimatePresence mode={"popLayout"}>
                         {Object.keys(playerMetadata)?.map((playerID) => (

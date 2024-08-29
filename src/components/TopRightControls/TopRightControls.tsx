@@ -2140,9 +2140,10 @@ function WhilePlayingSheet({
           </AccordionTrigger>
           <AccordionContent className="baseFlex w-full">
             <div
-              className={`grid grid-cols-2 py-4 ${
-                roomConfig.playersInRoom > 2 ? "grid-rows-2" : "grid-rows-1"
-              } w-full max-w-sm !items-start !justify-start overflow-y-auto !text-darkGreen`}
+              style={{
+                gridTemplateRows: "auto",
+              }}
+              className={`grid w-full max-w-sm grid-cols-2 !items-start !justify-start overflow-y-auto py-4 !text-darkGreen`}
             >
               {Object.keys(playerMetadata)?.map((playerID) => (
                 <div className="relative" key={playerID}>
