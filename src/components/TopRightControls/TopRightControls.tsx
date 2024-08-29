@@ -226,13 +226,11 @@ function TopRightControls() {
           <div
             onPointerEnter={() => {
               if (!isSignedIn) {
-                console.log("showing settings unauth tooltip");
                 setShowSettingsUnauthTooltip(true);
               }
             }}
             onPointerLeave={() => {
               if (!isSignedIn) {
-                console.log("hiding settings unauth tooltip");
                 setShowSettingsUnauthTooltip(false);
               }
             }}
