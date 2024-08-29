@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from "react";
+import { type ReactNode } from "react";
 import Image from "next/image";
 import { IoClose } from "react-icons/io5";
 import { AiOutlineInfoCircle } from "react-icons/ai";
@@ -23,15 +23,6 @@ interface ITutorialDialog {
 
 function TutorialDialog({ setShowDialog }: ITutorialDialog) {
   const { viewportLabel } = useRoomContext();
-
-  const [labeledPlayerContainerLoaded, setLabeledPlayerContainerLoaded] =
-    useState(false);
-  const [boardPlacementExampleLoaded, setBoardPlacementExampleLoaded] =
-    useState(false);
-  const [
-    squeakStackPlacementExampleLoaded,
-    setSqueakStackPlacementExampleLoaded,
-  ] = useState(false);
 
   return (
     <DialogContent className="baseVertFlex h-[95%] w-[95%] !justify-start overflow-y-scroll rounded-md rounded-t-md border-2 border-white bg-gradient-to-br from-green-800 to-green-850 shadow-lg tablet:max-h-[90dvh] tablet:max-w-4xl">
@@ -93,11 +84,8 @@ function TutorialDialog({ setShowDialog }: ITutorialDialog) {
                   : labeledPlayerContainer
               }
               alt={"Example of a player's card placement with labels"}
-              className={`rounded-md shadow-lg ${
-                labeledPlayerContainerLoaded ? "border-[1px] border-white" : ""
-              }`}
+              className="h-[196px] w-[306px] rounded-md border-[1px] border-white shadow-lg tablet:h-[237px] tablet:w-[727px]"
               placeholder="blur"
-              onLoad={() => setLabeledPlayerContainerLoaded(true)}
             />
           </div>
         </DynamicSectionContainer>
@@ -147,13 +135,10 @@ function TutorialDialog({ setShowDialog }: ITutorialDialog) {
                 <Image
                   src={boardPlacementExample}
                   alt={"Example of a card being placed on the board"}
-                  className={`rounded-md shadow-lg ${
-                    boardPlacementExampleLoaded
-                      ? "border-[1px] border-white"
-                      : ""
-                  }`}
+                  width={263}
+                  height={203}
+                  className="h-[203px] w-[263px] rounded-md border-[1px] border-white shadow-lg"
                   placeholder="blur"
-                  onLoad={() => setBoardPlacementExampleLoaded(true)}
                 />
               </div>
             </li>
@@ -188,13 +173,10 @@ function TutorialDialog({ setShowDialog }: ITutorialDialog) {
                 <Image
                   src={squeakStackPlacementExample}
                   alt={"Example of a card being placed on the board"}
-                  className={`rounded-md shadow-lg ${
-                    squeakStackPlacementExampleLoaded
-                      ? "border-[1px] border-white"
-                      : ""
-                  }`}
+                  width={302}
+                  height={186}
+                  className="h-[186px] w-[302px] rounded-md border-[1px] border-white shadow-lg"
                   placeholder="blur"
-                  onLoad={() => setSqueakStackPlacementExampleLoaded(true)}
                 />
               </div>
             </li>
