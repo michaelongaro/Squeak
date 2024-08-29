@@ -12,9 +12,9 @@ function Privacy() {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
-      className="baseVertFlex min-h-[100dvh] !justify-start px-2 pb-16 tablet:pt-16"
+      className="baseVertFlex min-h-[100dvh] !justify-start px-2 pb-6 tablet:pt-6"
     >
-      <div className="baseVertFlex mx-auto my-16 max-w-80 !items-start rounded-md border-2 border-lightGreen bg-gradient-to-br from-green-800 to-green-850 p-6 text-white tablet:mb-24 tablet:max-w-2xl">
+      <div className="baseVertFlex mx-auto my-16 max-w-80 !items-start rounded-md border-2 border-white bg-gradient-to-br from-green-800 to-green-850 p-6 text-white tablet:max-w-2xl">
         <Link href="/" className="self-center">
           <Image
             src={logo}
