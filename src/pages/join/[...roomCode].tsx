@@ -5,13 +5,13 @@ import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
 import { BiArrowBack } from "react-icons/bi";
 import { FaUsers } from "react-icons/fa";
-import { TbDoorEnter } from "react-icons/tb";
 import { IoSettingsSharp } from "react-icons/io5";
 import { MdCopyAll } from "react-icons/md";
 import PlayerCustomizationSheet from "~/components/sheets/PlayerCustomizationSheet";
 import PlayerCustomizationPreview from "~/components/playerIcons/PlayerCustomizationPreview";
 import PlayerIcon from "~/components/playerIcons/PlayerIcon";
 import PlayerCustomizationPopover from "~/components/popovers/PlayerCustomizationPopover";
+import { IoHome } from "react-icons/io5";
 import { Button } from "~/components/ui/button";
 import { socket } from "~/pages/_app";
 import { api } from "~/utils/api";
@@ -58,6 +58,9 @@ function JoinRoom() {
   const [username, setUsername] = useState("");
   const [focusedInInput, setFocusedInInput] = useState(false);
   const [usernameIsProfane, setUsernameIsProfane] = useState(false);
+  const [joinRoomText, setJoinRoomText] = useState<string>("Join room");
+  const [hoveringOnStartGameButton, setHoveringOnStartGameButton] =
+    useState<boolean>(false);
 
   // dynamic initialization flow state
   const [
@@ -268,7 +271,7 @@ function JoinRoom() {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
-      className="baseVertFlex relative min-h-[100dvh] pb-16 tablet:pt-16"
+      className={`baseVertFlex relative min-h-[100dvh] pb-16 tablet:pt-16 ${showUsernamePromptDialog ? "pt-16" : ""}`}
     >
       <AnimatePresence mode={"wait"}>
         {showUsernamePromptDialog && room && (
@@ -278,7 +281,7 @@ function JoinRoom() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.5 }}
-            className="baseVertFlex w-11/12 gap-4 rounded-md border-2 border-lightGreen bg-gradient-to-br from-green-800 to-green-850 px-8 py-4 text-lightGreen md:w-[500px]"
+            className="baseVertFlex gap-4 rounded-md border-2 border-lightGreen bg-gradient-to-br from-green-800 to-green-850 px-6 py-4 text-lightGreen sm:px-12 sm:py-8"
           >
             <div className="baseVertFlex gap-4">
               <p className="text-nowrap font-semibold">
@@ -296,25 +299,29 @@ function JoinRoom() {
                     onBlur={() => setFocusedInInput(false)}
                     onKeyDown={(e) => {
                       if (e.key === "Enter") {
-                        socket.volatile.emit(
-                          "joinRoom",
-                          {
-                            userID,
-                            code: room.code,
-                            playerMetadata: {
-                              ...playerMetadata[userID],
-                              username,
+                        setJoinRoomText("Loading");
+
+                        setTimeout(() => {
+                          socket.volatile.emit(
+                            "joinRoom",
+                            {
+                              userID,
+                              code: room.code,
+                              playerMetadata: {
+                                ...playerMetadata[userID],
+                                username,
+                              },
                             },
-                          },
-                          (response?: "roomIsFull") => {
-                            if (response === "roomIsFull") {
-                              setShowRoomIsFullDialog(true);
-                            } else {
-                              setShowUsernamePromptDialog(false);
-                              setConnectedToRoom(true);
-                            }
-                          },
-                        );
+                            (response?: "roomIsFull") => {
+                              if (response === "roomIsFull") {
+                                setShowRoomIsFullDialog(true);
+                              } else {
+                                setShowUsernamePromptDialog(false);
+                                setConnectedToRoom(true);
+                              }
+                            },
+                          );
+                        }, 1500);
                       }
                     }}
                     onChange={(e) => {
@@ -355,34 +362,97 @@ function JoinRoom() {
               </div>
             </div>
 
-            <Button
-              disabled={usernameIsProfane || username.length === 0}
-              className="my-2 gap-4 px-6 font-medium"
-              onClick={() =>
-                socket.volatile.emit(
-                  "joinRoom",
-                  {
-                    userID,
-                    code: room.code,
-                    playerMetadata: {
-                      ...playerMetadata[userID],
-                      username,
-                    },
-                  },
-                  (response?: "roomIsFull") => {
-                    if (response === "roomIsFull") {
-                      setShowRoomIsFullDialog(true);
-                    } else {
-                      setShowUsernamePromptDialog(false);
-                      setConnectedToRoom(true);
-                    }
-                  },
-                )
-              }
+            <motion.div
+              key={"waitingForHostToStart"}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.5 }}
+              onPointerEnter={() => {
+                if (usernameIsProfane || username.length === 0) return;
+                setHoveringOnStartGameButton(true);
+              }}
+              onPointerLeave={() => {
+                setHoveringOnStartGameButton(false);
+              }}
+              onPointerCancel={() => {
+                setHoveringOnStartGameButton(false);
+              }}
+              className="baseFlex w-full !justify-between px-1.5"
             >
-              <TbDoorEnter size={"1.5rem"} />
-              Join room
-            </Button>
+              <Button
+                variant={"secondary"}
+                className="size-10"
+                onClick={() => {
+                  push("/");
+                }}
+              >
+                <IoHome size={"1.25rem"} />
+              </Button>
+
+              <Button
+                disabled={
+                  usernameIsProfane ||
+                  username.length === 0 ||
+                  joinRoomText !== "Join room"
+                }
+                className="my-2 gap-4 px-6 font-medium"
+                onClick={() => {
+                  setJoinRoomText("Loading");
+
+                  setTimeout(() => {
+                    socket.volatile.emit(
+                      "joinRoom",
+                      {
+                        userID,
+                        code: room.code,
+                        playerMetadata: {
+                          ...playerMetadata[userID],
+                          username,
+                        },
+                      },
+                      (response?: "roomIsFull") => {
+                        if (response === "roomIsFull") {
+                          setShowRoomIsFullDialog(true);
+                        } else {
+                          setShowUsernamePromptDialog(false);
+                          setConnectedToRoom(true);
+                        }
+                      },
+                    );
+                  }, 1500);
+                }}
+              >
+                <AnimatePresence mode={"popLayout"} initial={false}>
+                  <motion.div
+                    key={joinRoomText}
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 20 }}
+                    transition={{
+                      duration: 0.25,
+                    }}
+                    className="baseFlex h-11 w-[10rem] gap-2"
+                  >
+                    {joinRoomText}
+                    {joinRoomText === "Join room" && (
+                      <BiArrowBack
+                        className={`relative size-4 scale-x-flip transition-all ${hoveringOnStartGameButton ? "translate-x-1" : ""}`}
+                      />
+                    )}
+                    {joinRoomText === "Loading" && (
+                      <div
+                        className="ml-1 inline-block size-4 animate-spin rounded-full border-[2px] border-darkGreen border-t-transparent text-darkGreen"
+                        role="status"
+                        aria-label="loading"
+                      >
+                        <span className="sr-only">Loading...</span>
+                      </div>
+                    )}
+                  </motion.div>
+                </AnimatePresence>
+              </Button>
+            </motion.div>
           </motion.div>
         )}
 
