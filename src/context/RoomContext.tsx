@@ -44,13 +44,6 @@ export interface IInitSqueakStackCardBeingDealt {
   indexToDealTo: number;
 }
 
-export interface IQueuedCard {
-  [key: string]: {
-    value: string;
-    suit: string;
-  };
-}
-
 interface IRoomContext {
   viewportLabel: "mobile" | "mobileLarge" | "tablet" | "desktop";
 
@@ -190,9 +183,8 @@ export function RoomProvider(props: { children: React.ReactNode }) {
   const { isLoaded, isSignedIn } = useAuth();
   const userID = useUserIDContext();
 
-  // probably want to remove the default "refetch on page focus" behavior
   const { data: user } = api.users.getUserByID.useQuery(userID, {
-    enabled: userID !== "",
+    enabled: isSignedIn && userID !== "",
   });
 
   const viewportLabel = useGetViewportLabel();
@@ -342,12 +334,6 @@ export function RoomProvider(props: { children: React.ReactNode }) {
   }, [audioContext]);
 
   useEffect(() => {
-    if (userID && friendData === undefined) {
-      socket.volatile.emit("initializePlayerInFriendsObj", userID);
-    }
-  }, [userID, friendData]);
-
-  useEffect(() => {
     if (currentVolume === null || !masterVolumeGainNode) return;
 
     localStorage.setItem("squeak-volume", currentVolume.toString());
@@ -366,6 +352,12 @@ export function RoomProvider(props: { children: React.ReactNode }) {
       setCurrentVolume(25);
     }
   }, []);
+
+  useEffect(() => {
+    if (isSignedIn && userID && friendData === undefined) {
+      socket.volatile.emit("initializePlayerInFriendsObj", userID);
+    }
+  }, [isSignedIn, userID, friendData]);
 
   useEffect(() => {
     if (isSignedIn) {

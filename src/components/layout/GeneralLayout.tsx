@@ -21,6 +21,9 @@ import {
 } from "~/components/ui/alert-dialog";
 import { useRoomContext } from "~/context/RoomContext";
 import { Button } from "~/components/ui/button";
+import useReceiveFriendData from "~/hooks/useReceiveFriendData";
+import useInitializeUserStats from "~/hooks/useInitializeUserStats";
+import usePostSignUpRegistration from "~/hooks/usePostSignUpRegistration";
 
 const montserrat = Montserrat({
   weight: "variable",
@@ -93,6 +96,9 @@ function GeneralLayout({ children }: GeneralLayout) {
   useRejoinRoom();
   useResetPlayerStateUponPageLoad();
   useInitializeAudioContext();
+  useReceiveFriendData();
+  useInitializeUserStats();
+  usePostSignUpRegistration();
   // useAttachUnloadEventListener(); maybe reenable this later on if you can work around bugginess
 
   return (

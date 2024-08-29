@@ -5,7 +5,7 @@ import { prisma } from "~/server/db";
 export function modifyFriendDataHandler(
   io: Server,
   socket: Socket,
-  friendData: IFriendsData
+  friendData: IFriendsData,
 ) {
   async function modifyFriendData({
     action,
@@ -26,7 +26,7 @@ export function modifyFriendDataHandler(
       await prisma.user
         .update({
           where: {
-            id: targetID,
+            userId: targetID,
           },
           data: {
             friendInviteIDs: target.friendInviteIDs,
@@ -43,13 +43,13 @@ export function modifyFriendDataHandler(
       target.friendIDs.push(initiatorID);
 
       initiator.friendInviteIDs = initiator.friendInviteIDs.filter(
-        (id) => id !== targetID
+        (id) => id !== targetID,
       );
 
       await prisma.user
         .update({
           where: {
-            id: initiatorID,
+            userId: initiatorID,
           },
           data: {
             friendIDs: initiator.friendIDs,
@@ -61,7 +61,7 @@ export function modifyFriendDataHandler(
       await prisma.user
         .update({
           where: {
-            id: targetID,
+            userId: targetID,
           },
           data: {
             friendIDs: target.friendIDs,
@@ -80,13 +80,13 @@ export function modifyFriendDataHandler(
       });
     } else if (action === "declineFriendInvite") {
       initiator.friendInviteIDs = initiator.friendInviteIDs.filter(
-        (id) => id !== targetID
+        (id) => id !== targetID,
       );
 
       await prisma.user
         .update({
           where: {
-            id: initiatorID,
+            userId: initiatorID,
           },
           data: {
             friendInviteIDs: initiator.friendInviteIDs,
@@ -104,7 +104,7 @@ export function modifyFriendDataHandler(
       await prisma.user
         .update({
           where: {
-            id: targetID,
+            userId: targetID,
           },
           data: {
             roomInviteIDs: target.roomInviteIDs,
@@ -124,13 +124,13 @@ export function modifyFriendDataHandler(
       currentRoomIsPublic !== undefined
     ) {
       initiator.roomInviteIDs = initiator.roomInviteIDs.filter(
-        (id) => id !== targetID
+        (id) => id !== targetID,
       );
 
       await prisma.user
         .update({
           where: {
-            id: initiatorID,
+            userId: initiatorID,
           },
           data: {
             roomInviteIDs: initiator.roomInviteIDs,
@@ -158,13 +158,13 @@ export function modifyFriendDataHandler(
       }
     } else if (action === "declineRoomInvite" && targetID) {
       initiator.roomInviteIDs = initiator.roomInviteIDs.filter(
-        (id) => id !== targetID
+        (id) => id !== targetID,
       );
 
       await prisma.user
         .update({
           where: {
-            id: initiatorID,
+            userId: initiatorID,
           },
           data: {
             roomInviteIDs: initiator.roomInviteIDs,
@@ -184,7 +184,7 @@ export function modifyFriendDataHandler(
       await prisma.user
         .update({
           where: {
-            id: initiatorID,
+            userId: initiatorID,
           },
           data: {
             friendIDs: initiator.friendIDs,
@@ -195,7 +195,7 @@ export function modifyFriendDataHandler(
       await prisma.user
         .update({
           where: {
-            id: targetID,
+            userId: targetID,
           },
           data: {
             friendIDs: target.friendIDs,
@@ -220,7 +220,7 @@ export function modifyFriendDataHandler(
       await prisma.user
         .update({
           where: {
-            id: initiatorID,
+            userId: initiatorID,
           },
           data: {
             status: "in a room",
@@ -248,7 +248,7 @@ export function modifyFriendDataHandler(
         await prisma.user
           .update({
             where: {
-              id: initiatorID,
+              userId: initiatorID,
             },
             data: {
               currentRoomIsPublic: currentRoomIsPublic,
@@ -261,7 +261,7 @@ export function modifyFriendDataHandler(
         await prisma.user
           .update({
             where: {
-              id: initiatorID,
+              userId: initiatorID,
             },
             data: {
               currentRoomIsFull: currentRoomIsFull,
@@ -284,7 +284,7 @@ export function modifyFriendDataHandler(
       await prisma.user
         .update({
           where: {
-            id: initiatorID,
+            userId: initiatorID,
           },
           data: {
             status: "in a game",
@@ -306,7 +306,7 @@ export function modifyFriendDataHandler(
       await prisma.user
         .update({
           where: {
-            id: initiatorID,
+            userId: initiatorID,
           },
           data: {
             status: "on main menu",
@@ -330,7 +330,7 @@ export function modifyFriendDataHandler(
       await prisma.user
         .update({
           where: {
-            id: initiatorID,
+            userId: initiatorID,
           },
           data: {
             online: false,
@@ -355,7 +355,7 @@ export function modifyFriendDataHandler(
       await prisma.user
         .update({
           where: {
-            id: initiatorID,
+            userId: initiatorID,
           },
           data: {
             online: true,

@@ -14,9 +14,6 @@ import Image from "next/image";
 import logo from "public/logo/squeakLogo.svg";
 import { Button } from "~/components/ui/button";
 import { useRouter } from "next/router";
-import useReceiveFriendData from "~/hooks/useReceiveFriendData";
-import useInitializeUserStats from "~/hooks/useInitializeUserStats";
-import usePostSignUpRegistration from "~/hooks/usePostSignUpRegistration";
 import { useRoomContext } from "~/context/RoomContext";
 import Link from "next/link";
 import { Dialog, DialogTrigger } from "~/components/ui/dialog";
@@ -36,11 +33,6 @@ function MainOptions() {
   const [hoveringOnAboutMe, setHoveringOnAboutMe] = useState(false);
   const [showTutorialDialog, setShowTutorialDialog] = useState(false);
   const [showLeaderboardDialog, setShowLeaderboardDialog] = useState(false);
-
-  useReceiveFriendData();
-  useInitializeUserStats();
-
-  usePostSignUpRegistration();
 
   return (
     <motion.div

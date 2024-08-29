@@ -67,6 +67,7 @@ function useReceiveFriendData() {
             new Notification("You have a new room invite");
           }
         }
+
         setFriendData(newFriendData);
       }
     }
