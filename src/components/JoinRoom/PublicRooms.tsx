@@ -41,6 +41,8 @@ function PublicRooms() {
 
   const [fetchingNewRooms, setFetchingNewRooms] = useState<boolean>(false);
   const [hoveredIndex, setHoveredIndex] = useState<number>(-1);
+  const [showExitRoomSpinnerIndex, setShowExitRoomSpinnerIndex] =
+    useState<number>(-1);
 
   function joinRoom(roomConfig: IRoomConfig) {
     setRoomConfig(roomConfig);
@@ -124,7 +126,7 @@ function PublicRooms() {
                 transition={{ duration: 0.5 }}
                 className="baseVertFlex mt-2 max-h-[400px] w-full !justify-start rounded-md border-2 border-lightGreen sm:mt-0"
               >
-                <div className="grid w-full grid-cols-3 place-items-center bg-lightGreen p-4 pr-8 text-sm font-semibold text-darkGreen sm:text-base">
+                <div className="grid w-full grid-cols-3 place-items-center bg-lightGreen p-4 pl-2 pr-10 text-sm font-semibold text-darkGreen sm:text-base">
                   <div>Owner</div>
                   <div>Points to win</div>
                   {viewportLabel.includes("mobile") ? (
@@ -150,11 +152,11 @@ function PublicRooms() {
                             ? "0 0 0.375rem 0.375rem"
                             : "none",
                       }}
-                      className="relative grid w-auto grid-cols-3 place-items-center border-b-2 border-darkGreen p-4 pr-8 text-lightGreen transition-colors lg:w-[600px]"
+                      className="relative grid w-auto grid-cols-3 place-items-center border-b-2 border-darkGreen p-4 pl-2 pr-10 text-lightGreen transition-colors lg:w-[600px]"
                       onPointerEnter={() => setHoveredIndex(index)}
                       onPointerLeave={() => setHoveredIndex(-1)}
                     >
-                      <div className="max-w-24 truncate sm:max-w-full">
+                      <div className="max-w-24 truncate sm:max-w-full tablet:max-w-none">
                         {room.hostUsername}
                       </div>
                       <div>{room.pointsToWin}</div>
@@ -169,16 +171,56 @@ function PublicRooms() {
                             playerMetadata[userID]?.username.length === 0 ||
                             filter.isProfane(
                               playerMetadata[userID]?.username ?? "",
-                            )
+                            ) ||
+                            showExitRoomSpinnerIndex !== -1
                           }
-                          className="!px-2 text-sm"
-                          onClick={() => joinRoom(room)}
+                          className="w-[40px] !px-2 text-sm tablet:w-[49px]"
+                          onClick={() => {
+                            setShowExitRoomSpinnerIndex(index);
+
+                            setTimeout(() => {
+                              joinRoom(room);
+                            }, 500);
+                          }}
                         >
-                          {viewportLabel.includes("mobile") ? (
-                            <BiArrowBack size={"1rem"} className="rotate-180" />
-                          ) : (
-                            "Join"
-                          )}
+                          <AnimatePresence mode={"popLayout"} initial={false}>
+                            {showExitRoomSpinnerIndex === index ? (
+                              <motion.div
+                                key={"exitRoomSpinner"}
+                                initial={{ opacity: 0, y: -20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: 20 }}
+                                transition={{ duration: 0.25 }}
+                                className="baseFlex"
+                              >
+                                <div
+                                  className="inline-block size-4 animate-spin rounded-full border-[2px] border-lightGreen/50 border-t-transparent text-lightGreen"
+                                  role="status"
+                                  aria-label="loading"
+                                >
+                                  <span className="sr-only">Loading...</span>
+                                </div>
+                              </motion.div>
+                            ) : (
+                              <motion.div
+                                key={"returnHomeButton"}
+                                initial={{ opacity: 0, y: -20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: 20 }}
+                                transition={{ duration: 0.25 }}
+                                className="baseFlex"
+                              >
+                                {viewportLabel.includes("mobile") ? (
+                                  <BiArrowBack
+                                    size={"1rem"}
+                                    className="rotate-180"
+                                  />
+                                ) : (
+                                  "Join"
+                                )}
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
                         </Button>
                       </div>
                     </div>

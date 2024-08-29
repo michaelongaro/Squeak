@@ -96,7 +96,8 @@ function CreateRoom() {
     useState<boolean>(false);
   const [focusedInInput, setFocusedInInput] = useState<boolean>(false);
   const [usernameIsProfane, setUsernameIsProfane] = useState<boolean>(false);
-
+  const [showExitRoomSpinner, setShowExitRoomSpinner] =
+    useState<boolean>(false);
   const [createButtonText, setCreateButtonText] = useState<string>("Create");
   const [startGameButtonText, setStartGameButtonText] =
     useState<string>("Start game");
@@ -281,26 +282,62 @@ function CreateRoom() {
         <div className="baseFlex sticky left-0 top-0 z-[105] w-screen !justify-start gap-4 border-b-2 border-white bg-gradient-to-br from-green-800 to-green-850 p-2 shadow-lg tablet:relative tablet:w-full tablet:bg-none tablet:shadow-none">
           <Button
             variant={"secondary"}
+            disabled={showExitRoomSpinner}
             className="size-10"
             onClick={() => {
-              leaveRoom();
+              setShowExitRoomSpinner(true);
 
-              // don't bother resetting these states if returning to
-              // the homepage
-              if (connectedToRoom) {
-                setConfigAndMetadataInitialized(false);
-                setShowCountdown(false);
-                setCreateButtonText("Create");
-                setStartGameButtonText("Start game");
-                setStartRoundCountdownValue(3);
-              }
+              setTimeout(() => {
+                leaveRoom();
+
+                // don't bother resetting these states if returning to
+                // the homepage
+                if (connectedToRoom) {
+                  setShowExitRoomSpinner(false);
+                  setConfigAndMetadataInitialized(false);
+                  setShowCountdown(false);
+                  setCreateButtonText("Create");
+                  setStartGameButtonText("Start game");
+                  setStartRoundCountdownValue(3);
+                }
+              }, 500);
             }}
           >
-            {connectedToRoom ? (
-              <BiArrowBack size={"1.25rem"} />
-            ) : (
-              <IoHome size={"1.25rem"} />
-            )}
+            <AnimatePresence mode={"popLayout"} initial={false}>
+              {showExitRoomSpinner ? (
+                <motion.div
+                  key={"exitRoomSpinner"}
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 20 }}
+                  transition={{ duration: 0.25 }}
+                  className="baseFlex"
+                >
+                  <div
+                    className="inline-block size-4 animate-spin rounded-full border-[2px] border-lightGreen/50 border-t-transparent text-lightGreen"
+                    role="status"
+                    aria-label="loading"
+                  >
+                    <span className="sr-only">Loading...</span>
+                  </div>
+                </motion.div>
+              ) : (
+                <motion.div
+                  key={"returnHomeButton"}
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 20 }}
+                  transition={{ duration: 0.25 }}
+                  className="baseFlex"
+                >
+                  {connectedToRoom ? (
+                    <BiArrowBack size={"1.25rem"} />
+                  ) : (
+                    <IoHome size={"1.25rem"} />
+                  )}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </Button>
 
           <div

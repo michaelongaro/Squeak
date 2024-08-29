@@ -54,6 +54,8 @@ function JoinRoom() {
     routeToNavigateTo: "/join",
   });
 
+  const [showExitRoomSpinner, setShowExitRoomSpinner] = useState(false);
+
   // for username prompt
   const [username, setUsername] = useState("");
   const [focusedInInput, setFocusedInInput] = useState(false);
@@ -413,7 +415,7 @@ function JoinRoom() {
                       },
                       (response?: "roomIsFull") => {
                         if (response === "roomIsFull") {
-                          setShowRoomIsFullDialog(true);
+                          setJoinRoomText("Room is full.");
                         } else {
                           setShowUsernamePromptDialog(false);
                           setConnectedToRoom(true);
@@ -470,14 +472,49 @@ function JoinRoom() {
               <div className="baseFlex sticky left-0 top-0 z-[105] w-screen !justify-start gap-4 border-b-2 border-white bg-gradient-to-br from-green-800 to-green-850 p-2 shadow-lg tablet:relative tablet:w-full tablet:bg-none tablet:shadow-none">
                 <Button
                   variant={"secondary"}
+                  disabled={showExitRoomSpinner}
                   className="size-10"
                   onClick={() => {
-                    leaveRoom();
-                    setShowCountdown(false);
-                    setStartRoundCountdownValue(3);
+                    setShowExitRoomSpinner(true);
+
+                    setTimeout(() => {
+                      leaveRoom();
+                      setShowCountdown(false);
+                      setStartRoundCountdownValue(3);
+                    }, 500);
                   }}
                 >
-                  <BiArrowBack size={"1.25rem"} />
+                  <AnimatePresence mode={"popLayout"} initial={false}>
+                    {showExitRoomSpinner ? (
+                      <motion.div
+                        key={"exitRoomSpinner"}
+                        initial={{ opacity: 0, y: -20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 20 }}
+                        transition={{ duration: 0.25 }}
+                        className="baseFlex"
+                      >
+                        <div
+                          className="inline-block size-4 animate-spin rounded-full border-[2px] border-lightGreen/50 border-t-transparent text-lightGreen"
+                          role="status"
+                          aria-label="loading"
+                        >
+                          <span className="sr-only">Loading...</span>
+                        </div>
+                      </motion.div>
+                    ) : (
+                      <motion.div
+                        key={"exitRoomButton"}
+                        initial={{ opacity: 0, y: -20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 20 }}
+                        transition={{ duration: 0.25 }}
+                        className="baseFlex"
+                      >
+                        <BiArrowBack size={"1.25rem"} />
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </Button>
 
                 <div
