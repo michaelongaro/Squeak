@@ -19,7 +19,7 @@ interface IFilteredStats {
   totalGamesPlayed: number;
 }
 
-function Stats() {
+function Statistics() {
   const userID = useUserIDContext();
 
   const { data: userStats } = api.stats.getStatsByID.useQuery(userID);
@@ -43,7 +43,14 @@ function Stats() {
   }, [userStats, filteredStats]);
 
   return (
-    <div className="baseVertFlex h-[328px] w-[700px] bg-gradient-to-br from-green-800 to-green-850 p-8 text-lightGreen">
+    <motion.div
+      key={"statistics"}
+      initial={{ opacity: 0, x: "25%" }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: "25%" }}
+      transition={{ duration: 0.5, ease: "easeInOut" }}
+      className="baseVertFlex text-lightGreen"
+    >
       <div className="baseVertFlex gap-6 rounded-md border-2 border-lightGreen p-4 text-lightGreen">
         {rowNames.map((rowName, index) => (
           <div key={index} className="baseFlex w-full !justify-between gap-12">
@@ -78,8 +85,8 @@ function Stats() {
           </div>
         ))}
       </div>
-    </div>
+    </motion.div>
   );
 }
 
-export default Stats;
+export default Statistics;

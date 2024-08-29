@@ -13,7 +13,7 @@ import {
   AlertDialogTitle,
 } from "~/components/ui/alert-dialog";
 import { AnimatePresence, motion } from "framer-motion";
-import { type ILocalPlayerSettings } from "./UserSettingsAndStatsDialog";
+import { type ILocalPlayerSettings } from "./UserSettingsAndStatisticsDialog";
 import Filter from "bad-words";
 import { Switch } from "~/components/ui/switch";
 import { Label } from "~/components/ui/label";
@@ -72,7 +72,14 @@ function Settings({
   const [hoveringOnDeleteButton, setHoveringOnDeleteButton] = useState(false);
 
   return (
-    <div className="baseVertFlex relative w-[700px] bg-gradient-to-br from-green-800 to-green-850 p-8 text-lightGreen">
+    <motion.div
+      key={"settings"}
+      initial={{ opacity: 0, x: "-25%" }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: "-25%" }}
+      transition={{ duration: 0.5, ease: "easeInOut" }}
+      className="baseVertFlex relative text-lightGreen"
+    >
       <div className="baseVertFlex gap-8">
         <div className="baseFlex gap-2">
           <Label htmlFor="username">Username</Label>
@@ -223,7 +230,7 @@ function Settings({
           <Button
             variant={"destructive"}
             disabled={saveButtonText !== "Save"}
-            className={`baseFlex !absolute right-[13px] top-[13px] min-w-[36px] !px-2 transition-all ${hoveringOnDeleteButton ? "gap-2" : "gap-0"} `}
+            className={`baseFlex !absolute right-[-19px] top-[-19px] min-w-[36px] !px-2 transition-all ${hoveringOnDeleteButton ? "gap-2" : "gap-0"} `}
             onMouseEnter={() => setHoveringOnDeleteButton(true)}
             onMouseLeave={() => setHoveringOnDeleteButton(false)}
             onClick={() => setShowDeleteUserDialog(true)}
@@ -338,7 +345,7 @@ function Settings({
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </div>
+    </motion.div>
   );
 }
 

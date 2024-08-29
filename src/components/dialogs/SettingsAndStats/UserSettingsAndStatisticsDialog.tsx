@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@clerk/nextjs";
 import Settings from "./Settings";
-import Stats from "./Stats";
+import Statistics from "./Statistics";
 import {
   type IRoomPlayersMetadata,
   type IRoomPlayer,
@@ -164,7 +164,7 @@ function UserSettingsAndStatsDialog({
   }
 
   return (
-    <DialogContent className="baseVertFlex w-fit rounded-md border-2 border-white shadow-md">
+    <DialogContent className="baseVertFlex w-fit overflow-hidden rounded-md border-2 border-white shadow-md">
       <VisuallyHidden>
         <DialogTitle>{showSettings ? "Settings" : "Statistics"}</DialogTitle>
         <DialogDescription>
@@ -207,92 +207,110 @@ function UserSettingsAndStatsDialog({
         </Button>
       </div>
 
-      {showSettings && (
-        <Settings
-          localPlayerMetadata={localPlayerMetadata}
-          setLocalPlayerMetadata={setLocalPlayerMetadata}
-          localPlayerSettings={localPlayerSettings}
-          setLocalPlayerSettings={setLocalPlayerSettings}
-          usernameIsProfane={usernameIsProfane}
-          setUsernameIsProfane={setUsernameIsProfane}
-          saveButtonText={saveButtonText}
-        />
-      )}
-
-      {!showSettings && <Stats />}
+      <AnimatePresence initial={false}>
+        <div className="h-[328px] w-[700px] bg-gradient-to-br from-green-800 to-green-850 p-8">
+          {showSettings ? (
+            <Settings
+              localPlayerMetadata={localPlayerMetadata}
+              setLocalPlayerMetadata={setLocalPlayerMetadata}
+              localPlayerSettings={localPlayerSettings}
+              setLocalPlayerSettings={setLocalPlayerSettings}
+              usernameIsProfane={usernameIsProfane}
+              setUsernameIsProfane={setUsernameIsProfane}
+              saveButtonText={saveButtonText}
+            />
+          ) : (
+            <Statistics />
+          )}
+        </div>
+      </AnimatePresence>
 
       <div className="baseFlex w-full gap-16 rounded-b-md border-t border-white bg-green-900 px-12 py-4">
-        <Button
-          variant={"secondary"}
-          onClick={() => {
-            setShowDialog(false);
-            signOut();
-          }}
-          className="h-[2.75rem] w-[10rem]"
-        >
-          Log out
-        </Button>
-
-        {showSettings && (
+        <motion.div layout={"position"}>
           <Button
-            disabled={
-              !ableToSave || usernameIsProfane || saveButtonText === "Saving"
-            }
+            variant={"secondary"}
             onClick={() => {
-              setSaveButtonText("Saving");
-              updateUserHandler();
+              setShowDialog(false);
+              signOut();
             }}
             className="h-[2.75rem] w-[10rem]"
           >
-            <AnimatePresence mode={"popLayout"} initial={false}>
-              <motion.div
-                key={saveButtonText}
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 20 }}
-                transition={{
-                  duration: 0.25,
-                }}
-                className="baseFlex h-[2.75rem] w-[10rem] gap-2"
-              >
-                {saveButtonText}
-                {saveButtonText === "Save" && <IoSave size={"1.25rem"} />}
-                {saveButtonText === "Saving" && (
-                  <div
-                    className="inline-block size-4 animate-spin rounded-full border-[2px] border-darkGreen border-t-transparent text-darkGreen"
-                    role="status"
-                    aria-label="loading"
-                  >
-                    <span className="sr-only">Loading...</span>
-                  </div>
-                )}
-                {saveButtonText === "Saved" && (
-                  <svg
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                    className="text-offwhite size-5"
-                  >
-                    <motion.path
-                      initial={{ pathLength: 0 }}
-                      animate={{ pathLength: 1 }}
-                      transition={{
-                        delay: 0.2,
-                        type: "tween",
-                        ease: "easeOut",
-                        duration: 0.3,
-                      }}
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
-                )}
-              </motion.div>
-            </AnimatePresence>
+            Log out
           </Button>
-        )}
+        </motion.div>
+
+        <AnimatePresence mode={"popLayout"} initial={false}>
+          {showSettings && (
+            <motion.div
+              key={"saveChangesButton"}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.15 }}
+            >
+              <Button
+                disabled={
+                  !ableToSave ||
+                  usernameIsProfane ||
+                  saveButtonText === "Saving"
+                }
+                onClick={() => {
+                  setSaveButtonText("Saving");
+                  updateUserHandler();
+                }}
+                className="h-[2.75rem] w-[10rem]"
+              >
+                <AnimatePresence mode={"popLayout"} initial={false}>
+                  <motion.div
+                    key={saveButtonText}
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 20 }}
+                    transition={{
+                      duration: 0.25,
+                    }}
+                    className="baseFlex h-[2.75rem] w-[10rem] gap-2"
+                  >
+                    {saveButtonText}
+                    {saveButtonText === "Save" && <IoSave size={"1.25rem"} />}
+                    {saveButtonText === "Saving" && (
+                      <div
+                        className="inline-block size-4 animate-spin rounded-full border-[2px] border-darkGreen border-t-transparent text-darkGreen"
+                        role="status"
+                        aria-label="loading"
+                      >
+                        <span className="sr-only">Loading...</span>
+                      </div>
+                    )}
+                    {saveButtonText === "Saved" && (
+                      <svg
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={2}
+                        className="text-offwhite size-5"
+                      >
+                        <motion.path
+                          initial={{ pathLength: 0 }}
+                          animate={{ pathLength: 1 }}
+                          transition={{
+                            delay: 0.2,
+                            type: "tween",
+                            ease: "easeOut",
+                            duration: 0.3,
+                          }}
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                    )}
+                  </motion.div>
+                </AnimatePresence>
+              </Button>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </DialogContent>
   );

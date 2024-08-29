@@ -9,7 +9,7 @@ import {
 } from "../../pages/api/socket";
 import UserSettingsAndStatsDialog, {
   type ILocalPlayerSettings,
-} from "../dialogs/SettingsAndStats/UserSettingsAndStatsDialog";
+} from "../dialogs/SettingsAndStats/UserSettingsAndStatisticsDialog";
 import { IoSettingsSharp } from "react-icons/io5";
 import { TbDoorExit } from "react-icons/tb";
 import { FiMail } from "react-icons/fi";
