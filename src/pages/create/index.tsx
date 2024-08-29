@@ -100,6 +100,8 @@ function CreateRoom() {
   const [createButtonText, setCreateButtonText] = useState<string>("Create");
   const [startGameButtonText, setStartGameButtonText] =
     useState<string>("Start game");
+  const [hoveringOnStartGameButton, setHoveringOnStartGameButton] =
+    useState<boolean>(false);
   const [copyRoomCodeButtonText, setCopyRoomCodeButtonText] =
     useState<string>("Copy");
 
@@ -576,9 +578,10 @@ function CreateRoom() {
               </legend>
               <div className="baseVertFlex gap-6 p-2">
                 <div
-                  className={`grid grid-cols-2 ${
-                    roomConfig.playersInRoom > 2 ? "grid-rows-2" : "grid-rows-1"
-                  } !items-start !justify-start overflow-hidden p-4 pb-0 sm:flex sm:!flex-row`}
+                  style={{
+                    gridTemplateRows: "auto",
+                  }}
+                  className={`grid grid-cols-2 !items-start !justify-start overflow-hidden p-4 pb-0 sm:flex sm:!flex-row`}
                 >
                   <AnimatePresence mode="popLayout">
                     {Object.keys(playerMetadata)?.map((playerID) => (
@@ -669,6 +672,16 @@ function CreateRoom() {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.5 }}
+                  onPointerEnter={() => {
+                    if (roomConfig.playersInRoom < 2) return;
+                    setHoveringOnStartGameButton(true);
+                  }}
+                  onPointerLeave={() => {
+                    setHoveringOnStartGameButton(false);
+                  }}
+                  onPointerCancel={() => {
+                    setHoveringOnStartGameButton(false);
+                  }}
                   className="baseFlex"
                 >
                   <Button
@@ -696,7 +709,9 @@ function CreateRoom() {
                       >
                         {startGameButtonText}
                         {startGameButtonText === "Start game" && (
-                          <BiArrowBack className="size-4 scale-x-flip" />
+                          <BiArrowBack
+                            className={`relative size-4 scale-x-flip transition-all ${hoveringOnStartGameButton ? "translate-x-1" : ""}`}
+                          />
                         )}
                         {startGameButtonText === "Loading" && (
                           <div

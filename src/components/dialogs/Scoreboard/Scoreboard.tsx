@@ -81,6 +81,8 @@ function Scoreboard() {
   >([]);
 
   const [hostActionButtonText, setHostActionButtonText] = useState<string>("");
+  const [hoveringOnHostActionButton, setHoveringOnHostActionButton] =
+    useState<boolean>(false);
 
   const [countdownValue, setCountdownValue] = useState<number>(3);
   const [countdownType, setCountdownType] = useState<
@@ -786,6 +788,15 @@ function Scoreboard() {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.5 }}
+                        onPointerEnter={() => {
+                          setHoveringOnHostActionButton(true);
+                        }}
+                        onPointerLeave={() => {
+                          setHoveringOnHostActionButton(false);
+                        }}
+                        onPointerCancel={() => {
+                          setHoveringOnHostActionButton(false);
+                        }}
                         className="baseFlex"
                       >
                         <Button
@@ -822,7 +833,9 @@ function Scoreboard() {
                             >
                               {hostActionButtonText}
                               {hostActionButtonText !== "Loading" && (
-                                <BiArrowBack className="size-4 scale-x-flip" />
+                                <BiArrowBack
+                                  className={`relative size-4 scale-x-flip transition-all ${hoveringOnHostActionButton ? "translate-x-1" : ""}`}
+                                />
                               )}
                               {hostActionButtonText === "Loading" && (
                                 <div
@@ -1237,6 +1250,15 @@ function Scoreboard() {
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
                       transition={{ duration: 0.5 }}
+                      onPointerEnter={() => {
+                        setHoveringOnHostActionButton(true);
+                      }}
+                      onPointerLeave={() => {
+                        setHoveringOnHostActionButton(false);
+                      }}
+                      onPointerCancel={() => {
+                        setHoveringOnHostActionButton(false);
+                      }}
                       className="baseFlex"
                     >
                       <Button
@@ -1273,7 +1295,9 @@ function Scoreboard() {
                           >
                             {hostActionButtonText}
                             {hostActionButtonText !== "Loading" && (
-                              <BiArrowBack className="size-4 scale-x-flip" />
+                              <BiArrowBack
+                                className={`relative size-4 scale-x-flip transition-all ${hoveringOnHostActionButton ? "translate-x-1" : ""}`}
+                              />
                             )}
                             {hostActionButtonText === "Loading" && (
                               <div
