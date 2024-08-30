@@ -194,10 +194,8 @@ function PlayerCustomizationPicker({
 
           setScaledDownElementIndex(-1);
         }}
-        onPointerDown={(e) => {
-          if (e.pointerType === "mouse") {
-            setScaledDownElementIndex(index);
-          }
+        onPointerDown={() => {
+          setScaledDownElementIndex(index);
         }}
         onClick={() => {
           // if user is connected to room
@@ -293,10 +291,8 @@ function PlayerCustomizationPicker({
 
               setScaledDownElementIndex(-1);
             }}
-            onPointerDown={(e) => {
-              if (e.pointerType === "mouse") {
-                setScaledDownElementIndex(index);
-              }
+            onPointerDown={() => {
+              setScaledDownElementIndex(index);
             }}
             onClick={() => {
               updateLocalStoragePlayerMetadata({

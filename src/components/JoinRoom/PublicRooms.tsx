@@ -194,7 +194,7 @@ function PublicRooms() {
                                 className="baseFlex"
                               >
                                 <div
-                                  className="inline-block size-4 animate-spin rounded-full border-[2px] border-lightGreen/50 border-t-transparent text-lightGreen"
+                                  className="inline-block size-4 animate-spin rounded-full border-[2px] border-lightGreen/25 border-t-transparent text-lightGreen"
                                   role="status"
                                   aria-label="loading"
                                 >

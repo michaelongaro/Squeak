@@ -285,22 +285,25 @@ function CreateRoom() {
             disabled={showExitRoomSpinner}
             className="size-10"
             onClick={() => {
-              setShowExitRoomSpinner(true);
+              if (connectedToRoom) setShowExitRoomSpinner(true);
 
-              setTimeout(() => {
-                leaveRoom();
+              setTimeout(
+                () => {
+                  leaveRoom();
 
-                // don't bother resetting these states if returning to
-                // the homepage
-                if (connectedToRoom) {
-                  setShowExitRoomSpinner(false);
-                  setConfigAndMetadataInitialized(false);
-                  setShowCountdown(false);
-                  setCreateButtonText("Create");
-                  setStartGameButtonText("Start game");
-                  setStartRoundCountdownValue(3);
-                }
-              }, 500);
+                  // don't bother resetting these states if returning to
+                  // the homepage
+                  if (connectedToRoom) {
+                    setShowExitRoomSpinner(false);
+                    setConfigAndMetadataInitialized(false);
+                    setShowCountdown(false);
+                    setCreateButtonText("Create");
+                    setStartGameButtonText("Start game");
+                    setStartRoundCountdownValue(3);
+                  }
+                },
+                connectedToRoom ? 500 : 0,
+              );
             }}
           >
             <AnimatePresence mode={"popLayout"} initial={false}>
@@ -314,7 +317,7 @@ function CreateRoom() {
                   className="baseFlex"
                 >
                   <div
-                    className="inline-block size-4 animate-spin rounded-full border-[2px] border-lightGreen/50 border-t-transparent text-lightGreen"
+                    className="inline-block size-4 animate-spin rounded-full border-[2px] border-lightGreen/25 border-t-transparent text-lightGreen"
                     role="status"
                     aria-label="loading"
                   >
