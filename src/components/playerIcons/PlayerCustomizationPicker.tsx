@@ -419,6 +419,11 @@ function PlayerCustomizationPicker({
               } as IRoomPlayer,
             });
           }
+
+          // not sure why this reset is necessary only on card back picker instead of
+          // avatar/front card pickers. but this just standardizes the behavior
+          setHoveredTooltip(null);
+          setScaledDownElementIndex(-1);
         }}
       >
         <div
