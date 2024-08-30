@@ -219,13 +219,21 @@ function Play() {
   }, [setShowScoreboard]);
 
   const boardContainerClass = useMemo(() => {
-    return roomConfig.playersInRoom === 5
+    const playersThatLeftMidgame = gameData?.playerIDsThatLeftMidgame
+      ? gameData.playerIDsThatLeftMidgame.length
+      : 0;
+
+    return roomConfig.playersInRoom + playersThatLeftMidgame === 5
       ? classes.fivePlayers
       : classes.fourPlayers;
-  }, [roomConfig.playersInRoom]);
+  }, [roomConfig.playersInRoom, gameData.playerIDsThatLeftMidgame]);
 
   const playerClassNames = useMemo(() => {
-    return roomConfig.playersInRoom === 5
+    const playersThatLeftMidgame = gameData?.playerIDsThatLeftMidgame
+      ? gameData.playerIDsThatLeftMidgame.length
+      : 0;
+
+    return roomConfig.playersInRoom + playersThatLeftMidgame === 5
       ? [
           classes.topPlayerCard1,
           classes.leftPlayerCards,
@@ -237,7 +245,7 @@ function Play() {
           classes.leftPlayerCards,
           classes.rightPlayerCards,
         ];
-  }, [roomConfig.playersInRoom]);
+  }, [roomConfig.playersInRoom, gameData.playerIDsThatLeftMidgame]);
 
   if (
     showRoomNotFoundDialog ||

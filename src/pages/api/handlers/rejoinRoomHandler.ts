@@ -6,6 +6,7 @@ import {
   type IRoomData,
   type IMiscRoomData,
 } from "../socket";
+import { prisma } from "~/server/db";
 
 interface IJoinRoomConfig {
   code: string;
@@ -35,6 +36,19 @@ export function rejoinRoomHandler(
         game.playerIDsThatLeftMidgame = game.playerIDsThatLeftMidgame.filter(
           (id) => id !== userID,
         );
+
+        room.roomConfig.playersInRoom++;
+        room.roomConfig.playerIDsInRoom.push(userID);
+
+        prisma.room.update({
+          where: {
+            code,
+          },
+          data: {
+            playersInRoom: room.roomConfig.playersInRoom,
+            playerIDsInRoom: Object.keys(room.players),
+          },
+        });
       }
 
       const rejoinData: IRejoinData = {

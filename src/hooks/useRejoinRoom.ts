@@ -4,9 +4,6 @@ import { useUserIDContext } from "../context/UserIDContext";
 import { useRoomContext } from "../context/RoomContext";
 import { type IRejoinData } from "./../pages/api/socket";
 
-// this hook has auth hook in it but I think it was just from a copy paste
-// from another hook to get a boilerplate
-
 function useRejoinRoom() {
   const userID = useUserIDContext();
 
@@ -43,15 +40,18 @@ function useRejoinRoom() {
         scoreboardMetadata,
       } = dataFromBackend;
 
-      // TODO/FYI: this is fine w/ your current setup since you are sending
-      // the whole game state on every action, but if you ever atomize the
-      // payload then you would probably want to either broadcast the modified
-      // playerIDsThatLeftMidgame state or something similar to similar effect
-      if (userID !== userIDFromBackend) return;
-
       setRoomConfig(roomConfig);
       setPlayerMetadata(players);
       setGameData(gameData);
+
+      if (userID !== userIDFromBackend) return;
+
+      // TODO: don't really like this approach btw. also might be fine to eliminiate
+      // the early return above as well, not sure if it would cause any scoreboard
+      // that is currently being shown to restart it's whole animation effect
+      // process or not. Main reason we moved the early return down was so that other players
+      // would be updated to the fact that a player had rejoined the room, not just the player
+      // that is rejoining themself.
 
       if (scoreboardMetadata) {
         setShowScoreboard(true);

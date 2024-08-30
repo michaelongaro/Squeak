@@ -229,6 +229,7 @@ function JoinRoom() {
       !isLoaded ||
       !userID ||
       !playerMetadata[userID] ||
+      !room ||
       connectedToRoom
     )
       return;
