@@ -97,8 +97,9 @@ const mainViewLabels = ["Settings", "Statistics", "Friends list"] as const;
 const settingsViewLabels = ["avatar", "front", "back"] as const;
 
 function TopRightControls() {
-  const { isSignedIn, isLoaded } = useAuth();
+  const { isSignedIn } = useAuth();
   const { asPath } = useRouter();
+  const userID = useUserIDContext();
 
   const {
     showSettingsDialog,
@@ -112,6 +113,10 @@ function TopRightControls() {
     setShowVotingOptionButtons,
     viewportLabel,
   } = useRoomContext();
+
+  const { data: user } = api.users.getUserByID.useQuery(userID, {
+    enabled: isSignedIn && userID !== "",
+  });
 
   const leaveRoom = useLeaveRoom({
     routeToNavigateTo: "/",
@@ -195,16 +200,7 @@ function TopRightControls() {
                 setShowVotingOptionButtons={setShowVotingOptionButtons}
               />
             ) : (
-              <MainSheet
-                status={
-                  isLoaded
-                    ? isSignedIn
-                      ? "authenticated"
-                      : "unauthenticated"
-                    : "loading"
-                }
-                setShowSheet={setShowSheet}
-              />
+              <MainSheet user={user} setShowSheet={setShowSheet} />
             )}
           </SheetContent>
         </SheetPortal>
@@ -247,7 +243,7 @@ function TopRightControls() {
                       <DialogTrigger asChild>
                         <Button
                           variant={"secondary"}
-                          disabled={!isSignedIn}
+                          disabled={!user}
                           includeMouseEvents
                           onClick={() => setShowSettingsDialog(true)}
                           className="h-[40px] w-[40px] md:h-[44px] md:w-[44px]"
@@ -372,7 +368,7 @@ function TopRightControls() {
                 <TooltipTrigger asChild>
                   <Button
                     variant={"secondary"}
-                    disabled={!isSignedIn}
+                    disabled={!user}
                     includeMouseEvents
                     className="absolute right-0 top-0 size-11"
                     onClick={() => setShowFriendsList(!showFriendsList)}
@@ -738,11 +734,11 @@ function VotingDialogToast({
 }
 
 interface IMainSheet {
-  status: "authenticated" | "loading" | "unauthenticated";
+  user: User | undefined | null;
   setShowSheet: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-function MainSheet({ status, setShowSheet }: IMainSheet) {
+function MainSheet({ user, setShowSheet }: IMainSheet) {
   const { signOut } = useAuth();
 
   const [renderedView, setRenderedView] = useState<allViewLabels | undefined>();
@@ -799,7 +795,7 @@ function MainSheet({ status, setShowSheet }: IMainSheet) {
               <Button
                 key={label}
                 variant={"sheet"}
-                disabled={status === "unauthenticated"}
+                disabled={!user}
                 style={{
                   borderTopWidth: label === "Settings" ? "0px" : "1px",
                 }}
@@ -824,7 +820,7 @@ function MainSheet({ status, setShowSheet }: IMainSheet) {
             </div>
 
             <div className="baseFlex my-2 h-8 w-full max-w-sm !justify-around">
-              {status === "authenticated" && (
+              {user && (
                 <Button
                   variant={"text"}
                   onClick={() => {

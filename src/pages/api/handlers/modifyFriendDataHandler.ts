@@ -359,6 +359,7 @@ export function modifyFriendDataHandler(
           },
           data: {
             online: true,
+            status: "on main menu",
           },
         })
         .catch((err) => console.log(err));

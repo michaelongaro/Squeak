@@ -347,12 +347,11 @@ function PlayerIcon({
 
             {onlineStatus !== undefined && (
               <div
-                style={{
-                  backgroundColor: onlineStatus
-                    ? "hsl(120deg 100% 35%)"
-                    : "hsl(0deg 100% 40%)",
-                }}
-                className="absolute bottom-0 right-[-0.25rem] h-4 w-4 rounded-[50%] shadow-md"
+                className={`absolute -bottom-1 -right-1 size-4 rounded-full shadow-xl ${
+                  onlineStatus
+                    ? "bg-gradient-to-br from-green-500 to-green-700"
+                    : "bg-gradient-to-br from-red-500 to-red-700"
+                }`}
               ></div>
             )}
           </div>

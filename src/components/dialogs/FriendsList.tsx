@@ -35,43 +35,30 @@ function FriendsList({ setShowFriendsListDialog }: IFriendsList) {
   const { push } = useRouter();
 
   const {
-    playerMetadata,
     connectedToRoom,
     friendData,
     newInviteNotification,
     setNewInviteNotification,
     roomConfig,
-    setConnectedToRoom,
   } = useRoomContext();
-
-  // TODO: fix ergonomics around these queries. Currently can't fully disable
-  // queries based on friendData being undefined, since jsx below will infinitely
-  // render loading spinners
 
   const { data: friends } = api.users.getUsersFromIDList.useQuery(
     friendData?.friendIDs ?? [],
-    // {
-    //   enabled: Boolean(
-    //     (friendData?.friendIDs ? friendData.friendIDs.length : 0) > 0,
-    //   ),
-    // },
+    {
+      refetchOnWindowFocus: true,
+    },
   );
   const { data: friendInviteIDs } = api.users.getUsersFromIDList.useQuery(
     friendData?.friendInviteIDs ?? [],
-    // {
-    //   enabled: Boolean(
-    //     (friendData?.friendInviteIDs ? friendData.friendInviteIDs.length : 0) >
-    //       0,
-    //   ),
-    // },
+    {
+      refetchOnWindowFocus: true,
+    },
   );
   const { data: roomInviteIDs } = api.users.getUsersFromIDList.useQuery(
     friendData?.roomInviteIDs ?? [],
-    // {
-    //   enabled: Boolean(
-    //     (friendData?.roomInviteIDs ? friendData.roomInviteIDs.length : 0) > 0,
-    //   ),
-    // },
+    {
+      refetchOnWindowFocus: true,
+    },
   );
 
   const [openPopoverID, setOpenPopoverID] = useState("");
@@ -99,13 +86,13 @@ function FriendsList({ setShowFriendsListDialog }: IFriendsList) {
       exit={{ opacity: 0, scale: 0.95 }}
       transition={{ duration: 0.15 }}
       ref={modalRef}
-      className="baseVertFlex absolute right-0 top-16 w-[370px] !items-start gap-2 rounded-md border-2 border-white bg-gradient-to-br from-green-800 to-green-850"
+      className="baseVertFlex absolute right-0 top-16 w-[400px] !items-start gap-2 rounded-md border-2 border-white bg-gradient-to-br from-green-800 to-green-850"
     >
       <div className="baseFlex w-full border-b-2 border-white">
         <Button
           variant={viewState === "friends" ? "default" : "secondary"}
           onClick={() => setViewState("friends")}
-          className="baseFlex w-[185px] gap-2 rounded-none rounded-tl-sm border-r-2 !border-none border-white"
+          className="baseFlex w-[200px] gap-2 rounded-none rounded-tl-sm border-r-2 !border-none border-white"
         >
           <FaUserFriends size={"1.25rem"} />
           Friends
@@ -121,7 +108,7 @@ function FriendsList({ setShowFriendsListDialog }: IFriendsList) {
         <Button
           variant={viewState === "pending" ? "default" : "secondary"}
           onClick={() => setViewState("pending")}
-          className="baseFlex w-[185px] gap-2 rounded-none rounded-tr-sm !border-none"
+          className="baseFlex w-[200px] gap-2 rounded-none rounded-tr-sm !border-none"
         >
           <FiMail size={"1.25rem"} />
           Pending
@@ -163,11 +150,11 @@ function FriendsList({ setShowFriendsListDialog }: IFriendsList) {
               {viewState === "friends" ? (
                 <motion.div
                   key={"friendsListContent"}
-                  initial={{ opacity: 0, x: "-25%" }}
+                  initial={{ opacity: 0, x: "-20%" }}
                   animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: "-25%" }}
+                  exit={{ opacity: 0, x: "-20%" }}
                   transition={{ duration: 0.5, ease: "easeInOut" }}
-                  className="flex w-full flex-col items-start justify-start gap-4 overflow-auto p-2"
+                  className="baseVertFlex min-h-72 w-full !items-start !justify-start gap-4 overflow-auto p-2"
                 >
                   <>
                     {friends.length === 0 ? (
@@ -190,9 +177,9 @@ function FriendsList({ setShowFriendsListDialog }: IFriendsList) {
                               style={{
                                 zIndex: friends.length - index,
                               }}
-                              className="baseFlex gap-4 px-2 transition-all"
+                              className="baseFlex w-full !justify-start gap-4 pl-2 transition-all"
                             >
-                              <div className="baseFlex gap-4">
+                              <div className="baseFlex !shrink-0 gap-4">
                                 <PlayerIcon
                                   avatarPath={friend.avatarPath}
                                   borderColor={friend.color}
@@ -202,75 +189,108 @@ function FriendsList({ setShowFriendsListDialog }: IFriendsList) {
                                 <div className="baseVertFlex !items-start text-lightGreen">
                                   {friend.username}
                                   {friend.online && (
-                                    <div className="text-sm opacity-80">
+                                    <div className="text-sm opacity-70">
                                       {friend.status}
                                     </div>
                                   )}
                                 </div>
                               </div>
 
-                              <div className="baseFlex gap-2">
-                                <Button
-                                  variant={"secondary"}
-                                  disabled={
-                                    !friend.online ||
-                                    friend.status === "in a game" ||
-                                    !connectedToRoom ||
-                                    friend.roomCode === roomConfig.code
-                                  }
-                                  className="size-8 rounded-full !p-0"
-                                  onClick={() =>
-                                    socket.volatile.emit("modifyFriendData", {
-                                      action: "sendRoomInvite",
-                                      initiatorID: userID,
-                                      targetID: friend.userId,
-                                    })
-                                  }
-                                >
-                                  <FiMail size={"1rem"} />
-                                </Button>
+                              <div
+                                className={`baseFlex ${
+                                  friend.username.length > 13
+                                    ? "gap-2"
+                                    : "gap-4 pl-2"
+                                }`}
+                              >
+                                <TooltipProvider>
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <Button
+                                        variant={"secondary"}
+                                        disabled={
+                                          !friend.online ||
+                                          friend.status === "in a game" ||
+                                          !connectedToRoom ||
+                                          friend.roomCode === roomConfig.code
+                                        }
+                                        className="size-9 rounded-full !p-0"
+                                        onClick={() =>
+                                          socket.volatile.emit(
+                                            "modifyFriendData",
+                                            {
+                                              action: "sendRoomInvite",
+                                              initiatorID: userID,
+                                              targetID: friend.userId,
+                                            },
+                                          )
+                                        }
+                                      >
+                                        <FiMail size={"1.25rem"} />
+                                      </Button>
+                                    </TooltipTrigger>
+                                    <TooltipContent
+                                      side={"bottom"}
+                                      sideOffset={8}
+                                      className="border-2 border-lightGreen bg-gradient-to-br from-green-800 to-green-850 text-lightGreen"
+                                    >
+                                      <p>Invite to room</p>
+                                    </TooltipContent>
+                                  </Tooltip>
+                                </TooltipProvider>
 
-                                <Button
-                                  variant={"secondary"}
-                                  disabled={
-                                    !friend.online ||
-                                    friend.roomCode === null ||
-                                    friend.roomCode === roomConfig.code ||
-                                    friend.status === "in a game" ||
-                                    !friend.currentRoomIsPublic ||
-                                    friend.currentRoomIsFull === true
-                                  }
-                                  className="size-8 rounded-full !p-0"
-                                  onClick={() => {
-                                    if (connectedToRoom) {
-                                      socket.volatile.emit("leaveRoom", {
-                                        roomCode: roomConfig.code,
-                                        userID,
-                                        playerWasKicked: false,
-                                      });
-                                    }
+                                <TooltipProvider>
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <Button
+                                        variant={"secondary"}
+                                        disabled={
+                                          !friend.online ||
+                                          friend.roomCode === null ||
+                                          friend.roomCode === roomConfig.code ||
+                                          friend.status === "in a game" ||
+                                          !friend.currentRoomIsPublic ||
+                                          friend.currentRoomIsFull === true
+                                        }
+                                        includeMouseEvents
+                                        className="size-9 rounded-full !p-0"
+                                        onClick={() => {
+                                          if (connectedToRoom) {
+                                            socket.volatile.emit("leaveRoom", {
+                                              roomCode: roomConfig.code,
+                                              userID,
+                                              playerWasKicked: false,
+                                            });
+                                          }
 
-                                    push(`/join/${friend.roomCode}`);
+                                          push(`/join/${friend.roomCode}`);
 
-                                    socket.volatile.emit("modifyFriendData", {
-                                      action: "joinRoom",
-                                      initiatorID: userID,
-                                      roomCode: friend.roomCode,
-                                      currentRoomIsPublic:
-                                        friend.currentRoomIsPublic,
-                                    });
+                                          socket.volatile.emit(
+                                            "modifyFriendData",
+                                            {
+                                              action: "joinRoom",
+                                              initiatorID: userID,
+                                              roomCode: friend.roomCode,
+                                              currentRoomIsPublic:
+                                                friend.currentRoomIsPublic,
+                                            },
+                                          );
 
-                                    // socket.volatile.emit("joinRoom", {
-                                    //   userID,
-                                    //   code: friend.roomCode,
-                                    //   playerMetadata: playerMetadata[userID],
-                                    // });
-
-                                    // setConnectedToRoom(true);
-                                  }}
-                                >
-                                  <TbDoorEnter size={"1rem"} />
-                                </Button>
+                                          setShowFriendsListDialog(false);
+                                        }}
+                                      >
+                                        <TbDoorEnter size={"1.25rem"} />
+                                      </Button>
+                                    </TooltipTrigger>
+                                    <TooltipContent
+                                      side={"bottom"}
+                                      sideOffset={8}
+                                      className="border-2 border-lightGreen bg-gradient-to-br from-green-800 to-green-850 text-lightGreen"
+                                    >
+                                      <p>Join room</p>
+                                    </TooltipContent>
+                                  </Tooltip>
+                                </TooltipProvider>
 
                                 <Popover
                                   open={openPopoverID === friend.userId}
@@ -285,16 +305,18 @@ function FriendsList({ setShowFriendsListDialog }: IFriendsList) {
                                           <Button
                                             variant={"destructive"}
                                             includeMouseEvents
-                                            className="size-8 rounded-full !p-0"
+                                            className="baseFlex size-9 rounded-full !p-0"
                                             onClick={() =>
                                               setOpenPopoverID(friend.userId)
                                             }
                                           >
-                                            <FaTrashAlt size={"1rem"} />
+                                            <FaTrashAlt size={"1.23rem"} />
                                           </Button>
                                         </TooltipTrigger>
                                         <TooltipContent
                                           side={"bottom"}
+                                          sideOffset={8}
+                                          align={"end"}
                                           className="border-2 border-[hsl(0,84%,60%)] bg-[hsl(0,84%,98%)] text-[hsl(0,84%,40%)]"
                                         >
                                           <p>Remove friend</p>
@@ -304,6 +326,7 @@ function FriendsList({ setShowFriendsListDialog }: IFriendsList) {
                                   </PopoverTrigger>
                                   <PopoverContent
                                     redArrow
+                                    align={"end"}
                                     className="text-[hsl(0,84%,40%) border-2 border-[hsl(0,84%,60%)] bg-[hsl(0,84%,98%)]"
                                   >
                                     <div className="baseVertFlex w-64 gap-3 p-2">
@@ -344,11 +367,11 @@ function FriendsList({ setShowFriendsListDialog }: IFriendsList) {
               ) : (
                 <motion.div
                   key={"pendingListContent"}
-                  initial={{ opacity: 0, x: "25%" }}
+                  initial={{ opacity: 0, x: "20%" }}
                   animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: "25%" }}
+                  exit={{ opacity: 0, x: "20%" }}
                   transition={{ duration: 0.5, ease: "easeInOut" }}
-                  className="flex w-full flex-col items-start justify-start gap-4 overflow-auto p-2"
+                  className="baseVertFlex min-h-72 w-full !items-start !justify-start gap-4 overflow-auto p-2"
                 >
                   <>
                     {
@@ -362,7 +385,7 @@ function FriendsList({ setShowFriendsListDialog }: IFriendsList) {
                         )
                     }
 
-                    {friendInviteIDs ? (
+                    {friendInviteIDs && friendInviteIDs.length > 0 && (
                       <div
                         style={{
                           padding: friendInviteIDs.length > 0 ? "0.5rem" : "0",
@@ -375,7 +398,7 @@ function FriendsList({ setShowFriendsListDialog }: IFriendsList) {
                             style={{
                               zIndex: friendInviteIDs.length - index,
                             }}
-                            className="baseFlex gap-4 text-lightGreen"
+                            className="baseFlex gap-6 text-lightGreen"
                           >
                             <div className="baseFlex gap-4">
                               <PlayerIcon
@@ -383,9 +406,9 @@ function FriendsList({ setShowFriendsListDialog }: IFriendsList) {
                                 borderColor={friend.color}
                                 size={"2.75rem"}
                               />
-                              <div className="baseVertFlex !items-start">
+                              <div className="baseVertFlex !items-start leading-5">
                                 {friend.username}
-                                <div className="text-sm opacity-80">
+                                <div className="text-sm opacity-70">
                                   Friend invite
                                 </div>
                               </div>
@@ -422,36 +445,26 @@ function FriendsList({ setShowFriendsListDialog }: IFriendsList) {
                           </div>
                         ))}
                       </div>
-                    ) : (
-                      // TODO: remove, I think this is redundant now
-                      <div className="baseFlex w-full">
-                        <div
-                          className="inline-block size-8 animate-spin rounded-full border-[2px] border-lightGreen border-t-transparent text-lightGreen"
-                          role="status"
-                          aria-label="loading"
-                        >
-                          <span className="sr-only">Loading...</span>
-                        </div>
-                      </div>
                     )}
 
                     {/* gating render until friendIDs appear so that it doesn't show loading circle
                    and the roomInvites at the same time */}
                     {friendInviteIDs &&
                       roomInviteIDs &&
+                      roomInviteIDs.length > 0 &&
                       roomInviteIDs.map((friend, index) => (
                         <div
                           key={friend.userId}
                           style={{
                             zIndex: roomInviteIDs.length - index,
                           }}
-                          className="baseFlex gap-4 p-2 text-lightGreen"
+                          className="baseFlex gap-6 text-lightGreen"
                         >
                           <div className="baseFlex gap-2 pl-2">
                             <TbDoorEnter size={"2rem"} />
-                            <div className="baseVertFlex !items-start">
+                            <div className="baseVertFlex !items-start leading-5">
                               {friend.username}
-                              <div className="text-sm opacity-80">
+                              <div className="text-sm opacity-70">
                                 Room invite
                               </div>
                             </div>
@@ -501,13 +514,7 @@ function FriendsList({ setShowFriendsListDialog }: IFriendsList) {
                                     friend.currentRoomIsPublic,
                                 });
 
-                                socket.volatile.emit("joinRoom", {
-                                  userID,
-                                  code: friend.roomCode,
-                                  playerMetadata: playerMetadata[userID],
-                                });
-
-                                setConnectedToRoom(true);
+                                setShowFriendsListDialog(false);
                               }}
                             >
                               <AiOutlineCheck size={"1rem"} />
