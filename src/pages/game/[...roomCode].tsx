@@ -20,7 +20,8 @@ import { type Room } from "@prisma/client";
 import { useRouter } from "next/router";
 import { useAuth } from "@clerk/nextjs";
 import { api } from "~/utils/api";
-import { Dialog } from "~/components/ui/dialog";
+import { Dialog, DialogTrigger } from "~/components/ui/dialog";
+import { MdQuestionMark } from "react-icons/md";
 import UnableToJoinRoom from "~/components/Play/UnableToJoinRoom";
 import {
   Tooltip,
@@ -35,6 +36,8 @@ import {
   TbAntennaBars4,
   TbAntennaBars5,
 } from "react-icons/tb";
+import { Button } from "~/components/ui/button";
+import TutorialDialog from "~/components/dialogs/TutorialDialog";
 
 function Play() {
   const { isLoaded } = useAuth();
@@ -72,6 +75,8 @@ function Play() {
   );
 
   const [room, setRoom] = useState<Room | null>(null);
+  const [showTutorialDialog, setShowTutorialDialog] = useState(false);
+  const [initialEffectRan, setInitialEffectRan] = useState(false);
 
   useEffect(() => {
     if (roomResult && typeof roomResult === "object") {
@@ -86,8 +91,6 @@ function Play() {
       }
     }
   }, [roomResult]);
-
-  const [initialEffectRan, setInitialEffectRan] = useState(false);
 
   // dynamic initialization flow state
   const [
@@ -337,6 +340,36 @@ function Play() {
               >
                 <p>{playerPing === null ? "Offline" : `${playerPing} ms`}</p>
               </TooltipContent>
+            </Tooltip>
+
+            <Tooltip>
+              <Dialog
+                open={showTutorialDialog}
+                onOpenChange={(isOpen) => setShowTutorialDialog(isOpen)}
+              >
+                <TooltipTrigger className="!absolute bottom-3 right-3 z-[500] text-lightGreen">
+                  <DialogTrigger asChild>
+                    <Button
+                      variant={"text"}
+                      includeMouseEvents
+                      onClick={() => setShowTutorialDialog(true)}
+                      className="z-[500] size-[40px] !p-0"
+                    >
+                      <MdQuestionMark size={"1.5rem"} />
+                    </Button>
+                  </DialogTrigger>
+                </TooltipTrigger>
+
+                <TooltipContent
+                  side={"right"}
+                  sideOffset={8}
+                  className="baseFlex z-[500] gap-2 rounded-md border-2 bg-gradient-to-br from-green-800 to-green-850 px-4 py-1 text-lightGreen"
+                >
+                  <p>Rules</p>
+                </TooltipContent>
+
+                <TutorialDialog setShowDialog={setShowTutorialDialog} />
+              </Dialog>
             </Tooltip>
           </TooltipProvider>
 

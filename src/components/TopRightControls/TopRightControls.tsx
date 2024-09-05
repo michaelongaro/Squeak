@@ -31,7 +31,7 @@ import {
 import { TbDoorEnter } from "react-icons/tb";
 import AudioLevelSlider from "./AudioLevelSlider";
 import useLeaveRoom from "../../hooks/useLeaveRoom";
-import { MdHowToVote } from "react-icons/md";
+import { MdHowToVote, MdQuestionMark } from "react-icons/md";
 import { FaArrowsRotate } from "react-icons/fa6";
 import { IoIosCheckmark } from "react-icons/io";
 import { IoClose, IoSave } from "react-icons/io5";
@@ -82,6 +82,7 @@ import {
   TbAntennaBars4,
   TbAntennaBars5,
 } from "react-icons/tb";
+import TutorialDialog from "~/components/dialogs/TutorialDialog";
 
 const filter = new Filter();
 
@@ -2075,6 +2076,8 @@ function WhilePlayingSheet({
 }: IWhilePlayingSheet) {
   const { playerMetadata, roomConfig, gameData, playerPing } = useRoomContext();
 
+  const [showTutorialDialog, setShowTutorialDialog] = useState(false);
+
   return (
     <div className="baseVertFlex h-[410px] w-full !justify-start overflow-y-auto">
       <div className="baseFlex absolute left-[9px] top-1.5 z-[500] gap-2 text-xs text-darkGreen">
@@ -2182,7 +2185,25 @@ function WhilePlayingSheet({
         </AccordionItem>
       </Accordion>
 
-      <div className="baseFlex w-full border-t-[1px] border-darkGreen px-2 py-4">
+      <div className="baseFlex w-full !justify-around border-t-[1px] border-darkGreen px-2 py-4">
+        <Dialog
+          open={showTutorialDialog}
+          onOpenChange={(isOpen) => setShowTutorialDialog(isOpen)}
+        >
+          <DialogTrigger asChild>
+            <Button
+              variant={"outline"}
+              onClick={() => setShowTutorialDialog(true)}
+              className="baseFlex z-[500] gap-2 bg-white/85 active:brightness-75"
+            >
+              <MdQuestionMark size={"1.5rem"} />
+              Rules
+            </Button>
+          </DialogTrigger>
+
+          <TutorialDialog setShowDialog={setShowTutorialDialog} />
+        </Dialog>
+
         <AlertDialog>
           <AlertDialogTrigger asChild>
             <Button variant="destructive" className="gap-2">
