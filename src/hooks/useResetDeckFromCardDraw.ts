@@ -1,10 +1,13 @@
 import { useState, useEffect } from "react";
 import { socket } from "~/pages/_app";
-import { useRoomContext } from "../context/RoomContext";
 import { type IDrawFromDeck } from "../pages/api/socket";
+import { useMainStore } from "~/stores/MainStore";
 
 function useResetDeckFromCardDraw() {
-  const { gameData, setGameData } = useRoomContext();
+  const { gameData, setGameData } = useMainStore((state) => ({
+    gameData: state.gameData,
+    setGameData: state.setGameData,
+  }));
 
   const [dataFromBackend, setDataFromBackend] = useState<IDrawFromDeck | null>(
     null,

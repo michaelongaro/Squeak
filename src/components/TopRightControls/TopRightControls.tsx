@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useRoomContext } from "../../context/RoomContext";
 import { useAuth } from "@clerk/nextjs";
 import { socket } from "~/pages/_app";
 import { api } from "~/utils/api";
@@ -83,6 +82,7 @@ import {
   TbAntennaBars5,
 } from "react-icons/tb";
 import TutorialDialog from "~/components/dialogs/TutorialDialog";
+import { useMainStore } from "~/stores/MainStore";
 
 const filter = new Filter();
 
@@ -113,7 +113,18 @@ function TopRightControls() {
     showVotingOptionButtons,
     setShowVotingOptionButtons,
     viewportLabel,
-  } = useRoomContext();
+  } = useMainStore((state) => ({
+    showSettingsDialog: state.showSettingsDialog,
+    setShowSettingsDialog: state.setShowSettingsDialog,
+    newInviteNotification: state.newInviteNotification,
+    voteType: state.voteType,
+    votingIsLockedOut: state.votingIsLockedOut,
+    showVotingDialog: state.showVotingDialog,
+    setShowVotingDialog: state.setShowVotingDialog,
+    showVotingOptionButtons: state.showVotingOptionButtons,
+    setShowVotingOptionButtons: state.setShowVotingOptionButtons,
+    viewportLabel: state.viewportLabel,
+  }));
 
   const { data: user } = api.users.getUserByID.useQuery(userID, {
     enabled: isSignedIn && userID !== "",
@@ -418,7 +429,7 @@ export default TopRightControls;
 
 interface IVotingDialog {
   showVotingOptionButtons: boolean;
-  setShowVotingOptionButtons: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowVotingOptionButtons: (value: boolean) => void;
   setShowSheet?: React.Dispatch<React.SetStateAction<boolean>>;
   forMobile?: boolean;
   forSheet?: boolean;
@@ -438,7 +449,14 @@ function VotingDialog({
     voteType,
     votingIsLockedOut,
     votingLockoutStartTimestamp,
-  } = useRoomContext();
+  } = useMainStore((state) => ({
+    roomConfig: state.roomConfig,
+    playerMetadata: state.playerMetadata,
+    currentVotes: state.currentVotes,
+    voteType: state.voteType,
+    votingIsLockedOut: state.votingIsLockedOut,
+    votingLockoutStartTimestamp: state.votingLockoutStartTimestamp,
+  }));
 
   const rotateDecksButtonRef = useRef<HTMLDivElement | null>(null);
   const finishRoundButtonRef = useRef<HTMLDivElement | null>(null);
@@ -700,7 +718,7 @@ function VotingDialog({
 interface IVotingDialogToast {
   isVisible: boolean;
   showVotingOptionButtons: boolean;
-  setShowVotingOptionButtons: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowVotingOptionButtons: (value: boolean) => void;
 }
 
 // needed to extract this to custom component because the exit animations weren't working on the toast
@@ -986,7 +1004,12 @@ function SheetSettings({
     setPlayerMetadata,
     connectedToRoom,
     setMirrorPlayerContainer,
-  } = useRoomContext();
+  } = useMainStore((state) => ({
+    playerMetadata: state.playerMetadata,
+    setPlayerMetadata: state.setPlayerMetadata,
+    connectedToRoom: state.connectedToRoom,
+    setMirrorPlayerContainer: state.setMirrorPlayerContainer,
+  }));
 
   const utils = api.useUtils();
   const { data: user } = api.users.getUserByID.useQuery(userID);
@@ -1569,7 +1592,15 @@ function SheetFriendsList({
     setNewInviteNotification,
     roomConfig,
     setConnectedToRoom,
-  } = useRoomContext();
+  } = useMainStore((state) => ({
+    playerMetadata: state.playerMetadata,
+    connectedToRoom: state.connectedToRoom,
+    friendData: state.friendData,
+    newInviteNotification: state.newInviteNotification,
+    setNewInviteNotification: state.setNewInviteNotification,
+    roomConfig: state.roomConfig,
+    setConnectedToRoom: state.setConnectedToRoom,
+  }));
 
   // TODO: fix ergonomics around these queries. Currently can't fully disable
   // queries based on friendData being undefined, since jsx below will infinitely
@@ -1890,7 +1921,12 @@ function FriendActions({
   const [buttonIsActive, setButtonIsActive] = useState(false);
 
   const { playerMetadata, connectedToRoom, roomConfig, setConnectedToRoom } =
-    useRoomContext();
+    useMainStore((state) => ({
+      playerMetadata: state.playerMetadata,
+      connectedToRoom: state.connectedToRoom,
+      roomConfig: state.roomConfig,
+      setConnectedToRoom: state.setConnectedToRoom,
+    }));
 
   return (
     <>
@@ -2065,7 +2101,7 @@ interface IWhilePlayingSheet {
   setShowSheet: React.Dispatch<React.SetStateAction<boolean>>;
   leaveRoom: () => void;
   showVotingOptionButtons: boolean;
-  setShowVotingOptionButtons: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowVotingOptionButtons: (value: boolean) => void;
 }
 
 function WhilePlayingSheet({
@@ -2074,7 +2110,14 @@ function WhilePlayingSheet({
   showVotingOptionButtons,
   setShowVotingOptionButtons,
 }: IWhilePlayingSheet) {
-  const { playerMetadata, roomConfig, gameData, playerPing } = useRoomContext();
+  const { playerMetadata, roomConfig, gameData, playerPing } = useMainStore(
+    (state) => ({
+      playerMetadata: state.playerMetadata,
+      roomConfig: state.roomConfig,
+      gameData: state.gameData,
+      playerPing: state.playerPing,
+    }),
+  );
 
   const [showTutorialDialog, setShowTutorialDialog] = useState(false);
 

@@ -14,12 +14,13 @@ import Image from "next/image";
 import logo from "public/logo/squeakLogo.svg";
 import { Button } from "~/components/ui/button";
 import { useRouter } from "next/router";
-import { useRoomContext } from "~/context/RoomContext";
+
 import Link from "next/link";
 import { Dialog, DialogTrigger } from "~/components/ui/dialog";
+import { useMainStore } from "~/stores/MainStore";
 
 function MainOptions() {
-  const { isSignedIn } = useAuth();
+  const { isSignedIn, userId } = useAuth();
   const userID = useUserIDContext();
   const { push } = useRouter();
 
@@ -28,7 +29,9 @@ function MainOptions() {
     enabled: userID !== "",
   });
 
-  const { viewportLabel } = useRoomContext();
+  const { viewportLabel } = useMainStore((state) => ({
+    viewportLabel: state.viewportLabel,
+  }));
 
   const [hoveringOnAboutMe, setHoveringOnAboutMe] = useState(false);
   const [showTutorialDialog, setShowTutorialDialog] = useState(false);

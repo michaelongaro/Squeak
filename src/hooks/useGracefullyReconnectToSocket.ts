@@ -1,12 +1,15 @@
 import { useEffect } from "react";
-import { useRoomContext } from "~/context/RoomContext";
 import { useUserIDContext } from "~/context/UserIDContext";
 import { socket } from "~/pages/_app";
+import { useMainStore } from "~/stores/MainStore";
 
 function useGracefullyReconnectToSocket() {
   const userID = useUserIDContext();
 
-  const { roomConfig, connectedToRoom } = useRoomContext();
+  const { roomConfig, connectedToRoom } = useMainStore((state) => ({
+    roomConfig: state.roomConfig,
+    connectedToRoom: state.connectedToRoom,
+  }));
 
   // by their nature, websocket connections close and reopen
   // on their own, so we need to listen for the "connect" event
@@ -35,7 +38,6 @@ function useGracefullyReconnectToSocket() {
       socket.off("forceReload", handleForceReload);
     };
   }, [roomConfig.code, connectedToRoom, userID]);
-  ``;
 }
 
 export default useGracefullyReconnectToSocket;

@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { socket } from "~/pages/_app";
-import { useRoomContext } from "../context/RoomContext";
 import { type IDrawFromDeck } from "../pages/api/socket";
 import { type IMoveCard } from "../components/Play/Card";
 import { useUserIDContext } from "~/context/UserIDContext";
+import { useMainStore } from "~/stores/MainStore";
 
 interface IUseCardDrawFromDeck {
   value?: string;
@@ -31,7 +31,11 @@ function useCardDrawFromDeck({
     setGameData,
     otherPlayerIDsDrawingFromDeck,
     setOtherPlayerIDsDrawingFromDeck,
-  } = useRoomContext();
+  } = useMainStore((state) => ({
+    setGameData: state.setGameData,
+    otherPlayerIDsDrawingFromDeck: state.otherPlayerIDsDrawingFromDeck,
+    setOtherPlayerIDsDrawingFromDeck: state.setOtherPlayerIDsDrawingFromDeck,
+  }));
 
   const [dataFromBackend, setDataFromBackend] = useState<IDrawFromDeck | null>(
     null,
@@ -71,8 +75,8 @@ function useCardDrawFromDeck({
         ]);
 
         setTimeout(() => {
-          setOtherPlayerIDsDrawingFromDeck((currentIDs) =>
-            currentIDs.filter((id) => id !== ownerID),
+          setOtherPlayerIDsDrawingFromDeck(
+            otherPlayerIDsDrawingFromDeck.filter((id) => id !== ownerID),
           );
         }, 100);
       }

@@ -7,7 +7,6 @@ import {
   type IRoomPlayer,
 } from "../../../pages/api/socket";
 import { useUserIDContext } from "../../../context/UserIDContext";
-import { useRoomContext } from "../../../context/RoomContext";
 import { api } from "~/utils/api";
 import { AnimatePresence, motion } from "framer-motion";
 import {
@@ -23,6 +22,7 @@ import {
   DialogTitle,
 } from "~/components/ui/dialog";
 import { Button } from "~/components/ui/button";
+import { useMainStore } from "~/stores/MainStore";
 
 export interface ILocalPlayerSettings {
   deckVariantIndex: number;
@@ -45,7 +45,12 @@ function UserSettingsAndStatsDialog({
     setPlayerMetadata,
     connectedToRoom,
     setMirrorPlayerContainer,
-  } = useRoomContext();
+  } = useMainStore((state) => ({
+    playerMetadata: state.playerMetadata,
+    setPlayerMetadata: state.setPlayerMetadata,
+    connectedToRoom: state.connectedToRoom,
+    setMirrorPlayerContainer: state.setMirrorPlayerContainer,
+  }));
 
   const utils = api.useUtils();
   const { data: user } = api.users.getUserByID.useQuery(userID);

@@ -4,7 +4,6 @@ import { api } from "~/utils/api";
 import { FiMail } from "react-icons/fi";
 import { FaUserFriends } from "react-icons/fa";
 import { useUserIDContext } from "../../context/UserIDContext";
-import { useRoomContext } from "../../context/RoomContext";
 import PlayerIcon from "../playerIcons/PlayerIcon";
 import { AnimatePresence, motion } from "framer-motion";
 import { AiOutlineCheck, AiOutlineClose } from "react-icons/ai";
@@ -25,6 +24,7 @@ import {
 } from "~/components/ui/popover";
 import { Button } from "~/components/ui/button";
 import { useRouter } from "next/router";
+import { useMainStore } from "~/stores/MainStore";
 
 interface IFriendsList {
   setShowFriendsListDialog: React.Dispatch<React.SetStateAction<boolean>>;
@@ -40,7 +40,13 @@ function FriendsList({ setShowFriendsListDialog }: IFriendsList) {
     newInviteNotification,
     setNewInviteNotification,
     roomConfig,
-  } = useRoomContext();
+  } = useMainStore((state) => ({
+    connectedToRoom: state.connectedToRoom,
+    friendData: state.friendData,
+    newInviteNotification: state.newInviteNotification,
+    setNewInviteNotification: state.setNewInviteNotification,
+    roomConfig: state.roomConfig,
+  }));
 
   const { data: friends } = api.users.getUsersFromIDList.useQuery(
     friendData?.friendIDs ?? [],

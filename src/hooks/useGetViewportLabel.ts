@@ -1,9 +1,11 @@
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useEffect, useLayoutEffect } from "react";
+import { useMainStore } from "~/stores/MainStore";
 
 function useGetViewportLabel() {
-  const [viewportLabel, setViewportLabel] = useState<
-    "mobile" | "mobileLarge" | "tablet" | "desktop"
-  >("mobile");
+  const { viewportLabel, setViewportLabel } = useMainStore((state) => ({
+    viewportLabel: state.viewportLabel,
+    setViewportLabel: state.setViewportLabel,
+  }));
 
   const useIsomorphicLayoutEffect =
     typeof window !== "undefined" ? useLayoutEffect : useEffect;

@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useUserIDContext } from "../../context/UserIDContext";
-import { useRoomContext } from "../../context/RoomContext";
 import useResponsiveCardDimensions from "../../hooks/useResponsiveCardDimensions";
 import Card from "./Card";
 import { FaRedoAlt } from "react-icons/fa";
@@ -9,6 +8,7 @@ import useRotatePlayerDecks from "../../hooks/useRotatePlayerDecks";
 import Buzzer from "./Buzzer";
 import { AnimatePresence } from "framer-motion";
 import DisconnectIcon from "~/components/ui/DisconnectIcon";
+import { useMainStore } from "~/stores/MainStore";
 
 interface IOtherPlayersCardContainers {
   orderedClassNames: (string | undefined)[];
@@ -46,7 +46,19 @@ function OtherPlayersCardContainers({
     squeakStackDragAlterations,
     viewportLabel,
     otherPlayerIDsDrawingFromDeck,
-  } = useRoomContext();
+  } = useMainStore((state) => ({
+    playerMetadata: state.playerMetadata,
+    gameData: state.gameData,
+    decksAreBeingRotated: state.decksAreBeingRotated,
+    setDecksAreBeingRotated: state.setDecksAreBeingRotated,
+    squeakDeckBeingMovedProgramatically:
+      state.squeakDeckBeingMovedProgramatically,
+    cardBeingMovedProgramatically: state.cardBeingMovedProgramatically,
+    roomConfig: state.roomConfig,
+    squeakStackDragAlterations: state.squeakStackDragAlterations,
+    viewportLabel: state.viewportLabel,
+    otherPlayerIDsDrawingFromDeck: state.otherPlayerIDsDrawingFromDeck,
+  }));
 
   const otherPlayerIDs = Object.keys(gameData.players).filter(
     (playerID) => playerID !== userID,
@@ -317,7 +329,7 @@ function OtherPlayersCardContainers({
                     ) : (
                       <div className="grid select-none grid-cols-1 items-center justify-items-center">
                         <div className="col-start-1 row-start-1">
-                          <FaRedoAlt className="scale-x-flip size-6" />
+                          <FaRedoAlt className="size-6 scale-x-flip" />
                         </div>
                         <div className="col-start-1 row-start-1 select-none opacity-25">
                           <Card

@@ -2,7 +2,6 @@ import { useState, type CSSProperties } from "react";
 import { socket } from "~/pages/_app";
 import { motion } from "framer-motion";
 import { useUserIDContext } from "../../context/UserIDContext";
-import { useRoomContext } from "../../context/RoomContext";
 import { type IRoomPlayer } from "../../pages/api/socket";
 import { AiOutlinePlus, AiOutlineClose } from "react-icons/ai";
 import { FaCrown } from "react-icons/fa6";
@@ -21,6 +20,7 @@ import {
 } from "~/components/ui/popover";
 import { Sheet, SheetTrigger, SheetContent } from "~/components/ui/sheet";
 import { FiMail } from "react-icons/fi";
+import { useMainStore } from "~/stores/MainStore";
 
 interface IPlayerIcon {
   avatarPath?: string;
@@ -59,7 +59,10 @@ function PlayerIcon({
 }: IPlayerIcon) {
   const userID = useUserIDContext();
 
-  const { roomConfig, viewportLabel } = useRoomContext();
+  const { roomConfig, viewportLabel } = useMainStore((state) => ({
+    roomConfig: state.roomConfig,
+    viewportLabel: state.viewportLabel,
+  }));
 
   const [friendInviteSent, setFriendInviteSent] = useState(false);
   const [popoverOpen, setPopoverOpen] = useState(false);

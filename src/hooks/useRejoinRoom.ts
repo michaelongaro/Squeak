@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { socket } from "~/pages/_app";
 import { useUserIDContext } from "../context/UserIDContext";
-import { useRoomContext } from "../context/RoomContext";
 import { type IRejoinData } from "./../pages/api/socket";
+import { useMainStore } from "~/stores/MainStore";
 
 function useRejoinRoom() {
   const userID = useUserIDContext();
@@ -14,7 +14,14 @@ function useRejoinRoom() {
     setConnectedToRoom,
     setShowScoreboard,
     setScoreboardMetadata,
-  } = useRoomContext();
+  } = useMainStore((state) => ({
+    setRoomConfig: state.setRoomConfig,
+    setPlayerMetadata: state.setPlayerMetadata,
+    setGameData: state.setGameData,
+    setConnectedToRoom: state.setConnectedToRoom,
+    setShowScoreboard: state.setShowScoreboard,
+    setScoreboardMetadata: state.setScoreboardMetadata,
+  }));
 
   const [dataFromBackend, setDataFromBackend] = useState<IRejoinData | null>(
     null,

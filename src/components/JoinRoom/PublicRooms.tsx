@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { socket } from "~/pages/_app";
 import { useUserIDContext } from "../../context/UserIDContext";
-import { useRoomContext } from "../../context/RoomContext";
 import { api } from "~/utils/api";
 import { HiOutlineRefresh } from "react-icons/hi";
 import Filter from "bad-words";
@@ -12,6 +11,7 @@ import { type IRoomConfig } from "~/pages/create";
 import { TbCards } from "react-icons/tb";
 import { useRouter } from "next/router";
 import { AnimatePresence, motion } from "framer-motion";
+import { useMainStore } from "~/stores/MainStore";
 
 const filter = new Filter();
 
@@ -25,7 +25,13 @@ function PublicRooms() {
     setRoomConfig,
     friendData,
     viewportLabel,
-  } = useRoomContext();
+  } = useMainStore((state) => ({
+    playerMetadata: state.playerMetadata,
+    setConnectedToRoom: state.setConnectedToRoom,
+    setRoomConfig: state.setRoomConfig,
+    friendData: state.friendData,
+    viewportLabel: state.viewportLabel,
+  }));
 
   const { data: roomInviteIDs } = api.users.getUsersFromIDList.useQuery(
     friendData?.roomInviteIDs ?? [],

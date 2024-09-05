@@ -1,12 +1,12 @@
 import { useRouter } from "next/router";
 import { useEffect } from "react";
-import { useRoomContext } from "~/context/RoomContext";
 import { useUserIDContext } from "~/context/UserIDContext";
 import type {
   IGameMetadata,
   IRoomPlayer,
   IRoomPlayersMetadata,
 } from "~/pages/api/socket";
+import { useMainStore } from "~/stores/MainStore";
 import { api } from "~/utils/api";
 
 function useResetPlayerStateUponPageLoad() {
@@ -24,7 +24,14 @@ function useResetPlayerStateUponPageLoad() {
     setConnectedToRoom,
     resetPlayerStateUponPageLoad,
     setResetPlayerStateUponPageLoad,
-  } = useRoomContext();
+  } = useMainStore((state) => ({
+    setRoomConfig: state.setRoomConfig,
+    setPlayerMetadata: state.setPlayerMetadata,
+    setGameData: state.setGameData,
+    setConnectedToRoom: state.setConnectedToRoom,
+    resetPlayerStateUponPageLoad: state.resetPlayerStateUponPageLoad,
+    setResetPlayerStateUponPageLoad: state.setResetPlayerStateUponPageLoad,
+  }));
 
   useEffect(() => {
     function handleRouteChange() {

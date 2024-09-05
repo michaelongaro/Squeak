@@ -1,8 +1,8 @@
 import { useState, useLayoutEffect, useRef, useMemo, useCallback } from "react";
 import { useUserIDContext } from "../../context/UserIDContext";
-import { useRoomContext } from "../../context/RoomContext";
 import PlayerIcon from "../playerIcons/PlayerIcon";
 import { AnimatePresence, motion } from "framer-motion";
+import { useMainStore } from "~/stores/MainStore";
 
 // This component was previously rerendering/reinitalizing the resize event listener on every render
 // so below is (maybe an overkill?) conservative implementation
@@ -10,7 +10,11 @@ import { AnimatePresence, motion } from "framer-motion";
 function OtherPlayerIcons() {
   const userID = useUserIDContext();
 
-  const { gameData, playerMetadata, viewportLabel } = useRoomContext();
+  const { gameData, playerMetadata, viewportLabel } = useMainStore((state) => ({
+    gameData: state.gameData,
+    playerMetadata: state.playerMetadata,
+    viewportLabel: state.viewportLabel,
+  }));
 
   const firstTopPlayerIconRef = useRef<HTMLDivElement>(null);
   const leftPlayerIconRef = useRef<HTMLDivElement>(null);

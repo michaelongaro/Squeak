@@ -19,11 +19,13 @@ import {
   AlertDialogTitle,
   AlertDialogDescription,
 } from "~/components/ui/alert-dialog";
-import { useRoomContext } from "~/context/RoomContext";
+
 import { Button } from "~/components/ui/button";
 import useReceiveFriendData from "~/hooks/useReceiveFriendData";
 import useInitializeUserStats from "~/hooks/useInitializeUserStats";
 import usePostSignUpRegistration from "~/hooks/usePostSignUpRegistration";
+import useStoreInitializationLogic from "~/hooks/useStoreInitializationLogic";
+import { useMainStore } from "~/stores/MainStore";
 
 const montserrat = Montserrat({
   weight: "variable",
@@ -56,8 +58,12 @@ interface GeneralLayout {
 function GeneralLayout({ children }: GeneralLayout) {
   const { asPath } = useRouter();
 
-  const { showUserWasKickedDialog, setShowUserWasKickedDialog } =
-    useRoomContext();
+  const { showUserWasKickedDialog, setShowUserWasKickedDialog } = useMainStore(
+    (state) => ({
+      showUserWasKickedDialog: state.showUserWasKickedDialog,
+      setShowUserWasKickedDialog: state.setShowUserWasKickedDialog,
+    }),
+  );
 
   // prevents iOS overscrolling on the /game page for better UX while playing
   useEffect(() => {
@@ -91,6 +97,7 @@ function GeneralLayout({ children }: GeneralLayout) {
     }
   }, [asPath]);
 
+  useStoreInitializationLogic();
   useGracefullyReconnectToSocket();
   usePlayerLeftRoom();
   useRejoinRoom();

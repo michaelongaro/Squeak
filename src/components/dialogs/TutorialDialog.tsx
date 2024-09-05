@@ -10,19 +10,22 @@ import { GiClubs, GiHearts, GiSpades } from "react-icons/gi";
 import squeakStackPlacementExample from "../../../public/tutorial/squeakStackPlacementExample.png";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { Button } from "~/components/ui/button";
-import { useRoomContext } from "~/context/RoomContext";
+
 import {
   DialogContent,
   DialogDescription,
   DialogTitle,
 } from "~/components/ui/dialog";
+import { useMainStore } from "~/stores/MainStore";
 
 interface ITutorialDialog {
   setShowDialog: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 function TutorialDialog({ setShowDialog }: ITutorialDialog) {
-  const { viewportLabel } = useRoomContext();
+  const { viewportLabel } = useMainStore((state) => ({
+    viewportLabel: state.viewportLabel,
+  }));
 
   return (
     <DialogContent className="baseVertFlex h-[95%] w-[95%] !justify-start overflow-y-scroll rounded-md rounded-t-md border-2 border-white bg-gradient-to-br from-green-800 to-green-850 shadow-lg tablet:max-h-[90dvh] tablet:max-w-4xl">

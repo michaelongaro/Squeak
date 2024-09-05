@@ -11,7 +11,6 @@ import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { socket } from "~/pages/_app";
 import { api } from "~/utils/api";
-import { useRoomContext } from "../../context/RoomContext";
 import { useUserIDContext } from "../../context/UserIDContext";
 import useLeaveRoom from "../../hooks/useLeaveRoom";
 import {
@@ -20,6 +19,7 @@ import {
 } from "../../pages/api/socket";
 import { useRouter } from "next/router";
 import { type IRoomConfig } from "~/pages/create";
+import { useMainStore } from "~/stores/MainStore";
 
 const filter = new Filter();
 
@@ -40,7 +40,17 @@ function JoinRoom() {
     setConnectedToRoom,
     friendData,
     viewportLabel,
-  } = useRoomContext();
+  } = useMainStore((state) => ({
+    playerMetadata: state.playerMetadata,
+    setPlayerMetadata: state.setPlayerMetadata,
+    roomConfig: state.roomConfig,
+    setRoomConfig: state.setRoomConfig,
+    setGameData: state.setGameData,
+    connectedToRoom: state.connectedToRoom,
+    setConnectedToRoom: state.setConnectedToRoom,
+    friendData: state.friendData,
+    viewportLabel: state.viewportLabel,
+  }));
 
   const leaveRoom = useLeaveRoom({
     routeToNavigateTo: "/",

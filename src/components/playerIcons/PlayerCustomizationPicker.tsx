@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useRoomContext } from "../../context/RoomContext";
 import { useUserIDContext } from "../../context/UserIDContext";
 import { socket } from "~/pages/_app";
 import {
@@ -14,6 +13,7 @@ import Card from "../Play/Card";
 import { type ILocalPlayerSettings } from "../dialogs/SettingsAndStats/UserSettingsAndStatisticsDialog";
 import PlayerIcon from "./PlayerIcon";
 import { updateLocalStoragePlayerMetadata } from "~/utils/updateLocalStoragePlayerMetadata";
+import { useMainStore } from "~/stores/MainStore";
 
 interface IPlayerCustomizationPicker {
   type: "avatar" | "back" | "front";
@@ -43,7 +43,14 @@ function PlayerCustomizationPicker({
     roomConfig,
     deckVariantIndex,
     setDeckVariantIndex,
-  } = useRoomContext();
+  } = useMainStore((state) => ({
+    playerMetadata: state.playerMetadata,
+    setPlayerMetadata: state.setPlayerMetadata,
+    connectedToRoom: state.connectedToRoom,
+    roomConfig: state.roomConfig,
+    deckVariantIndex: state.deckVariantIndex,
+    setDeckVariantIndex: state.setDeckVariantIndex,
+  }));
 
   // dynamic values depending on if parent is being used in <Settings /> or not
   const playerMetadata = localPlayerMetadata ?? storePlayerMetadata;

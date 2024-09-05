@@ -1,8 +1,8 @@
 import { socket } from "~/pages/_app";
 import { useAuth } from "@clerk/nextjs";
 import { useUserIDContext } from "../context/UserIDContext";
-import { useRoomContext } from "../context/RoomContext";
 import { useRouter } from "next/router";
+import { useMainStore } from "~/stores/MainStore";
 
 interface IUseLeaveRoom {
   routeToNavigateTo: string;
@@ -18,7 +18,12 @@ function useLeaveRoom({ routeToNavigateTo }: IUseLeaveRoom) {
     connectedToRoom,
     setResetPlayerStateUponPageLoad,
     setShowUserWasKickedDialog,
-  } = useRoomContext();
+  } = useMainStore((state) => ({
+    roomConfig: state.roomConfig,
+    connectedToRoom: state.connectedToRoom,
+    setResetPlayerStateUponPageLoad: state.setResetPlayerStateUponPageLoad,
+    setShowUserWasKickedDialog: state.setShowUserWasKickedDialog,
+  }));
 
   function leaveRoom(playerWasKicked = false) {
     setResetPlayerStateUponPageLoad(true);

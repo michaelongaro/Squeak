@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { socket } from "~/pages/_app";
-import { useRoomContext } from "../context/RoomContext";
 import toast from "react-hot-toast";
+import { useMainStore } from "~/stores/MainStore";
 
 function resetAnimation(element: Element | null, className: string) {
   if (element) {
@@ -53,7 +53,16 @@ function useVoteHasBeenCast() {
     setVotingLockoutStartTimestamp,
     passiveVoteResolutionTimerId,
     setPassiveVoteResolutionTimerId,
-  } = useRoomContext();
+  } = useMainStore((state) => ({
+    viewportLabel: state.viewportLabel,
+    currentVotes: state.currentVotes,
+    setCurrentVotes: state.setCurrentVotes,
+    setVoteType: state.setVoteType,
+    setVotingIsLockedOut: state.setVotingIsLockedOut,
+    setVotingLockoutStartTimestamp: state.setVotingLockoutStartTimestamp,
+    passiveVoteResolutionTimerId: state.passiveVoteResolutionTimerId,
+    setPassiveVoteResolutionTimerId: state.setPassiveVoteResolutionTimerId,
+  }));
 
   const [dataFromBackend, setDataFromBackend] =
     useState<IVoteHasBeenCast | null>(null);

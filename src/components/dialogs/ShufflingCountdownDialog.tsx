@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import { useUserIDContext } from "../../context/UserIDContext";
-import { useRoomContext } from "../../context/RoomContext";
 import Card from "../Play/Card";
 import { motion, useAnimation } from "framer-motion";
 import AnimatedNumbers from "~/components/ui/AnimatedNumbers";
@@ -10,6 +9,7 @@ import {
   DialogDescription,
   DialogTitle,
 } from "~/components/ui/dialog";
+import { useMainStore } from "~/stores/MainStore";
 
 const deck = Array.from({ length: 15 }, () => ({ suit: "S", value: "2" }));
 const repeatCount = 2;
@@ -24,7 +24,13 @@ function ShufflingCountdownDialog() {
     playerMetadata,
     setShowShufflingCountdown,
     showShufflingCountdown,
-  } = useRoomContext();
+  } = useMainStore((state) => ({
+    gameData: state.gameData,
+    roomConfig: state.roomConfig,
+    playerMetadata: state.playerMetadata,
+    setShowShufflingCountdown: state.setShowShufflingCountdown,
+    showShufflingCountdown: state.showShufflingCountdown,
+  }));
 
   const [timersInitiated, setTimersInitiated] = useState<boolean>(false);
   const [countdownTimerValue, setCountdownTimerValue] = useState<number>(5);

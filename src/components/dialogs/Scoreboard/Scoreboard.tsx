@@ -5,7 +5,6 @@ import AnimatedNumbers from "~/components/ui/AnimatedNumbers";
 import confetti from "canvas-confetti";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
-import { useRoomContext } from "../../../context/RoomContext";
 import PlayerIcon from "../../playerIcons/PlayerIcon";
 import { FaTrophy } from "react-icons/fa6";
 import { BiArrowBack } from "react-icons/bi";
@@ -19,6 +18,7 @@ import {
   DialogDescription,
   DialogTitle,
 } from "~/components/ui/dialog";
+import { useMainStore } from "~/stores/MainStore";
 
 interface IRanking {
   [key: number]: string;
@@ -55,7 +55,18 @@ function Scoreboard() {
     viewportLabel,
     gameData,
     setPlayerIDWhoSqueaked,
-  } = useRoomContext();
+  } = useMainStore((state) => ({
+    audioContext: state.audioContext,
+    masterVolumeGainNode: state.masterVolumeGainNode,
+    confettiPopBuffer: state.confettiPopBuffer,
+    playerMetadata: state.playerMetadata,
+    currentVolume: state.currentVolume,
+    roomConfig: state.roomConfig,
+    scoreboardMetadata: state.scoreboardMetadata,
+    viewportLabel: state.viewportLabel,
+    gameData: state.gameData,
+    setPlayerIDWhoSqueaked: state.setPlayerIDWhoSqueaked,
+  }));
 
   const [initalizedTimers, setInitalizedTimers] = useState(false);
 
