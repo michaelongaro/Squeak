@@ -4,7 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "next build",
+    "install:force": "npm install --force",
+    "build": "npm run install:force && react-scripts build",
     "dev": "next dev",
     "db:push": "prisma db push",
     "db:studio": "prisma studio",
