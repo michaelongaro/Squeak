@@ -1,19 +1,22 @@
 import { useState, useEffect } from "react";
 import { Range, getTrackBackground } from "react-range";
-import { useRoomContext } from "../../context/RoomContext";
 import {
   BsFillVolumeMuteFill,
   BsFillVolumeUpFill,
   BsFillVolumeDownFill,
 } from "react-icons/bs";
 import { motion, AnimatePresence } from "framer-motion";
+import { useMainStore } from "~/stores/MainStore";
 
 interface IAudioLevelSlider {
   forMobile?: boolean;
 }
 
 function AudioLevelSlider({ forMobile }: IAudioLevelSlider) {
-  const { currentVolume, setCurrentVolume } = useRoomContext();
+  const { currentVolume, setCurrentVolume } = useMainStore((state) => ({
+    currentVolume: state.currentVolume,
+    setCurrentVolume: state.setCurrentVolume,
+  }));
 
   const [values, setValues] = useState([0.01]);
   // not the biggest fan of this workaround, but can't set range below zero..

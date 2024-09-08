@@ -1,7 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { socket } from "~/pages/_app";
-import { useUserIDContext } from "../../context/UserIDContext";
-import { useRoomContext } from "../../context/RoomContext";
 import cardPlacementIsValid from "../../utils/cardPlacementIsValid";
 import useCardDrawFromDeck from "../../hooks/useCardDrawFromDeck";
 import useCardDrawFromSqueakDeck from "../../hooks/useCardDrawFromSqueakDeck";
@@ -11,6 +9,7 @@ import { adjustCoordinatesByRotation } from "../../utils/adjustCoordinatesByRota
 import { type StaticImageData } from "next/image";
 import { cardAssets } from "../../utils/cardAssetPaths";
 import useInitialCardDrawForSqueakStack from "~/hooks/useInitialCardDrawForSqueakStack";
+import { useMainStore } from "~/stores/MainStore";
 
 interface ICardComponent {
   value?: string;
@@ -62,8 +61,6 @@ function Card({
   height,
   manuallyShowSpecificCardFront,
 }: ICardComponent) {
-  const userID = useUserIDContext();
-
   const {
     roomConfig,
     gameData,
@@ -85,7 +82,32 @@ function Card({
     deckVariantIndex,
     setHoldingADeckCard,
     setHoldingASqueakCard,
-  } = useRoomContext();
+    userID,
+  } = useMainStore((state) => ({
+    roomConfig: state.roomConfig,
+    gameData: state.gameData,
+    hoveredCell: state.hoveredCell,
+    holdingADeckCard: state.holdingADeckCard,
+    holdingASqueakCard: state.holdingASqueakCard,
+    hoveredSqueakStack: state.hoveredSqueakStack,
+    originIndexForHeldSqueakCard: state.originIndexForHeldSqueakCard,
+    heldSqueakStackLocation: state.heldSqueakStackLocation,
+    audioContext: state.audioContext,
+    masterVolumeGainNode: state.masterVolumeGainNode,
+    notAllowedMoveBuffer: state.notAllowedMoveBuffer,
+    setProposedCardBoxShadow: state.setProposedCardBoxShadow,
+    setHeldSqueakStackLocation: state.setHeldSqueakStackLocation,
+    cardBeingMovedProgramatically: state.cardBeingMovedProgramatically,
+    setCardBeingMovedProgramatically: state.setCardBeingMovedProgramatically,
+    squeakDeckBeingMovedProgramatically:
+      state.squeakDeckBeingMovedProgramatically,
+    setSqueakDeckBeingMovedProgramatically:
+      state.setSqueakDeckBeingMovedProgramatically,
+    deckVariantIndex: state.deckVariantIndex,
+    setHoldingADeckCard: state.setHoldingADeckCard,
+    setHoldingASqueakCard: state.setHoldingASqueakCard,
+    userID: state.userID,
+  }));
 
   const [isDragging, setIsDragging] = useState(false);
   const [cardOffsetPosition, setCardOffsetPosition] = useState<IPosition>({

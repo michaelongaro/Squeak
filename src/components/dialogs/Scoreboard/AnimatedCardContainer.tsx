@@ -1,9 +1,9 @@
 import { type ICard } from "../../../utils/generateDeckAndSqueakCards";
 import React, { useEffect } from "react";
-import { useRoomContext } from "../../../context/RoomContext";
 import Card from "../../Play/Card";
 import { motion, useAnimation } from "framer-motion";
 import { type IRoomPlayersMetadata } from "~/pages/api/socket";
+import { useMainStore } from "~/stores/MainStore";
 
 interface IAnimatedCardContainer {
   cards: ICard[];
@@ -11,7 +11,9 @@ interface IAnimatedCardContainer {
 }
 
 function AnimatedCardContainer({ cards, playerID }: IAnimatedCardContainer) {
-  const { playerMetadata } = useRoomContext();
+  const { playerMetadata } = useMainStore((state) => ({
+    playerMetadata: state.playerMetadata,
+  }));
 
   return (
     <div
@@ -47,12 +49,12 @@ interface IAnimatedCard {
 }
 
 function AnimatedCard({
+  playerMetadata,
   card,
   index,
   playerID,
   totalCardsPlayed,
 }: IAnimatedCard) {
-  const { playerMetadata } = useRoomContext();
   const controls = useAnimation();
 
   useEffect(() => {

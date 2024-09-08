@@ -1,16 +1,20 @@
 import { useState, useEffect } from "react";
 import { socket } from "~/pages/_app";
-import { useUserIDContext } from "../context/UserIDContext";
-import { useRoomContext } from "../context/RoomContext";
 import { type IMoveBackToLobby } from "../pages/api/socket";
 import { useRouter } from "next/router";
+import { useMainStore } from "~/stores/MainStore";
 
 function useReturnToRoomHandler() {
-  const userID = useUserIDContext();
   const { push } = useRouter();
 
-  const { roomConfig, setRoomConfig, setPlayerMetadata, setGameData } =
-    useRoomContext();
+  const { roomConfig, setRoomConfig, setPlayerMetadata, setGameData, userID } =
+    useMainStore((state) => ({
+      roomConfig: state.roomConfig,
+      setRoomConfig: state.setRoomConfig,
+      setPlayerMetadata: state.setPlayerMetadata,
+      setGameData: state.setGameData,
+      userID: state.userID,
+    }));
 
   const [dataFromBackend, setDataFromBackend] =
     useState<IMoveBackToLobby | null>(null);

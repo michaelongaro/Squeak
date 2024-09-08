@@ -28,6 +28,7 @@ const client = new QueryClient({
 
 /** A set of type-safe react-query hooks for your tRPC API. */
 export const api = createTRPCNext<AppRouter>({
+  transformer: superjson,
   config() {
     return {
       queryClient: client,
@@ -36,7 +37,6 @@ export const api = createTRPCNext<AppRouter>({
        *
        * @see https://trpc.io/docs/data-transformers
        */
-      transformer: superjson,
 
       /**
        * Links used to determine request flow from client to server.
@@ -51,6 +51,7 @@ export const api = createTRPCNext<AppRouter>({
         }),
         httpBatchLink({
           url: `${getBaseUrl()}/api/trpc`,
+          transformer: superjson,
         }),
       ],
     };

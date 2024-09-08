@@ -15,9 +15,7 @@ import { IoHome } from "react-icons/io5";
 import { Button } from "~/components/ui/button";
 import { socket } from "~/pages/_app";
 import { api } from "~/utils/api";
-import { useRoomContext } from "../../context/RoomContext";
 import Filter from "bad-words";
-import { useUserIDContext } from "../../context/UserIDContext";
 import useLeaveRoom from "../../hooks/useLeaveRoom";
 import {
   type IGameMetadata,
@@ -28,12 +26,12 @@ import { Label } from "~/components/ui/label";
 import { Input } from "~/components/ui/input";
 import UnableToJoinRoom from "~/components/Play/UnableToJoinRoom";
 import AnimatedNumbers from "~/components/ui/AnimatedNumbers";
+import { useMainStore } from "~/stores/MainStore";
 
 const filter = new Filter();
 
 function JoinRoom() {
   const { isLoaded, isSignedIn } = useAuth();
-  const userID = useUserIDContext();
   const { push, query } = useRouter();
 
   const roomCode = query?.roomCode?.[0];
@@ -48,7 +46,19 @@ function JoinRoom() {
     setConnectedToRoom,
     friendData,
     viewportLabel,
-  } = useRoomContext();
+    userID,
+  } = useMainStore((state) => ({
+    playerMetadata: state.playerMetadata,
+    setPlayerMetadata: state.setPlayerMetadata,
+    roomConfig: state.roomConfig,
+    setRoomConfig: state.setRoomConfig,
+    setGameData: state.setGameData,
+    connectedToRoom: state.connectedToRoom,
+    setConnectedToRoom: state.setConnectedToRoom,
+    friendData: state.friendData,
+    viewportLabel: state.viewportLabel,
+    userID: state.userID,
+  }));
 
   const leaveRoom = useLeaveRoom({
     routeToNavigateTo: "/join",

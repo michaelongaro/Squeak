@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { socket } from "~/pages/_app";
-import { useRoomContext } from "../context/RoomContext";
 import { type ICardDropProposal } from "../pages/api/socket";
 import { type IMoveCard } from "../components/Play/Card";
+import { useMainStore } from "~/stores/MainStore";
 
 // is there any better approach than a partial here? don't like having to do huge
 // guard clause at the start if it's not necessary
@@ -52,7 +52,17 @@ function useCardDropApproved({
     squeakStackDragAlterations,
     setSqueakStackDragAlterations,
     viewportLabel,
-  } = useRoomContext();
+  } = useMainStore((state) => ({
+    audioContext: state.audioContext,
+    masterVolumeGainNode: state.masterVolumeGainNode,
+    successfulMoveBuffer: state.successfulMoveBuffer,
+    otherPlayerCardMoveBuffer: state.otherPlayerCardMoveBuffer,
+    setGameData: state.setGameData,
+    setProposedCardBoxShadow: state.setProposedCardBoxShadow,
+    squeakStackDragAlterations: state.squeakStackDragAlterations,
+    setSqueakStackDragAlterations: state.setSqueakStackDragAlterations,
+    viewportLabel: state.viewportLabel,
+  }));
 
   const [dataFromBackend, setDataFromBackend] =
     useState<ICardDropAccepted | null>(null);

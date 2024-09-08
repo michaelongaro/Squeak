@@ -1,14 +1,16 @@
 import { useEffect } from "react";
 import { useAuth } from "@clerk/nextjs";
 import { socket } from "~/pages/_app";
-import { useUserIDContext } from "../context/UserIDContext";
-import { useRoomContext } from "../context/RoomContext";
+import { useMainStore } from "~/stores/MainStore";
 
 function useAttachUnloadEventListener() {
   const { isSignedIn } = useAuth();
-  const userID = useUserIDContext();
 
-  const { roomConfig, connectedToRoom } = useRoomContext();
+  const { roomConfig, connectedToRoom, userID } = useMainStore((state) => ({
+    roomConfig: state.roomConfig,
+    connectedToRoom: state.connectedToRoom,
+    userID: state.userID,
+  }));
 
   useEffect(() => {
     function leaveRoomOnPageClose() {

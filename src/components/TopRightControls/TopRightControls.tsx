@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useRoomContext } from "../../context/RoomContext";
 import { useAuth } from "@clerk/nextjs";
 import { socket } from "~/pages/_app";
 import { api } from "~/utils/api";
@@ -56,7 +55,6 @@ import { Input } from "~/components/ui/input";
 import { IoStatsChart } from "react-icons/io5";
 import PlayerCustomizationPreview from "../playerIcons/PlayerCustomizationPreview";
 import PlayerCustomizationPicker from "../playerIcons/PlayerCustomizationPicker";
-import { useUserIDContext } from "~/context/UserIDContext";
 import Filter from "bad-words";
 import PlayerIcon from "../playerIcons/PlayerIcon";
 import { type User } from "@prisma/client";
@@ -83,6 +81,7 @@ import {
   TbAntennaBars5,
 } from "react-icons/tb";
 import TutorialDialog from "~/components/dialogs/TutorialDialog";
+import { useMainStore } from "~/stores/MainStore";
 
 const filter = new Filter();
 
@@ -100,7 +99,6 @@ const settingsViewLabels = ["avatar", "front", "back"] as const;
 function TopRightControls() {
   const { isSignedIn } = useAuth();
   const { asPath } = useRouter();
-  const userID = useUserIDContext();
 
   const {
     showSettingsDialog,
@@ -113,7 +111,20 @@ function TopRightControls() {
     showVotingOptionButtons,
     setShowVotingOptionButtons,
     viewportLabel,
-  } = useRoomContext();
+    userID,
+  } = useMainStore((state) => ({
+    showSettingsDialog: state.showSettingsDialog,
+    setShowSettingsDialog: state.setShowSettingsDialog,
+    newInviteNotification: state.newInviteNotification,
+    voteType: state.voteType,
+    votingIsLockedOut: state.votingIsLockedOut,
+    showVotingDialog: state.showVotingDialog,
+    setShowVotingDialog: state.setShowVotingDialog,
+    showVotingOptionButtons: state.showVotingOptionButtons,
+    setShowVotingOptionButtons: state.setShowVotingOptionButtons,
+    viewportLabel: state.viewportLabel,
+    userID: state.userID,
+  }));
 
   const { data: user } = api.users.getUserByID.useQuery(userID, {
     enabled: isSignedIn && userID !== "",
@@ -201,7 +212,11 @@ function TopRightControls() {
                 setShowVotingOptionButtons={setShowVotingOptionButtons}
               />
             ) : (
-              <MainSheet user={user} setShowSheet={setShowSheet} />
+              <MainSheet
+                user={user}
+                userID={userID}
+                setShowSheet={setShowSheet}
+              />
             )}
           </SheetContent>
         </SheetPortal>
@@ -418,7 +433,7 @@ export default TopRightControls;
 
 interface IVotingDialog {
   showVotingOptionButtons: boolean;
-  setShowVotingOptionButtons: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowVotingOptionButtons: (value: boolean) => void;
   setShowSheet?: React.Dispatch<React.SetStateAction<boolean>>;
   forMobile?: boolean;
   forSheet?: boolean;
@@ -438,7 +453,14 @@ function VotingDialog({
     voteType,
     votingIsLockedOut,
     votingLockoutStartTimestamp,
-  } = useRoomContext();
+  } = useMainStore((state) => ({
+    roomConfig: state.roomConfig,
+    playerMetadata: state.playerMetadata,
+    currentVotes: state.currentVotes,
+    voteType: state.voteType,
+    votingIsLockedOut: state.votingIsLockedOut,
+    votingLockoutStartTimestamp: state.votingLockoutStartTimestamp,
+  }));
 
   const rotateDecksButtonRef = useRef<HTMLDivElement | null>(null);
   const finishRoundButtonRef = useRef<HTMLDivElement | null>(null);
@@ -700,7 +722,7 @@ function VotingDialog({
 interface IVotingDialogToast {
   isVisible: boolean;
   showVotingOptionButtons: boolean;
-  setShowVotingOptionButtons: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowVotingOptionButtons: (value: boolean) => void;
 }
 
 // needed to extract this to custom component because the exit animations weren't working on the toast
@@ -736,10 +758,11 @@ function VotingDialogToast({
 
 interface IMainSheet {
   user: User | undefined | null;
+  userID: string;
   setShowSheet: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-function MainSheet({ user, setShowSheet }: IMainSheet) {
+function MainSheet({ user, userID, setShowSheet }: IMainSheet) {
   const { signOut } = useAuth();
 
   const [renderedView, setRenderedView] = useState<allViewLabels | undefined>();
@@ -877,11 +900,15 @@ function MainSheet({ user, setShowSheet }: IMainSheet) {
             )}
 
             {renderedView === "Statistics" && (
-              <SheetStatistics setRenderedView={setRenderedView} />
+              <SheetStatistics
+                userID={userID}
+                setRenderedView={setRenderedView}
+              />
             )}
 
             {renderedView === "Friends list" && (
               <SheetFriendsList
+                userID={userID}
                 setRenderedView={setRenderedView}
                 setFriendBeingViewed={setFriendBeingViewed}
                 setShowSheet={setShowSheet}
@@ -946,6 +973,7 @@ function MainSheet({ user, setShowSheet }: IMainSheet) {
             }
           >
             <FriendActions
+              userID={userID}
               friend={friendBeingViewed}
               setRenderedView={setRenderedView}
               setShowSheet={setShowSheet}
@@ -978,7 +1006,6 @@ function SheetSettings({
   setLocalPlayerSettings,
   setRenderedView,
 }: ISheetSettings) {
-  const userID = useUserIDContext();
   const { signOut } = useAuth();
 
   const {
@@ -986,7 +1013,14 @@ function SheetSettings({
     setPlayerMetadata,
     connectedToRoom,
     setMirrorPlayerContainer,
-  } = useRoomContext();
+    userID,
+  } = useMainStore((state) => ({
+    playerMetadata: state.playerMetadata,
+    setPlayerMetadata: state.setPlayerMetadata,
+    connectedToRoom: state.connectedToRoom,
+    setMirrorPlayerContainer: state.setMirrorPlayerContainer,
+    userID: state.userID,
+  }));
 
   const utils = api.useUtils();
   const { data: user } = api.users.getUserByID.useQuery(userID);
@@ -1463,14 +1497,13 @@ interface IFilteredStats {
 }
 
 interface ISheetStatistics {
+  userID: string;
   setRenderedView: React.Dispatch<
     React.SetStateAction<allViewLabels | undefined>
   >;
 }
 
-function SheetStatistics({ setRenderedView }: ISheetStatistics) {
-  const userID = useUserIDContext();
-
+function SheetStatistics({ userID, setRenderedView }: ISheetStatistics) {
   const { data: userStats } = api.stats.getStatsByID.useQuery(userID);
 
   const [filteredStats, setFilteredStats] = useState<IFilteredStats>();
@@ -1546,6 +1579,7 @@ function SheetStatistics({ setRenderedView }: ISheetStatistics) {
 }
 
 interface ISheetFriendsList {
+  userID: string;
   setRenderedView: React.Dispatch<
     React.SetStateAction<allViewLabels | undefined>
   >;
@@ -1554,11 +1588,11 @@ interface ISheetFriendsList {
 }
 
 function SheetFriendsList({
+  userID,
   setRenderedView,
   setFriendBeingViewed,
   setShowSheet,
 }: ISheetFriendsList) {
-  const userID = useUserIDContext();
   const { push } = useRouter();
 
   const {
@@ -1569,7 +1603,15 @@ function SheetFriendsList({
     setNewInviteNotification,
     roomConfig,
     setConnectedToRoom,
-  } = useRoomContext();
+  } = useMainStore((state) => ({
+    playerMetadata: state.playerMetadata,
+    connectedToRoom: state.connectedToRoom,
+    friendData: state.friendData,
+    newInviteNotification: state.newInviteNotification,
+    setNewInviteNotification: state.setNewInviteNotification,
+    roomConfig: state.roomConfig,
+    setConnectedToRoom: state.setConnectedToRoom,
+  }));
 
   // TODO: fix ergonomics around these queries. Currently can't fully disable
   // queries based on friendData being undefined, since jsx below will infinitely
@@ -1871,6 +1913,7 @@ function SheetFriendsList({
 }
 
 interface IFriendActions {
+  userID: string;
   friend: User;
   setRenderedView: React.Dispatch<
     React.SetStateAction<allViewLabels | undefined>
@@ -1879,18 +1922,23 @@ interface IFriendActions {
 }
 
 function FriendActions({
+  userID,
   friend,
   setRenderedView,
   setShowSheet,
 }: IFriendActions) {
-  const userID = useUserIDContext();
   const { push } = useRouter();
 
   const [sendInviteInnerText, setSendInviteInnerText] = useState("Send invite");
   const [buttonIsActive, setButtonIsActive] = useState(false);
 
   const { playerMetadata, connectedToRoom, roomConfig, setConnectedToRoom } =
-    useRoomContext();
+    useMainStore((state) => ({
+      playerMetadata: state.playerMetadata,
+      connectedToRoom: state.connectedToRoom,
+      roomConfig: state.roomConfig,
+      setConnectedToRoom: state.setConnectedToRoom,
+    }));
 
   return (
     <>
@@ -2065,7 +2113,7 @@ interface IWhilePlayingSheet {
   setShowSheet: React.Dispatch<React.SetStateAction<boolean>>;
   leaveRoom: () => void;
   showVotingOptionButtons: boolean;
-  setShowVotingOptionButtons: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowVotingOptionButtons: (value: boolean) => void;
 }
 
 function WhilePlayingSheet({
@@ -2074,7 +2122,14 @@ function WhilePlayingSheet({
   showVotingOptionButtons,
   setShowVotingOptionButtons,
 }: IWhilePlayingSheet) {
-  const { playerMetadata, roomConfig, gameData, playerPing } = useRoomContext();
+  const { playerMetadata, roomConfig, gameData, playerPing } = useMainStore(
+    (state) => ({
+      playerMetadata: state.playerMetadata,
+      roomConfig: state.roomConfig,
+      gameData: state.gameData,
+      playerPing: state.playerPing,
+    }),
+  );
 
   const [showTutorialDialog, setShowTutorialDialog] = useState(false);
 

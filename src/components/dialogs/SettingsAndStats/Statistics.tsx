@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import { useUserIDContext } from "../../../context/UserIDContext";
 import { api } from "~/utils/api";
 import { motion, AnimatePresence } from "framer-motion";
+import { useMainStore } from "~/stores/MainStore";
 
 const rowNames = [
   "Total Squeaks",
@@ -20,7 +20,9 @@ interface IFilteredStats {
 }
 
 function Statistics() {
-  const userID = useUserIDContext();
+  const { userID } = useMainStore((state) => ({
+    userID: state.userID,
+  }));
 
   const { data: userStats } = api.stats.getStatsByID.useQuery(userID);
 

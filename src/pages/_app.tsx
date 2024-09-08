@@ -1,7 +1,5 @@
 import { ClerkProvider } from "@clerk/nextjs";
-import { UserIDProvider } from "../context/UserIDContext";
 import type { AppProps } from "next/app";
-import { RoomProvider } from "../context/RoomContext";
 import NextProgress from "next-progress";
 import { api } from "~/utils/api";
 import { io } from "socket.io-client";
@@ -48,13 +46,9 @@ function App({ Component, pageProps }: ComponentWithPageLayout) {
         options={{ showSpinner: false }}
       />
 
-      <UserIDProvider>
-        <RoomProvider>
-          <GeneralLayout>
-            <Component {...pageProps} />
-          </GeneralLayout>
-        </RoomProvider>
-      </UserIDProvider>
+      <GeneralLayout>
+        <Component {...pageProps} />
+      </GeneralLayout>
     </ClerkProvider>
   );
 }
