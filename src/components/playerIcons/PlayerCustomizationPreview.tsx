@@ -1,8 +1,6 @@
 import React from "react";
 import Card from "../Play/Card";
 import PlayerIcon from "./PlayerIcon";
-import { useUserIDContext } from "~/context/UserIDContext";
-
 import { type IRoomPlayersMetadata } from "~/pages/api/socket";
 import { useMainStore } from "~/stores/MainStore";
 
@@ -24,13 +22,15 @@ function PlayerCustomizationPreview({
   renderDescriptionText = true,
   localPlayerMetadata,
 }: IPlayerCustomizationPicker) {
-  const userID = useUserIDContext();
-
-  const { playerMetadata: storePlayerMetadata, deckVariantIndex } =
-    useMainStore((state) => ({
-      playerMetadata: state.playerMetadata,
-      deckVariantIndex: state.deckVariantIndex,
-    }));
+  const {
+    playerMetadata: storePlayerMetadata,
+    deckVariantIndex,
+    userID,
+  } = useMainStore((state) => ({
+    playerMetadata: state.playerMetadata,
+    deckVariantIndex: state.deckVariantIndex,
+    userID: state.userID,
+  }));
 
   const playerMetadata = localPlayerMetadata ?? storePlayerMetadata;
 

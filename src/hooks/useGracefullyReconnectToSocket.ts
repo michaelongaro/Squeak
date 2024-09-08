@@ -1,14 +1,12 @@
 import { useEffect } from "react";
-import { useUserIDContext } from "~/context/UserIDContext";
 import { socket } from "~/pages/_app";
 import { useMainStore } from "~/stores/MainStore";
 
 function useGracefullyReconnectToSocket() {
-  const userID = useUserIDContext();
-
-  const { roomConfig, connectedToRoom } = useMainStore((state) => ({
+  const { roomConfig, connectedToRoom, userID } = useMainStore((state) => ({
     roomConfig: state.roomConfig,
     connectedToRoom: state.connectedToRoom,
+    userID: state.userID,
   }));
 
   // by their nature, websocket connections close and reopen

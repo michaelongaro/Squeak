@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { socket } from "~/pages/_app";
 import { type IDrawFromDeck } from "../pages/api/socket";
 import { type IMoveCard } from "../components/Play/Card";
-import { useUserIDContext } from "~/context/UserIDContext";
 import { useMainStore } from "~/stores/MainStore";
 
 interface IUseCardDrawFromDeck {
@@ -25,16 +24,16 @@ function useCardDrawFromDeck({
   rotation,
   moveCard,
 }: IUseCardDrawFromDeck) {
-  const userID = useUserIDContext();
-
   const {
     setGameData,
     otherPlayerIDsDrawingFromDeck,
     setOtherPlayerIDsDrawingFromDeck,
+    userID,
   } = useMainStore((state) => ({
     setGameData: state.setGameData,
     otherPlayerIDsDrawingFromDeck: state.otherPlayerIDsDrawingFromDeck,
     setOtherPlayerIDsDrawingFromDeck: state.setOtherPlayerIDsDrawingFromDeck,
+    userID: state.userID,
   }));
 
   const [dataFromBackend, setDataFromBackend] = useState<IDrawFromDeck | null>(

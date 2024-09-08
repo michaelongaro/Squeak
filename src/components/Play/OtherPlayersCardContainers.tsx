@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { useUserIDContext } from "../../context/UserIDContext";
 import useResponsiveCardDimensions from "../../hooks/useResponsiveCardDimensions";
 import Card from "./Card";
 import { FaRedoAlt } from "react-icons/fa";
@@ -33,8 +32,6 @@ const rotationOrder = [180, 90, 270, 180];
 function OtherPlayersCardContainers({
   orderedClassNames,
 }: IOtherPlayersCardContainers) {
-  const userID = useUserIDContext();
-
   const {
     playerMetadata,
     gameData,
@@ -46,6 +43,7 @@ function OtherPlayersCardContainers({
     squeakStackDragAlterations,
     viewportLabel,
     otherPlayerIDsDrawingFromDeck,
+    userID,
   } = useMainStore((state) => ({
     playerMetadata: state.playerMetadata,
     gameData: state.gameData,
@@ -58,6 +56,7 @@ function OtherPlayersCardContainers({
     squeakStackDragAlterations: state.squeakStackDragAlterations,
     viewportLabel: state.viewportLabel,
     otherPlayerIDsDrawingFromDeck: state.otherPlayerIDsDrawingFromDeck,
+    userID: state.userID,
   }));
 
   const otherPlayerIDs = Object.keys(gameData.players).filter(

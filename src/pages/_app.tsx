@@ -1,5 +1,4 @@
 import { ClerkProvider } from "@clerk/nextjs";
-import { UserIDProvider } from "../context/UserIDContext";
 import type { AppProps } from "next/app";
 import NextProgress from "next-progress";
 import { api } from "~/utils/api";
@@ -47,11 +46,9 @@ function App({ Component, pageProps }: ComponentWithPageLayout) {
         options={{ showSpinner: false }}
       />
 
-      <UserIDProvider>
-        <GeneralLayout>
-          <Component {...pageProps} />
-        </GeneralLayout>
-      </UserIDProvider>
+      <GeneralLayout>
+        <Component {...pageProps} />
+      </GeneralLayout>
     </ClerkProvider>
   );
 }

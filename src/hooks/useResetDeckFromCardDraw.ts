@@ -4,8 +4,7 @@ import { type IDrawFromDeck } from "../pages/api/socket";
 import { useMainStore } from "~/stores/MainStore";
 
 function useResetDeckFromCardDraw() {
-  const { gameData, setGameData } = useMainStore((state) => ({
-    gameData: state.gameData,
+  const { setGameData } = useMainStore((state) => ({
     setGameData: state.setGameData,
   }));
 
@@ -25,13 +24,13 @@ function useResetDeckFromCardDraw() {
     if (dataFromBackend !== null) {
       setDataFromBackend(null);
 
-      const { resetDeck, playerID, gameData } = dataFromBackend;
+      const { resetDeck, gameData } = dataFromBackend;
 
       if (resetDeck) {
         setGameData(gameData);
       }
     }
-  }, [dataFromBackend, gameData, setGameData]);
+  }, [dataFromBackend, setGameData]);
 }
 
 export default useResetDeckFromCardDraw;

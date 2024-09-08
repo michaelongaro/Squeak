@@ -1,6 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { socket } from "~/pages/_app";
-import { useUserIDContext } from "../../context/UserIDContext";
 import cardPlacementIsValid from "../../utils/cardPlacementIsValid";
 import useCardDrawFromDeck from "../../hooks/useCardDrawFromDeck";
 import useCardDrawFromSqueakDeck from "../../hooks/useCardDrawFromSqueakDeck";
@@ -62,8 +61,6 @@ function Card({
   height,
   manuallyShowSpecificCardFront,
 }: ICardComponent) {
-  const userID = useUserIDContext();
-
   const {
     roomConfig,
     gameData,
@@ -85,6 +82,7 @@ function Card({
     deckVariantIndex,
     setHoldingADeckCard,
     setHoldingASqueakCard,
+    userID,
   } = useMainStore((state) => ({
     roomConfig: state.roomConfig,
     gameData: state.gameData,
@@ -108,6 +106,7 @@ function Card({
     deckVariantIndex: state.deckVariantIndex,
     setHoldingADeckCard: state.setHoldingADeckCard,
     setHoldingASqueakCard: state.setHoldingASqueakCard,
+    userID: state.userID,
   }));
 
   const [isDragging, setIsDragging] = useState(false);

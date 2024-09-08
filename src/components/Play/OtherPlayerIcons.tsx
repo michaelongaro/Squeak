@@ -1,5 +1,4 @@
 import { useState, useLayoutEffect, useRef, useMemo, useCallback } from "react";
-import { useUserIDContext } from "../../context/UserIDContext";
 import PlayerIcon from "../playerIcons/PlayerIcon";
 import { AnimatePresence, motion } from "framer-motion";
 import { useMainStore } from "~/stores/MainStore";
@@ -8,13 +7,14 @@ import { useMainStore } from "~/stores/MainStore";
 // so below is (maybe an overkill?) conservative implementation
 
 function OtherPlayerIcons() {
-  const userID = useUserIDContext();
-
-  const { gameData, playerMetadata, viewportLabel } = useMainStore((state) => ({
-    gameData: state.gameData,
-    playerMetadata: state.playerMetadata,
-    viewportLabel: state.viewportLabel,
-  }));
+  const { gameData, playerMetadata, viewportLabel, userID } = useMainStore(
+    (state) => ({
+      gameData: state.gameData,
+      playerMetadata: state.playerMetadata,
+      viewportLabel: state.viewportLabel,
+      userID: state.userID,
+    }),
+  );
 
   const firstTopPlayerIconRef = useRef<HTMLDivElement>(null);
   const leftPlayerIconRef = useRef<HTMLDivElement>(null);

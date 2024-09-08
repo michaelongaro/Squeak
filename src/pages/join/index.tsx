@@ -11,7 +11,6 @@ import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { socket } from "~/pages/_app";
 import { api } from "~/utils/api";
-import { useUserIDContext } from "../../context/UserIDContext";
 import useLeaveRoom from "../../hooks/useLeaveRoom";
 import {
   type IRoomPlayersMetadata,
@@ -25,7 +24,6 @@ const filter = new Filter();
 
 function JoinRoom() {
   const { isSignedIn } = useAuth();
-  const userID = useUserIDContext();
   const { push } = useRouter();
 
   const ctx = api.useUtils();
@@ -40,6 +38,7 @@ function JoinRoom() {
     setConnectedToRoom,
     friendData,
     viewportLabel,
+    userID,
   } = useMainStore((state) => ({
     playerMetadata: state.playerMetadata,
     setPlayerMetadata: state.setPlayerMetadata,
@@ -50,6 +49,7 @@ function JoinRoom() {
     setConnectedToRoom: state.setConnectedToRoom,
     friendData: state.friendData,
     viewportLabel: state.viewportLabel,
+    userID: state.userID,
   }));
 
   const leaveRoom = useLeaveRoom({

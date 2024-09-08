@@ -2,7 +2,6 @@ import { useState } from "react";
 import { api } from "~/utils/api";
 import { SignInButton, SignUpButton, useAuth } from "@clerk/nextjs";
 import { AnimatePresence, motion } from "framer-motion";
-import { useUserIDContext } from "~/context/UserIDContext";
 import TutorialDialog from "~/components/dialogs/TutorialDialog";
 import { TbDoorEnter } from "react-icons/tb";
 import { AiOutlinePlusCircle, AiOutlineInfoCircle } from "react-icons/ai";
@@ -20,18 +19,17 @@ import { Dialog, DialogTrigger } from "~/components/ui/dialog";
 import { useMainStore } from "~/stores/MainStore";
 
 function MainOptions() {
-  const { isSignedIn, userId } = useAuth();
-  const userID = useUserIDContext();
+  const { isSignedIn } = useAuth();
   const { push } = useRouter();
 
-  // probably want to remove the default "refetch on page focus" behavior
+  const { viewportLabel, userID } = useMainStore((state) => ({
+    viewportLabel: state.viewportLabel,
+    userID: state.userID,
+  }));
+
   const { data: user } = api.users.getUserByID.useQuery(userID, {
     enabled: userID !== "",
   });
-
-  const { viewportLabel } = useMainStore((state) => ({
-    viewportLabel: state.viewportLabel,
-  }));
 
   const [hoveringOnAboutMe, setHoveringOnAboutMe] = useState(false);
   const [showTutorialDialog, setShowTutorialDialog] = useState(false);

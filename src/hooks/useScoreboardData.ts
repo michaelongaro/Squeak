@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { socket } from "~/pages/_app";
-import { useUserIDContext } from "../context/UserIDContext";
 import { type IScoreboardMetadata } from "../pages/api/handlers/roundOverHandler";
 import toast from "react-hot-toast";
 import { useMainStore } from "~/stores/MainStore";
@@ -10,8 +9,6 @@ interface IScoreboardMetadataWithSqueakSound extends IScoreboardMetadata {
 }
 
 function useScoreboardData() {
-  const userID = useUserIDContext();
-
   const {
     audioContext,
     masterVolumeGainNode,
@@ -21,6 +18,7 @@ function useScoreboardData() {
     setScoreboardMetadata,
     setShowScoreboard,
     setPlayerIDWhoSqueaked,
+    userID,
   } = useMainStore((state) => ({
     audioContext: state.audioContext,
     masterVolumeGainNode: state.masterVolumeGainNode,
@@ -30,6 +28,7 @@ function useScoreboardData() {
     setScoreboardMetadata: state.setScoreboardMetadata,
     setShowScoreboard: state.setShowScoreboard,
     setPlayerIDWhoSqueaked: state.setPlayerIDWhoSqueaked,
+    userID: state.userID,
   }));
 
   const [dataFromBackend, setDataFromBackend] =

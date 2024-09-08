@@ -3,7 +3,6 @@ import { useAuth } from "@clerk/nextjs";
 import cryptoRandomString from "crypto-random-string";
 import { api } from "~/utils/api";
 import { socket } from "~/pages/_app";
-import { useUserIDContext } from "../../context/UserIDContext";
 import {
   type IRoomPlayersMetadata,
   type IGameMetadata,
@@ -67,8 +66,6 @@ function CreateRoom() {
   const { isSignedIn } = useAuth();
   const { push } = useRouter();
 
-  const userID = useUserIDContext();
-
   const {
     roomConfig,
     setRoomConfig,
@@ -79,6 +76,7 @@ function CreateRoom() {
     friendData,
     setGameData,
     viewportLabel,
+    userID,
   } = useMainStore((state) => ({
     roomConfig: state.roomConfig,
     setRoomConfig: state.setRoomConfig,
@@ -89,6 +87,7 @@ function CreateRoom() {
     friendData: state.friendData,
     setGameData: state.setGameData,
     viewportLabel: state.viewportLabel,
+    userID: state.userID,
   }));
 
   const leaveRoom = useLeaveRoom({

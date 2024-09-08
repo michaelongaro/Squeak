@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import { useUserIDContext } from "../../context/UserIDContext";
 import Card from "../Play/Card";
 import { motion, useAnimation } from "framer-motion";
 import AnimatedNumbers from "~/components/ui/AnimatedNumbers";
@@ -16,20 +15,20 @@ const repeatCount = 2;
 const delayBetweenIterations = 1000;
 
 function ShufflingCountdownDialog() {
-  const userID = useUserIDContext();
-
   const {
     gameData,
     roomConfig,
     playerMetadata,
     setShowShufflingCountdown,
     showShufflingCountdown,
+    userID,
   } = useMainStore((state) => ({
     gameData: state.gameData,
     roomConfig: state.roomConfig,
     playerMetadata: state.playerMetadata,
     setShowShufflingCountdown: state.setShowShufflingCountdown,
     showShufflingCountdown: state.showShufflingCountdown,
+    userID: state.userID,
   }));
 
   const [timersInitiated, setTimersInitiated] = useState<boolean>(false);

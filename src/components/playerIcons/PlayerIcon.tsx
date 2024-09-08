@@ -1,7 +1,6 @@
 import { useState, type CSSProperties } from "react";
 import { socket } from "~/pages/_app";
 import { motion } from "framer-motion";
-import { useUserIDContext } from "../../context/UserIDContext";
 import { type IRoomPlayer } from "../../pages/api/socket";
 import { AiOutlinePlus, AiOutlineClose } from "react-icons/ai";
 import { FaCrown } from "react-icons/fa6";
@@ -57,11 +56,10 @@ function PlayerIcon({
   forWhilePlayingSheet,
   animatePresence,
 }: IPlayerIcon) {
-  const userID = useUserIDContext();
-
-  const { roomConfig, viewportLabel } = useMainStore((state) => ({
+  const { roomConfig, viewportLabel, userID } = useMainStore((state) => ({
     roomConfig: state.roomConfig,
     viewportLabel: state.viewportLabel,
+    userID: state.userID,
   }));
 
   const [friendInviteSent, setFriendInviteSent] = useState(false);

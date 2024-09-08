@@ -1,25 +1,24 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@clerk/nextjs";
 import { socket } from "~/pages/_app";
-import { useUserIDContext } from "../context/UserIDContext";
 import { type IReceiveFriendData } from "../pages/api/socket";
 import { useMainStore } from "~/stores/MainStore";
 
 function useReceiveFriendData() {
   const { isSignedIn } = useAuth();
 
-  const userID = useUserIDContext();
-
   const {
     friendData,
     setFriendData,
     newInviteNotification,
     setNewInviteNotification,
+    userID,
   } = useMainStore((state) => ({
     friendData: state.friendData,
     setFriendData: state.setFriendData,
     newInviteNotification: state.newInviteNotification,
     setNewInviteNotification: state.setNewInviteNotification,
+    userID: state.userID,
   }));
 
   const [dataFromBackend, setDataFromBackend] =

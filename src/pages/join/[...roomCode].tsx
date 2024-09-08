@@ -16,7 +16,6 @@ import { Button } from "~/components/ui/button";
 import { socket } from "~/pages/_app";
 import { api } from "~/utils/api";
 import Filter from "bad-words";
-import { useUserIDContext } from "../../context/UserIDContext";
 import useLeaveRoom from "../../hooks/useLeaveRoom";
 import {
   type IGameMetadata,
@@ -33,7 +32,6 @@ const filter = new Filter();
 
 function JoinRoom() {
   const { isLoaded, isSignedIn } = useAuth();
-  const userID = useUserIDContext();
   const { push, query } = useRouter();
 
   const roomCode = query?.roomCode?.[0];
@@ -48,6 +46,7 @@ function JoinRoom() {
     setConnectedToRoom,
     friendData,
     viewportLabel,
+    userID,
   } = useMainStore((state) => ({
     playerMetadata: state.playerMetadata,
     setPlayerMetadata: state.setPlayerMetadata,
@@ -58,6 +57,7 @@ function JoinRoom() {
     setConnectedToRoom: state.setConnectedToRoom,
     friendData: state.friendData,
     viewportLabel: state.viewportLabel,
+    userID: state.userID,
   }));
 
   const leaveRoom = useLeaveRoom({

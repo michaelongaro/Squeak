@@ -1,6 +1,6 @@
 import { useAuth } from "@clerk/nextjs";
+import cryptoRandomString from "crypto-random-string";
 import { useEffect } from "react";
-import { useUserIDContext } from "~/context/UserIDContext";
 import useGetViewportLabel from "~/hooks/useGetViewportLabel";
 import { socket } from "~/pages/_app";
 import { type IRoomPlayer } from "~/pages/api/socket";
@@ -8,12 +8,7 @@ import { useMainStore } from "~/stores/MainStore";
 import { api } from "~/utils/api";
 
 function useStoreInitializationLogic() {
-  const { isLoaded, isSignedIn } = useAuth();
-  const userID = useUserIDContext();
-
-  const { data: user } = api.users.getUserByID.useQuery(userID, {
-    enabled: isSignedIn && userID !== "",
-  });
+  const { userId, isLoaded, isSignedIn } = useAuth();
 
   const {
     audioContext,
@@ -26,11 +21,13 @@ function useStoreInitializationLogic() {
     currentVolume,
     setCurrentVolume,
     friendData,
-    playerMetadata,
     setPlayerMetadata,
     roomConfig,
     setDeckVariantIndex,
     setMirrorPlayerContainer,
+    getPlayerMetadata,
+    userID,
+    setUserID,
   } = useMainStore((state) => ({
     audioContext: state.audioContext,
     setSuccessfulMoveBuffer: state.setSuccessfulMoveBuffer,
@@ -42,12 +39,18 @@ function useStoreInitializationLogic() {
     currentVolume: state.currentVolume,
     setCurrentVolume: state.setCurrentVolume,
     friendData: state.friendData,
-    playerMetadata: state.playerMetadata,
     setPlayerMetadata: state.setPlayerMetadata,
     roomConfig: state.roomConfig,
     setDeckVariantIndex: state.setDeckVariantIndex,
     setMirrorPlayerContainer: state.setMirrorPlayerContainer,
+    getPlayerMetadata: state.getPlayerMetadata,
+    userID: state.userID,
+    setUserID: state.setUserID,
   }));
+
+  const { data: user } = api.users.getUserByID.useQuery(userID, {
+    enabled: isSignedIn && userID !== "",
+  });
 
   useGetViewportLabel();
 
@@ -89,6 +92,26 @@ function useStoreInitializationLogic() {
   ]);
 
   useEffect(() => {
+    if (!isLoaded) return;
+
+    if (!userId) {
+      let userID: string;
+      if (localStorage.getItem("squeak-userID") === null) {
+        userID = cryptoRandomString({ length: 16 });
+        localStorage.setItem("squeak-userID", userID);
+      } else {
+        userID = localStorage.getItem("squeak-userID") as string;
+      }
+      setUserID(userID);
+    } else {
+      if (localStorage.getItem("squeak-userID") !== null) {
+        localStorage.removeItem("squeak-userID");
+      }
+      setUserID(userId);
+    }
+  }, [userId, isLoaded, setUserID]);
+
+  useEffect(() => {
     if (currentVolume === null || !masterVolumeGainNode) return;
 
     localStorage.setItem("squeak-volume", currentVolume.toString());
@@ -128,7 +151,7 @@ function useStoreInitializationLogic() {
   // initializing player metadata w/ their database values (if authenticated)
   useEffect(() => {
     if (
-      playerMetadata[userID] !== undefined ||
+      getPlayerMetadata()[userID] !== undefined ||
       !isLoaded ||
       !isSignedIn ||
       user === undefined ||
@@ -137,7 +160,8 @@ function useStoreInitializationLogic() {
       return;
 
     setPlayerMetadata({
-      ...playerMetadata,
+      // ...playerMetadata,
+      ...getPlayerMetadata(),
       [userID]: {
         username: user ? user.username : "",
         avatarPath: user ? user.avatarPath : "/avatars/rabbit.svg",
@@ -151,18 +175,19 @@ function useStoreInitializationLogic() {
   }, [
     userID,
     user,
-    playerMetadata,
+    // playerMetadata,
     isLoaded,
     isSignedIn,
     setDeckVariantIndex,
     setMirrorPlayerContainer,
     setPlayerMetadata,
+    getPlayerMetadata,
   ]);
 
   // initializing player metadata w/ their database values (if not authenticated)
   useEffect(() => {
     if (
-      playerMetadata[userID] !== undefined ||
+      getPlayerMetadata()[userID] !== undefined ||
       !isLoaded ||
       isSignedIn ||
       user !== null
@@ -204,7 +229,8 @@ function useStoreInitializationLogic() {
     // the deckVariantIndex in playerMetadata just to simplify things?
 
     setPlayerMetadata({
-      ...playerMetadata,
+      // ...playerMetadata,
+      ...getPlayerMetadata(),
       [userID]: {
         username: localStorageUsername ?? "",
         avatarPath: parsedPlayerMetadata.avatarPath,
@@ -218,12 +244,13 @@ function useStoreInitializationLogic() {
   }, [
     userID,
     user,
-    playerMetadata,
+    // playerMetadata,
     isLoaded,
     isSignedIn,
     setDeckVariantIndex,
     setMirrorPlayerContainer,
     setPlayerMetadata,
+    getPlayerMetadata,
   ]);
 }
 

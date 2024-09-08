@@ -6,7 +6,6 @@ import {
   type IRoomPlayersMetadata,
   type IRoomPlayer,
 } from "../../../pages/api/socket";
-import { useUserIDContext } from "../../../context/UserIDContext";
 import { api } from "~/utils/api";
 import { AnimatePresence, motion } from "framer-motion";
 import {
@@ -37,7 +36,6 @@ interface IUserSettingsAndStatsDialogProps {
 function UserSettingsAndStatsDialog({
   setShowDialog,
 }: IUserSettingsAndStatsDialogProps) {
-  const userID = useUserIDContext();
   const { signOut } = useAuth();
 
   const {
@@ -45,11 +43,13 @@ function UserSettingsAndStatsDialog({
     setPlayerMetadata,
     connectedToRoom,
     setMirrorPlayerContainer,
+    userID,
   } = useMainStore((state) => ({
     playerMetadata: state.playerMetadata,
     setPlayerMetadata: state.setPlayerMetadata,
     connectedToRoom: state.connectedToRoom,
     setMirrorPlayerContainer: state.setMirrorPlayerContainer,
+    userID: state.userID,
   }));
 
   const utils = api.useUtils();

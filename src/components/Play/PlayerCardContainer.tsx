@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { socket } from "~/pages/_app";
-import { useUserIDContext } from "../../context/UserIDContext";
 import Card from "./Card";
 import { FaRedoAlt } from "react-icons/fa";
 
@@ -24,8 +23,6 @@ const cardClassMap = {
 };
 
 function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
-  const userID = useUserIDContext();
-
   const {
     mirrorPlayerContainer,
     roomConfig,
@@ -46,6 +43,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
     squeakStackDragAlterations,
     hoveredCell,
     setHoveredCell,
+    userID,
   } = useMainStore((state) => ({
     mirrorPlayerContainer: state.mirrorPlayerContainer,
     roomConfig: state.roomConfig,
@@ -67,6 +65,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
     squeakStackDragAlterations: state.squeakStackDragAlterations,
     hoveredCell: state.hoveredCell,
     setHoveredCell: state.setHoveredCell,
+    userID: state.userID,
   }));
 
   const [hoveringOverDeck, setHoveringOverDeck] = useState(false);

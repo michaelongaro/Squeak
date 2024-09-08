@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useUserIDContext } from "../../context/UserIDContext";
 import { socket } from "~/pages/_app";
 import {
   type IRoomPlayer,
@@ -34,8 +33,6 @@ function PlayerCustomizationPicker({
   setLocalPlayerSettings,
   forSheet,
 }: IPlayerCustomizationPicker) {
-  const userID = useUserIDContext();
-
   const {
     playerMetadata: storePlayerMetadata,
     setPlayerMetadata: storeSetPlayerMetadata,
@@ -43,6 +40,7 @@ function PlayerCustomizationPicker({
     roomConfig,
     deckVariantIndex,
     setDeckVariantIndex,
+    userID,
   } = useMainStore((state) => ({
     playerMetadata: state.playerMetadata,
     setPlayerMetadata: state.setPlayerMetadata,
@@ -50,6 +48,7 @@ function PlayerCustomizationPicker({
     roomConfig: state.roomConfig,
     deckVariantIndex: state.deckVariantIndex,
     setDeckVariantIndex: state.setDeckVariantIndex,
+    userID: state.userID,
   }));
 
   // dynamic values depending on if parent is being used in <Settings /> or not

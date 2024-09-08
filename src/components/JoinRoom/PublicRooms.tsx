@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { socket } from "~/pages/_app";
-import { useUserIDContext } from "../../context/UserIDContext";
 import { api } from "~/utils/api";
 import { HiOutlineRefresh } from "react-icons/hi";
 import Filter from "bad-words";
@@ -16,7 +15,6 @@ import { useMainStore } from "~/stores/MainStore";
 const filter = new Filter();
 
 function PublicRooms() {
-  const userID = useUserIDContext();
   const { push } = useRouter();
 
   const {
@@ -25,12 +23,14 @@ function PublicRooms() {
     setRoomConfig,
     friendData,
     viewportLabel,
+    userID,
   } = useMainStore((state) => ({
     playerMetadata: state.playerMetadata,
     setConnectedToRoom: state.setConnectedToRoom,
     setRoomConfig: state.setRoomConfig,
     friendData: state.friendData,
     viewportLabel: state.viewportLabel,
+    userID: state.userID,
   }));
 
   const { data: roomInviteIDs } = api.users.getUsersFromIDList.useQuery(

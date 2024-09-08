@@ -47,6 +47,9 @@ export interface IInitSqueakStackCardBeingDealt {
 }
 
 interface StoreState {
+  userID: string;
+  setUserID: (userID: string) => void;
+
   viewportLabel: "mobile" | "mobileLarge" | "tablet" | "desktop";
   setViewportLabel: (
     viewportLabel: "mobile" | "mobileLarge" | "tablet" | "desktop",
@@ -165,11 +168,20 @@ interface StoreState {
   setOtherPlayerCardMoveBuffer: (buffer: AudioBuffer) => void;
   setSqueakButtonPressBuffer: (buffer: AudioBuffer) => void;
   setConfettiPopBuffer: (buffer: AudioBuffer) => void;
+
+  // getters (necessary to recreate setState current value functionality
+  // when spreading the current value of the variable in the setter)
+  // without this the extra rerenders caused intense lag
+  getPlayerMetadata: () => IRoomPlayersMetadata;
+  getGameData: () => IGameMetadata;
 }
 
 export const useMainStore = createWithEqualityFn<StoreState>()(
   devtools(
     (set, get) => ({
+      userID: "",
+      setUserID: (userID) => set({ userID }),
+
       viewportLabel: "mobile",
       setViewportLabel: (viewportLabel) => set({ viewportLabel }),
       audioContext: null,
@@ -224,6 +236,7 @@ export const useMainStore = createWithEqualityFn<StoreState>()(
 
       playerMetadata: {} as IRoomPlayersMetadata, // Make sure to initialize this properly
       setPlayerMetadata: (playerMetadata) => set({ playerMetadata }),
+      getPlayerMetadata: () => get().playerMetadata,
 
       mirrorPlayerContainer: false,
       setMirrorPlayerContainer: (mirror) =>
@@ -231,6 +244,7 @@ export const useMainStore = createWithEqualityFn<StoreState>()(
 
       gameData: {} as IGameMetadata, // Make sure to initialize this properly
       setGameData: (gameData) => set({ gameData }),
+      getGameData: () => get().gameData,
 
       resetPlayerStateUponPageLoad: false,
       setResetPlayerStateUponPageLoad: (reset) =>
