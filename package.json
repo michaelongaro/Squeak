@@ -4,7 +4,6 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "preinstall": "npm install --force",
     "build": "npm run build",
     "dev": "next dev",
     "db:push": "prisma db push",
