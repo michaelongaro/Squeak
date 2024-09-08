@@ -61,10 +61,10 @@ function TutorialDialog({ setShowDialog }: ITutorialDialog) {
                   href="https://en.wikipedia.org/wiki/Nerts"
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center justify-center gap-1 pl-1 underline underline-offset-4"
+                  className="inline-flex items-center justify-center gap-1 pl-1 underline underline-offset-2"
                 >
                   Nerts
-                  <HiExternalLink size={"1.25rem"} />
+                  <HiExternalLink className="size-4 lg:size-[18px]" />
                 </a>
                 . Games can be played with 2-5 players, where each player starts
                 with a regular deck of cards. After shuffling, each player
@@ -218,10 +218,10 @@ function TutorialDialog({ setShowDialog }: ITutorialDialog) {
               should increase the chance for more valid moves to be made.
             </li>
             <li>
-              Otherwise, if the decks have been rotated multiple times and it
-              feels like the game is at a standstill, players may vote to end
-              the round where it is. Note that nobody will receive the Squeak
-              bonus if this vote passes.
+              If the decks have been rotated multiple times and it feels like
+              the game is at a standstill, players may vote to end the round
+              where it is. Note that nobody will receive the Squeak bonus if
+              this vote passes.
             </li>
             <li>Votes require every player to agree in order to pass.</li>
           </ul>
