@@ -1,2 +1,8 @@
 [phases.install]
-  cmds = ['npm install --force']
+cmds = ['npm install --force']
+
+[phases.build]
+cmds = ['npm run build']
+
+[start]
+cmd = 'npm run start'
