@@ -1,17 +1,26 @@
 import { useState, useEffect } from "react";
 import { socket } from "~/pages/_app";
-import { useUserIDContext } from "../context/UserIDContext";
-import { useRoomContext } from "../context/RoomContext";
 import { type IPlayerHasLeftRoom } from "./../pages/api/socket";
 import useLeaveRoom from "./useLeaveRoom";
 import { useRouter } from "next/router";
+import { useMainStore } from "~/stores/MainStore";
 
 function usePlayerLeftRoom() {
-  const userID = useUserIDContext();
   const { push } = useRouter();
 
-  const { setRoomConfig, setPlayerMetadata, setGameData, connectedToRoom } =
-    useRoomContext();
+  const {
+    setRoomConfig,
+    setPlayerMetadata,
+    setGameData,
+    connectedToRoom,
+    userID,
+  } = useMainStore((state) => ({
+    setRoomConfig: state.setRoomConfig,
+    setPlayerMetadata: state.setPlayerMetadata,
+    setGameData: state.setGameData,
+    connectedToRoom: state.connectedToRoom,
+    userID: state.userID,
+  }));
 
   const leaveRoom = useLeaveRoom({
     routeToNavigateTo: "/",

@@ -3,8 +3,6 @@ import { useAuth } from "@clerk/nextjs";
 import cryptoRandomString from "crypto-random-string";
 import { api } from "~/utils/api";
 import { socket } from "~/pages/_app";
-import { useUserIDContext } from "../../context/UserIDContext";
-import { useRoomContext } from "../../context/RoomContext";
 import {
   type IRoomPlayersMetadata,
   type IGameMetadata,
@@ -31,6 +29,7 @@ import { Button } from "~/components/ui/button";
 import { useRouter } from "next/router";
 import { avatarPaths } from "~/utils/avatarPaths";
 import { oklchToDeckHueRotations } from "~/utils/oklchToDeckHueRotations";
+import { useMainStore } from "~/stores/MainStore";
 
 const filter = new Filter();
 
@@ -67,8 +66,6 @@ function CreateRoom() {
   const { isSignedIn } = useAuth();
   const { push } = useRouter();
 
-  const userID = useUserIDContext();
-
   const {
     roomConfig,
     setRoomConfig,
@@ -79,7 +76,19 @@ function CreateRoom() {
     friendData,
     setGameData,
     viewportLabel,
-  } = useRoomContext();
+    userID,
+  } = useMainStore((state) => ({
+    roomConfig: state.roomConfig,
+    setRoomConfig: state.setRoomConfig,
+    playerMetadata: state.playerMetadata,
+    setPlayerMetadata: state.setPlayerMetadata,
+    connectedToRoom: state.connectedToRoom,
+    setConnectedToRoom: state.setConnectedToRoom,
+    friendData: state.friendData,
+    setGameData: state.setGameData,
+    viewportLabel: state.viewportLabel,
+    userID: state.userID,
+  }));
 
   const leaveRoom = useLeaveRoom({
     routeToNavigateTo: connectedToRoom ? "/create" : "/",

@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useRoomContext } from "~/context/RoomContext";
+import { useMainStore } from "~/stores/MainStore";
 
 // An AudioContext is not allowed to be created before a user gesture
 export function useInitializeAudioContext() {
@@ -8,7 +8,12 @@ export function useInitializeAudioContext() {
     setAudioContext,
     masterVolumeGainNode,
     setMasterVolumeGainNode,
-  } = useRoomContext();
+  } = useMainStore((state) => ({
+    audioContext: state.audioContext,
+    setAudioContext: state.setAudioContext,
+    masterVolumeGainNode: state.masterVolumeGainNode,
+    setMasterVolumeGainNode: state.setMasterVolumeGainNode,
+  }));
 
   useEffect(() => {
     if (audioContext && masterVolumeGainNode) return;

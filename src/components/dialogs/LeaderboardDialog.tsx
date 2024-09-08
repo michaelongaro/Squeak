@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { api } from "~/utils/api";
 import PlayerIcon from "../playerIcons/PlayerIcon";
 import { IoClose, IoStatsChart } from "react-icons/io5";
-import { useRoomContext } from "~/context/RoomContext";
+
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { Button } from "~/components/ui/button";
 import {
@@ -18,6 +18,7 @@ import {
   DialogDescription,
   DialogTitle,
 } from "~/components/ui/dialog";
+import { useMainStore } from "~/stores/MainStore";
 
 const orderValues = [
   "1st",
@@ -47,7 +48,9 @@ interface ILeaderboardDialog {
 function LeaderboardDialog({ setShowDialog }: ILeaderboardDialog) {
   const { data: leaderboardStats } = api.users.getLeaderboardStats.useQuery();
 
-  const { viewportLabel } = useRoomContext();
+  const { viewportLabel } = useMainStore((state) => ({
+    viewportLabel: state.viewportLabel,
+  }));
 
   const [currentlySelectedIndex, setCurrentlySelectedIndex] =
     useState<number>(0);

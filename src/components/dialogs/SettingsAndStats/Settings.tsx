@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useUserIDContext } from "../../../context/UserIDContext";
 import {
   type IRoomPlayersMetadata,
   type IRoomPlayer,
@@ -23,6 +22,7 @@ import { Button } from "~/components/ui/button";
 import { FaTrashAlt } from "react-icons/fa";
 import { api } from "~/utils/api";
 import { useAuth } from "@clerk/nextjs";
+import { useMainStore } from "~/stores/MainStore";
 
 const filter = new Filter();
 
@@ -49,8 +49,11 @@ function Settings({
   setUsernameIsProfane,
   saveButtonText,
 }: ISettings) {
-  const userID = useUserIDContext();
   const { signOut } = useAuth();
+
+  const { userID } = useMainStore((state) => ({
+    userID: state.userID,
+  }));
 
   const { mutate: deleteUser } = api.users.delete.useMutation({
     onSuccess: async () => {

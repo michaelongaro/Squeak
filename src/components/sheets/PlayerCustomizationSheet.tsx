@@ -8,15 +8,18 @@ import {
   SheetPortal,
   SheetTrigger,
 } from "~/components/ui/sheet";
-import { useRoomContext } from "~/context/RoomContext";
+
 import PlayerCustomizationPicker from "../playerIcons/PlayerCustomizationPicker";
 import PlayerCustomizationPreview from "../playerIcons/PlayerCustomizationPreview";
 import { IoIosArrowForward } from "react-icons/io";
+import { useMainStore } from "~/stores/MainStore";
 
 const viewLabels = ["avatar", "front", "back"] as const;
 
 function PlayerCustomizationSheet() {
-  const { playerMetadata } = useRoomContext();
+  const { playerMetadata } = useMainStore((state) => ({
+    playerMetadata: state.playerMetadata,
+  }));
 
   const [renderedView, setRenderedView] = useState<
     "avatar" | "front" | "back"
