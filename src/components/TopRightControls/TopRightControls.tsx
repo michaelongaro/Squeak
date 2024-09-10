@@ -1390,6 +1390,7 @@ function SheetSettings({
           </AlertDialog>
 
           <Button
+            variant={"outline"}
             disabled={
               !ableToSave || usernameIsProfane || saveButtonText === "Saving"
             }
@@ -2201,7 +2202,7 @@ function WhilePlayingSheet({
             <Button
               variant={"outline"}
               onClick={() => setShowTutorialDialog(true)}
-              className="baseFlex z-[500] gap-2 bg-white/85 active:brightness-75"
+              className="baseFlex z-[500] gap-2"
             >
               <MdQuestionMark size={"1.5rem"} />
               Rules
@@ -2226,7 +2227,7 @@ function WhilePlayingSheet({
             </AlertDialogHeader>
             <AlertDialogFooter className="baseFlex mt-4 !flex-row gap-8">
               <AlertDialogCancel asChild>
-                <Button variant={"secondary"} className="m-0 w-24">
+                <Button variant={"outline"} className="m-0 w-24">
                   Cancel
                 </Button>
               </AlertDialogCancel>
