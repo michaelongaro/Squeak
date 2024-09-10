@@ -9,8 +9,6 @@ function useStartAnotherRoundHandler() {
 
   const {
     roomConfig,
-    gameData,
-    playerMetadata,
     setGameData,
     setShowScoreboard,
     setShowShufflingCountdown,
@@ -33,7 +31,9 @@ function useStartAnotherRoundHandler() {
     if (dataFromBackend !== null) {
       setDataFromBackend(null);
 
-      setGameData(dataFromBackend.gameData);
+      const { gameData, roomCode } = dataFromBackend;
+
+      setGameData(gameData);
 
       setShowScoreboard(false);
 
@@ -43,7 +43,7 @@ function useStartAnotherRoundHandler() {
         // only want one "startGame" event to be emitted
         if (roomConfig.hostUserID === userID) {
           socket.volatile.emit("startGame", {
-            roomCode: dataFromBackend.roomCode,
+            roomCode,
             firstRound: false,
           });
         }
@@ -54,9 +54,7 @@ function useStartAnotherRoundHandler() {
     setShowScoreboard,
     setShowShufflingCountdown,
     setGameData,
-    playerMetadata,
     roomConfig,
-    gameData,
     userID,
   ]);
 }
