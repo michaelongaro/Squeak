@@ -14,7 +14,11 @@ import {
 } from "~/components/ui/alert-dialog";
 import { AnimatePresence, motion } from "framer-motion";
 import { type ILocalPlayerSettings } from "./UserSettingsAndStatisticsDialog";
-import Filter from "bad-words";
+import {
+  RegExpMatcher,
+  englishDataset,
+  englishRecommendedTransformers,
+} from "obscenity";
 import { Switch } from "~/components/ui/switch";
 import { Label } from "~/components/ui/label";
 import { Input } from "~/components/ui/input";
@@ -24,7 +28,10 @@ import { FaTrashAlt } from "react-icons/fa";
 import { api } from "~/utils/api";
 import { useAuth } from "@clerk/nextjs";
 
-const filter = new Filter();
+const obscenityMatcher = new RegExpMatcher({
+  ...englishDataset.build(),
+  ...englishRecommendedTransformers,
+});
 
 interface ISettings {
   localPlayerMetadata: IRoomPlayersMetadata;
@@ -93,7 +100,7 @@ function Settings({
               onFocus={() => setFocusedInInput(true)}
               onBlur={() => setFocusedInInput(false)}
               onChange={(e) => {
-                setUsernameIsProfane(filter.isProfane(e.target.value));
+                setUsernameIsProfane(obscenityMatcher.hasMatch(e.target.value));
 
                 setLocalPlayerMetadata((prevMetadata) => ({
                   ...prevMetadata,

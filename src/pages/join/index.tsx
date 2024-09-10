@@ -1,5 +1,4 @@
 import { useAuth } from "@clerk/nextjs";
-import Filter from "bad-words";
 import { AnimatePresence, motion } from "framer-motion";
 import { useCallback, useEffect, useState } from "react";
 import { IoHome } from "react-icons/io5";
@@ -20,8 +19,16 @@ import {
 } from "../../pages/api/socket";
 import { useRouter } from "next/router";
 import { type IRoomConfig } from "~/pages/create";
+import {
+  RegExpMatcher,
+  englishDataset,
+  englishRecommendedTransformers,
+} from "obscenity";
 
-const filter = new Filter();
+const obscenityMatcher = new RegExpMatcher({
+  ...englishDataset.build(),
+  ...englishRecommendedTransformers,
+});
 
 function JoinRoom() {
   const { isSignedIn } = useAuth();
@@ -224,7 +231,9 @@ function JoinRoom() {
                   onFocus={() => setFocusedInInput(true)}
                   onBlur={() => setFocusedInInput(false)}
                   onChange={(e) => {
-                    setUsernameIsProfane(filter.isProfane(e.target.value));
+                    setUsernameIsProfane(
+                      obscenityMatcher.hasMatch(e.target.value),
+                    );
 
                     if (!isSignedIn) {
                       localStorage.setItem("squeak-username", e.target.value);

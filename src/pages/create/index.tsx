@@ -21,7 +21,11 @@ import { BiArrowBack } from "react-icons/bi";
 import AnimatedNumbers from "~/components/ui/AnimatedNumbers";
 import { AnimatePresence, motion } from "framer-motion";
 import { Input } from "~/components/ui/input";
-import Filter from "bad-words";
+import {
+  RegExpMatcher,
+  englishDataset,
+  englishRecommendedTransformers,
+} from "obscenity";
 import useLeaveRoom from "../../hooks/useLeaveRoom";
 import PlayerCustomizationPopover from "~/components/popovers/PlayerCustomizationPopover";
 import PlayerCustomizationPreview from "~/components/playerIcons/PlayerCustomizationPreview";
@@ -32,7 +36,10 @@ import { useRouter } from "next/router";
 import { avatarPaths } from "~/utils/avatarPaths";
 import { oklchToDeckHueRotations } from "~/utils/oklchToDeckHueRotations";
 
-const filter = new Filter();
+const obscenityMatcher = new RegExpMatcher({
+  ...englishDataset.build(),
+  ...englishRecommendedTransformers,
+});
 
 const botNames = [
   "Bot Eric",
@@ -369,7 +376,9 @@ function CreateRoom() {
                   onFocus={() => setFocusedInInput(true)}
                   onBlur={() => setFocusedInInput(false)}
                   onChange={(e) => {
-                    setUsernameIsProfane(filter.isProfane(e.target.value));
+                    setUsernameIsProfane(
+                      obscenityMatcher.hasMatch(e.target.value),
+                    );
 
                     if (!isSignedIn) {
                       localStorage.setItem("squeak-username", e.target.value);

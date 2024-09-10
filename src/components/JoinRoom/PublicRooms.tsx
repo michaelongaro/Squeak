@@ -4,7 +4,11 @@ import { useUserIDContext } from "../../context/UserIDContext";
 import { useRoomContext } from "../../context/RoomContext";
 import { api } from "~/utils/api";
 import { HiOutlineRefresh } from "react-icons/hi";
-import Filter from "bad-words";
+import {
+  RegExpMatcher,
+  englishDataset,
+  englishRecommendedTransformers,
+} from "obscenity";
 import { Button } from "~/components/ui/button";
 import { FaUsers } from "react-icons/fa";
 import { BiArrowBack } from "react-icons/bi";
@@ -13,7 +17,10 @@ import { TbCards } from "react-icons/tb";
 import { useRouter } from "next/router";
 import { AnimatePresence, motion } from "framer-motion";
 
-const filter = new Filter();
+const obscenityMatcher = new RegExpMatcher({
+  ...englishDataset.build(),
+  ...englishRecommendedTransformers,
+});
 
 function PublicRooms() {
   const userID = useUserIDContext();
@@ -169,7 +176,7 @@ function PublicRooms() {
                           variant={"secondary"}
                           disabled={
                             playerMetadata[userID]?.username.length === 0 ||
-                            filter.isProfane(
+                            obscenityMatcher.hasMatch(
                               playerMetadata[userID]?.username ?? "",
                             ) ||
                             showExitRoomSpinnerIndex !== -1

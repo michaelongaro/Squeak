@@ -16,7 +16,11 @@ import { Button } from "~/components/ui/button";
 import { socket } from "~/pages/_app";
 import { api } from "~/utils/api";
 import { useRoomContext } from "../../context/RoomContext";
-import Filter from "bad-words";
+import {
+  RegExpMatcher,
+  englishDataset,
+  englishRecommendedTransformers,
+} from "obscenity";
 import { useUserIDContext } from "../../context/UserIDContext";
 import useLeaveRoom from "../../hooks/useLeaveRoom";
 import {
@@ -29,7 +33,10 @@ import { Input } from "~/components/ui/input";
 import UnableToJoinRoom from "~/components/Play/UnableToJoinRoom";
 import AnimatedNumbers from "~/components/ui/AnimatedNumbers";
 
-const filter = new Filter();
+const obscenityMatcher = new RegExpMatcher({
+  ...englishDataset.build(),
+  ...englishRecommendedTransformers,
+});
 
 function JoinRoom() {
   const { isLoaded, isSignedIn } = useAuth();
@@ -328,7 +335,9 @@ function JoinRoom() {
                       }
                     }}
                     onChange={(e) => {
-                      setUsernameIsProfane(filter.isProfane(e.target.value));
+                      setUsernameIsProfane(
+                        obscenityMatcher.hasMatch(e.target.value),
+                      );
 
                       setUsername(e.target.value);
                     }}

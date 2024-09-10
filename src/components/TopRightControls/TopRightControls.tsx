@@ -57,7 +57,11 @@ import { IoStatsChart } from "react-icons/io5";
 import PlayerCustomizationPreview from "../playerIcons/PlayerCustomizationPreview";
 import PlayerCustomizationPicker from "../playerIcons/PlayerCustomizationPicker";
 import { useUserIDContext } from "~/context/UserIDContext";
-import Filter from "bad-words";
+import {
+  RegExpMatcher,
+  englishDataset,
+  englishRecommendedTransformers,
+} from "obscenity";
 import PlayerIcon from "../playerIcons/PlayerIcon";
 import { type User } from "@prisma/client";
 import { Dialog, DialogTrigger } from "~/components/ui/dialog";
@@ -84,7 +88,10 @@ import {
 } from "react-icons/tb";
 import TutorialDialog from "~/components/dialogs/TutorialDialog";
 
-const filter = new Filter();
+const obscenityMatcher = new RegExpMatcher({
+  ...englishDataset.build(),
+  ...englishRecommendedTransformers,
+});
 
 type allViewLabels =
   | "Settings"
@@ -1147,7 +1154,7 @@ function SheetSettings({
               onFocus={() => setFocusedInInput(true)}
               onBlur={() => setFocusedInInput(false)}
               onChange={(e) => {
-                setUsernameIsProfane(filter.isProfane(e.target.value));
+                setUsernameIsProfane(obscenityMatcher.hasMatch(e.target.value));
 
                 setLocalPlayerMetadata((prevMetadata) => ({
                   ...prevMetadata,
