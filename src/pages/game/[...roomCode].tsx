@@ -8,8 +8,6 @@ import ShufflingCountdownDialog from "~/components/dialogs/ShufflingCountdownDia
 import useStartAnotherRoundHandler from "../../hooks/useStartAnotherRoundHandler";
 import useReturnToRoomHandler from "../../hooks/useReturnToRoomHandler";
 import { AnimatePresence, motion } from "framer-motion";
-import { useUserIDContext } from "../../context/UserIDContext";
-import { useRoomContext } from "../../context/RoomContext";
 import useResetDeckFromCardDraw from "../../hooks/useResetDeckFromCardDraw";
 import useScoreboardData from "../../hooks/useScoreboardData";
 import OtherPlayerIcons from "~/components/Play/OtherPlayerIcons";
@@ -38,10 +36,10 @@ import {
 } from "react-icons/tb";
 import { Button } from "~/components/ui/button";
 import TutorialDialog from "~/components/dialogs/TutorialDialog";
+import { useMainStore } from "~/stores/MainStore";
 
 function Play() {
   const { isLoaded } = useAuth();
-  const userID = useUserIDContext();
   const { query } = useRouter();
 
   const roomCode = query?.roomCode?.[0];
@@ -62,7 +60,25 @@ function Play() {
     setShowScoreboard,
     playerPing,
     setPlayerPing,
-  } = useRoomContext();
+    userID,
+  } = useMainStore((state) => ({
+    roomConfig: state.roomConfig,
+    gameData: state.gameData,
+    playerMetadata: state.playerMetadata,
+    setGameData: state.setGameData,
+    showScoreboard: state.showScoreboard,
+    setShowShufflingCountdown: state.setShowShufflingCountdown,
+    showShufflingCountdown: state.showShufflingCountdown,
+    voteType: state.voteType,
+    showVotingDialog: state.showVotingDialog,
+    setShowVotingDialog: state.setShowVotingDialog,
+    connectedToRoom: state.connectedToRoom,
+    viewportLabel: state.viewportLabel,
+    setShowScoreboard: state.setShowScoreboard,
+    playerPing: state.playerPing,
+    setPlayerPing: state.setPlayerPing,
+    userID: state.userID,
+  }));
 
   const { data: roomResult } = api.rooms.findRoomByCode.useQuery(
     {
