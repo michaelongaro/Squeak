@@ -325,50 +325,47 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
             }}
             className={`${classes.playerHand} cardDimensions relative select-none transition-opacity`}
           >
-            <>
-              {gameData.players[userID]?.hand.map(
-                (card, idx) =>
-                  card !== null && (
-                    <div
-                      key={`${userID}handCard${card.suit}${card.value}`}
-                      className="absolute left-0 top-0 select-none"
-                      onPointerEnter={() => {
-                        setHoveringOverDeck(false);
-                      }}
-                      onPointerDown={() => {
-                        if (idx === gameData.players[userID]!.hand.length - 1)
-                          setHoldingADeckCard(true);
-                      }}
-                      onPointerUp={() => {
-                        // pointer events fire before the drop event in <Card />,
-                        // so just waiting for next event loop tick
-                        setTimeout(() => {
-                          setHoldingADeckCard(false);
-                        }, 0);
-                      }}
-                    >
-                      <Card
-                        value={card.value}
-                        suit={card.suit}
-                        showCardBack={false} // TODO TODO TODO TODO TODO
-                        draggable={
-                          idx === gameData.players[userID]!.hand.length - 1
-                        }
-                        origin={"hand"}
-                        ownerID={userID}
-                        hueRotation={
-                          playerMetadata[userID]?.deckHueRotation || 0
-                        }
-                        startID={`${userID}hand`}
-                        rotation={0}
-                      />
-                    </div>
-                  ),
-              )}
-            </>
+            {gameData.players[userID]?.hand.map(
+              (card, idx) =>
+                card !== null && (
+                  <div
+                    key={`${userID}handCard${card.suit}${card.value}`}
+                    className="absolute left-0 top-0 select-none"
+                    onPointerEnter={() => {
+                      setHoveringOverDeck(false);
+                    }}
+                    onPointerDown={() => {
+                      if (idx === gameData.players[userID]!.hand.length - 1)
+                        setHoldingADeckCard(true);
+                    }}
+                    onPointerUp={() => {
+                      // pointer events fire before the drop event in <Card />,
+                      // so just waiting for next event loop tick
+                      setTimeout(() => {
+                        setHoldingADeckCard(false);
+                      }, 0);
+                    }}
+                  >
+                    <Card
+                      value={card.value}
+                      suit={card.suit}
+                      draggable={
+                        idx === gameData.players[userID]!.hand.length - 1
+                      }
+                      origin={"hand"}
+                      ownerID={userID}
+                      hueRotation={playerMetadata[userID]?.deckHueRotation || 0}
+                      startID={`${userID}hand`}
+                      rotation={0}
+                    />
+                  </div>
+                ),
+            )}
           </div>
 
-          <div className={`${classes.playerDeck} cardDimensions select-none`}>
+          <div
+            className={`${classes.playerDeck} cardDimensions select-none ${currentPlayerIsDrawingFromDeck ? "z-[100]" : ""}`}
+          >
             <div
               id={`${userID}deck`}
               style={{
@@ -482,22 +479,30 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.75 }}
                     transition={{ duration: 0.325 }}
-                    className="grid cursor-pointer select-none grid-cols-1 items-center justify-items-center"
+                    className="baseFlex cursor-pointer select-none"
                   >
-                    <div className="col-start-1 row-start-1 select-none">
-                      <FaRedoAlt className="size-6 scale-x-flip" />
-                    </div>
-                    <div className="col-start-1 row-start-1 select-none opacity-25">
-                      <Card
-                        showCardBack={true}
-                        draggable={false}
-                        ownerID={userID}
-                        hueRotation={
-                          playerMetadata[userID]?.deckHueRotation || 0
-                        }
-                        startID={`${userID}deck`}
-                        rotation={0}
-                      />
+                    <div
+                      style={{
+                        transform: pointerDownOnDeck ? "scale(0.95)" : "none",
+                        transition: "transform 150ms ease-in-out",
+                      }}
+                      className="grid grid-cols-1 items-center justify-items-center"
+                    >
+                      <div className="col-start-1 row-start-1 select-none">
+                        <FaRedoAlt className="size-6 scale-x-flip" />
+                      </div>
+                      <div className="col-start-1 row-start-1 select-none opacity-25">
+                        <Card
+                          showCardBack={true}
+                          draggable={false}
+                          ownerID={userID}
+                          hueRotation={
+                            playerMetadata[userID]?.deckHueRotation || 0
+                          }
+                          startID={`${userID}deck`}
+                          rotation={0}
+                        />
+                      </div>
                     </div>
                   </motion.div>
                 )}
