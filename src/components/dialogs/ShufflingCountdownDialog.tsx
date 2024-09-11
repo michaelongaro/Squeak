@@ -95,7 +95,7 @@ function ShufflingCountdownDialog() {
 
             <AnimatedNumbers
               value={countdownTimerValue}
-              padding={2}
+              padding={7}
               fontSize={18}
             />
           </div>
