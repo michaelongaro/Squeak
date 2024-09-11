@@ -220,7 +220,7 @@ function useCardDropApproved({
         },
       });
 
-      if (playerID === userID) {
+      if (endID.includes("cell") && playerID === userID) {
         setProposedCardBoxShadow({
           id: endID,
           boxShadowValue: `0px 0px 4px 3px hsl(120, 100%, 86%)`,
