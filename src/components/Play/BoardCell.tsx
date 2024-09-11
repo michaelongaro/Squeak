@@ -1,15 +1,8 @@
-import Card from "./Card";
 import { AnimatePresence, motion } from "framer-motion";
 import { type ICard } from "../../utils/generateDeckAndSqueakCards";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-
-interface IBoardCell {
-  card: ICard | null;
-  rowIdx: number;
-  colIdx: number;
-  plusOneIndicatorID: string | null;
-}
+import StaticCard from "~/components/Play/StaticCard";
 
 export interface IGetBoxShadowStyles {
   id: string;
@@ -18,7 +11,21 @@ export interface IGetBoxShadowStyles {
   squeakStackIdx?: number;
 }
 
-function BoardCell({ card, rowIdx, colIdx, plusOneIndicatorID }: IBoardCell) {
+interface IBoardCell {
+  card: ICard | null;
+  rowIdx: number;
+  colIdx: number;
+  plusOneIndicatorID: string | null;
+  deckVariantIndex: number;
+}
+
+function BoardCell({
+  card,
+  rowIdx,
+  colIdx,
+  plusOneIndicatorID,
+  deckVariantIndex,
+}: IBoardCell) {
   const [absoluteTopLeftOffset, setAbsoluteTopLeftOffset] = useState<{
     x: number;
     y: number;
@@ -59,13 +66,10 @@ function BoardCell({ card, rowIdx, colIdx, plusOneIndicatorID }: IBoardCell) {
             transition={{ duration: 0.55 }}
             className="relative h-full w-full select-none"
           >
-            <Card
-              value={card.value}
+            <StaticCard
               suit={card.suit}
-              showCardBack={false}
-              draggable={false}
-              hueRotation={0}
-              rotation={0}
+              value={card.value}
+              deckVariantIndex={deckVariantIndex}
             />
           </motion.div>
         )}

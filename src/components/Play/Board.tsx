@@ -3,7 +3,6 @@ import { useRoomContext } from "../../context/RoomContext";
 import useTrackHoverOverBoardCells from "../../hooks/useTrackHoverOverBoardCells";
 import BoardCell from "./BoardCell";
 import classes from "./Play.module.css";
-import { createPortal } from "react-dom";
 export interface IGetBoxShadowStyles {
   id: string;
   rowIdx?: number;
@@ -19,6 +18,7 @@ function Board() {
     proposedCardBoxShadow,
     hoveredCell,
     setProposedCardBoxShadow,
+    deckVariantIndex,
   } = useRoomContext();
 
   useTrackHoverOverBoardCells();
@@ -106,6 +106,7 @@ function Board() {
                   colIdx={colIdx}
                   card={cell}
                   plusOneIndicatorID={plusOneIndicatorID}
+                  deckVariantIndex={deckVariantIndex}
                 />
               </div>
             </div>

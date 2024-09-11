@@ -10,10 +10,10 @@ import {
 import { avatarPaths } from "../../utils/avatarPaths";
 import { deckHueRotations } from "../../utils/deckHueRotations";
 import { oklchToDeckHueRotations } from "../../utils/oklchToDeckHueRotations";
-import Card from "../Play/Card";
 import { type ILocalPlayerSettings } from "../dialogs/SettingsAndStats/UserSettingsAndStatisticsDialog";
 import PlayerIcon from "./PlayerIcon";
 import { updateLocalStoragePlayerMetadata } from "~/utils/updateLocalStoragePlayerMetadata";
+import StaticCard from "~/components/Play/StaticCard";
 
 interface IPlayerCustomizationPicker {
   type: "avatar" | "back" | "front";
@@ -319,16 +319,13 @@ function PlayerCustomizationPicker({
                 scaledDownElementIndex === index ? "scale-95" : ""
               }`}
             >
-              <Card
-                value={"8"}
+              <StaticCard
                 suit={"C"}
+                value={"8"}
+                deckVariantIndex={index}
                 showCardBack={false}
-                draggable={false}
-                rotation={0}
                 width={64}
                 height={87}
-                hueRotation={0}
-                manuallyShowSpecificCardFront={index}
               />
             </div>
           </div>
@@ -425,17 +422,18 @@ function PlayerCustomizationPicker({
         <div
           className={`transition-transform ${scaledDownElementIndex === index ? "scale-95" : ""}`}
         >
-          <Card
-            showCardBack={true}
-            draggable={false}
-            rotation={0}
-            width={64}
-            height={87}
+          <StaticCard
+            suit={"C"}
+            value={"8"}
+            deckVariantIndex={deckVariantIndex}
             hueRotation={
               oklchToDeckHueRotations[
                 color as keyof typeof oklchToDeckHueRotations // seems hacky
               ]
             }
+            showCardBack={true}
+            width={64}
+            height={87}
           />
         </div>
 

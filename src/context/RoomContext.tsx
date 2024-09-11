@@ -19,7 +19,7 @@ import { useUserIDContext } from "./UserIDContext";
 import { api } from "~/utils/api";
 import useGetViewportLabel from "~/hooks/useGetViewportLabel";
 
-interface IHeldSqueakStackLocation {
+export interface IHeldSqueakStackLocation {
   [playerID: string]: {
     squeakStack: [number, number];
     location: { x: number; y: number };

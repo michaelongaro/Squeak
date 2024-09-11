@@ -1,9 +1,8 @@
-import React from "react";
-import Card from "../Play/Card";
 import PlayerIcon from "./PlayerIcon";
 import { useUserIDContext } from "~/context/UserIDContext";
 import { useRoomContext } from "~/context/RoomContext";
 import { type IRoomPlayersMetadata } from "~/pages/api/socket";
+import StaticCard from "~/components/Play/StaticCard";
 
 interface IPlayerCustomizationPicker {
   renderedView: "avatar" | "front" | "back";
@@ -59,15 +58,16 @@ function PlayerCustomizationPreview({
   } else if (renderedView === "back") {
     return (
       <>
-        <Card
-          draggable={false}
-          rotation={0}
+        <StaticCard
+          suit={"C"}
+          value={"8"}
+          deckVariantIndex={deckVariantIndex}
           showCardBack={true}
-          ownerID={userID}
-          width={48} // roughly correct for ratio of a card
-          height={64}
           hueRotation={playerMetadata[userID]?.deckHueRotation || 0}
+          width={48}
+          height={64}
         />
+
         {renderDescriptionText && (
           <p
             className={`${
@@ -85,18 +85,15 @@ function PlayerCustomizationPreview({
 
   return (
     <>
-      <Card
-        draggable={false}
-        rotation={0}
-        showCardBack={false}
-        ownerID={userID}
+      <StaticCard
         suit={"C"}
         value={"8"}
-        width={48} // roughly correct for ratio of a card
+        deckVariantIndex={deckVariantIndex}
+        showCardBack={false}
+        width={48}
         height={64}
-        hueRotation={playerMetadata[userID]?.deckHueRotation || 0}
-        manuallyShowSpecificCardFront={deckVariantIndex}
       />
+
       {renderDescriptionText && (
         <p
           className={`${

@@ -1,7 +1,10 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { socket } from "~/pages/_app";
 import { useUserIDContext } from "../../context/UserIDContext";
-import { useRoomContext } from "../../context/RoomContext";
+import {
+  type IHeldSqueakStackLocation,
+  useRoomContext,
+} from "../../context/RoomContext";
 import cardPlacementIsValid from "../../utils/cardPlacementIsValid";
 import useCardDrawFromDeck from "../../hooks/useCardDrawFromDeck";
 import useCardDrawFromSqueakDeck from "../../hooks/useCardDrawFromSqueakDeck";
@@ -11,21 +14,36 @@ import { adjustCoordinatesByRotation } from "../../utils/adjustCoordinatesByRota
 import { type StaticImageData } from "next/image";
 import { cardAssets } from "../../utils/cardAssetPaths";
 import useInitialCardDrawForSqueakStack from "~/hooks/useInitialCardDrawForSqueakStack";
+import { getCardAssetPath } from "~/utils/getCardAssetPath";
 
-interface ICardComponent {
-  value?: string;
-  suit?: string;
-  showCardBack?: boolean;
-  draggable: boolean;
-  origin?: "deck" | "hand" | "squeakHand" | "squeakDeck";
-  ownerID?: string;
-  startID?: string;
-  squeakStackLocation?: [number, number];
-  rotation: number;
-  hueRotation: number;
-  width?: number;
-  height?: number;
-  manuallyShowSpecificCardFront?: number;
+function getTransitionStyles(
+  inMovingSqueakStack: boolean,
+  holdingASqueakCard: boolean,
+  heldSqueakStackLocation: IHeldSqueakStackLocation | null,
+  cardOffsetPosition: { x: number; y: number },
+  ownerID: string | undefined,
+  userID: string,
+) {
+  let transitionStyles = "";
+
+  if (
+    inMovingSqueakStack &&
+    (!holdingASqueakCard ||
+      (heldSqueakStackLocation?.[ownerID || ""]?.location.x === 0 &&
+        heldSqueakStackLocation?.[ownerID || ""]?.location.y === 0) ||
+      (heldSqueakStackLocation?.[ownerID || ""]?.location.x ===
+        cardOffsetPosition.x &&
+        heldSqueakStackLocation?.[ownerID || ""]?.location.y ===
+          cardOffsetPosition.y))
+  ) {
+    transitionStyles = "transform 325ms ease-out";
+  } else if (ownerID === userID) {
+    transitionStyles = "filter 163ms ease-in-out";
+  } else {
+    transitionStyles = "none";
+  }
+
+  return transitionStyles;
 }
 
 interface IPosition {
@@ -47,6 +65,21 @@ export interface IMoveCard {
   callbackFunction?: () => void;
 }
 
+interface ICardComponent {
+  value?: string;
+  suit?: string;
+  showCardBack?: boolean;
+  draggable: boolean;
+  origin?: "deck" | "hand" | "squeakHand" | "squeakDeck";
+  ownerID?: string;
+  startID?: string;
+  squeakStackLocation?: [number, number];
+  rotation: number;
+  hueRotation: number;
+  width?: number;
+  height?: number;
+}
+
 function Card({
   value,
   suit,
@@ -60,7 +93,6 @@ function Card({
   hueRotation,
   width,
   height,
-  manuallyShowSpecificCardFront,
 }: ICardComponent) {
   const userID = useUserIDContext();
 
@@ -98,16 +130,19 @@ function Card({
   const cardRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
 
-  const inMovingSqueakStack =
-    (squeakStackLocation &&
-      heldSqueakStackLocation &&
-      ownerID &&
-      heldSqueakStackLocation[ownerID] &&
-      heldSqueakStackLocation[ownerID]!.squeakStack[0] ===
-        squeakStackLocation[0] &&
-      heldSqueakStackLocation[ownerID]!.squeakStack[1] <
-        squeakStackLocation[1]) ??
-    false;
+  const inMovingSqueakStack = (() => {
+    if (!squeakStackLocation || !ownerID || !heldSqueakStackLocation)
+      return false;
+
+    const location = heldSqueakStackLocation[ownerID];
+
+    if (!location) return false;
+
+    const [heldX, heldY] = location.squeakStack;
+    const [currentX, currentY] = squeakStackLocation;
+
+    return heldX === currentX && heldY < currentY;
+  })();
 
   const moveCard = useCallback(
     ({ newPosition, flip, rotate, callbackFunction }: IMoveCard) => {
@@ -750,43 +785,6 @@ function Card({
     };
   }, [isDragging, handleMouseMove, handleDragEnd, handleTouchMove]);
 
-  function getTransitionStyles() {
-    let transitionStyles = "";
-
-    if (
-      inMovingSqueakStack &&
-      (!holdingASqueakCard ||
-        (heldSqueakStackLocation?.[ownerID || ""]?.location.x === 0 &&
-          heldSqueakStackLocation?.[ownerID || ""]?.location.y === 0) ||
-        (heldSqueakStackLocation?.[ownerID || ""]?.location.x ===
-          cardOffsetPosition.x &&
-          heldSqueakStackLocation?.[ownerID || ""]?.location.y ===
-            cardOffsetPosition.y))
-    ) {
-      transitionStyles = "transform 325ms ease-out";
-    } else if (ownerID === userID) {
-      transitionStyles = "filter 163ms ease-in-out";
-    } else {
-      transitionStyles = "none";
-    }
-
-    return transitionStyles;
-  }
-
-  // TODO: this will need to be refactored for sure to have better DX
-  // than hardcoding the card asset path variations like this
-  function getCardAssetPath(): StaticImageData {
-    if (manuallyShowSpecificCardFront !== undefined) {
-      return cardAssets[
-        `${suit}${value}${manuallyShowSpecificCardFront === 1 ? "Simple" : ""}`
-      ] as StaticImageData;
-    }
-
-    return cardAssets[
-      `${suit}${value}${deckVariantIndex === 1 ? "Simple" : ""}`
-    ] as StaticImageData;
-  }
-
   return (
     <>
       {(showCardBack || value || suit) && (
@@ -795,7 +793,14 @@ function Card({
           style={{
             width: width,
             height: height,
-            transition: getTransitionStyles(),
+            transition: getTransitionStyles(
+              inMovingSqueakStack,
+              holdingASqueakCard,
+              heldSqueakStackLocation,
+              cardOffsetPosition,
+              ownerID,
+              userID,
+            ),
             willChange:
               cardOffsetPosition.x === 0 && cardOffsetPosition.y === 0
                 ? "auto"
@@ -846,7 +851,11 @@ function Card({
             src={
               showCardBack && !forceShowCardFront
                 ? (cardAssets["cardBack"] as StaticImageData).src
-                : getCardAssetPath().src
+                : getCardAssetPath({
+                    suit: suit ?? "C",
+                    value: value ?? "A",
+                    deckVariantIndex,
+                  }).src
             }
             alt={
               showCardBack && !forceShowCardFront

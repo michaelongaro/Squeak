@@ -1,9 +1,9 @@
 import { type ICard } from "../../../utils/generateDeckAndSqueakCards";
 import React, { useEffect } from "react";
 import { useRoomContext } from "../../../context/RoomContext";
-import Card from "../../Play/Card";
 import { motion, useAnimation } from "framer-motion";
 import { type IRoomPlayersMetadata } from "~/pages/api/socket";
+import StaticCard from "~/components/Play/StaticCard";
 
 interface IAnimatedCardContainer {
   cards: ICard[];
@@ -11,7 +11,7 @@ interface IAnimatedCardContainer {
 }
 
 function AnimatedCardContainer({ cards, playerID }: IAnimatedCardContainer) {
-  const { playerMetadata } = useRoomContext();
+  const { playerMetadata, deckVariantIndex } = useRoomContext();
 
   return (
     <div
@@ -30,6 +30,7 @@ function AnimatedCardContainer({ cards, playerID }: IAnimatedCardContainer) {
           playerID={playerID}
           index={index}
           totalCardsPlayed={cards.length}
+          deckVariantIndex={deckVariantIndex}
         />
       ))}
     </div>
@@ -44,6 +45,7 @@ interface IAnimatedCard {
   index: number;
   playerID: string;
   totalCardsPlayed: number;
+  deckVariantIndex: number;
 }
 
 function AnimatedCard({
@@ -51,6 +53,7 @@ function AnimatedCard({
   index,
   playerID,
   totalCardsPlayed,
+  deckVariantIndex,
 }: IAnimatedCard) {
   const { playerMetadata } = useRoomContext();
   const controls = useAnimation();
@@ -108,12 +111,10 @@ function AnimatedCard({
       }}
       animate={controls}
     >
-      <Card
-        value={card.value}
+      <StaticCard
         suit={card.suit}
-        draggable={false}
-        hueRotation={playerMetadata[playerID]?.deckHueRotation || 0}
-        rotation={0}
+        value={card.value}
+        deckVariantIndex={deckVariantIndex}
       />
     </motion.div>
   );

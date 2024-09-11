@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useUserIDContext } from "../../context/UserIDContext";
 import { useRoomContext } from "../../context/RoomContext";
-import Card from "../Play/Card";
 import { motion, useAnimation } from "framer-motion";
 import AnimatedNumbers from "~/components/ui/AnimatedNumbers";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
@@ -10,6 +9,7 @@ import {
   DialogDescription,
   DialogTitle,
 } from "~/components/ui/dialog";
+import StaticCard from "~/components/Play/StaticCard";
 
 const deck = Array.from({ length: 15 }, () => ({ suit: "S", value: "2" }));
 const repeatCount = 2;
@@ -226,13 +226,12 @@ function AnimatedShufflingCard({
       }}
       id={`animatedShufflingCard${index}`}
     >
-      <Card
-        value={"2"}
-        suit={"S"}
-        draggable={false}
+      <StaticCard
+        value={"2"} // not important, placeholder vals
+        suit={"S"} // not important, placeholder vals
+        deckVariantIndex={0} // not important, placeholder vals
         showCardBack={true}
         hueRotation={hueRotation}
-        rotation={0}
       />
     </motion.div>
   );
