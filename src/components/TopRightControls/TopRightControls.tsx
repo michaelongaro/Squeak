@@ -87,13 +87,14 @@ import {
   TbAntennaBars5,
 } from "react-icons/tb";
 import TutorialDialog from "~/components/dialogs/TutorialDialog";
+import FriendsListSheet from "~/components/sheets/FriendsListSheet";
 
 const obscenityMatcher = new RegExpMatcher({
   ...englishDataset.build(),
   ...englishRecommendedTransformers,
 });
 
-type allViewLabels =
+export type AllViewLabels =
   | "Settings"
   | "Statistics"
   | "Friends list"
@@ -188,9 +189,32 @@ function TopRightControls() {
           }`}
         >
           <SheetTrigger onClick={() => setShowSheet(true)}>
-            <IoSettingsSharp
-              className={`size-5 text-lightGreen transition-all duration-200 active:brightness-50 ${showSheet ? "rotate-[25deg]" : ""}`}
-            />
+            <div className="baseFlex relative">
+              <IoSettingsSharp
+                className={`size-5 text-lightGreen transition-all duration-200 active:brightness-50 ${showSheet ? "rotate-[25deg]" : ""}`}
+              />
+
+              <AnimatePresence mode={"wait"}>
+                {!asPath.includes("/game") && newInviteNotification && (
+                  <motion.div
+                    key={"friendsListInviteNotificationMobile"}
+                    initial={{ opacity: 0, scale: 0.5 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.5 }}
+                    transition={{ duration: 0.25 }}
+                    className="baseFlex absolute right-[-5px] top-[-5px] size-3"
+                  >
+                    <div
+                      style={{
+                        animationDuration: "2s",
+                      }}
+                      className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-500 opacity-75"
+                    ></div>
+                    <div className="relative size-3 rounded-[50%] bg-red-600"></div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           </SheetTrigger>
         </div>
         <SheetPortal>
@@ -208,7 +232,11 @@ function TopRightControls() {
                 setShowVotingOptionButtons={setShowVotingOptionButtons}
               />
             ) : (
-              <MainSheet user={user} setShowSheet={setShowSheet} />
+              <MainSheet
+                user={user}
+                setShowSheet={setShowSheet}
+                newInviteNotification={newInviteNotification}
+              />
             )}
           </SheetContent>
         </SheetPortal>
@@ -399,14 +427,20 @@ function TopRightControls() {
             {newInviteNotification && (
               <motion.div
                 key={"friendsListInviteNotification"}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.15 }}
-                className="absolute bottom-[-5px] right-[-5px] h-4 w-4 rounded-[50%] bg-red-600"
-
-                // TODO: probably add tw-pulse class to this
-              ></motion.div>
+                initial={{ opacity: 0, scale: 0.5 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.5 }}
+                transition={{ duration: 0.25 }}
+                className="baseFlex absolute right-[-5px] top-[-5px] size-4"
+              >
+                <div
+                  style={{
+                    animationDuration: "2s",
+                  }}
+                  className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-500 opacity-75"
+                ></div>
+                <div className="relative size-4 rounded-[50%] bg-red-600"></div>
+              </motion.div>
             )}
           </AnimatePresence>
 
@@ -744,19 +778,18 @@ function VotingDialogToast({
 interface IMainSheet {
   user: User | undefined | null;
   setShowSheet: React.Dispatch<React.SetStateAction<boolean>>;
+  newInviteNotification: boolean;
 }
 
-function MainSheet({ user, setShowSheet }: IMainSheet) {
+function MainSheet({ user, setShowSheet, newInviteNotification }: IMainSheet) {
   const { signOut } = useAuth();
 
-  const [renderedView, setRenderedView] = useState<allViewLabels | undefined>();
+  const [renderedView, setRenderedView] = useState<AllViewLabels | undefined>();
 
   const [localPlayerMetadata, setLocalPlayerMetadata] =
     useState<IRoomPlayersMetadata>({} as IRoomPlayersMetadata);
   const [localPlayerSettings, setLocalPlayerSettings] =
     useState<ILocalPlayerSettings>({} as ILocalPlayerSettings);
-
-  const [friendBeingViewed, setFriendBeingViewed] = useState<User | null>(null);
 
   function getSheetHeight() {
     switch (renderedView) {
@@ -808,7 +841,7 @@ function MainSheet({ user, setShowSheet }: IMainSheet) {
                   borderTopWidth: label === "Settings" ? "0px" : "1px",
                 }}
                 showArrow
-                className="baseFlex h-20 w-full !justify-start"
+                className="baseFlex relative h-20 w-full !justify-start"
                 onClick={() => setRenderedView(label)}
               >
                 <div className="baseFlex gap-4 text-lg font-semibold">
@@ -818,6 +851,28 @@ function MainSheet({ user, setShowSheet }: IMainSheet) {
                     <FaUserFriends size={"1.5rem"} />
                   )}
                   {label}
+                  {label === "Friends list" && newInviteNotification && (
+                    <AnimatePresence mode={"wait"}>
+                      {newInviteNotification && (
+                        <motion.div
+                          key={"friendsListInviteNotificationMobile"}
+                          initial={{ opacity: 0, scale: 0.5 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          exit={{ opacity: 0, scale: 0.5 }}
+                          transition={{ duration: 0.25 }}
+                          className="baseFlex size-3"
+                        >
+                          <div
+                            style={{
+                              animationDuration: "2s",
+                            }}
+                            className="absolute inline-flex size-3 animate-ping rounded-full bg-red-500 opacity-75"
+                          ></div>
+                          <div className="relative size-3 rounded-[50%] bg-red-600"></div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  )}
                 </div>
               </Button>
             ))}
@@ -888,10 +943,9 @@ function MainSheet({ user, setShowSheet }: IMainSheet) {
             )}
 
             {renderedView === "Friends list" && (
-              <SheetFriendsList
-                setRenderedView={setRenderedView}
-                setFriendBeingViewed={setFriendBeingViewed}
+              <FriendsListSheet
                 setShowSheet={setShowSheet}
+                setRenderedView={setRenderedView}
               />
             )}
           </motion.div>
@@ -938,27 +992,6 @@ function MainSheet({ user, setShowSheet }: IMainSheet) {
             />
           </motion.div>
         )}
-
-        {friendBeingViewed && renderedView === "Friend actions" && (
-          <motion.div
-            key={`friendActions`}
-            initial={{ opacity: 0, translateX: "100%" }}
-            animate={{ opacity: 1, translateX: "0%" }}
-            exit={{ opacity: 0, translateX: "100%" }}
-            transition={{
-              duration: 0.3,
-            }}
-            className={
-              "baseVertFlex relative h-full w-full !justify-end bg-zinc-200"
-            }
-          >
-            <FriendActions
-              friend={friendBeingViewed}
-              setRenderedView={setRenderedView}
-              setShowSheet={setShowSheet}
-            />
-          </motion.div>
-        )}
       </AnimatePresence>
     </div>
   );
@@ -974,7 +1007,7 @@ interface ISheetSettings {
     React.SetStateAction<ILocalPlayerSettings>
   >;
   setRenderedView: React.Dispatch<
-    React.SetStateAction<allViewLabels | undefined>
+    React.SetStateAction<AllViewLabels | undefined>
   >;
 }
 
@@ -1288,13 +1321,13 @@ function SheetSettings({
           />
         </div>
 
-        <div className="baseFlex w-full gap-4">
+        <div className="baseFlex my-4 w-full gap-4">
           <AlertDialog open={showDeleteUserDialog}>
             <AlertDialogTrigger asChild>
               <Button
                 variant={"destructive"}
                 disabled={saveButtonText !== "Save"}
-                className={`baseFlex h-12 gap-2 text-destructive`}
+                className={`baseFlex h-11 gap-2 text-destructive`}
                 onClick={() => setShowDeleteUserDialog(true)}
               >
                 Delete account
@@ -1398,7 +1431,7 @@ function SheetSettings({
               setSaveButtonText("Saving");
               updateUserHandler();
             }}
-            className="my-4 h-[2.75rem] w-[10rem] !py-6"
+            className="h-11 w-[10rem]"
           >
             <AnimatePresence mode={"popLayout"} initial={false}>
               <motion.div
@@ -1472,7 +1505,7 @@ interface IFilteredStats {
 
 interface ISheetStatistics {
   setRenderedView: React.Dispatch<
-    React.SetStateAction<allViewLabels | undefined>
+    React.SetStateAction<AllViewLabels | undefined>
   >;
 }
 
@@ -1548,522 +1581,6 @@ function SheetStatistics({ setRenderedView }: ISheetStatistics) {
             </div>
           </div>
         ))}
-      </div>
-    </>
-  );
-}
-
-interface ISheetFriendsList {
-  setRenderedView: React.Dispatch<
-    React.SetStateAction<allViewLabels | undefined>
-  >;
-  setFriendBeingViewed: React.Dispatch<React.SetStateAction<User | null>>;
-  setShowSheet: React.Dispatch<React.SetStateAction<boolean>>;
-}
-
-function SheetFriendsList({
-  setRenderedView,
-  setFriendBeingViewed,
-  setShowSheet,
-}: ISheetFriendsList) {
-  const userID = useUserIDContext();
-  const { push } = useRouter();
-
-  const {
-    playerMetadata,
-    connectedToRoom,
-    friendData,
-    newInviteNotification,
-    setNewInviteNotification,
-    roomConfig,
-    setConnectedToRoom,
-  } = useRoomContext();
-
-  // TODO: fix ergonomics around these queries. Currently can't fully disable
-  // queries based on friendData being undefined, since jsx below will infinitely
-  // render loading spinners
-
-  const { data: friends } = api.users.getUsersFromIDList.useQuery(
-    friendData?.friendIDs ?? [],
-    // {
-    //   enabled: Boolean(
-    //     (friendData?.friendIDs ? friendData.friendIDs.length : 0) > 0,
-    //   ),
-    // },
-  );
-  const { data: friendInviteIDs } = api.users.getUsersFromIDList.useQuery(
-    friendData?.friendInviteIDs ?? [],
-    // {
-    //   enabled: Boolean(
-    //     (friendData?.friendInviteIDs ? friendData.friendInviteIDs.length : 0) >
-    //       0,
-    //   ),
-    // },
-  );
-  const { data: roomInviteIDs } = api.users.getUsersFromIDList.useQuery(
-    friendData?.roomInviteIDs ?? [],
-    // {
-    //   enabled: Boolean(
-    //     (friendData?.roomInviteIDs ? friendData.roomInviteIDs.length : 0) > 0,
-    //   ),
-    // },
-  );
-
-  useEffect(() => {
-    // clears red notification dot if it exists
-    if (newInviteNotification) {
-      setNewInviteNotification(false);
-    }
-  }, [newInviteNotification, setNewInviteNotification]);
-
-  return (
-    <>
-      <div className="absolute left-0 top-0 z-10 h-8 w-full bg-zinc-200">
-        <Button
-          variant={"text"}
-          onClick={() => setRenderedView(undefined)}
-          className="baseFlex !absolute left-2 top-0 gap-2 !p-0 text-darkGreen"
-        >
-          <IoIosArrowForward size={"1rem"} className="rotate-180" />
-          Back
-        </Button>
-      </div>
-
-      <div className="baseVertFlex h-full w-11/12 max-w-[500px] !items-start !justify-start gap-2 overflow-y-auto pb-4 pt-12">
-        <div className="baseVertFlex w-full !items-start gap-2">
-          <div className="baseFlex mb-4 gap-2 border-b-2 border-darkGreen text-xl text-darkGreen">
-            <FiMail size={"1.5rem"} />
-            <div className="baseFlex gap-2">
-              Pending
-              <div className="baseFlex gap-[0.1rem]">
-                <div>(</div>
-                <div>
-                  {friendInviteIDs && roomInviteIDs
-                    ? friendInviteIDs.length + roomInviteIDs.length
-                    : 0}
-                </div>
-                <div>)</div>
-              </div>
-            </div>
-          </div>
-          {friendInviteIDs ? (
-            <div
-              style={{
-                padding: friendInviteIDs.length > 0 ? "0.5rem" : "0",
-              }}
-              className="baseVertFlex w-full !items-start !justify-start gap-4 overflow-auto"
-            >
-              {friendInviteIDs.map((friend, index) => (
-                <div
-                  key={friend.id}
-                  style={{
-                    zIndex: friendInviteIDs.length - index,
-                  }}
-                  className="baseFlex color-darkGreen w-full !justify-between gap-4"
-                >
-                  <div className="baseFlex gap-4">
-                    <PlayerIcon
-                      avatarPath={friend.avatarPath}
-                      borderColor={friend.color}
-                      size={"2.5rem"}
-                      transparentBackground
-                    />
-                    <div className="baseVertFlex !items-start font-semibold">
-                      {friend.username}
-                      <div className="text-sm opacity-80">friend invite</div>
-                    </div>
-                  </div>
-                  <div className="baseFlex gap-[0.75rem]">
-                    <Button
-                      variant={"secondary"}
-                      onClick={() =>
-                        socket.volatile.emit("modifyFriendData", {
-                          action: "acceptFriendInvite",
-                          initiatorID: userID,
-                          targetID: friend.id,
-                        })
-                      }
-                      className="gap-2 !p-2"
-                    >
-                      <AiOutlineCheck size={"1.25rem"} />
-                    </Button>
-
-                    <Button
-                      variant={"destructive"}
-                      onClick={() =>
-                        socket.volatile.emit("modifyFriendData", {
-                          action: "declineFriendInvite",
-                          initiatorID: userID,
-                          targetID: friend.id,
-                        })
-                      }
-                      className="gap-2 !p-2"
-                    >
-                      <AiOutlineClose size={"1.25rem"} />
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="baseFlex w-full">
-              <div
-                className="inline-block size-10 animate-spin rounded-full border-[2px] border-darkGreen border-t-transparent text-darkGreen"
-                role="status"
-                aria-label="loading"
-              >
-                <span className="sr-only">Loading...</span>
-              </div>
-            </div>
-          )}
-
-          {/* gating render until friendIDs appear so that it doesn't show loading circle
-            and the roomInvites at the same time */}
-          {friendInviteIDs &&
-            roomInviteIDs &&
-            roomInviteIDs.map((friend, index) => (
-              <div
-                key={friend.id}
-                style={{
-                  zIndex: roomInviteIDs.length - index,
-                }}
-                className="baseFlex color-darkGreen w-full !justify-between gap-4 p-2"
-              >
-                <div className="baseFlex gap-4 pl-2">
-                  <TbDoorEnter size={"2rem"} />
-                  <div className="baseVertFlex !items-start font-semibold">
-                    {friend.username}
-                    <div className="text-sm opacity-80">room invite</div>
-                  </div>
-                </div>
-                <div className="baseFlex gap-[0.75rem]">
-                  <Button
-                    variant={"secondary"}
-                    onClick={() => {
-                      // there are probably major redundancies here, but should work for now
-
-                      const roomCodeOfRoomBeingJoined = friend.roomCode;
-
-                      // if player has invite(s) to this room, remove them
-                      for (const friend of roomInviteIDs) {
-                        if (friend.roomCode === roomCodeOfRoomBeingJoined) {
-                          socket.volatile.emit("modifyFriendData", {
-                            action: "acceptRoomInvite",
-                            initiatorID: userID,
-                            targetID: friend.id,
-                            roomCode: friend.roomCode,
-                            currentRoomIsPublic: friend.currentRoomIsPublic,
-                          });
-                        }
-                      }
-
-                      if (connectedToRoom) {
-                        socket.volatile.emit("leaveRoom", {
-                          roomCode: roomConfig.code,
-                          userID,
-                          playerWasKicked: false,
-                        });
-                      }
-
-                      push(`/join/${roomCodeOfRoomBeingJoined}`);
-
-                      socket.volatile.emit("modifyFriendData", {
-                        action: "joinRoom",
-                        initiatorID: userID,
-                        roomCode: friend.roomCode,
-                        currentRoomIsPublic: friend.currentRoomIsPublic,
-                      });
-
-                      socket.volatile.emit("joinRoom", {
-                        userID,
-                        code: friend.roomCode,
-                        playerMetadata: playerMetadata[userID],
-                      });
-
-                      setConnectedToRoom(true);
-
-                      setShowSheet(false);
-                    }}
-                    className="gap-2 !p-2"
-                  >
-                    <AiOutlineCheck size={"1.25rem"} />
-                  </Button>
-
-                  <Button
-                    variant={"destructive"}
-                    onClick={() =>
-                      socket.volatile.emit("modifyFriendData", {
-                        action: "declineRoomInvite",
-                        initiatorID: userID,
-                        targetID: friend.id,
-                      })
-                    }
-                    className="gap-2 !p-2"
-                  >
-                    <AiOutlineClose size={"1.25rem"} />
-                  </Button>
-                </div>
-              </div>
-            ))}
-        </div>
-
-        <div className="baseVertFlex w-full !items-start gap-2">
-          <div className="baseFlex color-darkGreen mt-4 gap-2 border-b-2 border-darkGreen text-xl">
-            <FaUserFriends size={"1.5rem"} />
-            <div className="baseFlex text-darkGren gap-2">
-              Friends
-              {friends !== undefined && (
-                <div className="baseFlex gap-[0.1rem]">
-                  <div>(</div>
-                  <div>{friends.length}</div>
-                  <div>)</div>
-                </div>
-              )}
-            </div>
-          </div>
-          {friends ? (
-            <div className="baseVertFlex w-full !items-start !justify-start gap-4">
-              {friends
-                .sort(
-                  ({ online: onlineA = false }, { online: onlineB = false }) =>
-                    Number(onlineB) - Number(onlineA),
-                )
-                .map((friend, index) => (
-                  <Button
-                    key={friend.id}
-                    variant={"sheet"}
-                    style={{
-                      zIndex: friends.length - index,
-                    }}
-                    className="baseFlex !h-24 !justify-start gap-2 !rounded-md border-2 transition-all"
-                    onClick={() => {
-                      setRenderedView("Friend actions");
-                      setFriendBeingViewed(friend);
-                    }}
-                  >
-                    <div className="baseFlex gap-4">
-                      <PlayerIcon
-                        avatarPath={friend.avatarPath}
-                        borderColor={friend.color}
-                        size={"2.5rem"}
-                        onlineStatus={friend.online}
-                        transparentBackground
-                      />
-                      <div className="baseVertFlex !items-start text-darkGreen">
-                        {friend.username}
-                        {friend.online && (
-                          <div className="text-sm opacity-80">
-                            {friend.status}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </Button>
-                ))}
-            </div>
-          ) : (
-            <div className="baseFlex w-full">
-              <div
-                className="inline-block size-10 animate-spin rounded-full border-[2px] border-darkGreen border-t-transparent text-darkGreen"
-                role="status"
-                aria-label="loading"
-              >
-                <span className="sr-only">Loading...</span>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-    </>
-  );
-}
-
-interface IFriendActions {
-  friend: User;
-  setRenderedView: React.Dispatch<
-    React.SetStateAction<allViewLabels | undefined>
-  >;
-  setShowSheet: React.Dispatch<React.SetStateAction<boolean>>;
-}
-
-function FriendActions({
-  friend,
-  setRenderedView,
-  setShowSheet,
-}: IFriendActions) {
-  const userID = useUserIDContext();
-  const { push } = useRouter();
-
-  const [sendInviteInnerText, setSendInviteInnerText] = useState("Send invite");
-  const [buttonIsActive, setButtonIsActive] = useState(false);
-
-  const { playerMetadata, connectedToRoom, roomConfig, setConnectedToRoom } =
-    useRoomContext();
-
-  return (
-    <>
-      <div className="absolute left-0 top-0 z-10 h-8 w-full bg-zinc-200">
-        <Button
-          variant={"text"}
-          onClick={() => setRenderedView("Friends list")}
-          className="baseFlex !absolute left-2 top-0 gap-2 !p-0 text-darkGreen"
-        >
-          <IoIosArrowForward size={"1rem"} className="rotate-180" />
-          Back
-        </Button>
-      </div>
-
-      <div className="baseVertFlex w-full">
-        <div className="baseFlex mb-4 gap-4">
-          <PlayerIcon
-            avatarPath={friend.avatarPath}
-            borderColor={friend.color}
-            size={"2.5rem"}
-            onlineStatus={friend.online}
-            transparentBackground
-          />
-          <div className="baseVertFlex !items-start text-darkGreen">
-            {friend.username}
-            {friend.online && (
-              <div className="text-sm opacity-80">{friend.status}</div>
-            )}
-          </div>
-        </div>
-
-        <Button
-          variant="sheet"
-          disabled={
-            !friend.online ||
-            friend.status === "in a game" ||
-            !connectedToRoom ||
-            friend.roomCode === roomConfig.code
-          }
-          showArrow={false}
-          showCheckmark={sendInviteInnerText === "Invite sent!"}
-          className="h-16 border-t-[1px]"
-          onClick={() => {
-            socket.volatile.emit("modifyFriendData", {
-              action: "sendRoomInvite",
-              initiatorID: userID,
-              targetID: friend.id,
-            });
-            setSendInviteInnerText("Invite sent!");
-            setTimeout(() => {
-              setSendInviteInnerText("Send invite");
-            }, 1000);
-          }}
-        >
-          <div className="baseFlex w-full gap-4">
-            <FiMail size={"1.5rem"} />
-            <span>{sendInviteInnerText}</span>
-          </div>
-        </Button>
-
-        <Button
-          variant="sheet"
-          disabled={
-            !friend.online ||
-            friend.roomCode === null ||
-            friend.roomCode === roomConfig.code ||
-            friend.status === "in a game" ||
-            !friend.currentRoomIsPublic ||
-            friend.currentRoomIsFull === true
-          }
-          showArrow={false}
-          className="h-16 border-t-[1px]"
-          onClick={() => {
-            if (connectedToRoom) {
-              socket.volatile.emit("leaveRoom", {
-                roomCode: roomConfig.code,
-                userID,
-                playerWasKicked: false,
-              });
-            }
-
-            push(`/join/${friend.roomCode}`);
-
-            socket.volatile.emit("modifyFriendData", {
-              action: "joinRoom",
-              initiatorID: userID,
-              roomCode: friend.roomCode,
-              currentRoomIsPublic: friend.currentRoomIsPublic,
-            });
-
-            socket.volatile.emit("joinRoom", {
-              userID,
-              code: friend.roomCode,
-              playerMetadata: playerMetadata[userID],
-            });
-
-            setConnectedToRoom(true);
-
-            setShowSheet(false);
-          }}
-        >
-          <div className="baseFlex w-full gap-4">
-            <TbDoorEnter size={"1.5rem"} />
-            <span>Join room</span>
-          </div>
-        </Button>
-
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <Button
-              variant="sheet"
-              showArrow={false}
-              style={{
-                borderColor: buttonIsActive
-                  ? "hsl(0, 84%, 50%)"
-                  : "hsl(0, 84%, 60%)",
-                backgroundColor: buttonIsActive
-                  ? "hsl(0, 84%, 50%)"
-                  : "hsl(0, 84%, 95%)",
-                color: buttonIsActive ? "hsl(0, 84%, 80%)" : "hsl(0, 84%, 40%)",
-                filter: `brightness(${buttonIsActive ? "0.75" : "1"})`,
-              }}
-              className="h-16 border-t-[1px]"
-              onPointerDown={() => setButtonIsActive(true)}
-              onPointerUp={() => setButtonIsActive(false)}
-              onPointerLeave={() => setButtonIsActive(false)}
-            >
-              <div className="baseFlex gap-4">
-                <FaTrashAlt size={"1.25rem"} />
-                <span>Remove friend</span>
-              </div>
-            </Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Confirm friend deletion?</AlertDialogTitle>
-              <AlertDialogDescription>
-                You won&apos;t be able to undo this action.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter className="baseVertFlex gap-4">
-              <AlertDialogCancel asChild>
-                <Button variant={"secondary"} className="w-24">
-                  Cancel
-                </Button>
-              </AlertDialogCancel>
-              <AlertDialogAction asChild>
-                <Button
-                  variant={"destructive"}
-                  className="w-24"
-                  onClick={() => {
-                    socket.volatile.emit("modifyFriendData", {
-                      action: "removeFriend",
-                      initiatorID: userID,
-                      targetID: friend.id,
-                    });
-                    setRenderedView("Friends list");
-                  }}
-                >
-                  Confirm
-                </Button>
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
       </div>
     </>
   );

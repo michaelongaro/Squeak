@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { socket } from "~/pages/_app";
 import { api } from "~/utils/api";
 import { FiMail } from "react-icons/fi";
@@ -7,30 +7,42 @@ import { useUserIDContext } from "../../context/UserIDContext";
 import { useRoomContext } from "../../context/RoomContext";
 import PlayerIcon from "../playerIcons/PlayerIcon";
 import { AnimatePresence, motion } from "framer-motion";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "~/components/ui/accordion";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "~/components/ui/alert-dialog";
 import { AiOutlineCheck, AiOutlineClose } from "react-icons/ai";
 import { FaTrashAlt } from "react-icons/fa";
 import { TbDoorEnter } from "react-icons/tb";
-import useOnClickOutside from "../../hooks/useOnClickOutside";
 import { FaMagnifyingGlass } from "react-icons/fa6";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "~/components/ui/tooltip";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "~/components/ui/popover";
 import { Button } from "~/components/ui/button";
 import { useRouter } from "next/router";
+import { IoIosArrowForward } from "react-icons/io";
+import { type AllViewLabels } from "~/components/TopRightControls/TopRightControls";
 
-interface IFriendsList {
-  setShowFriendsListDialog: React.Dispatch<React.SetStateAction<boolean>>;
+interface IFriendsListSheet {
+  setShowSheet: React.Dispatch<React.SetStateAction<boolean>>;
+  setRenderedView: React.Dispatch<
+    React.SetStateAction<AllViewLabels | undefined>
+  >;
 }
 
-function FriendsList({ setShowFriendsListDialog }: IFriendsList) {
+function FriendsListSheet({
+  setShowSheet,
+  setRenderedView,
+}: IFriendsListSheet) {
   const userID = useUserIDContext();
   const { push } = useRouter();
 
@@ -61,10 +73,7 @@ function FriendsList({ setShowFriendsListDialog }: IFriendsList) {
     },
   );
 
-  const [openPopoverID, setOpenPopoverID] = useState("");
   const [viewState, setViewState] = useState<"friends" | "pending">("friends");
-
-  const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     // clears red notification dot if it exists
@@ -73,26 +82,31 @@ function FriendsList({ setShowFriendsListDialog }: IFriendsList) {
     }
   }, [newInviteNotification, setNewInviteNotification]);
 
-  useOnClickOutside({
-    ref: modalRef,
-    setShowDialog: setShowFriendsListDialog,
-  });
-
   return (
     <motion.div
-      key={"friendsListDialog"}
+      key={"friendsListSheet"}
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.95 }}
       transition={{ duration: 0.15 }}
-      ref={modalRef}
-      className="baseVertFlex absolute right-0 top-16 w-[400px] !items-start gap-2 rounded-md border-2 border-white bg-gradient-to-br from-green-800 to-green-850 shadow-lg"
+      className="baseVertFlex h-full w-full !items-start gap-2"
     >
-      <div className="baseFlex w-full border-b-2 border-white">
+      <div className="absolute left-0 top-0 z-10 h-8 w-full bg-zinc-200">
+        <Button
+          variant={"text"}
+          onClick={() => setRenderedView(undefined)}
+          className="baseFlex !absolute left-2 top-0 gap-2 !p-0 text-darkGreen"
+        >
+          <IoIosArrowForward size={"1rem"} className="rotate-180" />
+          Back
+        </Button>
+      </div>
+
+      <div className="baseFlex mt-10 w-full border-y-2 border-darkGreen">
         <Button
           variant={viewState === "friends" ? "default" : "secondary"}
           onClick={() => setViewState("friends")}
-          className="baseFlex w-[200px] gap-2 rounded-none rounded-tl-sm border-r-2 !border-none border-white font-medium"
+          className="baseFlex w-1/2 gap-2 rounded-none border-r-2 !border-none border-white font-medium"
         >
           <FaUserFriends size={"1.25rem"} />
           Friends
@@ -108,7 +122,7 @@ function FriendsList({ setShowFriendsListDialog }: IFriendsList) {
         <Button
           variant={viewState === "pending" ? "default" : "secondary"}
           onClick={() => setViewState("pending")}
-          className="baseFlex w-[200px] gap-2 rounded-none rounded-tr-sm !border-none font-medium"
+          className="baseFlex w-1/2 gap-2 rounded-none !border-none font-medium"
         >
           <FiMail size={"1.25rem"} />
           Pending
@@ -124,7 +138,7 @@ function FriendsList({ setShowFriendsListDialog }: IFriendsList) {
         </Button>
       </div>
 
-      <div className="baseVertFlex h-72 w-full !items-start !justify-start gap-2 overflow-hidden">
+      <div className="baseVertFlex h-full w-full !items-start !justify-start gap-2 overflow-hidden">
         <AnimatePresence mode={"popLayout"} initial={false}>
           {friends === undefined ||
           friendInviteIDs === undefined ||
@@ -135,7 +149,7 @@ function FriendsList({ setShowFriendsListDialog }: IFriendsList) {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.15 }}
-              className="baseFlex h-72 w-full"
+              className="baseFlex h-full w-full"
             >
               <div
                 className="inline-block size-8 animate-spin rounded-full border-[2px] border-lightGreen border-t-transparent text-lightGreen"
@@ -154,11 +168,11 @@ function FriendsList({ setShowFriendsListDialog }: IFriendsList) {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: "-15%" }}
                   transition={{ duration: 0.35, ease: "easeInOut" }}
-                  className="baseVertFlex min-h-72 w-full !items-start !justify-start gap-4 overflow-auto p-2"
+                  className="baseVertFlex min-h-full w-full !items-start !justify-start gap-4 overflow-auto p-2"
                 >
                   <>
                     {friends.length === 0 ? (
-                      <div className="baseVertFlex h-72 w-full gap-4 text-lightGreen">
+                      <div className="baseVertFlex h-full w-full gap-4 text-darkGreen">
                         <FaMagnifyingGlass className="size-6" />
                         You have no friends yet.
                       </div>
@@ -177,35 +191,42 @@ function FriendsList({ setShowFriendsListDialog }: IFriendsList) {
                               style={{
                                 zIndex: friends.length - index,
                               }}
-                              className="baseFlex w-full !justify-start gap-4 pl-2 transition-all"
+                              className="baseVertFlex w-full !items-start gap-4 transition-all"
                             >
-                              <div className="baseFlex !shrink-0 gap-4">
-                                <PlayerIcon
-                                  avatarPath={friend.avatarPath}
-                                  borderColor={friend.color}
-                                  size={"2.75rem"}
-                                  onlineStatus={friend.online}
-                                />
-                                <div className="baseVertFlex !items-start text-lightGreen">
-                                  {friend.username}
-                                  {friend.online && (
-                                    <div className="text-sm opacity-70">
-                                      {friend.status}
-                                    </div>
-                                  )}
-                                </div>
-                              </div>
-
-                              <div
-                                className={`baseFlex ${
-                                  friend.username.length > 13
-                                    ? "gap-2"
-                                    : "gap-4 pl-2"
-                                }`}
+                              <Accordion
+                                type="single"
+                                collapsible
+                                className="w-full"
                               >
-                                <TooltipProvider>
-                                  <Tooltip>
-                                    <TooltipTrigger asChild>
+                                <AccordionItem
+                                  value="item-1"
+                                  className="border-darkGreen text-darkGreen"
+                                >
+                                  <AccordionTrigger>
+                                    <Button
+                                      variant={"sheet"}
+                                      className="baseFlex mb-1 !w-full !justify-start gap-2 !rounded-md border-darkGreen !py-8"
+                                    >
+                                      <div className="baseFlex gap-4">
+                                        <PlayerIcon
+                                          avatarPath={friend.avatarPath}
+                                          borderColor={friend.color}
+                                          size={"2.75rem"}
+                                          onlineStatus={friend.online}
+                                        />
+                                        <div className="baseVertFlex !items-start text-darkGreen">
+                                          {friend.username}
+                                          {friend.online && (
+                                            <div className="text-sm opacity-70">
+                                              {friend.status}
+                                            </div>
+                                          )}
+                                        </div>
+                                      </div>
+                                    </Button>
+                                  </AccordionTrigger>
+                                  <AccordionContent className="baseFlex my-4 w-full">
+                                    <div className={`baseFlex w-full gap-4`}>
                                       <Button
                                         variant={"secondary"}
                                         disabled={
@@ -214,7 +235,7 @@ function FriendsList({ setShowFriendsListDialog }: IFriendsList) {
                                           !connectedToRoom ||
                                           friend.roomCode === roomConfig.code
                                         }
-                                        className="size-9 rounded-full !p-0"
+                                        className="baseFlex gap-2 !px-2 text-sm"
                                         onClick={() =>
                                           socket.volatile.emit(
                                             "modifyFriendData",
@@ -227,21 +248,9 @@ function FriendsList({ setShowFriendsListDialog }: IFriendsList) {
                                         }
                                       >
                                         <FiMail size={"1.25rem"} />
+                                        Invite to room
                                       </Button>
-                                    </TooltipTrigger>
-                                    <TooltipContent
-                                      side={"bottom"}
-                                      sideOffset={8}
-                                      className="border-2 border-lightGreen bg-gradient-to-br from-green-800 to-green-850 text-lightGreen"
-                                    >
-                                      <p>Invite to room</p>
-                                    </TooltipContent>
-                                  </Tooltip>
-                                </TooltipProvider>
 
-                                <TooltipProvider>
-                                  <Tooltip>
-                                    <TooltipTrigger asChild>
                                       <Button
                                         variant={"secondary"}
                                         disabled={
@@ -252,8 +261,7 @@ function FriendsList({ setShowFriendsListDialog }: IFriendsList) {
                                           !friend.currentRoomIsPublic ||
                                           friend.currentRoomIsFull === true
                                         }
-                                        includeMouseEvents
-                                        className="size-9 rounded-full !p-0"
+                                        className="baseFlex gap-2 !px-2 text-sm"
                                         onClick={() => {
                                           if (connectedToRoom) {
                                             socket.volatile.emit("leaveRoom", {
@@ -276,89 +284,67 @@ function FriendsList({ setShowFriendsListDialog }: IFriendsList) {
                                             },
                                           );
 
-                                          setShowFriendsListDialog(false);
+                                          setShowSheet(false);
                                         }}
                                       >
                                         <TbDoorEnter size={"1.25rem"} />
+                                        <p>Join room</p>
                                       </Button>
-                                    </TooltipTrigger>
-                                    <TooltipContent
-                                      side={"bottom"}
-                                      sideOffset={8}
-                                      className="border-2 border-lightGreen bg-gradient-to-br from-green-800 to-green-850 text-lightGreen"
-                                    >
-                                      <p>Join room</p>
-                                    </TooltipContent>
-                                  </Tooltip>
-                                </TooltipProvider>
 
-                                <Popover
-                                  open={openPopoverID === friend.userId}
-                                  onOpenChange={(open) => {
-                                    if (!open) setOpenPopoverID("");
-                                  }}
-                                >
-                                  <PopoverTrigger>
-                                    <TooltipProvider>
-                                      <Tooltip>
-                                        <TooltipTrigger asChild>
+                                      <AlertDialog>
+                                        <AlertDialogTrigger asChild>
                                           <Button
-                                            variant={"destructive"}
-                                            includeMouseEvents
-                                            className="baseFlex size-9 rounded-full !p-0"
-                                            onClick={() =>
-                                              setOpenPopoverID(friend.userId)
-                                            }
+                                            variant="destructive"
+                                            className="gap-2"
                                           >
-                                            <FaTrashAlt size={"1.23rem"} />
+                                            <FaTrashAlt size={"1rem"} />
                                           </Button>
-                                        </TooltipTrigger>
-                                        <TooltipContent
-                                          side={"bottom"}
-                                          sideOffset={8}
-                                          align={"end"}
-                                          className="border-2 border-[hsl(0,84%,60%)] bg-[hsl(0,84%,98%)] text-[hsl(0,84%,40%)]"
-                                        >
-                                          <p>Remove friend</p>
-                                        </TooltipContent>
-                                      </Tooltip>
-                                    </TooltipProvider>
-                                  </PopoverTrigger>
-                                  <PopoverContent
-                                    redArrow
-                                    align={"end"}
-                                    className="text-[hsl(0,84%,40%) border-2 border-[hsl(0,84%,60%)] bg-[hsl(0,84%,98%)]"
-                                  >
-                                    <div className="baseVertFlex w-64 gap-3 p-2">
-                                      <p className="text-center text-sm font-semibold text-[hsl(0,84%,40%)]">
-                                        Are you sure you want to remove &ldquo;
-                                        {friend.username}
-                                        &rdquo; as a friend?
-                                      </p>
-                                      <Button
-                                        variant={"destructive"}
-                                        className="text-sm"
-                                        onClick={() => {
-                                          setOpenPopoverID("");
-
-                                          setTimeout(() => {
-                                            socket.volatile.emit(
-                                              "modifyFriendData",
-                                              {
-                                                action: "removeFriend",
-                                                initiatorID: userID,
-                                                targetID: friend.userId,
-                                              },
-                                            );
-                                          }, 350);
-                                        }}
-                                      >
-                                        Confirm
-                                      </Button>
+                                        </AlertDialogTrigger>
+                                        <AlertDialogContent>
+                                          <AlertDialogHeader className="baseFlex w-full">
+                                            <AlertDialogTitle className="w-72">
+                                              Are you sure you want to remove
+                                              &ldquo;
+                                              {friend.username}
+                                              &rdquo; as a friend?
+                                            </AlertDialogTitle>
+                                          </AlertDialogHeader>
+                                          <AlertDialogFooter className="baseFlex mt-4 !flex-row gap-8">
+                                            <AlertDialogCancel asChild>
+                                              <Button
+                                                variant={"secondary"}
+                                                className="m-0 w-24"
+                                              >
+                                                Cancel
+                                              </Button>
+                                            </AlertDialogCancel>
+                                            <AlertDialogAction asChild>
+                                              <Button
+                                                variant={"destructive"}
+                                                className="m-0 w-24"
+                                                onClick={() => {
+                                                  setTimeout(() => {
+                                                    socket.volatile.emit(
+                                                      "modifyFriendData",
+                                                      {
+                                                        action: "removeFriend",
+                                                        initiatorID: userID,
+                                                        targetID: friend.userId,
+                                                      },
+                                                    );
+                                                  }, 350);
+                                                }}
+                                              >
+                                                Confirm
+                                              </Button>
+                                            </AlertDialogAction>
+                                          </AlertDialogFooter>
+                                        </AlertDialogContent>
+                                      </AlertDialog>
                                     </div>
-                                  </PopoverContent>
-                                </Popover>
-                              </div>
+                                  </AccordionContent>
+                                </AccordionItem>
+                              </Accordion>
                             </div>
                           ))}
                       </>
@@ -372,14 +358,14 @@ function FriendsList({ setShowFriendsListDialog }: IFriendsList) {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: "15%" }}
                   transition={{ duration: 0.35, ease: "easeInOut" }}
-                  className="baseVertFlex min-h-72 w-full !items-start !justify-start gap-4 overflow-auto p-2"
+                  className="baseVertFlex min-h-full w-full !items-start !justify-start gap-4 overflow-auto p-2"
                 >
                   <>
                     {
                       // no friend invites or room invites
                       friendInviteIDs?.length === 0 &&
                         roomInviteIDs?.length === 0 && (
-                          <div className="baseVertFlex h-72 w-full gap-4 text-lightGreen">
+                          <div className="baseVertFlex h-full w-full gap-4 text-darkGreen">
                             <FaMagnifyingGlass className="size-6" />
                             No pending invites.
                           </div>
@@ -399,7 +385,7 @@ function FriendsList({ setShowFriendsListDialog }: IFriendsList) {
                             style={{
                               zIndex: friendInviteIDs.length - index,
                             }}
-                            className="baseFlex gap-6 text-lightGreen"
+                            className="baseFlex gap-6 text-darkGreen"
                           >
                             <div className="baseFlex gap-4">
                               <PlayerIcon
@@ -459,7 +445,7 @@ function FriendsList({ setShowFriendsListDialog }: IFriendsList) {
                           style={{
                             zIndex: roomInviteIDs.length - index,
                           }}
-                          className="baseFlex gap-6 text-lightGreen"
+                          className="baseFlex gap-6 text-darkGreen"
                         >
                           <div className="baseFlex gap-2 pl-2">
                             <TbDoorEnter size={"2rem"} />
@@ -515,7 +501,7 @@ function FriendsList({ setShowFriendsListDialog }: IFriendsList) {
                                     friend.currentRoomIsPublic,
                                 });
 
-                                setShowFriendsListDialog(false);
+                                setShowSheet(false);
                               }}
                             >
                               <AiOutlineCheck size={"1rem"} />
@@ -548,4 +534,4 @@ function FriendsList({ setShowFriendsListDialog }: IFriendsList) {
   );
 }
 
-export default FriendsList;
+export default FriendsListSheet;
