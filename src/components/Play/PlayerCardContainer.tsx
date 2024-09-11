@@ -532,6 +532,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
               }
               username={playerMetadata[userID]?.username}
               size={"3rem"}
+              animateLayout={false}
             />
           </div>
         </div>

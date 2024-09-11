@@ -187,6 +187,7 @@ function OtherPlayerIcons() {
                 }
                 username={playerMetadata[otherPlayerIDs[0]]?.username}
                 size={"3rem"}
+                animateLayout={false}
               />
             </motion.div>
           )}
@@ -224,6 +225,7 @@ function OtherPlayerIcons() {
                 }
                 username={playerMetadata[otherPlayerIDs[1]]?.username}
                 size={"3rem"}
+                animateLayout={false}
               />
             </motion.div>
           )}
@@ -261,6 +263,7 @@ function OtherPlayerIcons() {
                 }
                 username={playerMetadata[otherPlayerIDs[2]]?.username}
                 size={"3rem"}
+                animateLayout={false}
               />
             </motion.div>
           )}
@@ -298,6 +301,7 @@ function OtherPlayerIcons() {
                 }
                 username={playerMetadata[otherPlayerIDs[3]]?.username}
                 size={"3rem"}
+                animateLayout={false}
               />
             </motion.div>
           )}

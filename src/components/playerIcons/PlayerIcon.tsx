@@ -38,6 +38,7 @@ interface IPlayerIcon {
   transparentBackground?: boolean;
   forWhilePlayingSheet?: boolean;
   animatePresence?: boolean;
+  animateLayout?: boolean;
 }
 
 function PlayerIcon({
@@ -56,6 +57,7 @@ function PlayerIcon({
   transparentBackground,
   forWhilePlayingSheet,
   animatePresence,
+  animateLayout = true,
 }: IPlayerIcon) {
   const userID = useUserIDContext();
 
@@ -72,7 +74,7 @@ function PlayerIcon({
       {avatarPath && borderColor && (
         <motion.div
           key={`playerIcon${playerID}`}
-          layout={"position"}
+          layout={animateLayout ? "position" : undefined}
           initial={{
             opacity: 0,
             scale: 0,
