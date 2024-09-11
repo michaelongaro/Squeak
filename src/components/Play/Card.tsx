@@ -383,7 +383,7 @@ function Card({
         const elapsed = timestamp - start;
 
         // 325ms is the duration of the card movement animation
-        // TODO: we had a +25ms "buffer" on this value before, but I really don't
+        // FYI: we had a +25ms "buffer" on this value before, but I really don't
         // know if it was helping at all
         if (elapsed <= 325) {
           if (!done) {
