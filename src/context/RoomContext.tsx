@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useRef,
+} from "react";
 import { socket } from "~/pages/_app";
 import { useAuth } from "@clerk/nextjs";
 import { type IRoomConfig } from "~/pages/create";
@@ -109,6 +115,13 @@ interface IRoomContext {
   otherPlayerIDsDrawingFromDeck: string[];
   setOtherPlayerIDsDrawingFromDeck: React.Dispatch<
     React.SetStateAction<string[]>
+  >;
+  currentPlayerIsDrawingFromDeck: boolean;
+  setCurrentPlayerIsDrawingFromDeck: React.Dispatch<
+    React.SetStateAction<boolean>
+  >;
+  fallbackPlayerIsDrawingFromDeckTimerIdRef: React.MutableRefObject<
+    NodeJS.Timeout | undefined
   >;
 
   currentVolume: number | null;
@@ -251,6 +264,13 @@ export function RoomProvider(props: { children: React.ReactNode }) {
 
   const [proposedCardBoxShadow, setProposedCardBoxShadow] =
     useState<IProposedCardBoxShadow | null>(null);
+
+  const [currentPlayerIsDrawingFromDeck, setCurrentPlayerIsDrawingFromDeck] =
+    useState<boolean>(false);
+
+  // cleanup timer just in case the current player doesn't receive the
+  // "playerDrawnFromDeck" emit from the server
+  const fallbackPlayerIsDrawingFromDeckTimerIdRef = useRef<NodeJS.Timeout>();
 
   const [decksAreBeingRotated, setDecksAreBeingRotated] =
     useState<boolean>(false);
@@ -476,6 +496,9 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     setGameData,
     resetPlayerStateUponPageLoad,
     setResetPlayerStateUponPageLoad,
+    currentPlayerIsDrawingFromDeck,
+    setCurrentPlayerIsDrawingFromDeck,
+    fallbackPlayerIsDrawingFromDeckTimerIdRef,
     friendData,
     setFriendData,
     hoveredCell,

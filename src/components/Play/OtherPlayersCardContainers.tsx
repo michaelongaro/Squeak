@@ -7,7 +7,7 @@ import { FaRedoAlt } from "react-icons/fa";
 import classes from "./OtherPlayersCardContainers.module.css";
 import useRotatePlayerDecks from "../../hooks/useRotatePlayerDecks";
 import Buzzer from "./Buzzer";
-import { AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import DisconnectIcon from "~/components/ui/DisconnectIcon";
 
 interface IOtherPlayersCardContainers {
@@ -317,7 +317,7 @@ function OtherPlayersCardContainers({
                     ) : (
                       <div className="grid select-none grid-cols-1 items-center justify-items-center">
                         <div className="col-start-1 row-start-1">
-                          <FaRedoAlt className="scale-x-flip size-6" />
+                          <FaRedoAlt className="size-6 scale-x-flip" />
                         </div>
                         <div className="col-start-1 row-start-1 select-none opacity-25">
                           <Card
@@ -498,91 +498,100 @@ function OtherPlayersCardContainers({
                 filter: otherPlayerIDsDrawingFromDeck.includes(playerID)
                   ? "brightness(0.8)"
                   : "none",
-                transition: "filter 75ms ease-in-out",
+                transform: otherPlayerIDsDrawingFromDeck.includes(playerID)
+                  ? "scale(0.95)"
+                  : "none",
+                transition:
+                  "transform 115ms ease-in-out, filter 75ms ease-in-out",
               }}
               className={`${classes.playerDeck} cardDimensions select-none`}
             >
               <div id={`${playerID}deck`} className="h-full w-full">
-                {gameData?.players[playerID]?.deck.length ? (
-                  <div
-                    style={{
-                      zIndex:
-                        cardBeingMovedProgramatically[playerID] === true
-                          ? 150
-                          : 100,
-                      transform: otherPlayerIDsDrawingFromDeck.includes(
-                        playerID,
-                      )
-                        ? "scale(0.95)"
-                        : "none",
-                      transition: "transform 100ms ease-in-out",
-                    }}
-                    className="relative h-full w-full select-none"
-                  >
-                    <>
-                      <div
-                        onAnimationEnd={() => setDecksAreBeingRotated(false)}
-                        className={`${
-                          decksAreBeingRotated ? "topBackFacingCardInDeck" : ""
-                        } select-none" absolute left-0 top-0 h-full w-full`}
-                      >
-                        {gameData?.players[playerID]?.deck.map((card) => (
-                          <div
-                            key={`${playerID}deckCard${card.suit}${card.value}`}
-                            className="absolute left-0 top-0 h-full w-full select-none"
-                          >
-                            <Card
-                              value={card.value}
-                              suit={card.suit}
-                              showCardBack={true} // separate state inside overrides this halfway through flip
-                              draggable={false}
-                              ownerID={playerID}
-                              hueRotation={
-                                playerMetadata[playerID]?.deckHueRotation || 0
-                              }
-                              origin={"deck"}
-                              startID={`${playerID}deck`}
-                              rotation={rotationOrder[idx] as number}
-                            />
-                          </div>
-                        ))}
+                <AnimatePresence mode={"popLayout"} initial={false}>
+                  {gameData?.players[playerID]?.deck.length ? (
+                    <motion.div
+                      key={`animated${playerID}Deck`}
+                      initial={{ opacity: 0, scale: 0.75 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.325, ease: "easeInOut" }}
+                      style={{
+                        zIndex:
+                          cardBeingMovedProgramatically[playerID] === true
+                            ? 150
+                            : 100,
+                      }}
+                      className="relative h-full w-full select-none"
+                    >
+                      <>
+                        <div
+                          onAnimationEnd={() => setDecksAreBeingRotated(false)}
+                          className={`${
+                            decksAreBeingRotated
+                              ? "topBackFacingCardInDeck"
+                              : ""
+                          } select-none" absolute left-0 top-0 h-full w-full`}
+                        >
+                          {gameData?.players[playerID]?.deck.map((card) => (
+                            <div
+                              key={`${playerID}deckCard${card.suit}${card.value}`}
+                              className="absolute left-0 top-0 h-full w-full select-none"
+                            >
+                              <Card
+                                value={card.value}
+                                suit={card.suit}
+                                showCardBack={true} // separate state inside overrides this halfway through flip
+                                draggable={false}
+                                ownerID={playerID}
+                                hueRotation={
+                                  playerMetadata[playerID]?.deckHueRotation || 0
+                                }
+                                origin={"deck"}
+                                startID={`${playerID}deck`}
+                                rotation={rotationOrder[idx] as number}
+                              />
+                            </div>
+                          ))}
+                        </div>
+                        <div className="absolute left-0 top-0 h-full w-full select-none">
+                          <Card
+                            showCardBack={true}
+                            draggable={false}
+                            ownerID={userID}
+                            hueRotation={
+                              playerMetadata[playerID]?.deckHueRotation || 0
+                            }
+                            origin={"deck"}
+                            rotation={0}
+                          />
+                        </div>
+                      </>
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      key={`animated${playerID}DeckReset`}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.75 }}
+                      transition={{ duration: 0.325, ease: "easeInOut" }}
+                      className="grid select-none grid-cols-1 items-center justify-items-center"
+                    >
+                      <div className="col-start-1 row-start-1">
+                        <FaRedoAlt size={"1.5rem"} />
                       </div>
-                      <div className="absolute left-0 top-0 h-full w-full select-none">
+                      <div className="col-start-1 row-start-1 select-none opacity-25">
                         <Card
                           showCardBack={true}
                           draggable={false}
-                          ownerID={userID}
+                          ownerID={playerID}
                           hueRotation={
                             playerMetadata[playerID]?.deckHueRotation || 0
                           }
-                          origin={"deck"}
-                          rotation={0}
+                          startID={`${playerID}deck`}
+                          rotation={rotationOrder[idx] as number}
                         />
                       </div>
-                    </>
-                  </div>
-                ) : (
-                  <div
-                    // no scale here since we immediately update the game state when resetting the deck. not really sure of a workaround without a decent refactor
-                    className="grid select-none grid-cols-1 items-center justify-items-center"
-                  >
-                    <div className="col-start-1 row-start-1">
-                      <FaRedoAlt size={"1.5rem"} />
-                    </div>
-                    <div className="col-start-1 row-start-1 select-none opacity-25">
-                      <Card
-                        showCardBack={true}
-                        draggable={false}
-                        ownerID={playerID}
-                        hueRotation={
-                          playerMetadata[playerID]?.deckHueRotation || 0
-                        }
-                        startID={`${playerID}deck`}
-                        rotation={rotationOrder[idx] as number}
-                      />
-                    </div>
-                  </div>
-                )}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             </div>
           </div>

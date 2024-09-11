@@ -31,6 +31,8 @@ function useCardDrawFromDeck({
     setGameData,
     otherPlayerIDsDrawingFromDeck,
     setOtherPlayerIDsDrawingFromDeck,
+    setCurrentPlayerIsDrawingFromDeck,
+    fallbackPlayerIsDrawingFromDeckTimerIdRef,
   } = useRoomContext();
 
   const [dataFromBackend, setDataFromBackend] = useState<IDrawFromDeck | null>(
@@ -74,7 +76,7 @@ function useCardDrawFromDeck({
           setOtherPlayerIDsDrawingFromDeck((currentIDs) =>
             currentIDs.filter((id) => id !== ownerID),
           );
-        }, 100);
+        }, 115);
       }
 
       const endID = `${ownerID}hand`;
@@ -89,6 +91,11 @@ function useCardDrawFromDeck({
           flip: true,
           rotate: false,
           callbackFunction: () => {
+            if (ownerID === userID) {
+              setCurrentPlayerIsDrawingFromDeck(false);
+              clearTimeout(fallbackPlayerIsDrawingFromDeckTimerIdRef.current);
+            }
+
             setGameData(gameData);
           },
         });
@@ -105,6 +112,8 @@ function useCardDrawFromDeck({
     setOtherPlayerIDsDrawingFromDeck,
     otherPlayerIDsDrawingFromDeck,
     userID,
+    fallbackPlayerIsDrawingFromDeckTimerIdRef,
+    setCurrentPlayerIsDrawingFromDeck,
   ]);
 }
 

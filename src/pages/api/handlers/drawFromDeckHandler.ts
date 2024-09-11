@@ -41,15 +41,14 @@ export function drawFromDeck({
   if (!playerCards || !players || !board || !deck || !hand) return;
 
   // resets the deck if the player has drawn all the cards.
-  // this has it's own hook because there will be no cards to "target" to listen for
+  // this has it's own event/hook because there won't be any deck cards to "target" to listen for
   // this event being emitted. Therefore we just listen for it on the main /game/[...code] component
   if (playerCards.deck.length === 0) {
     // updating the reference to the actual player object
     playerCards.deck = hand.reverse(); // in real life you would physically flip over the hand pile to become the deck
     playerCards.hand = [];
 
-    io.in(roomCode).emit("playerDrawnFromDeck", {
-      resetDeck: true,
+    io.in(roomCode).emit("resetDeckFromCardDraw", {
       playerID,
       gameData: gameData[roomCode],
     });

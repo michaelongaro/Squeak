@@ -4,13 +4,12 @@ import { useUserIDContext } from "../../context/UserIDContext";
 import { useRoomContext } from "../../context/RoomContext";
 import Card from "./Card";
 import { FaRedoAlt } from "react-icons/fa";
-
 import classes from "./PlayerCardContainer.module.css";
 import { type IGetBoxShadowStyles } from "./Board";
 import useRotatePlayerDecks from "../../hooks/useRotatePlayerDecks";
 import PlayerIcon from "../playerIcons/PlayerIcon";
 import useResponsiveCardDimensions from "../../hooks/useResponsiveCardDimensions";
-import { AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import Buzzer from "./Buzzer";
 interface IPlayerCardContainer {
   cardContainerClass: string | undefined;
@@ -46,11 +45,13 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
     squeakStackDragAlterations,
     hoveredCell,
     setHoveredCell,
+    currentPlayerIsDrawingFromDeck,
+    setCurrentPlayerIsDrawingFromDeck,
+    fallbackPlayerIsDrawingFromDeckTimerIdRef,
   } = useRoomContext();
 
   const [hoveringOverDeck, setHoveringOverDeck] = useState(false);
   const [pointerDownOnDeck, setPointerDownOnDeck] = useState(false);
-  const [drawingFromDeck, setDrawingFromDeck] = useState(false);
 
   useRotatePlayerDecks();
 
@@ -349,6 +350,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                       <Card
                         value={card.value}
                         suit={card.suit}
+                        showCardBack={false} // TODO TODO TODO TODO TODO
                         draggable={
                           idx === gameData.players[userID]!.hand.length - 1
                         }
@@ -373,19 +375,19 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                 boxShadow:
                   hoveringOverDeck &&
                   !holdingADeckCard &&
-                  !drawingFromDeck &&
+                  !currentPlayerIsDrawingFromDeck &&
                   !pointerDownOnDeck
                     ? "0px 0px 4px 3px rgba(184,184,184,1)"
                     : "none",
-                cursor: drawingFromDeck ? "auto" : "pointer",
-                pointerEvents: drawingFromDeck ? "none" : "auto",
+                cursor: currentPlayerIsDrawingFromDeck ? "auto" : "pointer",
+                pointerEvents: currentPlayerIsDrawingFromDeck ? "none" : "auto",
                 filter: pointerDownOnDeck ? "brightness(0.8)" : "none",
                 transition:
                   "box-shadow 150ms cubic-bezier(0.4, 0, 0.2, 1), filter 150ms ease-in-out",
               }}
               className="h-full w-full select-none rounded-[0.1rem]"
               onPointerEnter={() => {
-                if (drawingFromDeck) return;
+                if (currentPlayerIsDrawingFromDeck) return;
                 setHoveringOverDeck(true);
               }}
               onPointerLeave={() => {
@@ -399,14 +401,17 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                 setPointerDownOnDeck(false);
               }}
               onClick={() => {
-                if (drawingFromDeck) return;
+                if (currentPlayerIsDrawingFromDeck) return;
 
+                setCurrentPlayerIsDrawingFromDeck(true);
                 setHoldingADeckCard(false);
-                setDrawingFromDeck(true);
 
-                setTimeout(() => {
-                  setDrawingFromDeck(false);
-                }, 375);
+                fallbackPlayerIsDrawingFromDeckTimerIdRef.current = setTimeout(
+                  () => {
+                    setCurrentPlayerIsDrawingFromDeck(false);
+                  },
+                  500,
+                );
 
                 socket.volatile.emit("playerDrawFromDeck", {
                   playerID: userID,
@@ -414,43 +419,75 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                 });
               }}
             >
-              {gameData?.players[userID]?.deck?.length ? (
-                <div
-                  style={{
-                    transform: pointerDownOnDeck ? "scale(0.95)" : "none",
-                    transition: "transform 150ms ease-in-out ",
-                  }}
-                  className="relative h-full w-full select-none"
-                >
-                  <>
+              <AnimatePresence mode={"popLayout"} initial={false}>
+                {gameData?.players[userID]?.deck?.length ? (
+                  <motion.div
+                    key={`animated${userID}Deck`}
+                    initial={{ opacity: 0, scale: 0.75 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.325 }}
+                    className="relative h-full w-full select-none"
+                  >
                     <div
-                      onAnimationEnd={() => setDecksAreBeingRotated(false)}
-                      className={`${
-                        decksAreBeingRotated ? "topBackFacingCardInDeck" : ""
-                      } absolute left-0 top-0 h-full w-full select-none`}
+                      style={{
+                        transform: pointerDownOnDeck ? "scale(0.95)" : "none",
+                        transition: "transform 150ms ease-in-out",
+                      }}
+                      className="baseFlex"
                     >
-                      {gameData?.players[userID]?.deck?.map((card) => (
-                        <div
-                          key={`${userID}deckCard${card.suit}${card.value}`}
-                          className="absolute left-0 top-0 h-full w-full select-none"
-                        >
-                          <Card
-                            value={card.value}
-                            suit={card.suit}
-                            showCardBack={true} // separate state inside overrides this halfway through flip
-                            draggable={false}
-                            ownerID={userID}
-                            hueRotation={
-                              playerMetadata[userID]?.deckHueRotation || 0
-                            }
-                            origin={"deck"}
-                            startID={`${userID}deck`}
-                            rotation={0}
-                          />
-                        </div>
-                      ))}
+                      <div
+                        onAnimationEnd={() => setDecksAreBeingRotated(false)}
+                        className={`${
+                          decksAreBeingRotated ? "topBackFacingCardInDeck" : ""
+                        } absolute left-0 top-0 h-full w-full select-none`}
+                      >
+                        {gameData?.players[userID]?.deck?.map((card) => (
+                          <div
+                            key={`${userID}deckCard${card.suit}${card.value}`}
+                            className="absolute left-0 top-0 h-full w-full select-none"
+                          >
+                            <Card
+                              value={card.value}
+                              suit={card.suit}
+                              showCardBack={true} // separate state inside overrides this halfway through flip
+                              draggable={false}
+                              ownerID={userID}
+                              hueRotation={
+                                playerMetadata[userID]?.deckHueRotation || 0
+                              }
+                              origin={"deck"}
+                              startID={`${userID}deck`}
+                              rotation={0}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                      <div className="absolute left-0 top-0 h-full w-full select-none">
+                        <Card
+                          showCardBack={true}
+                          draggable={false}
+                          ownerID={userID}
+                          hueRotation={
+                            playerMetadata[userID]?.deckHueRotation || 0
+                          }
+                          origin={"deck"}
+                          rotation={0}
+                        />
+                      </div>
                     </div>
-                    <div className="absolute left-0 top-0 h-full w-full select-none">
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key={`animated${userID}DeckReset`}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.75 }}
+                    transition={{ duration: 0.325 }}
+                    className="grid cursor-pointer select-none grid-cols-1 items-center justify-items-center"
+                  >
+                    <div className="col-start-1 row-start-1 select-none">
+                      <FaRedoAlt className="size-6 scale-x-flip" />
+                    </div>
+                    <div className="col-start-1 row-start-1 select-none opacity-25">
                       <Card
                         showCardBack={true}
                         draggable={false}
@@ -458,35 +495,13 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                         hueRotation={
                           playerMetadata[userID]?.deckHueRotation || 0
                         }
-                        origin={"deck"}
+                        startID={`${userID}deck`}
                         rotation={0}
                       />
                     </div>
-                  </>
-                </div>
-              ) : (
-                <div
-                  style={{
-                    transform: pointerDownOnDeck ? "scale(0.95)" : "none",
-                    transition: "transform 150ms ease-in-out ",
-                  }}
-                  className="grid cursor-pointer select-none grid-cols-1 items-center justify-items-center"
-                >
-                  <div className="col-start-1 row-start-1 select-none">
-                    <FaRedoAlt className="scale-x-flip size-6" />
-                  </div>
-                  <div className="col-start-1 row-start-1 select-none opacity-25">
-                    <Card
-                      showCardBack={true}
-                      draggable={false}
-                      ownerID={userID}
-                      hueRotation={playerMetadata[userID]?.deckHueRotation || 0}
-                      startID={`${userID}deck`}
-                      rotation={0}
-                    />
-                  </div>
-                </div>
-              )}
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           </div>
 
