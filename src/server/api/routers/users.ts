@@ -99,7 +99,6 @@ export const usersRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       try {
-        console.log(input.userId, ctx.auth.userId);
         if (input.userId !== ctx.auth.userId) {
           throw new Error("Unauthorized");
         }
