@@ -68,7 +68,7 @@ export function squeakToBoard({
           gameData,
           io,
         });
-      }, 350);
+      }, 325);
     }
 
     // not sure how to properly mutate the board without this
