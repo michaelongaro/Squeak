@@ -6,7 +6,6 @@ import Card from "./Card";
 import { FaRedoAlt } from "react-icons/fa";
 import classes from "./PlayerCardContainer.module.css";
 import { type IGetBoxShadowStyles } from "./Board";
-import useRotatePlayerDecks from "../../hooks/useRotatePlayerDecks";
 import PlayerIcon from "../playerIcons/PlayerIcon";
 import useResponsiveCardDimensions from "../../hooks/useResponsiveCardDimensions";
 import { AnimatePresence, motion } from "framer-motion";
@@ -53,8 +52,6 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
 
   const [hoveringOverDeck, setHoveringOverDeck] = useState(false);
   const [pointerDownOnDeck, setPointerDownOnDeck] = useState(false);
-
-  useRotatePlayerDecks();
 
   const cardDimensions = useResponsiveCardDimensions();
 

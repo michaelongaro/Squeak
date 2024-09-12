@@ -38,6 +38,7 @@ import {
 } from "react-icons/tb";
 import { Button } from "~/components/ui/button";
 import TutorialDialog from "~/components/dialogs/TutorialDialog";
+import useRotatePlayerDecks from "~/hooks/useRotatePlayerDecks";
 
 function Play() {
   const { isLoaded } = useAuth();
@@ -105,6 +106,7 @@ function Play() {
   useStartAnotherRoundHandler();
   useReturnToRoomHandler();
   useResetDeckFromCardDraw();
+  useRotatePlayerDecks();
   useScoreboardData();
   useSyncClientWithServer();
 

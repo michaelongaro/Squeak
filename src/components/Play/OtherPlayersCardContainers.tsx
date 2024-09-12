@@ -5,7 +5,6 @@ import useResponsiveCardDimensions from "../../hooks/useResponsiveCardDimensions
 import Card from "./Card";
 import { FaRedoAlt } from "react-icons/fa";
 import classes from "./OtherPlayersCardContainers.module.css";
-import useRotatePlayerDecks from "../../hooks/useRotatePlayerDecks";
 import Buzzer from "./Buzzer";
 import { AnimatePresence, motion } from "framer-motion";
 import DisconnectIcon from "~/components/ui/DisconnectIcon";
@@ -82,7 +81,6 @@ function OtherPlayersCardContainers({
   }, []);
 
   const cardDimensions = useResponsiveCardDimensions();
-  useRotatePlayerDecks();
 
   function getDynamicTopValue(
     squeakStackIdx: number,
