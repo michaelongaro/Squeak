@@ -9,6 +9,7 @@ import useRotatePlayerDecks from "../../hooks/useRotatePlayerDecks";
 import Buzzer from "./Buzzer";
 import { AnimatePresence, motion } from "framer-motion";
 import DisconnectIcon from "~/components/ui/DisconnectIcon";
+import StaticCard from "~/components/Play/StaticCard";
 
 interface IOtherPlayersCardContainers {
   orderedClassNames: (string | undefined)[];
@@ -91,6 +92,11 @@ function OtherPlayersCardContainers({
   ) {
     const draggedData = squeakStackDragAlterations[playerID];
 
+    // early return if no dragged data, since we don't need to calculate anything
+    if (!draggedData) {
+      return `${(20 - squeakStackLength) * cardIdx}px`;
+    }
+
     const draggedStack = draggedData?.draggedStack ?? null;
     const squeakStackDepthAlterations =
       draggedData?.squeakStackDepthAlterations ?? null;
@@ -110,8 +116,8 @@ function OtherPlayersCardContainers({
     }
 
     // otherwise, part of regular squeak stacks
-    else {
-      squeakStackLength += squeakStackDepthAlterations?.[squeakStackIdx] ?? 0;
+    else if (squeakStackDepthAlterations) {
+      squeakStackLength += squeakStackDepthAlterations[squeakStackIdx] ?? 0;
     }
 
     return `${(20 - squeakStackLength) * cardIdx}px`;
@@ -320,15 +326,14 @@ function OtherPlayersCardContainers({
                           <FaRedoAlt className="size-6 scale-x-flip" />
                         </div>
                         <div className="col-start-1 row-start-1 select-none opacity-25">
-                          <Card
+                          <StaticCard
                             showCardBack={true}
-                            draggable={false}
-                            ownerID={playerID}
                             hueRotation={
                               playerMetadata[playerID]?.deckHueRotation || 0
                             }
-                            startID={`${playerID}deck`}
-                            rotation={rotationOrder[idx] as number}
+                            suit={"S"} // placeholder
+                            value={"2"} // placeholder
+                            deckVariantIndex={0} // placeholder
                           />
                         </div>
                       </div>
@@ -552,16 +557,19 @@ function OtherPlayersCardContainers({
                             </div>
                           ))}
                         </div>
+
+                        {/* dummy card for when deck is drawing last 1/2/3 cards so that the last cards that
+                          are supposed to be moving with the top card that is animating don't get revealed
+                          to be actually static during the animation.*/}
                         <div className="absolute left-0 top-0 h-full w-full select-none">
-                          <Card
+                          <StaticCard
                             showCardBack={true}
-                            draggable={false}
-                            ownerID={userID}
                             hueRotation={
                               playerMetadata[playerID]?.deckHueRotation || 0
                             }
-                            origin={"deck"}
-                            rotation={0}
+                            suit={"S"} // placeholder
+                            value={"2"} // placeholder
+                            deckVariantIndex={0} // placeholder
                           />
                         </div>
                       </>
@@ -578,15 +586,14 @@ function OtherPlayersCardContainers({
                         <FaRedoAlt size={"1.5rem"} />
                       </div>
                       <div className="col-start-1 row-start-1 select-none opacity-25">
-                        <Card
+                        <StaticCard
                           showCardBack={true}
-                          draggable={false}
-                          ownerID={playerID}
                           hueRotation={
                             playerMetadata[playerID]?.deckHueRotation || 0
                           }
-                          startID={`${playerID}deck`}
-                          rotation={rotationOrder[idx] as number}
+                          suit={"S"} // placeholder
+                          value={"2"} // placeholder
+                          deckVariantIndex={0} // placeholder
                         />
                       </div>
                     </motion.div>

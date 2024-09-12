@@ -11,6 +11,7 @@ import PlayerIcon from "../playerIcons/PlayerIcon";
 import useResponsiveCardDimensions from "../../hooks/useResponsiveCardDimensions";
 import { AnimatePresence, motion } from "framer-motion";
 import Buzzer from "./Buzzer";
+import StaticCard from "~/components/Play/StaticCard";
 interface IPlayerCardContainer {
   cardContainerClass: string | undefined;
 }
@@ -77,6 +78,11 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
   ) {
     const draggedData = squeakStackDragAlterations[userID];
 
+    // early return if no dragged data, since we don't need to calculate anything
+    if (!draggedData) {
+      return `${(20 - squeakStackLength) * cardIdx}px`;
+    }
+
     const draggedStack = draggedData?.draggedStack ?? null;
     const squeakStackDepthAlterations =
       draggedData?.squeakStackDepthAlterations ?? null;
@@ -96,8 +102,8 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
     }
 
     // otherwise, part of regular squeak stacks
-    else {
-      squeakStackLength += squeakStackDepthAlterations?.[squeakStackIdx] ?? 0;
+    else if (squeakStackDepthAlterations) {
+      squeakStackLength += squeakStackDepthAlterations[squeakStackIdx] ?? 0;
     }
 
     return `${(20 - squeakStackLength) * cardIdx}px`;
@@ -459,16 +465,19 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                           </div>
                         ))}
                       </div>
+
+                      {/* dummy card for when deck is drawing last 1/2/3 cards so that the last cards that
+                          are supposed to be moving with the top card that is animating don't get revealed
+                          to be actually static during the animation.*/}
                       <div className="absolute left-0 top-0 h-full w-full select-none">
-                        <Card
+                        <StaticCard
                           showCardBack={true}
-                          draggable={false}
-                          ownerID={userID}
                           hueRotation={
                             playerMetadata[userID]?.deckHueRotation || 0
                           }
-                          origin={"deck"}
-                          rotation={0}
+                          suit={"S"} // placeholder
+                          value={"2"} // placeholder
+                          deckVariantIndex={0} // placeholder
                         />
                       </div>
                     </div>
@@ -476,6 +485,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                 ) : (
                   <motion.div
                     key={`animated${userID}DeckReset`}
+                    initial={{ opacity: 0, scale: 0.75 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.75 }}
                     transition={{ duration: 0.325 }}
@@ -492,15 +502,14 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                         <FaRedoAlt className="size-6 scale-x-flip" />
                       </div>
                       <div className="col-start-1 row-start-1 select-none opacity-25">
-                        <Card
+                        <StaticCard
                           showCardBack={true}
-                          draggable={false}
-                          ownerID={userID}
                           hueRotation={
                             playerMetadata[userID]?.deckHueRotation || 0
                           }
-                          startID={`${userID}deck`}
-                          rotation={0}
+                          suit={"S"} // placeholder
+                          value={"2"} // placeholder
+                          deckVariantIndex={0} // placeholder
                         />
                       </div>
                     </div>
