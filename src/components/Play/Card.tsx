@@ -326,7 +326,7 @@ function Card({
             if (origin === "deck" || origin === "squeakDeck") {
               image.style.willChange = "transform, filter, boxShadow";
             } else {
-            image.style.willChange = "transform, filter";
+              image.style.willChange = "transform, filter";
             }
 
             card.style.transition = "all 325ms ease-out, filter 163ms";
@@ -334,7 +334,7 @@ function Card({
               image.style.transition =
                 "transform 163ms ease-out, boxShadow 163ms ease-out";
             } else {
-            image.style.transition = "transform 163ms ease-out";
+              image.style.transition = "transform 163ms ease-out";
             }
             image.style.transform = "scale(1)";
           }
@@ -617,7 +617,7 @@ function Card({
             suit,
           },
           handStart: true,
-          squeakEndLocation: idx,
+          squeakStackEndIndex: idx,
           playerID: userID,
           roomCode: roomConfig.code,
         });
@@ -652,7 +652,7 @@ function Card({
             value,
             suit,
           },
-          squeakStartLocation: originIndexForHeldSqueakCard,
+          squeakStackStartIndex: originIndexForHeldSqueakCard,
           boardEndLocation: { row, col },
           playerID: userID,
           roomCode: roomConfig.code,
@@ -681,8 +681,8 @@ function Card({
             value,
             suit,
           },
-          squeakStartLocation: originIndexForHeldSqueakCard,
-          squeakEndLocation: hoveredSqueakStack,
+          squeakStackStartIndex: originIndexForHeldSqueakCard,
+          squeakStackEndIndex: hoveredSqueakStack,
           playerID: userID,
           roomCode: roomConfig.code,
         });
