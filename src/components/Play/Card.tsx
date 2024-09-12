@@ -21,7 +21,7 @@ function getTransitionStyles(
   holdingASqueakCard: boolean,
   heldSqueakStackLocation: IHeldSqueakStackLocation | null,
   cardOffsetPosition: { x: number; y: number },
-  ownerID: string | undefined,
+  ownerID: string,
   userID: string,
 ) {
   let transitionStyles = "";
@@ -29,11 +29,11 @@ function getTransitionStyles(
   if (
     inMovingSqueakStack &&
     (!holdingASqueakCard ||
-      (heldSqueakStackLocation?.[ownerID || ""]?.location.x === 0 &&
-        heldSqueakStackLocation?.[ownerID || ""]?.location.y === 0) ||
-      (heldSqueakStackLocation?.[ownerID || ""]?.location.x ===
+      (heldSqueakStackLocation?.[ownerID]?.location.x === 0 &&
+        heldSqueakStackLocation?.[ownerID]?.location.y === 0) ||
+      (heldSqueakStackLocation?.[ownerID]?.location.x ===
         cardOffsetPosition.x &&
-        heldSqueakStackLocation?.[ownerID || ""]?.location.y ===
+        heldSqueakStackLocation?.[ownerID]?.location.y ===
           cardOffsetPosition.y))
   ) {
     transitionStyles = "transform 325ms ease-out";
@@ -70,9 +70,9 @@ interface ICardComponent {
   suit?: string;
   showCardBack?: boolean;
   draggable: boolean;
-  origin?: "deck" | "hand" | "squeakHand" | "squeakDeck";
-  ownerID?: string;
-  startID?: string;
+  origin: "deck" | "hand" | "squeakHand" | "squeakDeck";
+  ownerID: string;
+  startID: string;
   squeakStackLocation?: [number, number];
   rotation: number;
   hueRotation: number;
@@ -117,6 +117,8 @@ function Card({
     deckVariantIndex,
     setHoldingADeckCard,
     setHoldingASqueakCard,
+    squeakStackDragAlterations,
+    setSqueakStackDragAlterations,
   } = useRoomContext();
 
   const [isDragging, setIsDragging] = useState(false);
@@ -131,18 +133,57 @@ function Card({
   const imageRef = useRef<HTMLImageElement>(null);
 
   const inMovingSqueakStack = (() => {
-    if (!squeakStackLocation || !ownerID || !heldSqueakStackLocation)
+    if (
+      squeakStackLocation === undefined ||
+      heldSqueakStackLocation === null ||
+      heldSqueakStackLocation[ownerID] === null
+    )
       return false;
 
     const location = heldSqueakStackLocation[ownerID];
 
     if (!location) return false;
 
+    // not sure these variable names are the best
     const [heldX, heldY] = location.squeakStack;
     const [currentX, currentY] = squeakStackLocation;
 
     return heldX === currentX && heldY < currentY;
   })();
+
+  // really dislike this being "necessary", but for whatever reason
+  // heldSqueakStackLocation and squeakStackDragAlterations were just
+  // not being reset always, I think the issue was exacerbated on lower end devices?
+  const [initSqueakStackResetComplete, setInitSqueakStackResetComplete] =
+    useState(false);
+
+  useEffect(() => {
+    if (initSqueakStackResetComplete) return;
+    setInitSqueakStackResetComplete(true);
+
+    if (squeakStackLocation !== undefined) {
+      setHeldSqueakStackLocation({
+        ...heldSqueakStackLocation,
+        [ownerID]: null,
+      });
+
+      setSqueakStackDragAlterations({
+        ...squeakStackDragAlterations,
+        [ownerID]: {
+          squeakStackDepthAlterations: [0, 0, 0, 0],
+          draggedStack: undefined,
+        },
+      });
+    }
+  }, [
+    heldSqueakStackLocation,
+    ownerID,
+    setHeldSqueakStackLocation,
+    squeakStackLocation,
+    initSqueakStackResetComplete,
+    squeakStackDragAlterations,
+    setSqueakStackDragAlterations,
+  ]);
 
   const moveCard = useCallback(
     ({ newPosition, flip, rotate, callbackFunction }: IMoveCard) => {
@@ -206,14 +247,12 @@ function Card({
           imageRef.current.style.willChange = "auto";
         }
 
-        if ((origin === "hand" || origin === "squeakHand") && ownerID) {
+        if (origin === "hand" || origin === "squeakHand") {
           setCardBeingMovedProgramatically({
             ...cardBeingMovedProgramatically,
             [ownerID]: false,
           });
-        }
-
-        if (origin === "squeakDeck" && ownerID) {
+        } else if (origin === "squeakDeck") {
           setSqueakDeckBeingMovedProgramatically({
             ...squeakDeckBeingMovedProgramatically,
             [ownerID]: false,
@@ -229,7 +268,7 @@ function Card({
           });
         }
 
-        if (squeakStackLocation && ownerID) {
+        if (squeakStackLocation) {
           setHeldSqueakStackLocation({
             ...heldSqueakStackLocation,
             [ownerID]: null,
@@ -237,14 +276,12 @@ function Card({
         }
       }
 
-      if ((origin === "hand" || origin === "squeakHand") && ownerID) {
+      if (origin === "hand" || origin === "squeakHand") {
         setCardBeingMovedProgramatically({
           ...cardBeingMovedProgramatically,
           [ownerID]: true,
         });
-      }
-
-      if (origin === "squeakDeck" && ownerID) {
+      } else if (origin === "squeakDeck") {
         setSqueakDeckBeingMovedProgramatically({
           ...squeakDeckBeingMovedProgramatically,
           [ownerID]: true,
@@ -335,7 +372,7 @@ function Card({
 
         setCardOffsetPosition({ x: 0, y: 0 });
 
-        if (squeakStackLocation && ownerID) {
+        if (squeakStackLocation) {
           setHeldSqueakStackLocation({
             ...heldSqueakStackLocation,
             [ownerID]: {
@@ -344,7 +381,7 @@ function Card({
             },
           });
         }
-      } else if (startID) {
+      } else {
         const currentCard = document.getElementById(startID);
 
         if (!currentCard) return;
@@ -364,7 +401,7 @@ function Card({
           y: endYCoordinate,
         });
 
-        if (squeakStackLocation && ownerID) {
+        if (squeakStackLocation) {
           setHeldSqueakStackLocation({
             ...heldSqueakStackLocation,
             [ownerID]: {
@@ -666,10 +703,10 @@ function Card({
         y,
       });
 
-      if (squeakStackLocation && ownerID) {
+      if (squeakStackLocation) {
         setHeldSqueakStackLocation({
           ...heldSqueakStackLocation,
-          [ownerID!]: {
+          [ownerID]: {
             squeakStack: squeakStackLocation,
             location: {
               x,
@@ -696,10 +733,10 @@ function Card({
         y: clientY - cardOffsetPosition.y,
       });
 
-      if (squeakStackLocation && ownerID) {
+      if (squeakStackLocation) {
         setHeldSqueakStackLocation({
           ...heldSqueakStackLocation,
-          [ownerID!]: {
+          [ownerID]: {
             squeakStack: squeakStackLocation,
             location: {
               x: 0,
@@ -815,7 +852,7 @@ function Card({
                   : 100, // makes sure child cards stay on top whenever moving
             transform: formatOffsetPosition(
               inMovingSqueakStack
-                ? heldSqueakStackLocation?.[ownerID || ""]?.location
+                ? heldSqueakStackLocation?.[ownerID]?.location
                 : cardOffsetPosition,
             ),
             touchAction: "none",
@@ -847,7 +884,7 @@ function Card({
                   : "scale(1)",
               transition: "transform 325ms ease-out",
             }}
-            className="cardDimensions pointer-events-none select-none rounded-[0.15rem]"
+            className="cardDimensions pointer-events-none relative left-0 top-0 select-none rounded-[0.15rem]"
             src={
               showCardBack && !forceShowCardFront
                 ? (cardAssets["cardBack"] as StaticImageData).src
