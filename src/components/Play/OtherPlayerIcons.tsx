@@ -143,7 +143,7 @@ function OtherPlayerIcons() {
   useLayoutEffect(() => {
     setTimeout(() => {
       handleResize();
-    }, 50); // flaky: waiting for the player containers to be rendered before positioning the icons
+    }, 250); // flaky: waiting for the player containers to be rendered before positioning the icons
 
     window.addEventListener("resize", handleResize);
 
