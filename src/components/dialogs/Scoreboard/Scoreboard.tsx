@@ -707,7 +707,7 @@ function Scoreboard() {
                   )}
                 </AnimatePresence>
 
-                <div className="baseFlex gap-2">
+                <div className="baseFlex gap-4">
                   <PlayerIcon
                     avatarPath={
                       playerMetadata[
@@ -731,7 +731,7 @@ function Scoreboard() {
                             scoreboardMetadata.roundWinnerID
                         ]?.textColor ?? "black",
                     }}
-                    className="text-sm"
+                    className="text-center text-sm"
                   >
                     {scoreboardMetadata.gameWinnerID
                       ? playerMetadata[scoreboardMetadata.gameWinnerID]
