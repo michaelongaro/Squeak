@@ -8,13 +8,13 @@ interface IDeckToSqueak {
   playerID: string;
   roomCode: string;
   io: Server;
-  squeakEndLocation: number;
+  squeakStackEndIndex: number;
 }
 
 export function handToSqueak({
   gameData,
   card,
-  squeakEndLocation,
+  squeakStackEndIndex,
   playerID,
   roomCode,
   io,
@@ -24,7 +24,7 @@ export function handToSqueak({
   const player = gameData[roomCode]?.players?.[playerID];
 
   const squeakStackLocation =
-    gameData[roomCode]?.players?.[playerID]?.squeakHand[squeakEndLocation];
+    gameData[roomCode]?.players?.[playerID]?.squeakHand[squeakStackEndIndex];
 
   if (!player || !board || !players || !squeakStackLocation) return;
 
@@ -40,28 +40,29 @@ export function handToSqueak({
     return true;
   });
 
-  const indexWithinSqueakStack = gameData[roomCode]!.players[
+  const indexWithinTargetSqueakStack = gameData[roomCode]!.players[
     playerID
-  ]!.squeakHand[squeakEndLocation]!.findIndex(
+  ]!.squeakHand[squeakStackEndIndex]!.findIndex(
     (squeakCard) =>
       squeakCard.value === card.value && squeakCard.suit === card.suit,
   );
 
-  const squeakStackLength =
-    gameData[roomCode]!.players[playerID]!.squeakHand[squeakEndLocation]!
+  const targetSqueakStackLength =
+    gameData[roomCode]!.players[playerID]!.squeakHand[squeakStackEndIndex]!
       .length;
 
   io.in(roomCode).emit("cardDropApproved", {
     card,
     startingCardMetadata: {
       originSqueakStackIdx: undefined,
-      destinationSqueakStackIdx: squeakEndLocation,
-      lengthOfStack: 1,
+      destinationSqueakStackIdx: squeakStackEndIndex,
+      lengthOfStartStack: 1,
     },
     squeakEndCoords: {
-      offsetHeight: indexWithinSqueakStack * (20 - squeakStackLength),
+      offsetHeight:
+        indexWithinTargetSqueakStack * (20 - targetSqueakStackLength),
     },
-    endID: `${playerID}squeakStack${squeakEndLocation}0`,
+    endID: `${playerID}squeakStack${squeakStackEndIndex}0`,
     gameData: gameData[roomCode],
     playerID,
   });

@@ -12,7 +12,7 @@ interface ISqueakToBoard {
   playerID: string;
   roomCode: string;
   io: Server;
-  squeakStartLocation: number;
+  squeakStackStartIndex: number;
   boardEndLocation: { row: number; col: number };
 }
 
@@ -23,13 +23,13 @@ export function squeakToBoard({
   playerID,
   roomCode,
   io,
-  squeakStartLocation,
+  squeakStackStartIndex,
   boardEndLocation,
 }: ISqueakToBoard) {
   const board = gameData[roomCode]?.board;
   const players = gameData[roomCode]?.players;
   const player = gameData[roomCode]?.players?.[playerID];
-  const startSqueakStackLocation = player?.squeakHand[squeakStartLocation];
+  const startSqueakStackLocation = player?.squeakHand[squeakStackStartIndex];
   const miscRoomDataObj = miscRoomData[roomCode];
 
   if (
@@ -62,13 +62,13 @@ export function squeakToBoard({
     if (startSqueakStackLocation?.length === 0) {
       setTimeout(() => {
         drawFromSqueakDeck({
-          indexToDrawTo: squeakStartLocation,
+          indexToDrawTo: squeakStackStartIndex,
           playerID,
           roomCode,
           gameData,
           io,
         });
-      }, 325);
+      }, 375);
     }
 
     // not sure how to properly mutate the board without this
@@ -78,9 +78,9 @@ export function squeakToBoard({
       playerID,
       card,
       startingCardMetadata: {
-        originSqueakStackIdx: squeakStartLocation,
+        originSqueakStackIdx: squeakStackStartIndex,
         destinationSqueakStackIdx: undefined,
-        lengthOfStack: 1,
+        lengthOfStartStack: 1,
       },
       endID: `cell${row}${col}`,
       boardEndLocation,

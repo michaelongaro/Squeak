@@ -9,8 +9,8 @@ interface ISqueakToSqueak {
   playerID: string;
   roomCode: string;
   io: Server;
-  squeakStartLocation: number;
-  squeakEndLocation: number;
+  squeakStackStartIndex: number;
+  squeakStackEndIndex: number;
 }
 
 export function squeakToSqueak({
@@ -19,15 +19,15 @@ export function squeakToSqueak({
   playerID,
   roomCode,
   io,
-  squeakStartLocation,
-  squeakEndLocation,
+  squeakStackStartIndex,
+  squeakStackEndIndex,
 }: ISqueakToSqueak) {
   const board = gameData[roomCode]?.board;
   const players = gameData[roomCode]?.players;
   const player = gameData[roomCode]?.players?.[playerID];
-  const startSqueakStack = player?.squeakHand[squeakStartLocation];
+  const startSqueakStack = player?.squeakHand[squeakStackStartIndex];
 
-  const endSqueakStack = player?.squeakHand[squeakEndLocation];
+  const endSqueakStack = player?.squeakHand[squeakStackEndIndex];
 
   const indexOfCardInStartStack = startSqueakStack?.findIndex(
     (c) => c.value === card.value && c.suit === card.suit,
@@ -49,45 +49,45 @@ export function squeakToSqueak({
   if (startSqueakStack?.length === 0) {
     setTimeout(() => {
       drawFromSqueakDeck({
-        indexToDrawTo: squeakStartLocation,
+        indexToDrawTo: squeakStackStartIndex,
         playerID,
         roomCode,
         gameData,
         io,
       });
-    }, 325);
+    }, 375);
   }
 
   // moving all child cards below the card being moved to the new stack
-  // not sure how to do this without "!"s
-  gameData[roomCode]!.players[playerID]!.squeakHand[squeakEndLocation] =
+  gameData[roomCode]!.players[playerID]!.squeakHand[squeakStackEndIndex] =
     endSqueakStack.concat(cardsToMove);
 
-  const indexWithinSqueakStack = gameData[roomCode]!.players[
+  const indexWithinTargetSqueakStack = gameData[roomCode]!.players[
     playerID
-  ]!.squeakHand[squeakEndLocation]!.findIndex(
+  ]!.squeakHand[squeakStackEndIndex]!.findIndex(
     (squeakCard) =>
       squeakCard.value === card.value && squeakCard.suit === card.suit,
   );
 
-  const squeakStackLength =
-    gameData[roomCode]!.players[playerID]!.squeakHand[squeakEndLocation]!
+  const targetSqueakStackLength =
+    gameData[roomCode]!.players[playerID]!.squeakHand[squeakStackEndIndex]!
       .length;
 
   io.in(roomCode).emit("cardDropApproved", {
     playerID,
     card,
     startingCardMetadata: {
-      originSqueakStackIdx: squeakStartLocation,
-      destinationSqueakStackIdx: squeakEndLocation,
-      lengthOfStack: cardsToMove.length,
-      lengthOfTargetStack: squeakStackLength - cardsToMove.length,
-      startingDepth: indexWithinSqueakStack,
+      originSqueakStackIdx: squeakStackStartIndex,
+      destinationSqueakStackIdx: squeakStackEndIndex,
+      lengthOfStartStack: cardsToMove.length,
+      lengthOfTargetStack: targetSqueakStackLength,
+      indexWithinStartStack: indexOfCardInStartStack,
     },
     squeakEndCoords: {
-      offsetHeight: indexWithinSqueakStack * (20 - squeakStackLength),
+      offsetHeight:
+        indexWithinTargetSqueakStack * (20 - targetSqueakStackLength),
     },
-    endID: `${playerID}squeakStack${squeakEndLocation}0`,
+    endID: `${playerID}squeakStack${squeakStackEndIndex}0`,
     gameData: gameData[roomCode],
   });
 }

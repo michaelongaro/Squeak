@@ -36,7 +36,7 @@ interface ICardBeingMovedProgramatically {
 
 interface DraggedStack {
   squeakStackIdx: number;
-  startingDepth: number;
+  indexWithinStartStack: number;
   length: number;
   lengthOfTargetStack: number;
 }

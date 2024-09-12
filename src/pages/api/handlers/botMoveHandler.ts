@@ -99,7 +99,7 @@ export function botMoveHandler(
                   playerID,
                   roomCode,
                   io,
-                  squeakStartLocation: stackIdx,
+                  squeakStackStartIndex: stackIdx,
                   boardEndLocation: { row: row, col: col },
                 });
 
@@ -156,8 +156,8 @@ export function botMoveHandler(
             playerID,
             roomCode,
             io,
-            squeakStartLocation: stackIdx,
-            squeakEndLocation: otherStackIdx,
+            squeakStackStartIndex: stackIdx,
+            squeakStackEndIndex: otherStackIdx,
           });
 
           // add to blacklist so we don't move it back to the same squeak stack
@@ -206,7 +206,7 @@ export function botMoveHandler(
               playerID,
               roomCode,
               io,
-              squeakStartLocation: stackIdx,
+              squeakStackStartIndex: stackIdx,
               boardEndLocation: { row, col },
             });
 
@@ -320,7 +320,7 @@ export function botMoveHandler(
           playerID,
           roomCode,
           io,
-          squeakEndLocation: stackIdx,
+          squeakStackEndIndex: stackIdx,
         });
 
         return;
@@ -359,8 +359,8 @@ export function botMoveHandler(
             playerID,
             roomCode,
             io,
-            squeakStartLocation: stackIdx,
-            squeakEndLocation: otherStackIdx,
+            squeakStackStartIndex: stackIdx,
+            squeakStackEndIndex: otherStackIdx,
           });
 
           // add to blacklist so we don't move it back to the same squeak stack

@@ -128,9 +128,9 @@ export interface IModifyFriendData {
 export interface ICardDropProposal {
   card: ICard;
   handStart?: boolean;
-  squeakStartLocation?: number;
+  squeakStackStartIndex?: number;
   boardEndLocation?: { row: number; col: number };
-  squeakEndLocation?: number;
+  squeakStackEndIndex?: number;
   gameData: IGameMetadata;
   playerID: string;
   roomCode: string;

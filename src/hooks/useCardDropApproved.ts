@@ -10,9 +10,9 @@ interface ICardDropAccepted extends Partial<ICardDropProposal> {
   startingCardMetadata: {
     originSqueakStackIdx?: number; // if undefined -> origin is hand
     destinationSqueakStackIdx?: number; // if undefined -> destination is board
-    lengthOfStack: number; // will just be 1 for a single card
+    lengthOfStartStack: number; // will just be 1 for a single card
     lengthOfTargetStack: number;
-    startingDepth: number;
+    indexWithinStartStack: number;
   };
   squeakEndCoords?: {
     offsetHeight: number;
@@ -134,19 +134,19 @@ function useCardDropApproved({
       ) {
         const depthAlterations = [0, 0, 0, 0];
         depthAlterations[startingCardMetadata.originSqueakStackIdx] =
-          -startingCardMetadata.lengthOfStack;
+          -startingCardMetadata.lengthOfStartStack;
         depthAlterations[startingCardMetadata.destinationSqueakStackIdx] =
-          startingCardMetadata.lengthOfStack;
+          startingCardMetadata.lengthOfStartStack;
 
         setSqueakStackDragAlterations({
           ...squeakStackDragAlterations,
           [ownerID]: {
             squeakStackDepthAlterations: depthAlterations,
             draggedStack: {
-              length: startingCardMetadata.lengthOfStack,
+              length: startingCardMetadata.lengthOfStartStack,
               lengthOfTargetStack: startingCardMetadata.lengthOfTargetStack,
               squeakStackIdx: startingCardMetadata.originSqueakStackIdx,
-              startingDepth: startingCardMetadata.startingDepth,
+              indexWithinStartStack: startingCardMetadata.indexWithinStartStack,
             },
           },
         });

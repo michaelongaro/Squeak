@@ -18,9 +18,9 @@ export function proposedCardDropHandler(
   function proposedCardDrop({
     card,
     handStart,
-    squeakStartLocation,
+    squeakStackStartIndex,
     boardEndLocation,
-    squeakEndLocation,
+    squeakStackEndIndex,
     playerID,
     roomCode,
   }: ICardDropProposal) {
@@ -34,32 +34,32 @@ export function proposedCardDropHandler(
         roomCode,
         io,
       });
-    } else if (handStart && squeakEndLocation != null) {
+    } else if (handStart && squeakStackEndIndex != null) {
       handToSqueak({
         gameData,
         card,
-        squeakEndLocation,
+        squeakStackEndIndex,
         playerID,
         roomCode,
         io,
       });
-    } else if (squeakStartLocation != null && boardEndLocation) {
+    } else if (squeakStackStartIndex != null && boardEndLocation) {
       squeakToBoard({
         gameData,
         miscRoomData,
         card,
-        squeakStartLocation,
+        squeakStackStartIndex,
         boardEndLocation,
         playerID,
         roomCode,
         io,
       });
-    } else if (squeakStartLocation != null && squeakEndLocation != null) {
+    } else if (squeakStackStartIndex != null && squeakStackEndIndex != null) {
       squeakToSqueak({
         gameData,
         card,
-        squeakStartLocation,
-        squeakEndLocation,
+        squeakStackStartIndex,
+        squeakStackEndIndex,
         playerID,
         roomCode,
         io,

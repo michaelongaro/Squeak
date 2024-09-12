@@ -71,7 +71,7 @@ export function handToBoard({
       startingCardMetadata: {
         originSqueakStackIdx: undefined,
         destinationSqueakStackIdx: undefined,
-        lengthOfStack: 1,
+        lengthOfStartStack: 1,
       },
       endID: `cell${row}${col}`,
       boardEndLocation,

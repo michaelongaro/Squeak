@@ -99,18 +99,14 @@ function OtherPlayersCardContainers({
     const squeakStackDepthAlterations =
       draggedData?.squeakStackDepthAlterations ?? null;
 
-    let lengthOfSqueakStackBeingDragged = 0;
-    if (draggedStack !== null) {
-      lengthOfSqueakStackBeingDragged = draggedStack.length;
-    }
+    // special handling for squeak stack being dragged, since it's possible
+    // only a part of the stack is being dragged
 
-    // special handling for squeak stack being dragged
     if (
       squeakStackIdx === draggedStack?.squeakStackIdx &&
-      cardIdx >= draggedStack?.startingDepth
+      cardIdx >= draggedStack?.indexWithinStartStack
     ) {
-      squeakStackLength =
-        draggedStack.lengthOfTargetStack + lengthOfSqueakStackBeingDragged;
+      squeakStackLength = draggedStack.lengthOfTargetStack;
     }
 
     // otherwise, part of regular squeak stacks
