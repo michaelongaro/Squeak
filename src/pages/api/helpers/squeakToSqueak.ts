@@ -87,7 +87,7 @@ export function squeakToSqueak({
     squeakEndCoords: {
       offsetHeight: indexWithinSqueakStack * (20 - squeakStackLength),
     },
-    endID: `${playerID}squeakHand${squeakEndLocation}`,
+    endID: `${playerID}squeakStack${squeakEndLocation}0`,
     gameData: gameData[roomCode],
   });
 }
