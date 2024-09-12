@@ -113,8 +113,8 @@ function useCardDropApproved({
 
       // ---------- hand to squeak stack ----------
       if (
-        !startingCardMetadata?.originSqueakStackIdx &&
-        startingCardMetadata?.destinationSqueakStackIdx !== undefined
+        startingCardMetadata.originSqueakStackIdx === undefined &&
+        startingCardMetadata.destinationSqueakStackIdx !== undefined
       ) {
         const depthAlterations = [0, 0, 0, 0];
         depthAlterations[startingCardMetadata.destinationSqueakStackIdx] = 1;
@@ -129,8 +129,8 @@ function useCardDropApproved({
 
       // ---------- squeak stack to squeak stack ----------
       else if (
-        startingCardMetadata?.originSqueakStackIdx !== undefined &&
-        startingCardMetadata?.destinationSqueakStackIdx !== undefined
+        startingCardMetadata.originSqueakStackIdx !== undefined &&
+        startingCardMetadata.destinationSqueakStackIdx !== undefined
       ) {
         const depthAlterations = [0, 0, 0, 0];
         depthAlterations[startingCardMetadata.originSqueakStackIdx] =
@@ -154,8 +154,8 @@ function useCardDropApproved({
 
       // ---------- squeak stack to board ----------
       else if (
-        startingCardMetadata?.originSqueakStackIdx !== undefined &&
-        !startingCardMetadata?.destinationSqueakStackIdx
+        startingCardMetadata.originSqueakStackIdx !== undefined &&
+        startingCardMetadata.destinationSqueakStackIdx === undefined
       ) {
         const depthAlterations = [0, 0, 0, 0];
         depthAlterations[startingCardMetadata.originSqueakStackIdx] = -1;
@@ -210,9 +210,7 @@ function useCardDropApproved({
             },
           });
 
-          if (playerID) {
-            setGameData(gameData);
-          }
+          setGameData(gameData);
 
           if (playerID === userID) {
             setProposedCardBoxShadow(null);
