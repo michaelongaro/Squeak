@@ -322,10 +322,20 @@ function Card({
             const image = card.children[0] as HTMLImageElement;
 
             card.style.willChange = "transform";
+
+            if (origin === "deck" || origin === "squeakDeck") {
+              image.style.willChange = "transform, filter, boxShadow";
+            } else {
             image.style.willChange = "transform, filter";
+            }
 
             card.style.transition = "all 325ms ease-out, filter 163ms";
+            if (origin === "deck" || origin === "squeakDeck") {
+              image.style.transition =
+                "transform 163ms ease-out, boxShadow 163ms ease-out";
+            } else {
             image.style.transition = "transform 163ms ease-out";
+            }
             image.style.transform = "scale(1)";
           }
         }
@@ -427,6 +437,12 @@ function Card({
         }
       }
 
+      // helps to differentiate the moving card from the rest of the deck. previously
+      // I had box shadows on all moving cards but I think it caused performance issues
+      if (origin === "deck" || origin === "squeakDeck") {
+        imageRef.current.style.boxShadow = "0px 0px 4px 0px rgb(0, 0, 0)";
+      }
+
       if (flip) {
         if (!cardRef.current) return;
 
@@ -445,6 +461,10 @@ function Card({
             "rotateX(3deg) rotateY(90deg)",
             "rotateX(0deg) rotateY(0deg)",
           );
+
+          if (origin === "deck" || origin === "squeakDeck") {
+            imageRef.current.style.boxShadow = "none";
+          }
         }, 163);
       }
 
