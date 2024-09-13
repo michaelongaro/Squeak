@@ -93,6 +93,8 @@ export function drawFromDeck({
   io.in(roomCode).emit("playerDrawnFromDeck", {
     cardBeingAnimated,
     playerID,
+    cardsInInitialPile: deck.length,
+    cardsInTargetPile: hand.length,
     gameData: gameData[roomCode],
   });
 }

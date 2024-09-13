@@ -60,6 +60,7 @@ function formatOffsetPosition(offset: IPosition | undefined) {
 
 export interface IMoveCard {
   newPosition: { x: number; y: number };
+  pseudoVerticalDepthDifferential?: number;
   flip: boolean;
   rotate: boolean;
   callbackFunction?: () => void;
@@ -186,7 +187,13 @@ function Card({
   ]);
 
   const moveCard = useCallback(
-    ({ newPosition, flip, rotate, callbackFunction }: IMoveCard) => {
+    ({
+      newPosition,
+      flip,
+      rotate,
+      callbackFunction,
+      pseudoVerticalDepthDifferential = 0,
+    }: IMoveCard) => {
       if (!cardRef.current || !imageRef.current) return;
 
       let start: number | undefined;
@@ -401,9 +408,10 @@ function Card({
 
         const { x: endXCoordinate, y: endYCoordinate } =
           adjustCoordinatesByRotation(
-            Math.floor(newPosition.x - currentX),
-            Math.floor(newPosition.y - currentY),
+            newPosition.x - currentX,
+            newPosition.y - currentY,
             rotation,
+            pseudoVerticalDepthDifferential,
           );
 
         setCardOffsetPosition({

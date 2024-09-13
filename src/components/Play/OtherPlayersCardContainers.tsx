@@ -419,31 +419,34 @@ function OtherPlayersCardContainers({
             >
               {gameData.players[playerID]!.squeakDeck.length > 0 && (
                 <div className="relative h-full w-full">
-                  {gameData.players[playerID]?.squeakDeck.map((card) => (
-                    <div
-                      key={`${playerID}squeakDeckCard${card.suit}${card.value}`}
-                      style={{
-                        zIndex: squeakDeckBeingMovedProgramatically[playerID]
-                          ? 140 // 140 since the card shouldn't be above any moving cards, which are at 150
-                          : 90, // otherwise default to 90 so regular cards fly above this whole deck
-                      }}
-                      className="absolute left-0 top-0 h-full w-full select-none"
-                    >
-                      <Card
-                        value={card.value}
-                        suit={card.suit}
-                        showCardBack={true} // this would need to be changed halfway through card flip
-                        draggable={false}
-                        ownerID={playerID}
-                        hueRotation={
-                          playerMetadata[playerID]?.deckHueRotation || 0
-                        }
-                        startID={`${playerID}squeakDeck`}
-                        origin={"squeakDeck"}
-                        rotation={rotationOrder[idx] as number}
-                      />
-                    </div>
-                  ))}
+                  {gameData.players[playerID]?.squeakDeck.map(
+                    (card, squeakDeckIdx) => (
+                      <div
+                        key={`${playerID}squeakDeckCard${card.suit}${card.value}`}
+                        style={{
+                          bottom: `${squeakDeckIdx * 0.15}px`,
+                          zIndex: squeakDeckBeingMovedProgramatically[playerID]
+                            ? 140 // 140 since the card shouldn't be above any moving cards, which are at 150
+                            : 90, // otherwise default to 90 so regular cards fly above this whole deck
+                        }}
+                        className="absolute left-0 h-full w-full select-none transition-[bottom]"
+                      >
+                        <Card
+                          value={card.value}
+                          suit={card.suit}
+                          showCardBack={true} // this would need to be changed halfway through card flip
+                          draggable={false}
+                          ownerID={playerID}
+                          hueRotation={
+                            playerMetadata[playerID]?.deckHueRotation || 0
+                          }
+                          startID={`${playerID}squeakDeck`}
+                          origin={"squeakDeck"}
+                          rotation={rotationOrder[idx] as number}
+                        />
+                      </div>
+                    ),
+                  )}
                 </div>
               )}
 
@@ -468,11 +471,14 @@ function OtherPlayersCardContainers({
             >
               <>
                 {gameData.players[playerID]?.hand.map(
-                  (card) =>
+                  (card, handIdx) =>
                     card !== null && (
                       <div
                         key={`${playerID}handCard${card.suit}${card.value}`}
-                        className="absolute left-0 top-0 select-none"
+                        style={{
+                          bottom: `${handIdx * 0.15}px`,
+                        }}
+                        className="absolute left-0 select-none transition-[bottom]"
                       >
                         <Card
                           value={card.value}
@@ -530,26 +536,32 @@ function OtherPlayersCardContainers({
                               : ""
                           } select-none" absolute left-0 top-0 h-full w-full`}
                         >
-                          {gameData?.players[playerID]?.deck.map((card) => (
-                            <div
-                              key={`${playerID}deckCard${card.suit}${card.value}`}
-                              className="absolute left-0 top-0 h-full w-full select-none"
-                            >
-                              <Card
-                                value={card.value}
-                                suit={card.suit}
-                                showCardBack={true} // separate state inside overrides this halfway through flip
-                                draggable={false}
-                                ownerID={playerID}
-                                hueRotation={
-                                  playerMetadata[playerID]?.deckHueRotation || 0
-                                }
-                                origin={"deck"}
-                                startID={`${playerID}deck`}
-                                rotation={rotationOrder[idx] as number}
-                              />
-                            </div>
-                          ))}
+                          {gameData?.players[playerID]?.deck.map(
+                            (card, deckIdx) => (
+                              <div
+                                key={`${playerID}deckCard${card.suit}${card.value}`}
+                                style={{
+                                  bottom: `${deckIdx * 0.15}px`,
+                                }}
+                                className="absolute left-0 h-full w-full select-none transition-[bottom]"
+                              >
+                                <Card
+                                  value={card.value}
+                                  suit={card.suit}
+                                  showCardBack={true} // separate state inside overrides this halfway through flip
+                                  draggable={false}
+                                  ownerID={playerID}
+                                  hueRotation={
+                                    playerMetadata[playerID]?.deckHueRotation ||
+                                    0
+                                  }
+                                  origin={"deck"}
+                                  startID={`${playerID}deck`}
+                                  rotation={rotationOrder[idx] as number}
+                                />
+                              </div>
+                            ),
+                          )}
                         </div>
 
                         {/* dummy card for when deck is drawing last 1/2/3 cards so that the last cards that

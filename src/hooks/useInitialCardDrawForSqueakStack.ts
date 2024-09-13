@@ -46,7 +46,14 @@ function useInitialCardDrawForSqueakStack({
     if (dataFromBackend !== null) {
       setDataFromBackend(null);
 
-      const { playerID, indexToDrawTo, newCard, gameData } = dataFromBackend;
+      const {
+        playerID,
+        indexToDrawTo,
+        cardsInInitialPile,
+        cardsInTargetPile,
+        newCard,
+        gameData,
+      } = dataFromBackend;
 
       if (
         playerID !== ownerID ||
@@ -67,6 +74,8 @@ function useInitialCardDrawForSqueakStack({
 
         moveCard({
           newPosition: { x: endX, y: endY },
+          pseudoVerticalDepthDifferential:
+            (cardsInTargetPile - cardsInInitialPile) * 0.15,
           flip: true,
           rotate: false,
           callbackFunction: () => {

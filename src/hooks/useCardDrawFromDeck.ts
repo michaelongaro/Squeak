@@ -53,6 +53,8 @@ function useCardDrawFromDeck({
 
       const {
         cardBeingAnimated, // whatever card will be showing as top card of player's hand
+        cardsInInitialPile,
+        cardsInTargetPile,
         playerID,
         gameData,
       } = dataFromBackend;
@@ -66,6 +68,8 @@ function useCardDrawFromDeck({
       )
         return;
 
+      // simulates another player drawing from their deck. This shows the little
+      // "press down" animation on the deck for w/e other player is drawing from their deck
       if (ownerID !== userID) {
         setOtherPlayerIDsDrawingFromDeck([
           ...otherPlayerIDsDrawingFromDeck,
@@ -88,6 +92,8 @@ function useCardDrawFromDeck({
       if (endLocation) {
         moveCard({
           newPosition: { x: endLocation.x, y: endLocation.y },
+          pseudoVerticalDepthDifferential:
+            (cardsInTargetPile - cardsInInitialPile) * 0.15,
           flip: true,
           rotate: false,
           callbackFunction: () => {

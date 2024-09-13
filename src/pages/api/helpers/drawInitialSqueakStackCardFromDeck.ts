@@ -28,6 +28,8 @@ export function drawInitialSqueakStackCardFromDeck({
 
     io.in(roomCode).emit("initialCardDrawnForSqueakStack", {
       playerID,
+      cardsInInitialPile: player.deck.length,
+      cardsInTargetPile: 0,
       indexToDrawTo,
       newCard: card,
       gameData: gameData[roomCode],

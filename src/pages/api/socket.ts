@@ -127,6 +127,8 @@ export interface IModifyFriendData {
 
 export interface ICardDropProposal {
   card: ICard;
+  cardsInInitialPile: number; // used to calculate offset for artificial "depth" on deck/hand/squeakDeck
+  cardsInTargetPile: number; // used to calculate offset for artificial "depth" on deck/hand/squeakDeck
   handStart?: boolean;
   squeakStackStartIndex?: number;
   boardEndLocation?: { row: number; col: number };
@@ -139,6 +141,8 @@ export interface ICardDropProposal {
 export interface IDrawFromSqueakDeck {
   roomCode: string;
   indexToDrawTo: number;
+  cardsInInitialPile: number; // used to calculate offset for artificial "depth" on deck/hand/squeakDeck
+  cardsInTargetPile: number; // used to calculate offset for artificial "depth" on deck/hand/squeakDeck
   playerID: string;
   newCard?: ICard;
   gameData: IGameMetadata;
@@ -146,7 +150,8 @@ export interface IDrawFromSqueakDeck {
 
 export interface IDrawFromDeck {
   cardBeingAnimated: ICard | null; // this will be the (up to) third top card from deck being drawn
-  resetDeck?: boolean;
+  cardsInInitialPile: number; // used to calculate offset for artificial "depth" on deck/hand/squeakDeck
+  cardsInTargetPile: number; // used to calculate offset for artificial "depth" on deck/hand/squeakDeck
   playerID: string;
   roomCode: string;
   gameData: IGameMetadata;

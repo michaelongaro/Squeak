@@ -76,6 +76,8 @@ export function squeakToSqueak({
   io.in(roomCode).emit("cardDropApproved", {
     playerID,
     card,
+    cardsInInitialPile: 0,
+    cardsInTargetPile: 0,
     startingCardMetadata: {
       originSqueakStackIdx: squeakStackStartIndex,
       destinationSqueakStackIdx: squeakStackEndIndex,

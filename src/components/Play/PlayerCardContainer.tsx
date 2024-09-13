@@ -279,29 +279,34 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
           >
             {gameData.players[userID]!.squeakDeck.length > 0 && (
               <div className="relative h-full w-full">
-                {gameData.players[userID]?.squeakDeck.map((card) => (
-                  <div
-                    key={`${userID}squeakDeckCard${card.suit}${card.value}`}
-                    style={{
-                      zIndex: squeakDeckBeingMovedProgramatically[userID]
-                        ? 140 // 140 since the card shouldn't be above any moving cards, which are at 150
-                        : 90, // otherwise default to 90 so regular cards fly above this whole deck
-                    }}
-                    className="absolute left-0 top-0 h-full w-full select-none"
-                  >
-                    <Card
-                      value={card.value}
-                      suit={card.suit}
-                      showCardBack={true} // separate state inside overrides this halfway through flip
-                      draggable={false}
-                      ownerID={userID}
-                      hueRotation={playerMetadata[userID]?.deckHueRotation || 0}
-                      startID={`${userID}squeakDeck`}
-                      origin={"squeakDeck"}
-                      rotation={0}
-                    />
-                  </div>
-                ))}
+                {gameData.players[userID]?.squeakDeck.map(
+                  (card, squeakDeckIdx) => (
+                    <div
+                      key={`${userID}squeakDeckCard${card.suit}${card.value}`}
+                      style={{
+                        bottom: `${squeakDeckIdx * 0.15}px`,
+                        zIndex: squeakDeckBeingMovedProgramatically[userID]
+                          ? 140 // 140 since the card shouldn't be above any moving cards, which are at 150
+                          : 90, // otherwise default to 90 so regular cards fly above this whole deck
+                      }}
+                      className="absolute left-0 h-full w-full select-none transition-[bottom]"
+                    >
+                      <Card
+                        value={card.value}
+                        suit={card.suit}
+                        showCardBack={true} // separate state inside overrides this halfway through flip
+                        draggable={false}
+                        ownerID={userID}
+                        hueRotation={
+                          playerMetadata[userID]?.deckHueRotation || 0
+                        }
+                        startID={`${userID}squeakDeck`}
+                        origin={"squeakDeck"}
+                        rotation={0}
+                      />
+                    </div>
+                  ),
+                )}
               </div>
             )}
 
@@ -325,16 +330,19 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
             className={`${classes.playerHand} cardDimensions relative select-none transition-opacity`}
           >
             {gameData.players[userID]?.hand.map(
-              (card, idx) =>
+              (card, handIdx) =>
                 card !== null && (
                   <div
                     key={`${userID}handCard${card.suit}${card.value}`}
-                    className="absolute left-0 top-0 select-none"
+                    style={{
+                      bottom: `${handIdx * 0.15}px`,
+                    }}
+                    className="absolute left-0 select-none transition-[bottom]"
                     onPointerEnter={() => {
                       setHoveringOverDeck(false);
                     }}
                     onPointerDown={() => {
-                      if (idx === gameData.players[userID]!.hand.length - 1)
+                      if (handIdx === gameData.players[userID]!.hand.length - 1)
                         setHoldingADeckCard(true);
                     }}
                     onPointerUp={() => {
@@ -349,7 +357,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                       value={card.value}
                       suit={card.suit}
                       draggable={
-                        idx === gameData.players[userID]!.hand.length - 1
+                        handIdx === gameData.players[userID]!.hand.length - 1
                       }
                       origin={"hand"}
                       ownerID={userID}
@@ -439,26 +447,31 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                             : ""
                         } absolute left-0 top-0 h-full w-full select-none`}
                       >
-                        {gameData?.players[userID]?.deck?.map((card) => (
-                          <div
-                            key={`${userID}deckCard${card.suit}${card.value}`}
-                            className="absolute left-0 top-0 h-full w-full select-none"
-                          >
-                            <Card
-                              value={card.value}
-                              suit={card.suit}
-                              showCardBack={true} // separate state inside overrides this halfway through flip
-                              draggable={false}
-                              ownerID={userID}
-                              hueRotation={
-                                playerMetadata[userID]?.deckHueRotation || 0
-                              }
-                              origin={"deck"}
-                              startID={`${userID}deck`}
-                              rotation={0}
-                            />
-                          </div>
-                        ))}
+                        {gameData?.players[userID]?.deck?.map(
+                          (card, deckIdx) => (
+                            <div
+                              key={`${userID}deckCard${card.suit}${card.value}`}
+                              style={{
+                                bottom: `${deckIdx * 0.15}px`,
+                              }}
+                              className="absolute left-0 h-full w-full select-none transition-[bottom]"
+                            >
+                              <Card
+                                value={card.value}
+                                suit={card.suit}
+                                showCardBack={true} // separate state inside overrides this halfway through flip
+                                draggable={false}
+                                ownerID={userID}
+                                hueRotation={
+                                  playerMetadata[userID]?.deckHueRotation || 0
+                                }
+                                origin={"deck"}
+                                startID={`${userID}deck`}
+                                rotation={0}
+                              />
+                            </div>
+                          ),
+                        )}
                       </div>
 
                       {/* dummy card for when deck is drawing last 1/2/3 cards so that the last cards that

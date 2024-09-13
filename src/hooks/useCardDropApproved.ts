@@ -71,6 +71,8 @@ function useCardDropApproved({
 
       const {
         card,
+        cardsInInitialPile,
+        cardsInTargetPile,
         startingCardMetadata,
         endID,
         squeakEndCoords,
@@ -86,7 +88,9 @@ function useCardDropApproved({
         gameData === undefined ||
         card.value !== value ||
         card.suit !== suit ||
-        playerID !== ownerID
+        playerID !== ownerID ||
+        cardsInInitialPile === undefined ||
+        cardsInTargetPile === undefined
       )
         return;
 
@@ -199,6 +203,8 @@ function useCardDropApproved({
 
       moveCard({
         newPosition: { x: endX, y: endY },
+        pseudoVerticalDepthDifferential:
+          (cardsInTargetPile - cardsInInitialPile) * 0.15,
         flip: false,
         rotate: endID.includes("cell"),
         callbackFunction: () => {

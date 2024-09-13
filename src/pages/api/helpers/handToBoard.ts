@@ -68,6 +68,8 @@ export function handToBoard({
     io.in(roomCode).emit("cardDropApproved", {
       playerID,
       card,
+      cardsInInitialPile: player.hand.length,
+      cardsInTargetPile: 0,
       startingCardMetadata: {
         originSqueakStackIdx: undefined,
         destinationSqueakStackIdx: undefined,
