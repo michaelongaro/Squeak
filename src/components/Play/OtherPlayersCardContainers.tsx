@@ -58,25 +58,25 @@ function OtherPlayersCardContainers({
   // the other player's cards on the screen
 
   useEffect(() => {
-    const boardElement = document.getElementById("board");
-    if (!boardElement) return;
-
     const updateOffsets = () => {
+      const boardElement = document.getElementById("board");
+      if (!boardElement) {
+        setTimeout(() => {
+          updateOffsets();
+        }, 250); // rough way to handle the fact that the board element might not be rendered yet
+        return;
+      }
+
       const { top, left } = boardElement.getBoundingClientRect();
       setTopOffsetsFromBoard([top, left, left, top]);
     };
 
-    const mutationObserver = new MutationObserver(updateOffsets);
-    const resizeObserver = new ResizeObserver(updateOffsets);
-
-    mutationObserver.observe(boardElement, { attributes: true });
-    resizeObserver.observe(boardElement);
+    window.addEventListener("resize", updateOffsets);
 
     updateOffsets();
 
     return () => {
-      mutationObserver.disconnect();
-      resizeObserver.disconnect();
+      window.removeEventListener("resize", updateOffsets);
     };
   }, []);
 
@@ -518,7 +518,7 @@ function OtherPlayersCardContainers({
                       key={`animated${playerID}Deck`}
                       initial={{ opacity: 0, scale: 0.75 }}
                       animate={{ opacity: 1, scale: 1 }}
-                      transition={{ duration: 0.325, ease: "easeInOut" }}
+                      transition={{ duration: 0.15, ease: "easeInOut" }}
                       style={{
                         zIndex:
                           cardBeingMovedProgramatically[playerID] === true
@@ -585,7 +585,7 @@ function OtherPlayersCardContainers({
                       key={`animated${playerID}DeckReset`}
                       animate={{ opacity: 1, scale: 1 }}
                       exit={{ opacity: 0, scale: 0.75 }}
-                      transition={{ duration: 0.325, ease: "easeInOut" }}
+                      transition={{ duration: 0.15, ease: "easeInOut" }}
                       className="grid select-none grid-cols-1 items-center justify-items-center"
                     >
                       <div className="col-start-1 row-start-1">
