@@ -41,14 +41,14 @@ function useResetDeckFromCardDraw() {
           setOtherPlayerIDsDrawingFromDeck((currentIDs) =>
             currentIDs.filter((id) => id !== playerID),
           );
-        }, 115);
+        }, 75);
       }
 
       const playersHandContainer = document.getElementById(`${playerID}hand`);
 
       if (!playersHandContainer) return;
 
-      playersHandContainer.style.transition = "all 0.325s ease-in-out";
+      playersHandContainer.style.transition = "all 0.15s ease-in-out";
       playersHandContainer.style.opacity = "0";
       playersHandContainer.style.transform = "scale(0.75)";
 
@@ -56,7 +56,7 @@ function useResetDeckFromCardDraw() {
         setGameData(gameData);
         playersHandContainer.style.opacity = "1";
         playersHandContainer.style.transform = "scale(1)";
-      }, 325);
+      }, 150);
     }
   }, [
     dataFromBackend,

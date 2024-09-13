@@ -429,7 +429,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                     key={`animated${userID}Deck`}
                     initial={{ opacity: 0, scale: 0.75 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.325 }}
+                    transition={{ duration: 0.15, ease: "easeInOut" }}
                     className="relative h-full w-full select-none"
                   >
                     <div
@@ -496,7 +496,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                     initial={{ opacity: 0, scale: 0.75 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.75 }}
-                    transition={{ duration: 0.325 }}
+                    transition={{ duration: 0.15, ease: "easeInOut" }}
                     className="baseFlex cursor-pointer select-none"
                   >
                     <div

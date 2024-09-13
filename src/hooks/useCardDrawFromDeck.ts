@@ -80,7 +80,7 @@ function useCardDrawFromDeck({
           setOtherPlayerIDsDrawingFromDeck((currentIDs) =>
             currentIDs.filter((id) => id !== ownerID),
           );
-        }, 115);
+        }, 150);
       }
 
       const endID = `${ownerID}hand`;
