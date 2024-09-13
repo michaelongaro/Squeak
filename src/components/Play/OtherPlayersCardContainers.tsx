@@ -526,7 +526,7 @@ function OtherPlayersCardContainers({
                           onAnimationEnd={() => setDecksAreBeingRotated(false)}
                           className={`${
                             decksAreBeingRotated
-                              ? "topBackFacingCardInDeck"
+                              ? "rotateDeckByACardAnimation"
                               : ""
                           } select-none" absolute left-0 top-0 h-full w-full`}
                         >
@@ -555,7 +555,7 @@ function OtherPlayersCardContainers({
                         {/* dummy card for when deck is drawing last 1/2/3 cards so that the last cards that
                           are supposed to be moving with the top card that is animating don't get revealed
                           to be actually static during the animation.*/}
-                        <div className="absolute left-0 top-0 h-full w-full select-none">
+                        <div className="absolute left-0 top-0 z-[1] h-full w-full select-none">
                           <StaticCard
                             showCardBack={true}
                             hueRotation={

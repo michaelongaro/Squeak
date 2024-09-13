@@ -434,7 +434,9 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                       <div
                         onAnimationEnd={() => setDecksAreBeingRotated(false)}
                         className={`${
-                          decksAreBeingRotated ? "topBackFacingCardInDeck" : ""
+                          decksAreBeingRotated
+                            ? "rotateDeckByACardAnimation"
+                            : ""
                         } absolute left-0 top-0 h-full w-full select-none`}
                       >
                         {gameData?.players[userID]?.deck?.map((card) => (
@@ -462,7 +464,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                       {/* dummy card for when deck is drawing last 1/2/3 cards so that the last cards that
                           are supposed to be moving with the top card that is animating don't get revealed
                           to be actually static during the animation.*/}
-                      <div className="absolute left-0 top-0 h-full w-full select-none">
+                      <div className="absolute left-0 top-0 z-[1] h-full w-full select-none">
                         <StaticCard
                           showCardBack={true}
                           hueRotation={

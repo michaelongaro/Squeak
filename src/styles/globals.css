@@ -152,7 +152,7 @@ body {
   background-repeat: repeat;
 }
 
-.topBackFacingCardInDeck {
+.rotateDeckByACardAnimation {
   animation: rotateDeck 1s ease-in-out;
 }
 
@@ -166,7 +166,7 @@ body {
     top: -85px;
   }
 
-  65% {
+  45% {
     z-index: 1;
   }
 
@@ -191,7 +191,7 @@ body {
       top: -95px;
     }
 
-    65% {
+    45% {
       z-index: 1;
     }
 
