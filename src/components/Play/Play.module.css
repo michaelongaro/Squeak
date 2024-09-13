@@ -74,9 +74,9 @@
 .boardContainer.fivePlayers {
   grid-template-columns: 0fr 0.5fr 0.5fr 0fr;
   grid-template-areas:
-    "leftPlayerCards topPlayerCard1 topPlayerCard2 rightPlayerCards"
+    ". topPlayerCard1 topPlayerCard2 ."
     "leftPlayerCards board board rightPlayerCards"
-    "leftPlayerCards currentPlayerCards currentPlayerCards rightPlayerCards";
+    ". currentPlayerCards currentPlayerCards .";
 }
 
 .board {
