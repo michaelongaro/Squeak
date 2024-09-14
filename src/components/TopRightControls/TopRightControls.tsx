@@ -12,10 +12,8 @@ import UserSettingsAndStatsDialog, {
 } from "../dialogs/SettingsAndStats/UserSettingsAndStatisticsDialog";
 import { IoSettingsSharp } from "react-icons/io5";
 import { TbDoorExit } from "react-icons/tb";
-import { FiMail } from "react-icons/fi";
 import { FaUserFriends } from "react-icons/fa";
 import { AnimatePresence, motion } from "framer-motion";
-import { AiOutlineCheck, AiOutlineClose } from "react-icons/ai";
 import { FaTrashAlt } from "react-icons/fa";
 import {
   AlertDialog,
@@ -28,7 +26,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "~/components/ui/alert-dialog";
-import { TbDoorEnter } from "react-icons/tb";
 import AudioLevelSlider from "./AudioLevelSlider";
 import useLeaveRoom from "../../hooks/useLeaveRoom";
 import { MdHowToVote, MdQuestionMark } from "react-icons/md";
@@ -1744,7 +1741,7 @@ function WhilePlayingSheet({
             </AlertDialogHeader>
             <AlertDialogFooter className="baseFlex mt-4 !flex-row gap-8">
               <AlertDialogCancel asChild>
-                <Button variant={"outline"} className="m-0 w-24">
+                <Button variant={"secondary"} className="m-0 w-24">
                   Cancel
                 </Button>
               </AlertDialogCancel>
