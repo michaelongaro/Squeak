@@ -120,16 +120,21 @@ function CreateRoom() {
   // needs !connectedToRoom for when player inherits ownership of room after prev
   // host leaves, otherwise this effect would be overwriting the current room config
   useEffect(() => {
-    if (!configAndMetadataInitialized && userID && !connectedToRoom) {
+    if (
+      !configAndMetadataInitialized &&
+      userID &&
+      playerMetadata[userID]?.username &&
+      !connectedToRoom
+    ) {
+      setConfigAndMetadataInitialized(true);
+
       setRoomConfig({
         ...roomConfig,
         code: cryptoRandomString({ length: 6, type: "numeric" }),
         playerIDsInRoom: [userID],
-        hostUsername: playerMetadata[userID]?.username || "",
+        hostUsername: playerMetadata[userID].username,
         hostUserID: userID,
       });
-
-      setConfigAndMetadataInitialized(true);
     }
   }, [
     configAndMetadataInitialized,
