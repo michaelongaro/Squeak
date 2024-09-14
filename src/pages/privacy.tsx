@@ -24,7 +24,7 @@ function Privacy() {
           />
         </Link>
 
-        <h1 className="mb-6 text-2xl font-bold tablet:text-3xl">
+        <h1 className="mb-6 text-xl font-bold tablet:text-2xl">
           Privacy Policy
         </h1>
         <p className="mb-4">
@@ -45,14 +45,14 @@ function Privacy() {
           information.
         </p>
 
-        <h2 className="mb-4 text-xl font-semibold tablet:text-2xl">
+        <p className="my-4 text-lg font-semibold tablet:text-xl">
           1. Information We Collect
-        </h2>
+        </p>
         <p className="mb-4">
           We collect the following information from you when you use our website
           or services:
         </p>
-        <ul className="baseVertFlex mb-4 list-inside list-disc !items-start gap-2">
+        <ul className="baseVertFlex mb-4 ml-6 list-outside list-disc !items-start gap-2">
           <li>
             <span className="font-semibold">Personal Information:</span> When
             you create an account through Google, we collect your name, email
@@ -66,13 +66,13 @@ function Privacy() {
           </li>
         </ul>
 
-        <h2 className="mb-4 text-xl font-semibold tablet:text-2xl">
+        <p className="my-4 text-lg font-semibold tablet:text-xl">
           2. How We Use Your Information
-        </h2>
+        </p>
         <p className="mb-4">
           We use the information we collect for the following purposes:
         </p>
-        <ul className="baseVertFlex mb-4 list-inside list-disc !items-start gap-2">
+        <ul className="baseVertFlex mb-4 ml-6 list-outside list-disc !items-start gap-2">
           <li>
             To provide and maintain our services, including managing your
             account.
@@ -83,14 +83,14 @@ function Privacy() {
           <li>To comply with legal obligations and enforce our terms.</li>
         </ul>
 
-        <h2 className="mb-4 text-xl font-semibold tablet:text-2xl">
+        <p className="my-4 text-lg font-semibold tablet:text-xl">
           3. How We Share Your Information
-        </h2>
+        </p>
         <p className="mb-4">
           We do not sell your personal information. We may share your
           information with third parties in the following circumstances:
         </p>
-        <ul className="baseVertFlex mb-4 list-inside list-disc !items-start gap-2">
+        <ul className="baseVertFlex mb-4 ml-6 list-outside list-disc !items-start gap-2">
           <li>
             <span className="font-semibold">Service Providers:</span> We use
             third-party services such as Clerk for authentication. These service
@@ -103,9 +103,9 @@ function Privacy() {
           </li>
         </ul>
 
-        <h2 className="mb-4 text-xl font-semibold tablet:text-2xl">
+        <p className="my-4 text-lg font-semibold tablet:text-xl">
           4. Data Retention
-        </h2>
+        </p>
         <p className="mb-4">
           We retain your personal information for as long as your account is
           active or as needed to provide you with our services. If you delete
@@ -114,9 +114,9 @@ function Privacy() {
           database).
         </p>
 
-        <h2 className="mb-4 text-xl font-semibold tablet:text-2xl">
+        <p className="my-4 text-lg font-semibold tablet:text-xl">
           5. Data Security
-        </h2>
+        </p>
         <p className="mb-4">
           We implement appropriate security measures to protect your personal
           information. Our security practices include encryption, access
@@ -126,9 +126,9 @@ function Privacy() {
           information, we cannot guarantee its absolute security.
         </p>
 
-        <h2 className="mb-4 text-xl font-semibold tablet:text-2xl">
+        <p className="my-4 text-lg font-semibold tablet:text-xl">
           6. International Users
-        </h2>
+        </p>
         <p className="mb-4">
           Our website is intended for use only within the United States. Access
           to our website from outside the United States is restricted and not
@@ -136,9 +136,9 @@ function Privacy() {
           limitation.
         </p>
 
-        <h2 className="mb-4 text-xl font-semibold tablet:text-2xl">
+        <p className="my-4 text-lg font-semibold tablet:text-xl">
           7. User Rights
-        </h2>
+        </p>
         <p className="mb-4">
           You have the right to access, rectify, delete, and restrict the
           processing of your personal data. To exercise these rights, please
@@ -151,9 +151,9 @@ function Privacy() {
           . We will respond to your request within a reasonable timeframe.
         </p>
 
-        <h2 className="mb-4 text-xl font-semibold tablet:text-2xl">
+        <p className="my-4 text-lg font-semibold tablet:text-xl">
           8. Changes to This Privacy Policy
-        </h2>
+        </p>
         <p className="mb-4">
           We may update this Privacy Policy from time to time. If we make
           significant changes, we will notify you via email. Your continued use
@@ -161,9 +161,9 @@ function Privacy() {
           acceptance of the new terms.
         </p>
 
-        <h2 className="mb-4 text-xl font-semibold tablet:text-2xl">
+        <p className="my-4 text-lg font-semibold tablet:text-xl">
           9. Contact Us
-        </h2>
+        </p>
         <p className="mb-4">
           If you have any questions or concerns about this Privacy Policy,
           please contact us:
