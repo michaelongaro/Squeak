@@ -14,16 +14,16 @@ function useResponsiveCardDimensions() {
 
       // tablet dimensions
       if (
-        window.innerWidth > 1000 &&
+        window.innerWidth >= 1000 &&
         window.innerWidth < 1500 &&
-        window.innerHeight > 700 &&
+        window.innerHeight >= 700 &&
         window.innerHeight < 800
       ) {
         setWidth(57);
         setHeight(74);
       }
       // desktop dimensions
-      else if (window.innerWidth > 1500 && window.innerHeight > 800) {
+      else if (window.innerWidth >= 1500 && window.innerHeight >= 800) {
         setWidth(67);
         setHeight(87);
       }

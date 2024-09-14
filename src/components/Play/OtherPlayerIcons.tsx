@@ -61,8 +61,8 @@ function OtherPlayerIcons() {
     ];
 
     const withinIconOnlyViewportRange =
-      (window.innerWidth >= 1000 && window.innerWidth <= 1500) ||
-      (window.innerHeight >= 700 && window.innerHeight <= 800);
+      (window.innerWidth >= 1000 && window.innerWidth < 1500) ||
+      (window.innerHeight >= 700 && window.innerHeight < 800);
 
     for (let i = 0; i < otherPlayerIDs.length; i++) {
       const playerID = otherPlayerIDs[i];
