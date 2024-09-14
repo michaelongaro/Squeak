@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, Fragment } from "react";
 import { useRoomContext } from "../../context/RoomContext";
 import { useAuth } from "@clerk/nextjs";
 import { socket } from "~/pages/_app";
@@ -1542,41 +1542,47 @@ function SheetStatistics({ setRenderedView }: ISheetStatistics) {
         </Button>
       </div>
 
-      <p className="text-lg font-medium underline underline-offset-2">Stats</p>
+      <p className="text-lg font-medium underline underline-offset-2">
+        Statistics
+      </p>
 
-      <div className="baseVertFlex color-darkGreen m-4 mt-8 gap-6 rounded-md border-2 border-darkGreen p-4">
+      <div className="baseVertFlex m-4 mt-8 gap-3 rounded-md border-2 border-darkGreen p-4">
         {rowNames.map((rowName, index) => (
-          <div key={index} className="baseFlex w-full !justify-between gap-8">
-            <div className="font-semibold">{rowName}</div>
+          <Fragment key={index}>
+            <div key={index} className="baseFlex w-full !justify-between gap-8">
+              <div className="font-semibold">{rowName}</div>
 
-            <div className="w-16 text-right">
-              <AnimatePresence mode="wait">
-                {filteredStats ? (
-                  <motion.div
-                    key={`filteredStats${rowName}`}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="font-semibold"
-                  >
-                    {Object.values(filteredStats)[index]}
-                  </motion.div>
-                ) : (
-                  <motion.div
-                    key={`loadingSpinner${rowName}`}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="inline-block size-4 animate-spin rounded-full border-[2px] border-darkGreen border-t-transparent text-darkGreen"
-                    role="status"
-                    aria-label="loading"
-                  >
-                    <span className="sr-only">Loading...</span>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+              <div className="w-16 text-right">
+                <AnimatePresence mode="wait">
+                  {filteredStats ? (
+                    <motion.div
+                      key={`filteredStats${rowName}`}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      className="font-semibold"
+                    >
+                      {Object.values(filteredStats)[index]}
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      key={`loadingSpinner${rowName}`}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      className="inline-block size-4 animate-spin rounded-full border-[2px] border-darkGreen border-t-transparent text-darkGreen"
+                      role="status"
+                      aria-label="loading"
+                    >
+                      <span className="sr-only">Loading...</span>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             </div>
-          </div>
+
+            <div className="h-[1px] w-full bg-darkGreen/70 last:hidden"></div>
+          </Fragment>
         ))}
       </div>
     </>
