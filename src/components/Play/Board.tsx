@@ -3,6 +3,7 @@ import { useRoomContext } from "../../context/RoomContext";
 import useTrackHoverOverBoardCells from "../../hooks/useTrackHoverOverBoardCells";
 import BoardCell from "./BoardCell";
 import classes from "./Play.module.css";
+import { motion, AnimatePresence } from "framer-motion";
 export interface IGetBoxShadowStyles {
   id: string;
   rowIdx?: number;
@@ -47,7 +48,7 @@ function Board() {
 
       setTimeout(() => {
         setPlusOneIndicatorID(null);
-      }, 500); // trying to make sure the animation completes before hiding the indicator
+      }, 750); // trying to make sure the animation completes before hiding the indicator
       // this has been a recurring problem despite multiple approaches to fix it
     }
   }, [proposedCardBoxShadow, setProposedCardBoxShadow]);
@@ -98,16 +99,51 @@ function Board() {
                     ? 0.35
                     : 1,
               }}
-              className="baseFlex relative z-0 h-[71px] min-h-fit w-[56px] min-w-fit select-none rounded-lg p-1 transition-all mobileLarge:h-[77px] mobileLarge:w-[61px] tablet:h-[81px] tablet:w-[64px] desktop:h-[95px] desktop:w-[75px]"
+              className="baseFlex z-0 h-[71px] min-h-fit w-[56px] min-w-fit select-none rounded-lg p-1 transition-all mobileLarge:h-[77px] mobileLarge:w-[61px] tablet:h-[81px] tablet:w-[64px] desktop:h-[95px] desktop:w-[75px]"
             >
-              <div id={`cell${rowIdx}${colIdx}`} className="h-full w-full">
+              <div
+                id={`cell${rowIdx}${colIdx}`}
+                className="relative h-full w-full"
+              >
                 <BoardCell
                   rowIdx={rowIdx}
                   colIdx={colIdx}
                   card={cell}
-                  plusOneIndicatorID={plusOneIndicatorID}
                   deckVariantIndex={deckVariantIndex}
                 />
+
+                {/* TODO: the start of this whole animation
+                feels slightly delayed... maybe I am hallucinating this effect */}
+                <AnimatePresence>
+                  {plusOneIndicatorID === `cell${rowIdx}${colIdx}` && (
+                    <motion.div
+                      key={`cell${rowIdx}${colIdx}AnimatedPlusOneIndicator`}
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.9 }}
+                      transition={{
+                        duration: 0.75,
+                        ease: "easeInOut",
+                      }}
+                      className={`baseFlex absolute left-0 top-0 z-[500] h-full w-full select-none rounded-sm bg-darkGreen/50 text-lg tracking-wider text-lightGreen [text-shadow:_0_1px_3px_rgb(0_0_0)] desktop:text-xl`}
+                    >
+                      <motion.div
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        exit={{ scale: 0 }}
+                        transition={{
+                          type: "spring",
+                          damping: 8,
+                          stiffness: 100,
+                          delay: 0.25,
+                        }}
+                        className="baseFlex h-full w-full"
+                      >
+                        +1
+                      </motion.div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             </div>
           ))}
