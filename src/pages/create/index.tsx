@@ -477,9 +477,9 @@ function CreateRoom() {
             Room settings
           </legend>
 
-          <div className="grid grid-cols-2 grid-rows-4 items-center gap-y-4 p-1 text-lightGreen sm:p-2">
+          <div className="grid grid-cols-[0.45fr_0.55fr] grid-rows-4 items-center gap-y-4 p-1 text-lightGreen sm:grid-cols-2 sm:p-2">
             <Label>Points to win:</Label>
-            <div className="baseFlex !justify-between gap-2 sm:px-4">
+            <div className="baseFlex w-full gap-4 sm:!justify-between sm:gap-2 sm:px-4">
               <Button
                 variant={"secondary"}
                 disabled={roomConfig.pointsToWin <= 25}
