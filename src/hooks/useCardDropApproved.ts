@@ -201,10 +201,16 @@ function useCardDropApproved({
         }
       }
 
+      // pseudo depth doesn't apply to the first card a the pile
+      const adjustedCardsInTargetPile =
+        cardsInTargetPile === 1 ? 0 : cardsInTargetPile;
+      const adjustedCardsInInitialPile =
+        cardsInInitialPile === 1 ? 0 : cardsInInitialPile;
+
       moveCard({
         newPosition: { x: endX, y: endY },
         pseudoVerticalDepthDifferential:
-          (cardsInTargetPile - cardsInInitialPile) * 0.15,
+          (adjustedCardsInTargetPile - adjustedCardsInInitialPile) * 0.15,
         flip: false,
         rotate: endID.includes("cell"),
         callbackFunction: () => {

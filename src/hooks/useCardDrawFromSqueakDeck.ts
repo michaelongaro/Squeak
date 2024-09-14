@@ -71,10 +71,16 @@ function useCardDrawFromSqueakDeck({
         const endX = endLocation.x;
         const endY = endLocation.y;
 
+        // pseudo depth doesn't apply to the first card a the pile
+        const adjustedCardsInTargetPile =
+          cardsInTargetPile === 1 ? 0 : cardsInTargetPile;
+        const adjustedCardsInInitialPile =
+          cardsInInitialPile === 1 ? 0 : cardsInInitialPile;
+
         moveCard({
           newPosition: { x: endX, y: endY },
           pseudoVerticalDepthDifferential:
-            (cardsInTargetPile - cardsInInitialPile) * 0.15,
+            (adjustedCardsInTargetPile - adjustedCardsInInitialPile) * 0.15,
           flip: true,
           rotate: false,
           callbackFunction: () => {

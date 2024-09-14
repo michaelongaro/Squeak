@@ -111,10 +111,8 @@ function Card({
     notAllowedMoveBuffer,
     setProposedCardBoxShadow,
     setHeldSqueakStackLocation,
-    cardBeingMovedProgramatically,
-    setCardBeingMovedProgramatically,
-    squeakDeckBeingMovedProgramatically,
-    setSqueakDeckBeingMovedProgramatically,
+    cardsBeingMovedProgramatically,
+    setCardsBeingMovedProgramatically,
     deckVariantIndex,
     setHoldingADeckCard,
     setHoldingASqueakCard,
@@ -255,14 +253,25 @@ function Card({
         }
 
         if (origin === "hand" || origin === "squeakHand") {
-          setCardBeingMovedProgramatically({
-            ...cardBeingMovedProgramatically,
-            [ownerID]: false,
+          setCardsBeingMovedProgramatically({
+            ...cardsBeingMovedProgramatically,
+            hand: cardsBeingMovedProgramatically.hand.filter(
+              (id) => id !== ownerID,
+            ),
+          });
+        } else if (origin === "deck") {
+          setCardsBeingMovedProgramatically({
+            ...cardsBeingMovedProgramatically,
+            deck: cardsBeingMovedProgramatically.deck.filter(
+              (id) => id !== ownerID,
+            ),
           });
         } else if (origin === "squeakDeck") {
-          setSqueakDeckBeingMovedProgramatically({
-            ...squeakDeckBeingMovedProgramatically,
-            [ownerID]: false,
+          setCardsBeingMovedProgramatically({
+            ...cardsBeingMovedProgramatically,
+            squeakDeck: cardsBeingMovedProgramatically.squeakDeck.filter(
+              (id) => id !== ownerID,
+            ),
           });
         }
 
@@ -284,14 +293,19 @@ function Card({
       }
 
       if (origin === "hand" || origin === "squeakHand") {
-        setCardBeingMovedProgramatically({
-          ...cardBeingMovedProgramatically,
-          [ownerID]: true,
+        setCardsBeingMovedProgramatically({
+          ...cardsBeingMovedProgramatically,
+          hand: [...cardsBeingMovedProgramatically.hand, ownerID],
+        });
+      } else if (origin === "deck") {
+        setCardsBeingMovedProgramatically({
+          ...cardsBeingMovedProgramatically,
+          deck: [...cardsBeingMovedProgramatically.deck, ownerID],
         });
       } else if (origin === "squeakDeck") {
-        setSqueakDeckBeingMovedProgramatically({
-          ...squeakDeckBeingMovedProgramatically,
-          [ownerID]: true,
+        setCardsBeingMovedProgramatically({
+          ...cardsBeingMovedProgramatically,
+          squeakDeck: [...cardsBeingMovedProgramatically.squeakDeck, ownerID],
         });
       }
 
@@ -454,11 +468,8 @@ function Card({
       if (flip) {
         if (!cardRef.current) return;
 
-        // tiny X rotation is meant to add slight realism to card flip,
-        // entirely fine with reverting if the effect doesn't land well
-
         imageRef.current.style.transform =
-          currentImageTransform + " rotateX(3deg) rotateY(90deg)";
+          currentImageTransform + " rotateY(90deg)";
 
         setTimeout(() => {
           if (!imageRef.current) return;
@@ -466,8 +477,8 @@ function Card({
           setForceShowCardFront(true);
 
           imageRef.current.style.transform = currentImageTransform.replace(
-            "rotateX(3deg) rotateY(90deg)",
-            "rotateX(0deg) rotateY(0deg)",
+            "rotateY(90deg)",
+            "rotateY(0deg)",
           );
 
           if (origin === "deck" || origin === "squeakDeck") {
@@ -511,11 +522,9 @@ function Card({
       setHoldingADeckCard,
       setHoldingASqueakCard,
       setProposedCardBoxShadow,
-      cardBeingMovedProgramatically,
-      setCardBeingMovedProgramatically,
+      cardsBeingMovedProgramatically,
+      setCardsBeingMovedProgramatically,
       heldSqueakStackLocation,
-      squeakDeckBeingMovedProgramatically,
-      setSqueakDeckBeingMovedProgramatically,
     ],
   );
 

@@ -40,8 +40,7 @@ function OtherPlayersCardContainers({
     gameData,
     decksAreBeingRotated,
     setDecksAreBeingRotated,
-    squeakDeckBeingMovedProgramatically,
-    cardBeingMovedProgramatically,
+    cardsBeingMovedProgramatically,
     roomConfig,
     squeakStackDragAlterations,
     viewportLabel,
@@ -206,8 +205,12 @@ function OtherPlayersCardContainers({
                                   gameData.players[playerID]!.squeakDeck
                                     .length -
                                     1 &&
-                                squeakDeckBeingMovedProgramatically[playerID] &&
-                                !cardBeingMovedProgramatically[playerID]
+                                cardsBeingMovedProgramatically.squeakDeck.includes(
+                                  playerID,
+                                ) &&
+                                !cardsBeingMovedProgramatically.hand.includes(
+                                  playerID,
+                                )
                                   ? 150
                                   : 90,
                             }}
@@ -258,10 +261,11 @@ function OtherPlayersCardContainers({
                 <div
                   id={`${playerID}hand`}
                   style={{
-                    zIndex:
-                      cardBeingMovedProgramatically[playerID] === true
-                        ? 150
-                        : 100,
+                    zIndex: cardsBeingMovedProgramatically.hand.includes(
+                      playerID,
+                    )
+                      ? 150
+                      : 100,
                   }}
                   className={`absolute left-0 top-0 h-full w-full select-none`}
                 >
@@ -425,9 +429,12 @@ function OtherPlayersCardContainers({
                         key={`${playerID}squeakDeckCard${card.suit}${card.value}`}
                         style={{
                           bottom: `${squeakDeckIdx * 0.15}px`,
-                          zIndex: squeakDeckBeingMovedProgramatically[playerID]
-                            ? 140 // 140 since the card shouldn't be above any moving cards, which are at 150
-                            : 90, // otherwise default to 90 so regular cards fly above this whole deck
+                          zIndex:
+                            cardsBeingMovedProgramatically.squeakDeck.includes(
+                              playerID,
+                            )
+                              ? 140 // 140 since the card shouldn't be above any moving cards, which are at 150
+                              : 90, // otherwise default to 90 so regular cards fly above this whole deck
                         }}
                         className="absolute left-0 h-full w-full select-none transition-[bottom]"
                       >
@@ -465,7 +472,10 @@ function OtherPlayersCardContainers({
               id={`${playerID}hand`}
               style={{
                 zIndex:
-                  cardBeingMovedProgramatically[playerID] === true ? 150 : 100,
+                  cardsBeingMovedProgramatically.hand.includes(playerID) ===
+                  true
+                    ? 150
+                    : 100,
               }}
               className={`${classes.playerHand} cardDimensions relative select-none`}
             >
@@ -508,6 +518,9 @@ function OtherPlayersCardContainers({
                   : "none",
                 transition:
                   "transform 115ms ease-in-out, filter 75ms ease-in-out",
+                zIndex: cardsBeingMovedProgramatically.deck.includes(playerID)
+                  ? 150
+                  : 100,
               }}
               className={`${classes.playerDeck} cardDimensions select-none`}
             >
@@ -519,12 +532,6 @@ function OtherPlayersCardContainers({
                       initial={{ opacity: 0, scale: 0.75 }}
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ duration: 0.15, ease: "easeInOut" }}
-                      style={{
-                        zIndex:
-                          cardBeingMovedProgramatically[playerID] === true
-                            ? 150
-                            : 100,
-                      }}
                       className="relative h-full w-full select-none"
                     >
                       <>

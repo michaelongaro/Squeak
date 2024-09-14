@@ -9,7 +9,7 @@ export function adjustCoordinatesByRotation(
   } else if (rotation === 90) {
     return { x: y, y: (x + psuedoVerticalDepthDifferential) * -1 };
   } else if (rotation === 270) {
-    return { x: (y + psuedoVerticalDepthDifferential) * -1, y: x };
+    return { x: y * -1, y: x - psuedoVerticalDepthDifferential };
   }
 
   return { x, y: y - psuedoVerticalDepthDifferential };

@@ -38,7 +38,6 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
     setDecksAreBeingRotated,
     originIndexForHeldSqueakCard,
     setHoldingADeckCard,
-    squeakDeckBeingMovedProgramatically,
     setOriginIndexForHeldSqueakCard,
     setHoldingASqueakCard,
     setHoveredSqueakStack,
@@ -48,6 +47,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
     currentPlayerIsDrawingFromDeck,
     setCurrentPlayerIsDrawingFromDeck,
     fallbackPlayerIsDrawingFromDeckTimerIdRef,
+    cardsBeingMovedProgramatically,
   } = useRoomContext();
 
   const [hoveringOverDeck, setHoveringOverDeck] = useState(false);
@@ -285,9 +285,12 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                       key={`${userID}squeakDeckCard${card.suit}${card.value}`}
                       style={{
                         bottom: `${squeakDeckIdx * 0.15}px`,
-                        zIndex: squeakDeckBeingMovedProgramatically[userID]
-                          ? 140 // 140 since the card shouldn't be above any moving cards, which are at 150
-                          : 90, // otherwise default to 90 so regular cards fly above this whole deck
+                        zIndex:
+                          cardsBeingMovedProgramatically.squeakDeck.includes(
+                            userID,
+                          )
+                            ? 140 // 140 since the card shouldn't be above any moving cards, which are at 150
+                            : 90, // otherwise default to 90 so regular cards fly above this whole deck
                       }}
                       className="absolute left-0 h-full w-full select-none transition-[bottom]"
                     >
@@ -388,6 +391,9 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                 filter: pointerDownOnDeck ? "brightness(0.8)" : "none",
                 transition:
                   "box-shadow 150ms cubic-bezier(0.4, 0, 0.2, 1), filter 150ms ease-in-out",
+                zIndex: cardsBeingMovedProgramatically.deck.includes(userID)
+                  ? 150
+                  : 100,
               }}
               className="h-full w-full select-none rounded-[0.1rem]"
               onPointerEnter={() => {

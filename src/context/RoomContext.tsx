@@ -31,7 +31,9 @@ interface IProposedCardBoxShadow {
   boxShadowValue: string;
 }
 interface ICardBeingMovedProgramatically {
-  [playerID: string]: boolean;
+  hand: string[]; // of playerIDs
+  squeakDeck: string[]; // of playerIDs
+  deck: string[]; // of playerIDs
 }
 
 interface DraggedStack {
@@ -129,8 +131,8 @@ interface IRoomContext {
   deckVariantIndex: number;
   setDeckVariantIndex: React.Dispatch<React.SetStateAction<number>>;
 
-  cardBeingMovedProgramatically: ICardBeingMovedProgramatically;
-  setCardBeingMovedProgramatically: React.Dispatch<
+  cardsBeingMovedProgramatically: ICardBeingMovedProgramatically;
+  setCardsBeingMovedProgramatically: React.Dispatch<
     React.SetStateAction<ICardBeingMovedProgramatically>
   >;
   newInviteNotification: boolean;
@@ -144,10 +146,6 @@ interface IRoomContext {
   scoreboardMetadata: IScoreboardMetadata | null;
   setScoreboardMetadata: React.Dispatch<
     React.SetStateAction<IScoreboardMetadata | null>
-  >;
-  squeakDeckBeingMovedProgramatically: ICardBeingMovedProgramatically;
-  setSqueakDeckBeingMovedProgramatically: React.Dispatch<
-    React.SetStateAction<ICardBeingMovedProgramatically>
   >;
   squeakStackDragAlterations: {
     [playerID: string]: SqueakStackDragAlterations;
@@ -293,14 +291,12 @@ export function RoomProvider(props: { children: React.ReactNode }) {
   const [scoreboardMetadata, setScoreboardMetadata] =
     useState<IScoreboardMetadata | null>(null);
 
-  const [cardBeingMovedProgramatically, setCardBeingMovedProgramatically] =
-    useState<ICardBeingMovedProgramatically>({});
-
-  // planning on combining below and above into generic [] that has "deck" "squeak" etc..
-  const [
-    squeakDeckBeingMovedProgramatically,
-    setSqueakDeckBeingMovedProgramatically,
-  ] = useState<ICardBeingMovedProgramatically>({});
+  const [cardsBeingMovedProgramatically, setCardsBeingMovedProgramatically] =
+    useState<ICardBeingMovedProgramatically>({
+      hand: [],
+      squeakDeck: [],
+      deck: [],
+    });
 
   const [newInviteNotification, setNewInviteNotification] =
     useState<boolean>(false);
@@ -535,14 +531,12 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     setCurrentVolume,
     deckVariantIndex,
     setDeckVariantIndex,
-    cardBeingMovedProgramatically,
-    setCardBeingMovedProgramatically,
+    cardsBeingMovedProgramatically,
+    setCardsBeingMovedProgramatically,
     newInviteNotification,
     setNewInviteNotification,
     mirrorPlayerContainer,
     setMirrorPlayerContainer,
-    squeakDeckBeingMovedProgramatically,
-    setSqueakDeckBeingMovedProgramatically,
     squeakStackDragAlterations,
     setSqueakStackDragAlterations,
     currentVotes,

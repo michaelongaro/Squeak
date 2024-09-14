@@ -72,6 +72,10 @@ function useInitialCardDrawForSqueakStack({
         const endX = endLocation.x;
         const endY = endLocation.y;
 
+        // fyi: no need to do adjustments for the "pseudoVerticalDepthDifferential"
+        // like in all other card movement hooks, since there can never be just one card
+        // in the initial pile or the target pile when drawing initial cards for the squeak stack
+
         moveCard({
           newPosition: { x: endX, y: endY },
           pseudoVerticalDepthDifferential:
