@@ -54,7 +54,7 @@ function useStartAnotherRoundHandler() {
     setShowScoreboard,
     setShowShufflingCountdown,
     setGameData,
-    roomConfig,
+    roomConfig.hostUserID,
     userID,
   ]);
 }
