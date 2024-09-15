@@ -20,10 +20,6 @@ export async function goOfflineHandler(
       }
     }
 
-    console.dir(friendData, { depth: null });
-
-    console.log(userIDThatDisconnected, userThatDisconnected, reason);
-
     if (!userIDThatDisconnected || !userThatDisconnected || !prisma) return;
 
     await prisma.user

@@ -8,8 +8,6 @@ export async function initializePlayerInFriendsObjectHandler(
   friendData: IFriendsData,
 ) {
   async function initializePlayer(playerID: string) {
-    console.log("socket id is", socket.id);
-
     // if friendData has no keys (first call since server has started)
     if (Object.keys(friendData).length === 0) {
       // do prisma query that gives the whole users object
@@ -77,8 +75,6 @@ export async function initializePlayerInFriendsObjectHandler(
     }
 
     if (!prisma) return;
-
-    console.log("prisma stuff");
 
     await prisma.user
       .update({
