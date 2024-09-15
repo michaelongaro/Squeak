@@ -513,7 +513,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                       className="grid grid-cols-1 items-center justify-items-center"
                     >
                       <div className="col-start-1 row-start-1 select-none">
-                        <FaRedoAlt className="size-6 scale-x-flip" />
+                        <FaRedoAlt className="size-[18px] scale-x-flip tablet:size-5 desktop:size-6" />
                       </div>
                       <div className="col-start-1 row-start-1 select-none opacity-25">
                         <StaticCard

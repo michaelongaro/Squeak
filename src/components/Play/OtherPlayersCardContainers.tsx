@@ -596,7 +596,7 @@ function OtherPlayersCardContainers({
                       className="grid select-none grid-cols-1 items-center justify-items-center"
                     >
                       <div className="col-start-1 row-start-1">
-                        <FaRedoAlt size={"1.5rem"} />
+                        <FaRedoAlt className="size-[18px] scale-x-flip tablet:size-5 desktop:size-6" />
                       </div>
                       <div className="col-start-1 row-start-1 select-none opacity-25">
                         <StaticCard
