@@ -678,7 +678,7 @@ function Scoreboard() {
                         scoreboardMetadata.roundWinnerID
                     ]?.baseColor ?? "black",
                 }}
-                className="baseFlex relative w-full max-w-xl gap-4 rounded-md px-10 py-2 transition-all duration-300"
+                className="baseFlex relative w-full max-w-sm gap-4 rounded-md px-10 py-2 transition-all duration-300"
               >
                 <AnimatePresence>
                   {showConfettiPoppers && (
@@ -731,7 +731,7 @@ function Scoreboard() {
                             scoreboardMetadata.roundWinnerID
                         ]?.textColor ?? "black",
                     }}
-                    className="text-center text-sm"
+                    className="w-[125px] text-center text-sm xs:w-auto"
                   >
                     {scoreboardMetadata.gameWinnerID
                       ? playerMetadata[scoreboardMetadata.gameWinnerID]
@@ -829,7 +829,7 @@ function Scoreboard() {
                               transition={{
                                 duration: 0.25,
                               }}
-                              className="baseFlex h-11 w-[14rem] gap-4"
+                              className="baseFlex h-11 w-[14rem] gap-3"
                             >
                               {hostActionButtonText}
                               {hostActionButtonText !== "Loading" && (
