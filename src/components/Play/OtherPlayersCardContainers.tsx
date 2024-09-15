@@ -67,7 +67,7 @@ function OtherPlayersCardContainers({
       }
 
       const { top, left } = boardElement.getBoundingClientRect();
-      setTopOffsetsFromBoard([top, left, left, top]);
+      setTopOffsetsFromBoard([top + 10, left + 10, left + 10, top + 10]);
     };
 
     window.addEventListener("resize", updateOffsets);
