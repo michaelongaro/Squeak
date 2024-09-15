@@ -24,6 +24,7 @@ function useResetPlayerStateUponPageLoad() {
     setConnectedToRoom,
     resetPlayerStateUponPageLoad,
     setResetPlayerStateUponPageLoad,
+    setCardsBeingMovedProgramatically,
   } = useRoomContext();
 
   useEffect(() => {
@@ -40,6 +41,12 @@ function useResetPlayerStateUponPageLoad() {
         hostUsername: "",
         hostUserID: "",
         gameStarted: false,
+      });
+
+      setCardsBeingMovedProgramatically({
+        hand: [],
+        deck: [],
+        squeakDeck: [],
       });
 
       if (userID !== "") {
@@ -107,6 +114,7 @@ function useResetPlayerStateUponPageLoad() {
     setGameData,
     setConnectedToRoom,
     setResetPlayerStateUponPageLoad,
+    setCardsBeingMovedProgramatically,
   ]);
 }
 
