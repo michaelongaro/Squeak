@@ -371,7 +371,7 @@ export function RoomProvider(props: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (isSignedIn && userID && friendData === undefined) {
-      socket.volatile.emit("initializePlayerInFriendsObj", userID);
+      socket.emit("initializePlayerInFriendsObj", userID);
     }
   }, [isSignedIn, userID, friendData]);
 

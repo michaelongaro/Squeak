@@ -326,54 +326,6 @@ export function modifyFriendDataHandler(
           friendData: friend,
         });
       }
-    } else if (action === "goOffline") {
-      await prisma.user
-        .update({
-          where: {
-            userId: initiatorID,
-          },
-          data: {
-            online: false,
-            status: "on main menu",
-            roomCode: null,
-            currentRoomIsPublic: null,
-          },
-        })
-        .catch((err) => console.log(err));
-
-      for (const friendID of initiator.friendIDs) {
-        const friend = friendData[friendID];
-
-        if (!friend) continue; // don't think this should ever happen but continue better than return here?
-
-        io.emit("friendDataUpdated", {
-          playerID: friendID,
-          friendData: friend,
-        });
-      }
-    } else if (action === "goOnline") {
-      await prisma.user
-        .update({
-          where: {
-            userId: initiatorID,
-          },
-          data: {
-            online: true,
-            status: "on main menu",
-          },
-        })
-        .catch((err) => console.log(err));
-
-      for (const friendID of initiator.friendIDs) {
-        const friend = friendData[friendID];
-
-        if (!friend) continue; // don't think this should ever happen but continue better than return here?
-
-        io.emit("friendDataUpdated", {
-          playerID: friendID,
-          friendData: friend,
-        });
-      }
     }
   }
   socket.on("modifyFriendData", modifyFriendData);

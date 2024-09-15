@@ -6,7 +6,10 @@ interface IBroadcastRoomActionCountdown {
   type: "startRound" | "returnToRoom";
 }
 
-export function broadcastRoomActionCountdown(io: Server, socket: Socket) {
+export function broadcastRoomActionCountdownHandler(
+  io: Server,
+  socket: Socket,
+) {
   socket.on(
     "broadcastRoomActionCountdown",
     async ({ hostUserID, code, type }: IBroadcastRoomActionCountdown) => {

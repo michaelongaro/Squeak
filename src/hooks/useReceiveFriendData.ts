@@ -35,14 +35,6 @@ function useReceiveFriendData() {
       const { friendData: newFriendData, playerID } = dataFromBackend;
 
       if (playerID === userID) {
-        // send "go online" emit if friendData hasn't been initialized yet
-        if (isSignedIn && friendData === undefined) {
-          socket.volatile.emit("modifyFriendData", {
-            action: "goOnline",
-            initiatorID: userID,
-          });
-        }
-
         if (
           !newInviteNotification &&
           friendData?.friendInviteIDs &&

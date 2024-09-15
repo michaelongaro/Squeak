@@ -6,7 +6,6 @@ import TopRightControls from "../TopRightControls/TopRightControls";
 import { cardAssets } from "~/utils/cardAssetPaths";
 import { IoSadSharp } from "react-icons/io5";
 import usePlayerLeftRoom from "~/hooks/usePlayerLeftRoom";
-import useAttachUnloadEventListener from "~/hooks/useAttachUnloadEventListener";
 import useRejoinRoom from "~/hooks/useRejoinRoom";
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -99,7 +98,6 @@ function GeneralLayout({ children }: GeneralLayout) {
   useReceiveFriendData();
   useInitializeUserStats();
   usePostSignUpRegistration();
-  // useAttachUnloadEventListener(); maybe reenable this later on if you can work around bugginess
 
   return (
     <>

@@ -2,7 +2,7 @@ import { type Server, type Socket } from "socket.io";
 import { type IMiscRoomData, type IGameData, type IRoomData } from "../socket";
 import { prisma } from "~/server/db";
 
-export function oldRoomCleanupCron(
+export function oldRoomCleanupCronHandler(
   io: Server,
   socket: Socket,
   gameData: IGameData,

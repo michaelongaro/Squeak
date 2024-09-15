@@ -2,13 +2,13 @@ import { type Server, type Socket } from "socket.io";
 import { type IFriendsData } from "../socket";
 import { prisma } from "~/server/db";
 
-export async function initializePlayerInFriendsObject(
+export async function initializePlayerInFriendsObjectHandler(
   io: Server,
   socket: Socket,
   friendData: IFriendsData,
 ) {
   async function initializePlayer(playerID: string) {
-    if (!prisma) return;
+    console.log("socket id is", socket.id);
 
     // if friendData has no keys (first call since server has started)
     if (Object.keys(friendData).length === 0) {
@@ -25,6 +25,7 @@ export async function initializePlayerInFriendsObject(
 
       users.forEach((user) => {
         friendData[user.userId] = {
+          socketID: socket.id,
           friendIDs: user.friendIDs,
           friendInviteIDs: user.friendInviteIDs,
           roomInviteIDs: user.roomInviteIDs,
@@ -55,6 +56,7 @@ export async function initializePlayerInFriendsObject(
       if (!user) return;
 
       friendData[playerID] = {
+        socketID: socket.id,
         friendIDs: user.friendIDs,
         friendInviteIDs: user.friendInviteIDs,
         roomInviteIDs: user.roomInviteIDs,
@@ -73,7 +75,30 @@ export async function initializePlayerInFriendsObject(
         friendData: friendData[playerID],
       });
     }
+
+    if (!prisma) return;
+
+    console.log("prisma stuff");
+
+    await prisma.user
+      .update({
+        where: {
+          userId: playerID,
+        },
+        data: {
+          online: true,
+          status: "on main menu",
+        },
+      })
+      .catch((err) => console.log(err));
   }
 
-  socket.on("initializePlayerInFriendsObj", initializePlayer);
+  // socket.on("initializePlayerInFriendsObj", initializePlayer);
+  socket.on("initializePlayerInFriendsObj", (playerID) => {
+    console.log(
+      "Received initializePlayerInFriendsObj event for playerID:",
+      playerID,
+    );
+    initializePlayer(playerID);
+  });
 }

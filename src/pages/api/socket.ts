@@ -10,7 +10,7 @@ import { proposedCardDropHandler } from "./handlers/proposedCardDropHandler";
 import { roundOverHandler } from "./handlers/roundOverHandler";
 import { resetGameHandler } from "./handlers/resetGameHandler";
 import { leaveRoomHandler } from "./handlers/leaveRoomHandler";
-import { initializePlayerInFriendsObject } from "./handlers/initializePlayerInFriendsObject";
+import { initializePlayerInFriendsObjectHandler } from "./handlers/initializePlayerInFriendsObjectHandler";
 import { modifyFriendDataHandler } from "./handlers/modifyFriendDataHandler";
 import { updateRoomConfigHandler } from "./handlers/updateRoomConfigHandler";
 import { startGameHandler } from "./handlers/startGameHandler";
@@ -19,9 +19,10 @@ import { joinRoomHandler } from "./handlers/joinRoomHandler";
 import { updatePlayerMetadataHandler } from "./handlers/updatePlayerMetadataHandler";
 import { castVoteHandler } from "./handlers/castVoteHandler";
 import { rejoinRoomHandler } from "./handlers/rejoinRoomHandler";
-import { oldRoomCleanupCron } from "~/pages/api/handlers/oldRoomCleanupCron";
-import { broadcastRoomActionCountdown } from "~/pages/api/handlers/broadcastRoomActionCountdown";
+import { oldRoomCleanupCronHandler } from "~/pages/api/handlers/oldRoomCleanupCronHandler";
+import { broadcastRoomActionCountdownHandler } from "~/pages/api/handlers/broadcastRoomActionCountdownHandler";
 import { gracefulReconnectHandler } from "~/pages/api/handlers/gracefulReconnectHandler";
+import { goOfflineHandler } from "~/pages/api/handlers/goOfflineHandler";
 
 // TODO: is there a better way to type these?
 export interface IFriendsData {
@@ -29,6 +30,7 @@ export interface IFriendsData {
 }
 
 export interface IFriendsMetadata {
+  socketID: string; // used to identify which user is disconnecting from socket
   friendIDs: string[];
   friendInviteIDs: string[];
   roomInviteIDs: string[];
@@ -115,9 +117,7 @@ export interface IModifyFriendData {
     | "roomMetadataUpdate"
     | "startGame"
     | "leaveRoom" // this is also called when a player is kicked from a room
-    | "removeFriend"
-    | "goOffline"
-    | "goOnline";
+    | "removeFriend";
   initiatorID: string;
   targetID?: string;
   roomCode?: string;
@@ -238,7 +238,7 @@ export default function SocketHandler(req, res) {
 
     updatePlayerMetadataHandler(io, socket, roomData);
 
-    broadcastRoomActionCountdown(io, socket);
+    broadcastRoomActionCountdownHandler(io, socket);
 
     startGameHandler(io, socket, roomData, gameData, miscRoomData);
 
@@ -257,7 +257,7 @@ export default function SocketHandler(req, res) {
 
     rejoinRoomHandler(io, socket, gameData, roomData, miscRoomData);
 
-    oldRoomCleanupCron(io, socket, gameData, roomData, miscRoomData);
+    oldRoomCleanupCronHandler(io, socket, gameData, roomData, miscRoomData);
 
     socket.on("directlyLeaveRoom", (roomCode) => {
       socket.leave(roomCode);
@@ -268,9 +268,11 @@ export default function SocketHandler(req, res) {
     });
 
     // friends handlers
-    initializePlayerInFriendsObject(io, socket, friendsData);
+    initializePlayerInFriendsObjectHandler(io, socket, friendsData);
 
     modifyFriendDataHandler(io, socket, friendsData);
+
+    goOfflineHandler(io, socket, friendsData);
   };
 
   io.on("connection", onConnection);
