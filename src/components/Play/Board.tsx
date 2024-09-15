@@ -40,18 +40,21 @@ function Board() {
       proposedCardBoxShadow.boxShadowValue ===
         "0px 0px 4px 3px hsl(120, 100%, 86%)"
     ) {
+      setPlusOneIndicatorID(proposedCardBoxShadow.id);
+
       setTimeout(() => {
         setProposedCardBoxShadow(null);
       }, 300); // standard duration of box shadow transition
 
-      setPlusOneIndicatorID(proposedCardBoxShadow.id);
-
       setTimeout(() => {
-        setPlusOneIndicatorID(null);
-      }, 750); // trying to make sure the animation completes before hiding the indicator
-      // this has been a recurring problem despite multiple approaches to fix it
+        // if another card was played in quick succession *on the same cell*,
+        // then leave the animation present, otherwise hide it
+        if (proposedCardBoxShadow?.id === plusOneIndicatorID) {
+          setPlusOneIndicatorID(null);
+        }
+      }, 750);
     }
-  }, [proposedCardBoxShadow, setProposedCardBoxShadow]);
+  }, [proposedCardBoxShadow, plusOneIndicatorID, setProposedCardBoxShadow]);
 
   function getBoxShadowStyles({
     id,
@@ -99,7 +102,7 @@ function Board() {
                     ? 0.35
                     : 1,
               }}
-              className="baseFlex z-0 h-[71px] min-h-fit w-[56px] min-w-fit select-none rounded-lg p-1 transition-all mobileLarge:h-[77px] mobileLarge:w-[61px] tablet:h-[81px] tablet:w-[64px] desktop:h-[95px] desktop:w-[75px]"
+              className="baseFlex z-0 h-[73px] min-h-fit w-[56px] min-w-fit select-none rounded-md p-1 transition-all mobileLarge:h-[78px] mobileLarge:w-[61px] tablet:h-[82px] tablet:w-[64px] desktop:h-[95px] desktop:w-[75px]"
             >
               <div
                 id={`cell${rowIdx}${colIdx}`}
@@ -133,7 +136,7 @@ function Board() {
                         exit={{ scale: 0 }}
                         transition={{
                           type: "spring",
-                          damping: 8,
+                          damping: 6,
                           stiffness: 100,
                           delay: 0.25,
                         }}
