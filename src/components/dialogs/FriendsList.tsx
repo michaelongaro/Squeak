@@ -160,7 +160,7 @@ function FriendsList({ setShowFriendsListDialog }: IFriendsList) {
                     {friends.length === 0 ? (
                       <div className="baseVertFlex h-72 w-full gap-4 text-lightGreen">
                         <FaMagnifyingGlass className="size-6" />
-                        You have no friends yet.
+                        You don&apos;t have any friends yet.
                       </div>
                     ) : (
                       <>

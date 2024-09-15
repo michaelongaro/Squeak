@@ -174,7 +174,7 @@ function FriendsListSheet({
                     {friends.length === 0 ? (
                       <div className="baseVertFlex h-full w-full gap-4 text-darkGreen">
                         <FaMagnifyingGlass className="size-6" />
-                        You have no friends yet.
+                        You don&apos;t have any friends yet.
                       </div>
                     ) : (
                       <>
