@@ -627,7 +627,7 @@ function VotingDialog({
                         toast.dismiss();
                         setShowSheet?.(false);
 
-                        socket.volatile.emit("castVote", {
+                        socket.emit("castVote", {
                           roomCode: roomConfig.code,
                           voteType: "rotateDecks",
                           voteDirection: "for",
@@ -660,7 +660,7 @@ function VotingDialog({
                         toast.dismiss();
                         setShowSheet?.(false);
 
-                        socket.volatile.emit("castVote", {
+                        socket.emit("castVote", {
                           roomCode: roomConfig.code,
                           voteType: "finishRound",
                           voteDirection: "for",
@@ -694,7 +694,7 @@ function VotingDialog({
                       toast.dismiss();
                       setShowSheet?.(false);
 
-                      socket.volatile.emit("castVote", {
+                      socket.emit("castVote", {
                         roomCode: roomConfig.code,
                         voteType,
                         voteDirection: "for",
@@ -714,7 +714,7 @@ function VotingDialog({
                       toast.dismiss();
                       setShowSheet?.(false);
 
-                      socket.volatile.emit("castVote", {
+                      socket.emit("castVote", {
                         roomCode: roomConfig.code,
                         voteType,
                         voteDirection: "against",

@@ -377,7 +377,7 @@ export function RoomProvider(props: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (isSignedIn) {
-      socket.volatile.emit("modifyFriendData", {
+      socket.emit("modifyFriendData", {
         action: "roomMetadataUpdate",
         initiatorID: userID,
         currentRoomIsPublic: roomConfig.isPublic,

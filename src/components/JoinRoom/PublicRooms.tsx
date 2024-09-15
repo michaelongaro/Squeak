@@ -54,7 +54,7 @@ function PublicRooms() {
   function joinRoom(roomConfig: IRoomConfig) {
     setRoomConfig(roomConfig);
 
-    socket.volatile.emit(
+    socket.emit(
       "joinRoom",
       {
         userID,
@@ -73,7 +73,7 @@ function PublicRooms() {
     if (roomInviteIDs) {
       for (const friend of roomInviteIDs) {
         if (friend.roomCode === roomConfig.code) {
-          socket.volatile.emit("modifyFriendData", {
+          socket.emit("modifyFriendData", {
             action: "acceptRoomInvite",
             initiatorID: userID,
             targetID: friend.id,

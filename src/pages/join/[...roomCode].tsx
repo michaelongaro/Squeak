@@ -183,7 +183,7 @@ function JoinRoom() {
   const dynamicallyHandleInitializationFlow = useCallback(() => {
     // player was a part of the room already, rejoining.
     if (room && room.playerIDsInRoom.includes(userID) && !connectedToRoom) {
-      socket.volatile.emit(
+      socket.emit(
         "rejoinRoom",
         {
           userID,
@@ -209,7 +209,7 @@ function JoinRoom() {
       room.playerIDsInRoom.length < room.maxPlayers
     ) {
       if (isSignedIn && playerMetadata[userID]) {
-        socket.volatile.emit("joinRoom", {
+        socket.emit("joinRoom", {
           userID,
           code: room.code,
           playerMetadata: playerMetadata[userID],
@@ -312,7 +312,7 @@ function JoinRoom() {
                         setJoinRoomText("Loading");
 
                         setTimeout(() => {
-                          socket.volatile.emit(
+                          socket.emit(
                             "joinRoom",
                             {
                               userID,
@@ -413,7 +413,7 @@ function JoinRoom() {
                   setJoinRoomText("Loading");
 
                   setTimeout(() => {
-                    socket.volatile.emit(
+                    socket.emit(
                       "joinRoom",
                       {
                         userID,

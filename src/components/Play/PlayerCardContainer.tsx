@@ -423,7 +423,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                   500,
                 );
 
-                socket.volatile.emit("playerDrawFromDeck", {
+                socket.emit("playerDrawFromDeck", {
                   playerID: userID,
                   roomCode: roomConfig.code,
                 });

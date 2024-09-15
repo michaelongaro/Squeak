@@ -216,14 +216,11 @@ function FriendsList({ setShowFriendsListDialog }: IFriendsList) {
                                         }
                                         className="size-9 rounded-full !p-0"
                                         onClick={() =>
-                                          socket.volatile.emit(
-                                            "modifyFriendData",
-                                            {
-                                              action: "sendRoomInvite",
-                                              initiatorID: userID,
-                                              targetID: friend.userId,
-                                            },
-                                          )
+                                          socket.emit("modifyFriendData", {
+                                            action: "sendRoomInvite",
+                                            initiatorID: userID,
+                                            targetID: friend.userId,
+                                          })
                                         }
                                       >
                                         <FiMail size={"1.25rem"} />
@@ -256,7 +253,7 @@ function FriendsList({ setShowFriendsListDialog }: IFriendsList) {
                                         className="size-9 rounded-full !p-0"
                                         onClick={() => {
                                           if (connectedToRoom) {
-                                            socket.volatile.emit("leaveRoom", {
+                                            socket.emit("leaveRoom", {
                                               roomCode: roomConfig.code,
                                               userID,
                                               playerWasKicked: false,
@@ -265,16 +262,13 @@ function FriendsList({ setShowFriendsListDialog }: IFriendsList) {
 
                                           push(`/join/${friend.roomCode}`);
 
-                                          socket.volatile.emit(
-                                            "modifyFriendData",
-                                            {
-                                              action: "joinRoom",
-                                              initiatorID: userID,
-                                              roomCode: friend.roomCode,
-                                              currentRoomIsPublic:
-                                                friend.currentRoomIsPublic,
-                                            },
-                                          );
+                                          socket.emit("modifyFriendData", {
+                                            action: "joinRoom",
+                                            initiatorID: userID,
+                                            roomCode: friend.roomCode,
+                                            currentRoomIsPublic:
+                                              friend.currentRoomIsPublic,
+                                          });
 
                                           setShowFriendsListDialog(false);
                                         }}
@@ -342,14 +336,11 @@ function FriendsList({ setShowFriendsListDialog }: IFriendsList) {
                                           setOpenPopoverID("");
 
                                           setTimeout(() => {
-                                            socket.volatile.emit(
-                                              "modifyFriendData",
-                                              {
-                                                action: "removeFriend",
-                                                initiatorID: userID,
-                                                targetID: friend.userId,
-                                              },
-                                            );
+                                            socket.emit("modifyFriendData", {
+                                              action: "removeFriend",
+                                              initiatorID: userID,
+                                              targetID: friend.userId,
+                                            });
                                           }, 350);
                                         }}
                                       >
@@ -419,7 +410,7 @@ function FriendsList({ setShowFriendsListDialog }: IFriendsList) {
                                 variant={"secondary"}
                                 className="size-8 rounded-full !p-0"
                                 onClick={() =>
-                                  socket.volatile.emit("modifyFriendData", {
+                                  socket.emit("modifyFriendData", {
                                     action: "acceptFriendInvite",
                                     initiatorID: userID,
                                     targetID: friend.userId,
@@ -433,7 +424,7 @@ function FriendsList({ setShowFriendsListDialog }: IFriendsList) {
                                 variant={"destructive"}
                                 className="size-8 rounded-full !p-0"
                                 onClick={() => {
-                                  socket.volatile.emit("modifyFriendData", {
+                                  socket.emit("modifyFriendData", {
                                     action: "declineFriendInvite",
                                     initiatorID: userID,
                                     targetID: friend.userId,
@@ -486,7 +477,7 @@ function FriendsList({ setShowFriendsListDialog }: IFriendsList) {
                                     friend.roomCode ===
                                     roomCodeOfRoomBeingJoined
                                   ) {
-                                    socket.volatile.emit("modifyFriendData", {
+                                    socket.emit("modifyFriendData", {
                                       action: "acceptRoomInvite",
                                       initiatorID: userID,
                                       targetID: friend.userId,
@@ -498,7 +489,7 @@ function FriendsList({ setShowFriendsListDialog }: IFriendsList) {
                                 }
 
                                 if (connectedToRoom) {
-                                  socket.volatile.emit("leaveRoom", {
+                                  socket.emit("leaveRoom", {
                                     roomCode: roomConfig.code,
                                     userID,
                                     playerWasKicked: false,
@@ -507,7 +498,7 @@ function FriendsList({ setShowFriendsListDialog }: IFriendsList) {
 
                                 push(`/join/${roomCodeOfRoomBeingJoined}`);
 
-                                socket.volatile.emit("modifyFriendData", {
+                                socket.emit("modifyFriendData", {
                                   action: "joinRoom",
                                   initiatorID: userID,
                                   roomCode: friend.roomCode,
@@ -525,7 +516,7 @@ function FriendsList({ setShowFriendsListDialog }: IFriendsList) {
                               variant={"destructive"}
                               className="size-8 rounded-full !p-0"
                               onClick={() =>
-                                socket.volatile.emit("modifyFriendData", {
+                                socket.emit("modifyFriendData", {
                                   action: "declineRoomInvite",
                                   initiatorID: userID,
                                   targetID: friend.userId,

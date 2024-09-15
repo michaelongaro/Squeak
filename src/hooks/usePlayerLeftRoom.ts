@@ -47,7 +47,7 @@ function usePlayerLeftRoom() {
       if (playerWhoLeftID === userID && playerWasKicked) {
         leaveRoom(true);
 
-        socket.volatile.emit("directlyLeaveRoom", roomConfig.code);
+        socket.emit("directlyLeaveRoom", roomConfig.code);
         return;
       }
 

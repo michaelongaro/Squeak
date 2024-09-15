@@ -32,7 +32,7 @@ function useLeaveRoom({ routeToNavigateTo }: IUseLeaveRoom) {
       if (playerWasKicked) {
         setShowUserWasKickedDialog(true);
       } else {
-        socket.volatile.emit("leaveRoom", {
+        socket.emit("leaveRoom", {
           playerID: userID,
           roomCode: roomConfig.code,
           playerWasKicked: false,
@@ -40,7 +40,7 @@ function useLeaveRoom({ routeToNavigateTo }: IUseLeaveRoom) {
       }
 
       if (isSignedIn) {
-        socket.volatile.emit("modifyFriendData", {
+        socket.emit("modifyFriendData", {
           action: "leaveRoom",
           initiatorID: userID,
         });

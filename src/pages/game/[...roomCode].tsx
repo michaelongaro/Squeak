@@ -113,7 +113,7 @@ function Play() {
   const dynamicallyHandleInitializationFlow = useCallback(() => {
     // player was a part of the room already, rejoining.
     if (room && room.playerIDsInRoom.includes(userID) && !connectedToRoom) {
-      socket.volatile.emit("rejoinRoom", {
+      socket.emit("rejoinRoom", {
         userID,
         code: room.code,
       });
@@ -169,7 +169,7 @@ function Play() {
       setShowShufflingCountdown(true);
     }
 
-    socket.volatile.emit("modifyFriendData", {
+    socket.emit("modifyFriendData", {
       action: "startGame",
       initiatorID: userID,
     });
@@ -188,15 +188,11 @@ function Play() {
     if (!userID || roomCode === undefined) return;
 
     const pingInterval = setInterval(() => {
-      socket.volatile.emit(
-        "measurePlayerPing",
-        undefined,
-        (serverTimestamp: number) => {
-          if (typeof serverTimestamp === "number") {
-            setPlayerPing(Math.max(Date.now() - serverTimestamp, 0));
-          }
-        },
-      );
+      socket.emit("measurePlayerPing", undefined, (serverTimestamp: number) => {
+        if (typeof serverTimestamp === "number") {
+          setPlayerPing(Math.max(Date.now() - serverTimestamp, 0));
+        }
+      });
     }, 5000);
 
     return () => {

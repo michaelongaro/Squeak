@@ -237,14 +237,11 @@ function FriendsListSheet({
                                         }
                                         className="baseFlex gap-2 !px-2 text-sm"
                                         onClick={() =>
-                                          socket.volatile.emit(
-                                            "modifyFriendData",
-                                            {
-                                              action: "sendRoomInvite",
-                                              initiatorID: userID,
-                                              targetID: friend.userId,
-                                            },
-                                          )
+                                          socket.emit("modifyFriendData", {
+                                            action: "sendRoomInvite",
+                                            initiatorID: userID,
+                                            targetID: friend.userId,
+                                          })
                                         }
                                       >
                                         <FiMail size={"1.25rem"} />
@@ -264,7 +261,7 @@ function FriendsListSheet({
                                         className="baseFlex gap-2 !px-2 text-sm"
                                         onClick={() => {
                                           if (connectedToRoom) {
-                                            socket.volatile.emit("leaveRoom", {
+                                            socket.emit("leaveRoom", {
                                               roomCode: roomConfig.code,
                                               userID,
                                               playerWasKicked: false,
@@ -273,16 +270,13 @@ function FriendsListSheet({
 
                                           push(`/join/${friend.roomCode}`);
 
-                                          socket.volatile.emit(
-                                            "modifyFriendData",
-                                            {
-                                              action: "joinRoom",
-                                              initiatorID: userID,
-                                              roomCode: friend.roomCode,
-                                              currentRoomIsPublic:
-                                                friend.currentRoomIsPublic,
-                                            },
-                                          );
+                                          socket.emit("modifyFriendData", {
+                                            action: "joinRoom",
+                                            initiatorID: userID,
+                                            roomCode: friend.roomCode,
+                                            currentRoomIsPublic:
+                                              friend.currentRoomIsPublic,
+                                          });
 
                                           setShowSheet(false);
                                         }}
@@ -324,7 +318,7 @@ function FriendsListSheet({
                                                 className="m-0 w-24"
                                                 onClick={() => {
                                                   setTimeout(() => {
-                                                    socket.volatile.emit(
+                                                    socket.emit(
                                                       "modifyFriendData",
                                                       {
                                                         action: "removeFriend",
@@ -405,7 +399,7 @@ function FriendsListSheet({
                                 variant={"secondary"}
                                 className="size-8 rounded-full !p-0"
                                 onClick={() =>
-                                  socket.volatile.emit("modifyFriendData", {
+                                  socket.emit("modifyFriendData", {
                                     action: "acceptFriendInvite",
                                     initiatorID: userID,
                                     targetID: friend.userId,
@@ -419,7 +413,7 @@ function FriendsListSheet({
                                 variant={"destructive"}
                                 className="size-8 rounded-full !p-0"
                                 onClick={() => {
-                                  socket.volatile.emit("modifyFriendData", {
+                                  socket.emit("modifyFriendData", {
                                     action: "declineFriendInvite",
                                     initiatorID: userID,
                                     targetID: friend.userId,
@@ -472,7 +466,7 @@ function FriendsListSheet({
                                     friend.roomCode ===
                                     roomCodeOfRoomBeingJoined
                                   ) {
-                                    socket.volatile.emit("modifyFriendData", {
+                                    socket.emit("modifyFriendData", {
                                       action: "acceptRoomInvite",
                                       initiatorID: userID,
                                       targetID: friend.userId,
@@ -484,7 +478,7 @@ function FriendsListSheet({
                                 }
 
                                 if (connectedToRoom) {
-                                  socket.volatile.emit("leaveRoom", {
+                                  socket.emit("leaveRoom", {
                                     roomCode: roomConfig.code,
                                     userID,
                                     playerWasKicked: false,
@@ -493,7 +487,7 @@ function FriendsListSheet({
 
                                 push(`/join/${roomCodeOfRoomBeingJoined}`);
 
-                                socket.volatile.emit("modifyFriendData", {
+                                socket.emit("modifyFriendData", {
                                   action: "joinRoom",
                                   initiatorID: userID,
                                   roomCode: friend.roomCode,
@@ -511,7 +505,7 @@ function FriendsListSheet({
                               variant={"destructive"}
                               className="size-8 rounded-full !p-0"
                               onClick={() =>
-                                socket.volatile.emit("modifyFriendData", {
+                                socket.emit("modifyFriendData", {
                                   action: "declineRoomInvite",
                                   initiatorID: userID,
                                   targetID: friend.userId,

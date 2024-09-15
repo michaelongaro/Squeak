@@ -252,7 +252,7 @@ function Scoreboard() {
               setPlayerIDWhoSqueaked(null);
 
               if (userID === hostUserID) {
-                socket.volatile.emit("resetGame", {
+                socket.emit("resetGame", {
                   roomCode: roomConfig.code,
                   gameIsFinished: false,
                 });
@@ -280,7 +280,7 @@ function Scoreboard() {
               setPlayerIDWhoSqueaked(null);
 
               if (userID === hostUserID) {
-                socket.volatile.emit("resetGame", {
+                socket.emit("resetGame", {
                   roomCode: roomConfig.code,
                   gameIsFinished: true,
                 });
@@ -805,17 +805,14 @@ function Scoreboard() {
                             setHostActionButtonText("Loading");
 
                             setTimeout(() => {
-                              socket.volatile.emit(
-                                "broadcastRoomActionCountdown",
-                                {
-                                  code: roomConfig.code,
-                                  hostUserID: userID,
-                                  type:
-                                    scoreboardMetadata.gameWinnerID === null
-                                      ? "startRound"
-                                      : "returnToRoom",
-                                },
-                              );
+                              socket.emit("broadcastRoomActionCountdown", {
+                                code: roomConfig.code,
+                                hostUserID: userID,
+                                type:
+                                  scoreboardMetadata.gameWinnerID === null
+                                    ? "startRound"
+                                    : "returnToRoom",
+                              });
                             }, 1000);
                           }}
                           className="h-11 w-[14rem] text-sm font-medium"
@@ -1267,17 +1264,14 @@ function Scoreboard() {
                           setHostActionButtonText("Loading");
 
                           setTimeout(() => {
-                            socket.volatile.emit(
-                              "broadcastRoomActionCountdown",
-                              {
-                                code: roomConfig.code,
-                                hostUserID: userID,
-                                type:
-                                  scoreboardMetadata.gameWinnerID === null
-                                    ? "startRound"
-                                    : "returnToRoom",
-                              },
-                            );
+                            socket.emit("broadcastRoomActionCountdown", {
+                              code: roomConfig.code,
+                              hostUserID: userID,
+                              type:
+                                scoreboardMetadata.gameWinnerID === null
+                                  ? "startRound"
+                                  : "returnToRoom",
+                            });
                           }, 1000);
                         }}
                         className="h-11 w-[14rem] font-medium"

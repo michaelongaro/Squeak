@@ -42,7 +42,7 @@ function useStartAnotherRoundHandler() {
 
         // only want one "startGame" event to be emitted
         if (roomConfig.hostUserID === userID) {
-          socket.volatile.emit("startGame", {
+          socket.emit("startGame", {
             roomCode,
             firstRound: false,
           });
