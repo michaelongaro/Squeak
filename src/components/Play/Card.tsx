@@ -36,9 +36,9 @@ function getTransitionStyles(
         heldSqueakStackLocation?.[ownerID]?.location.y ===
           cardOffsetPosition.y))
   ) {
-    transitionStyles = "transform 325ms ease-out";
+    transitionStyles = "transform 375ms ease-out";
   } else if (ownerID === userID) {
-    transitionStyles = "filter 163ms ease-in-out";
+    transitionStyles = "filter 188ms ease-in-out";
   } else {
     transitionStyles = "none";
   }
@@ -350,12 +350,12 @@ function Card({
               image.style.willChange = "transform, filter";
             }
 
-            card.style.transition = "all 325ms ease-out, filter 163ms";
+            card.style.transition = "all 375ms ease-out, filter 188ms";
             if (origin === "deck" || origin === "squeakDeck") {
               image.style.transition =
-                "transform 163ms ease-out, boxShadow 163ms ease-out";
+                "transform 188ms ease-out, boxShadow 188ms ease-out";
             } else {
-              image.style.transition = "transform 163ms ease-out";
+              image.style.transition = "transform 188ms ease-out";
             }
             image.style.transform = "scale(1)";
           }
@@ -364,8 +364,8 @@ function Card({
         cardRef.current.style.willChange = "transform";
         imageRef.current.style.willChange = "transform, filter";
 
-        cardRef.current.style.transition = "all 325ms ease-out, filter 163ms";
-        imageRef.current.style.transition = "transform 163ms ease-out";
+        cardRef.current.style.transition = "all 375ms ease-out, filter 188ms";
+        imageRef.current.style.transition = "transform 188ms ease-out";
         imageRef.current.style.transform = "scale(1)";
       }
 
@@ -484,7 +484,7 @@ function Card({
           if (origin === "deck" || origin === "squeakDeck") {
             imageRef.current.style.boxShadow = "none";
           }
-        }, 163);
+        }, 188);
       }
 
       function step(timestamp: number) {
@@ -493,10 +493,10 @@ function Card({
         }
         const elapsed = timestamp - start;
 
-        // 325ms is the duration of the card movement animation
+        // 375ms is the duration of the card movement animation
         // FYI: we had a +25ms "buffer" on this value before, but I really don't
         // know if it was helping at all
-        if (elapsed <= 325) {
+        if (elapsed <= 375) {
           if (!done) {
             window.requestAnimationFrame(step);
           }
@@ -919,7 +919,7 @@ function Card({
                   cardOffsetPosition.y !== 0)
                   ? "scale(1.05)"
                   : "scale(1)",
-              transition: "transform 325ms ease-out",
+              transition: "transform 375ms ease-out",
             }}
             className="cardDimensions pointer-events-none relative left-0 top-0 select-none rounded-[0.15rem]"
             src={
