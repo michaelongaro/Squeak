@@ -292,17 +292,27 @@ function Card({
         }
       }
 
-      if (origin === "hand" || origin === "squeakHand") {
+      // TODO: probably just use a Set for this to avoid extra duplication checks
+      if (
+        (origin === "hand" || origin === "squeakHand") &&
+        !cardsBeingMovedProgramatically.hand.includes(ownerID)
+      ) {
         setCardsBeingMovedProgramatically({
           ...cardsBeingMovedProgramatically,
           hand: [...cardsBeingMovedProgramatically.hand, ownerID],
         });
-      } else if (origin === "deck") {
+      } else if (
+        origin === "deck" &&
+        !cardsBeingMovedProgramatically.deck.includes(ownerID)
+      ) {
         setCardsBeingMovedProgramatically({
           ...cardsBeingMovedProgramatically,
           deck: [...cardsBeingMovedProgramatically.deck, ownerID],
         });
-      } else if (origin === "squeakDeck") {
+      } else if (
+        origin === "squeakDeck" &&
+        !cardsBeingMovedProgramatically.squeakDeck.includes(ownerID)
+      ) {
         setCardsBeingMovedProgramatically({
           ...cardsBeingMovedProgramatically,
           squeakDeck: [...cardsBeingMovedProgramatically.squeakDeck, ownerID],

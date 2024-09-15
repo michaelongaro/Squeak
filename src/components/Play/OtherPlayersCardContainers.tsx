@@ -207,11 +207,8 @@ function OtherPlayersCardContainers({
                                     1 &&
                                 cardsBeingMovedProgramatically.squeakDeck.includes(
                                   playerID,
-                                ) &&
-                                !cardsBeingMovedProgramatically.hand.includes(
-                                  playerID,
                                 )
-                                  ? 150
+                                  ? "auto"
                                   : 90,
                             }}
                             className="absolute left-0 top-0 h-full w-full select-none"

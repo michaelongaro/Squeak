@@ -289,7 +289,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                           cardsBeingMovedProgramatically.squeakDeck.includes(
                             userID,
                           )
-                            ? 140 // 140 since the card shouldn't be above any moving cards, which are at 150
+                            ? "auto" // rendered after squeak hand cards so auto is enough here
                             : 90, // otherwise default to 90 so regular cards fly above this whole deck
                       }}
                       className="absolute left-0 h-full w-full select-none transition-[bottom]"
@@ -392,10 +392,10 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                 transition:
                   "box-shadow 150ms cubic-bezier(0.4, 0, 0.2, 1), filter 150ms ease-in-out",
                 zIndex: cardsBeingMovedProgramatically.deck.includes(userID)
-                  ? 150
-                  : 100,
+                  ? "auto" // rendered after hand cards so auto is enough here
+                  : 90, // otherwise default to 90 so regular cards fly above this whole deck
               }}
-              className="h-full w-full select-none rounded-[0.1rem]"
+              className="relative h-full w-full select-none rounded-[0.1rem]"
               onPointerEnter={() => {
                 if (currentPlayerIsDrawingFromDeck) return;
                 setHoveringOverDeck(true);
