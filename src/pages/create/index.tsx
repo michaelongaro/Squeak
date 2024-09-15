@@ -120,19 +120,14 @@ function CreateRoom() {
   // needs !connectedToRoom for when player inherits ownership of room after prev
   // host leaves, otherwise this effect would be overwriting the current room config
   useEffect(() => {
-    if (
-      !configAndMetadataInitialized &&
-      userID &&
-      playerMetadata[userID]?.username &&
-      !connectedToRoom
-    ) {
+    if (!configAndMetadataInitialized && userID && !connectedToRoom) {
       setConfigAndMetadataInitialized(true);
 
       setRoomConfig({
         ...roomConfig,
         code: cryptoRandomString({ length: 6, type: "numeric" }),
         playerIDsInRoom: [userID],
-        hostUsername: playerMetadata[userID].username,
+        hostUsername: playerMetadata[userID]?.username ?? "",
         hostUserID: userID,
       });
     }
@@ -251,6 +246,36 @@ function CreateRoom() {
       });
     }
   }
+
+  // dislike this effect, there should 100% be a better approach than this...
+  // fyi: only ever happens when user is logged in, and their playerMetadata info isn't present
+  // on init load of /create. Otherwise user typing username in input field will update everything
+  // as expected. timeout is necessary because otherwise it's just a race condition between this setting
+  // roomConfig and the initial setting of roomConfig in the useEffect above
+  useEffect(() => {
+    if (
+      userID &&
+      playerMetadata[userID] &&
+      roomConfig.code &&
+      playerMetadata[userID].username !== roomConfig.hostUsername
+    ) {
+      setTimeout(
+        () => {
+          setRoomConfig({
+            ...roomConfig,
+            hostUsername: playerMetadata[userID]!.username,
+          });
+          if (connectedToRoom) {
+            socket.volatile.emit("updateRoomConfig", {
+              ...roomConfig,
+              hostUsername: playerMetadata[userID]!.username,
+            });
+          }
+        },
+        roomConfig.code ? 0 : 1500,
+      );
+    }
+  }, [userID, playerMetadata, roomConfig, connectedToRoom, setRoomConfig]);
 
   function getNewBotMetadata() {
     let randomBotName = "";
@@ -396,6 +421,7 @@ function CreateRoom() {
                         username: e.target.value,
                       } as IRoomPlayer,
                     });
+
                     updateRoomConfig("hostUsername", e.target.value);
                   }}
                   value={playerMetadata[userID]?.username || ""}
