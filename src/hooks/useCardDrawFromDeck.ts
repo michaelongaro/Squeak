@@ -29,7 +29,6 @@ function useCardDrawFromDeck({
 
   const {
     setGameData,
-    otherPlayerIDsDrawingFromDeck,
     setOtherPlayerIDsDrawingFromDeck,
     setCurrentPlayerIsDrawingFromDeck,
     fallbackPlayerIsDrawingFromDeckTimerIdRef,
@@ -71,10 +70,9 @@ function useCardDrawFromDeck({
       // simulates another player drawing from their deck. This shows the little
       // "press down" animation on the deck for w/e other player is drawing from their deck
       if (ownerID !== userID) {
-        setOtherPlayerIDsDrawingFromDeck([
-          ...otherPlayerIDsDrawingFromDeck,
-          playerID,
-        ]);
+        setOtherPlayerIDsDrawingFromDeck((prev) => {
+          return [...prev, playerID];
+        });
 
         setTimeout(() => {
           setOtherPlayerIDsDrawingFromDeck((currentIDs) =>
@@ -122,7 +120,6 @@ function useCardDrawFromDeck({
     ownerID,
     value,
     setOtherPlayerIDsDrawingFromDeck,
-    otherPlayerIDsDrawingFromDeck,
     userID,
     fallbackPlayerIsDrawingFromDeckTimerIdRef,
     setCurrentPlayerIsDrawingFromDeck,

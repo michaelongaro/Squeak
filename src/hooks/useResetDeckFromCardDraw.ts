@@ -6,11 +6,7 @@ import { useUserIDContext } from "~/context/UserIDContext";
 
 function useResetDeckFromCardDraw() {
   const userID = useUserIDContext();
-  const {
-    otherPlayerIDsDrawingFromDeck,
-    setOtherPlayerIDsDrawingFromDeck,
-    setGameData,
-  } = useRoomContext();
+  const { setOtherPlayerIDsDrawingFromDeck, setGameData } = useRoomContext();
 
   const [dataFromBackend, setDataFromBackend] = useState<IDrawFromDeck | null>(
     null,
@@ -32,10 +28,7 @@ function useResetDeckFromCardDraw() {
 
       // maybe do this below:
       if (playerID !== userID) {
-        setOtherPlayerIDsDrawingFromDeck([
-          ...otherPlayerIDsDrawingFromDeck,
-          playerID,
-        ]);
+        setOtherPlayerIDsDrawingFromDeck((prev) => [...prev, playerID]);
 
         setTimeout(() => {
           setOtherPlayerIDsDrawingFromDeck((currentIDs) =>
@@ -58,13 +51,7 @@ function useResetDeckFromCardDraw() {
         playersHandContainer.style.transform = "scale(1)";
       }, 150);
     }
-  }, [
-    dataFromBackend,
-    setGameData,
-    setOtherPlayerIDsDrawingFromDeck,
-    otherPlayerIDsDrawingFromDeck,
-    userID,
-  ]);
+  }, [dataFromBackend, setGameData, setOtherPlayerIDsDrawingFromDeck, userID]);
 }
 
 export default useResetDeckFromCardDraw;

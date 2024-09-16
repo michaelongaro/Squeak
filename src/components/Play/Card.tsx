@@ -111,12 +111,10 @@ function Card({
     notAllowedMoveBuffer,
     setProposedCardBoxShadow,
     setHeldSqueakStackLocation,
-    cardsBeingMovedProgramatically,
     setCardsBeingMovedProgramatically,
     deckVariantIndex,
     setHoldingADeckCard,
     setHoldingASqueakCard,
-    squeakStackDragAlterations,
     setSqueakStackDragAlterations,
   } = useRoomContext();
 
@@ -153,6 +151,8 @@ function Card({
   // really dislike this being "necessary", but for whatever reason
   // heldSqueakStackLocation and squeakStackDragAlterations were just
   // not being reset always, I think the issue was exacerbated on lower end devices?
+  // UPDATE: this might not be necessary anymore since we started to use direct react state
+  // previous values in callback. I'm going to leave it in for now, but I think it can be removed
   const [initSqueakStackResetComplete, setInitSqueakStackResetComplete] =
     useState(false);
 
@@ -161,26 +161,28 @@ function Card({
     setInitSqueakStackResetComplete(true);
 
     if (squeakStackLocation !== undefined) {
-      setHeldSqueakStackLocation({
-        ...heldSqueakStackLocation,
-        [ownerID]: null,
+      setHeldSqueakStackLocation((prev) => {
+        return {
+          ...prev,
+          [ownerID]: null,
+        };
       });
 
-      setSqueakStackDragAlterations({
-        ...squeakStackDragAlterations,
-        [ownerID]: {
-          squeakStackDepthAlterations: [0, 0, 0, 0],
-          draggedStack: undefined,
-        },
+      setSqueakStackDragAlterations((prev) => {
+        return {
+          ...prev,
+          [ownerID]: {
+            squeakStackDepthAlterations: [0, 0, 0, 0],
+            draggedStack: undefined,
+          },
+        };
       });
     }
   }, [
-    heldSqueakStackLocation,
     ownerID,
     setHeldSqueakStackLocation,
     squeakStackLocation,
     initSqueakStackResetComplete,
-    squeakStackDragAlterations,
     setSqueakStackDragAlterations,
   ]);
 
@@ -234,44 +236,40 @@ function Card({
               const image = card.children[0] as HTMLImageElement;
 
               card.style.transition = "none";
-              card.style.zIndex = "100";
               card.style.pointerEvents = "auto";
               card.style.willChange = "auto";
 
-              image.style.zIndex = "100";
               image.style.willChange = "auto";
             }
           }
         } else {
           cardRef.current.style.transition = "none";
-          cardRef.current.style.zIndex = "100";
           cardRef.current.style.pointerEvents = "auto";
           cardRef.current.style.willChange = "auto";
 
-          imageRef.current.style.zIndex = "100";
           imageRef.current.style.willChange = "auto";
         }
 
         if (origin === "hand" || origin === "squeakHand") {
-          setCardsBeingMovedProgramatically({
-            ...cardsBeingMovedProgramatically,
-            hand: cardsBeingMovedProgramatically.hand.filter(
-              (id) => id !== ownerID,
-            ),
+          setCardsBeingMovedProgramatically((prev) => {
+            return {
+              ...prev,
+              hand: prev.hand.filter((id) => id !== ownerID),
+            };
           });
         } else if (origin === "deck") {
-          setCardsBeingMovedProgramatically({
-            ...cardsBeingMovedProgramatically,
-            deck: cardsBeingMovedProgramatically.deck.filter(
-              (id) => id !== ownerID,
-            ),
+          setCardsBeingMovedProgramatically((prev) => {
+            return {
+              ...prev,
+              deck: prev.deck.filter((id) => id !== ownerID),
+            };
           });
         } else if (origin === "squeakDeck") {
-          setCardsBeingMovedProgramatically({
-            ...cardsBeingMovedProgramatically,
-            squeakDeck: cardsBeingMovedProgramatically.squeakDeck.filter(
-              (id) => id !== ownerID,
-            ),
+          setCardsBeingMovedProgramatically((prev) => {
+            return {
+              ...prev,
+              squeakDeck: prev.squeakDeck.filter((id) => id !== ownerID),
+            };
           });
         }
 
@@ -285,37 +283,35 @@ function Card({
         }
 
         if (squeakStackLocation) {
-          setHeldSqueakStackLocation({
-            ...heldSqueakStackLocation,
-            [ownerID]: null,
+          setHeldSqueakStackLocation((prev) => {
+            return {
+              ...prev,
+              [ownerID]: null,
+            };
           });
         }
       }
 
-      // TODO: probably just use a Set for this to avoid extra duplication checks
-      if (
-        (origin === "hand" || origin === "squeakHand") &&
-        !cardsBeingMovedProgramatically.hand.includes(ownerID)
-      ) {
-        setCardsBeingMovedProgramatically({
-          ...cardsBeingMovedProgramatically,
-          hand: [...cardsBeingMovedProgramatically.hand, ownerID],
+      if (origin === "hand" || origin === "squeakHand") {
+        setCardsBeingMovedProgramatically((prev) => {
+          return {
+            ...prev,
+            hand: [...prev.hand, ownerID],
+          };
         });
-      } else if (
-        origin === "deck" &&
-        !cardsBeingMovedProgramatically.deck.includes(ownerID)
-      ) {
-        setCardsBeingMovedProgramatically({
-          ...cardsBeingMovedProgramatically,
-          deck: [...cardsBeingMovedProgramatically.deck, ownerID],
+      } else if (origin === "deck") {
+        setCardsBeingMovedProgramatically((prev) => {
+          return {
+            ...prev,
+            deck: [...prev.deck, ownerID],
+          };
         });
-      } else if (
-        origin === "squeakDeck" &&
-        !cardsBeingMovedProgramatically.squeakDeck.includes(ownerID)
-      ) {
-        setCardsBeingMovedProgramatically({
-          ...cardsBeingMovedProgramatically,
-          squeakDeck: [...cardsBeingMovedProgramatically.squeakDeck, ownerID],
+      } else if (origin === "squeakDeck") {
+        setCardsBeingMovedProgramatically((prev) => {
+          return {
+            ...prev,
+            squeakDeck: [...prev.squeakDeck, ownerID],
+          };
         });
       }
 
@@ -414,12 +410,14 @@ function Card({
         setCardOffsetPosition({ x: 0, y: 0 });
 
         if (squeakStackLocation) {
-          setHeldSqueakStackLocation({
-            ...heldSqueakStackLocation,
-            [ownerID]: {
-              squeakStack: squeakStackLocation,
-              location: { x: 0, y: 0 },
-            },
+          setHeldSqueakStackLocation((prev) => {
+            return {
+              ...prev,
+              [ownerID]: {
+                squeakStack: squeakStackLocation,
+                location: { x: 0, y: 0 },
+              },
+            };
           });
         }
       } else {
@@ -444,12 +442,14 @@ function Card({
         });
 
         if (squeakStackLocation) {
-          setHeldSqueakStackLocation({
-            ...heldSqueakStackLocation,
-            [ownerID]: {
-              squeakStack: squeakStackLocation,
-              location: { x: endXCoordinate, y: endYCoordinate },
-            },
+          setHeldSqueakStackLocation((prev) => {
+            return {
+              ...prev,
+              [ownerID]: {
+                squeakStack: squeakStackLocation,
+                location: { x: endXCoordinate, y: endYCoordinate },
+              },
+            };
           });
         }
 
@@ -532,9 +532,7 @@ function Card({
       setHoldingADeckCard,
       setHoldingASqueakCard,
       setProposedCardBoxShadow,
-      cardsBeingMovedProgramatically,
       setCardsBeingMovedProgramatically,
-      heldSqueakStackLocation,
     ],
   );
 
@@ -751,24 +749,21 @@ function Card({
       });
 
       if (squeakStackLocation) {
-        setHeldSqueakStackLocation({
-          ...heldSqueakStackLocation,
-          [ownerID]: {
-            squeakStack: squeakStackLocation,
-            location: {
-              x,
-              y,
+        setHeldSqueakStackLocation((prev) => {
+          return {
+            ...prev,
+            [ownerID]: {
+              squeakStack: squeakStackLocation,
+              location: {
+                x,
+                y,
+              },
             },
-          },
+          };
         });
       }
     },
-    [
-      heldSqueakStackLocation,
-      ownerID,
-      setHeldSqueakStackLocation,
-      squeakStackLocation,
-    ],
+    [ownerID, setHeldSqueakStackLocation, squeakStackLocation],
   );
 
   const handleDragStart = useCallback(
@@ -781,22 +776,23 @@ function Card({
       });
 
       if (squeakStackLocation) {
-        setHeldSqueakStackLocation({
-          ...heldSqueakStackLocation,
-          [ownerID]: {
-            squeakStack: squeakStackLocation,
-            location: {
-              x: 0,
-              y: 0,
+        setHeldSqueakStackLocation((prev) => {
+          return {
+            ...prev,
+            [ownerID]: {
+              squeakStack: squeakStackLocation,
+              location: {
+                x: 0,
+                y: 0,
+              },
             },
-          },
+          };
         });
       }
     },
     [
       draggable,
       cardOffsetPosition,
-      heldSqueakStackLocation,
       ownerID,
       setHeldSqueakStackLocation,
       squeakStackLocation,

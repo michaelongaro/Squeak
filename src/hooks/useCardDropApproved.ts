@@ -49,7 +49,6 @@ function useCardDropApproved({
     otherPlayerCardMoveBuffer,
     setGameData,
     setProposedCardBoxShadow,
-    squeakStackDragAlterations,
     setSqueakStackDragAlterations,
     viewportLabel,
   } = useRoomContext();
@@ -123,11 +122,13 @@ function useCardDropApproved({
         const depthAlterations = [0, 0, 0, 0];
         depthAlterations[startingCardMetadata.destinationSqueakStackIdx] = 1;
 
-        setSqueakStackDragAlterations({
-          ...squeakStackDragAlterations,
-          [ownerID]: {
-            squeakStackDepthAlterations: depthAlterations,
-          },
+        setSqueakStackDragAlterations((prev) => {
+          return {
+            ...prev,
+            [ownerID]: {
+              squeakStackDepthAlterations: depthAlterations,
+            },
+          };
         });
       }
 
@@ -142,17 +143,20 @@ function useCardDropApproved({
         depthAlterations[startingCardMetadata.destinationSqueakStackIdx] =
           startingCardMetadata.lengthOfStartStack;
 
-        setSqueakStackDragAlterations({
-          ...squeakStackDragAlterations,
-          [ownerID]: {
-            squeakStackDepthAlterations: depthAlterations,
-            draggedStack: {
-              length: startingCardMetadata.lengthOfStartStack,
-              lengthOfTargetStack: startingCardMetadata.lengthOfTargetStack,
-              squeakStackIdx: startingCardMetadata.originSqueakStackIdx,
-              indexWithinStartStack: startingCardMetadata.indexWithinStartStack,
+        setSqueakStackDragAlterations((prev) => {
+          return {
+            ...prev,
+            [ownerID]: {
+              squeakStackDepthAlterations: depthAlterations,
+              draggedStack: {
+                length: startingCardMetadata.lengthOfStartStack,
+                lengthOfTargetStack: startingCardMetadata.lengthOfTargetStack,
+                squeakStackIdx: startingCardMetadata.originSqueakStackIdx ?? 0, // added this on a whim, could be buggy
+                indexWithinStartStack:
+                  startingCardMetadata.indexWithinStartStack,
+              },
             },
-          },
+          };
         });
       }
 
@@ -164,11 +168,13 @@ function useCardDropApproved({
         const depthAlterations = [0, 0, 0, 0];
         depthAlterations[startingCardMetadata.originSqueakStackIdx] = -1;
 
-        setSqueakStackDragAlterations({
-          ...squeakStackDragAlterations,
-          [ownerID]: {
-            squeakStackDepthAlterations: depthAlterations,
-          },
+        setSqueakStackDragAlterations((prev) => {
+          return {
+            ...prev,
+            [ownerID]: {
+              squeakStackDepthAlterations: depthAlterations,
+            },
+          };
         });
       }
 
@@ -214,12 +220,14 @@ function useCardDropApproved({
         flip: false,
         rotate: endID.includes("cell"),
         callbackFunction: () => {
-          setSqueakStackDragAlterations({
-            ...squeakStackDragAlterations,
-            [ownerID]: {
-              squeakStackDepthAlterations: [0, 0, 0, 0],
-              draggedStack: undefined,
-            },
+          setSqueakStackDragAlterations((prev) => {
+            return {
+              ...prev,
+              [ownerID]: {
+                squeakStackDepthAlterations: [0, 0, 0, 0],
+                draggedStack: undefined,
+              },
+            };
           });
 
           setGameData(gameData);
@@ -246,7 +254,6 @@ function useCardDropApproved({
     successfulMoveBuffer,
     otherPlayerCardMoveBuffer,
     setProposedCardBoxShadow,
-    squeakStackDragAlterations,
     setSqueakStackDragAlterations,
     suit,
     ownerID,
