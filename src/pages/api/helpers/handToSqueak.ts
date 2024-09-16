@@ -53,7 +53,7 @@ export function handToSqueak({
 
   io.in(roomCode).emit("cardDropApproved", {
     card,
-    ardsInInitialPile: player.hand.length,
+    cardsInInitialPile: player.hand.length,
     cardsInTargetPile: 0,
     startingCardMetadata: {
       originSqueakStackIdx: undefined,
