@@ -55,7 +55,7 @@ export function squeakToSqueak({
         gameData,
         io,
       });
-    }, 375);
+    }, 500);
   }
 
   // moving all child cards below the card being moved to the new stack
@@ -76,8 +76,8 @@ export function squeakToSqueak({
   io.in(roomCode).emit("cardDropApproved", {
     playerID,
     card,
-    cardsInInitialPile: 0,
-    cardsInTargetPile: 0,
+    cardsInInitialPile: 0, // fyi: 0, because this is in relation to the pseudoVerticalDepth calculations which don't apply here
+    cardsInTargetPile: 0, // fyi: 0, because this is in relation to the pseudoVerticalDepth calculations which don't apply here
     startingCardMetadata: {
       originSqueakStackIdx: squeakStackStartIndex,
       destinationSqueakStackIdx: squeakStackEndIndex,
