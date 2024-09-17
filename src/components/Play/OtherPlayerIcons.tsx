@@ -23,10 +23,10 @@ function OtherPlayerIcons() {
   const [absolutePositioning, setAbsolutePositioning] = useState<
     { top: string; left: string }[]
   >([
-    { top: "0px", left: "0px" },
-    { top: "0px", left: "0px" },
-    { top: "0px", left: "0px" },
-    { top: "0px", left: "0px" },
+    { top: "-9999px", left: "-9999px" },
+    { top: "-9999px", left: "-9999px" },
+    { top: "-9999px", left: "-9999px" },
+    { top: "-9999px", left: "-9999px" },
   ]);
 
   const otherPlayerIDs = useMemo(
@@ -163,9 +163,9 @@ function OtherPlayerIcons() {
             <motion.div
               key={`otherPlayerIcon${otherPlayerIDs[0]}`}
               ref={firstTopPlayerIconRef}
-              initial={{ scale: 0.75 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0.75 }}
+              initial={{ scale: 0.75, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.75, opacity: 0 }}
               style={{
                 ...absolutePositioning[0],
                 opacity: gameData.playerIDsThatLeftMidgame.includes(
@@ -201,9 +201,9 @@ function OtherPlayerIcons() {
             <motion.div
               key={`otherPlayerIcon${otherPlayerIDs[1]}`}
               ref={leftPlayerIconRef}
-              initial={{ scale: 0.75 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0.75 }}
+              initial={{ scale: 0.75, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.75, opacity: 0 }}
               style={{
                 ...absolutePositioning[1],
                 opacity: gameData.playerIDsThatLeftMidgame.includes(
@@ -239,9 +239,9 @@ function OtherPlayerIcons() {
             <motion.div
               key={`otherPlayerIcon${otherPlayerIDs[2]}`}
               ref={rightPlayerIconRef}
-              initial={{ scale: 0.75 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0.75 }}
+              initial={{ scale: 0.75, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.75, opacity: 0 }}
               style={{
                 ...absolutePositioning[2],
                 opacity: gameData.playerIDsThatLeftMidgame.includes(
@@ -277,9 +277,9 @@ function OtherPlayerIcons() {
             <motion.div
               key={`otherPlayerIcon${otherPlayerIDs[3]}`}
               ref={secondTopPlayerIconRef}
-              initial={{ scale: 0.75 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0.75 }}
+              initial={{ scale: 0.75, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.75, opacity: 0 }}
               style={{
                 ...absolutePositioning[3],
                 opacity: gameData.playerIDsThatLeftMidgame.includes(
