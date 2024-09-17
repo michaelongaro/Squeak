@@ -8,41 +8,12 @@ export async function initializePlayerInFriendsObjectHandler(
   friendData: IFriendsData,
 ) {
   async function initializePlayer(playerID: string) {
-    // if friendData has no keys (first call since server has started)
-    if (Object.keys(friendData).length === 0) {
-      // do prisma query that gives the whole users object
-      // set friendData to user's data
-      const users = await prisma.user.findMany({
-        select: {
-          userId: true,
-          friendIDs: true,
-          friendInviteIDs: true,
-          roomInviteIDs: true,
-        },
-      });
-
-      users.forEach((user) => {
-        friendData[user.userId] = {
-          socketID: socket.id,
-          friendIDs: user.friendIDs,
-          friendInviteIDs: user.friendInviteIDs,
-          roomInviteIDs: user.roomInviteIDs,
-        };
-      });
-
-      io.emit("friendDataUpdated", {
-        playerID,
-        friendData: friendData[playerID],
-      });
-    }
-
-    // else check if playerID is in friendData
-    else if (friendData[playerID] === undefined) {
+    // check if playerID is in friendData, add the player if they are not
+    if (friendData[playerID] === undefined) {
       // do prisma query that for playerID
-      // set friendData to user's data
       const user = await prisma.user.findUnique({
         where: {
-          id: playerID,
+          userId: playerID,
         },
         select: {
           friendIDs: true,
@@ -53,6 +24,7 @@ export async function initializePlayerInFriendsObjectHandler(
 
       if (!user) return;
 
+      // set friendData to user's data
       friendData[playerID] = {
         socketID: socket.id,
         friendIDs: user.friendIDs,
@@ -68,6 +40,8 @@ export async function initializePlayerInFriendsObjectHandler(
 
     // player already in friendData
     else {
+      friendData[playerID].socketID = socket.id;
+
       io.emit("friendDataUpdated", {
         playerID,
         friendData: friendData[playerID],
@@ -76,6 +50,9 @@ export async function initializePlayerInFriendsObjectHandler(
 
     if (!prisma) return;
 
+    // always set user to online and status to "on main menu" when they initialize
+    // fyi: this is probably flaky/not correct if user closed tab while in a game, and
+    // now hits this while rejoining the game, for example
     await prisma.user
       .update({
         where: {
@@ -89,12 +66,5 @@ export async function initializePlayerInFriendsObjectHandler(
       .catch((err) => console.log(err));
   }
 
-  // socket.on("initializePlayerInFriendsObj", initializePlayer);
-  socket.on("initializePlayerInFriendsObj", (playerID) => {
-    console.log(
-      "Received initializePlayerInFriendsObj event for playerID:",
-      playerID,
-    );
-    initializePlayer(playerID);
-  });
+  socket.on("initializePlayerInFriendsObj", initializePlayer);
 }
