@@ -121,12 +121,12 @@ function Board() {
                   {plusOneIndicatorID === `cell${rowIdx}${colIdx}` && (
                     <motion.div
                       key={`cell${rowIdx}${colIdx}AnimatedPlusOneIndicator`}
-                      initial={{ opacity: 0, scale: 0.9 }}
+                      initial={{ opacity: 0, scale: 0.85 }}
                       animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.9 }}
+                      exit={{ opacity: 0 }}
                       transition={{
                         duration: 0.75,
-                        ease: "easeInOut",
+                        ease: "easeOut",
                       }}
                       className={`baseFlex absolute left-0 top-0 z-[500] h-full w-full select-none rounded-sm bg-darkGreen/50 text-lg tracking-wider text-lightGreen [text-shadow:_0_1px_3px_rgb(0_0_0)] desktop:text-xl`}
                     >
