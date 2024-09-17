@@ -185,7 +185,10 @@ function TopRightControls() {
             !asPath.includes("/game") ? "top-3" : "top-1.5"
           }`}
         >
-          <SheetTrigger onClick={() => setShowSheet(true)}>
+          <SheetTrigger
+            aria-label="Settings"
+            onClick={() => setShowSheet(true)}
+          >
             <div className="baseFlex relative">
               <IoSettingsSharp
                 className={`size-5 text-lightGreen transition-all duration-200 active:brightness-50 ${showSheet ? "rotate-[25deg]" : ""}`}
@@ -278,6 +281,7 @@ function TopRightControls() {
                           variant={"secondary"}
                           disabled={!user}
                           includeMouseEvents
+                          aria-label="Settings"
                           onClick={() => setShowSettingsDialog(true)}
                           className="h-[40px] w-[40px] md:h-[44px] md:w-[44px]"
                         >
@@ -294,6 +298,7 @@ function TopRightControls() {
                       variant={"secondary"}
                       disabled={!isSignedIn}
                       includeMouseEvents
+                      aria-label="Settings"
                       onClick={() => setShowSettingsDialog(true)}
                       className="h-[40px] w-[40px] md:h-[44px] md:w-[44px]"
                     >
@@ -403,6 +408,7 @@ function TopRightControls() {
                     variant={"secondary"}
                     disabled={!user}
                     includeMouseEvents
+                    aria-label="Friends list"
                     className="absolute right-0 top-0 size-11"
                     onClick={() => setShowFriendsList(!showFriendsList)}
                   >
