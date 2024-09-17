@@ -48,6 +48,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
     setCurrentPlayerIsDrawingFromDeck,
     fallbackPlayerIsDrawingFromDeckTimerIdRef,
     cardsBeingMovedProgramatically,
+    viewportLabel,
   } = useRoomContext();
 
   const [hoveringOverDeck, setHoveringOverDeck] = useState(false);
@@ -284,7 +285,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                     <div
                       key={`${userID}squeakDeckCard${card.suit}${card.value}`}
                       style={{
-                        bottom: `${squeakDeckIdx * 0.15}px`,
+                        bottom: `${squeakDeckIdx * (viewportLabel.includes("mobile") ? 0.15 : 0.3)}px`,
                         zIndex:
                           cardsBeingMovedProgramatically.squeakDeck.includes(
                             userID,
@@ -338,7 +339,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                   <div
                     key={`${userID}handCard${card.suit}${card.value}`}
                     style={{
-                      bottom: `${handIdx * 0.15}px`,
+                      bottom: `${handIdx * (viewportLabel.includes("mobile") ? 0.15 : 0.3)}px`,
                     }}
                     className="absolute left-0 select-none transition-[bottom]"
                     onPointerEnter={() => {
@@ -458,7 +459,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                             <div
                               key={`${userID}deckCard${card.suit}${card.value}`}
                               style={{
-                                bottom: `${deckIdx * 0.15}px`,
+                                bottom: `${deckIdx * (viewportLabel.includes("mobile") ? 0.15 : 0.3)}px`,
                               }}
                               className="absolute left-0 h-full w-full select-none transition-[bottom]"
                             >

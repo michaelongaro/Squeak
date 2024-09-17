@@ -212,11 +212,13 @@ function useCardDropApproved({
         cardsInTargetPile === 1 ? 0 : cardsInTargetPile;
       const adjustedCardsInInitialPile =
         cardsInInitialPile === 1 ? 0 : cardsInInitialPile;
+      const dynamicMultiplier = viewportLabel.includes("mobile") ? 0.15 : 0.3;
 
       moveCard({
         newPosition: { x: endX, y: endY },
         pseudoVerticalDepthDifferential:
-          (adjustedCardsInTargetPile - adjustedCardsInInitialPile) * 0.15,
+          (adjustedCardsInTargetPile - adjustedCardsInInitialPile) *
+          dynamicMultiplier,
         flip: false,
         rotate: endID.includes("cell"),
         callbackFunction: () => {

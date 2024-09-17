@@ -32,6 +32,7 @@ function useCardDrawFromDeck({
     setOtherPlayerIDsDrawingFromDeck,
     setCurrentPlayerIsDrawingFromDeck,
     fallbackPlayerIsDrawingFromDeckTimerIdRef,
+    viewportLabel,
   } = useRoomContext();
 
   const [dataFromBackend, setDataFromBackend] = useState<IDrawFromDeck | null>(
@@ -92,12 +93,14 @@ function useCardDrawFromDeck({
         cardsInTargetPile === 1 ? 0 : cardsInTargetPile;
       const adjustedCardsInInitialPile =
         cardsInInitialPile === 1 ? 0 : cardsInInitialPile;
+      const dynamicMultiplier = viewportLabel.includes("mobile") ? 0.15 : 0.3;
 
       if (endLocation) {
         moveCard({
           newPosition: { x: endLocation.x, y: endLocation.y },
           pseudoVerticalDepthDifferential:
-            (adjustedCardsInTargetPile - adjustedCardsInInitialPile) * 0.15,
+            (adjustedCardsInTargetPile - adjustedCardsInInitialPile) *
+            dynamicMultiplier,
           flip: true,
           rotate: false,
           callbackFunction: () => {
@@ -123,6 +126,7 @@ function useCardDrawFromDeck({
     userID,
     fallbackPlayerIsDrawingFromDeckTimerIdRef,
     setCurrentPlayerIsDrawingFromDeck,
+    viewportLabel,
   ]);
 }
 

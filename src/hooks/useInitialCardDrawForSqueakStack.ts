@@ -22,7 +22,7 @@ function useInitialCardDrawForSqueakStack({
   ownerID,
   moveCard,
 }: IUseInitialCardDrawForSqueakStack) {
-  const { setGameData } = useRoomContext();
+  const { setGameData, viewportLabel } = useRoomContext();
 
   const [dataFromBackend, setDataFromBackend] =
     useState<IDrawFromSqueakDeck | null>(null);
@@ -72,14 +72,16 @@ function useInitialCardDrawForSqueakStack({
         const endX = endLocation.x;
         const endY = endLocation.y;
 
-        // fyi: no need to do adjustments for the "pseudoVerticalDepthDifferential"
+        // fyi: no need to do the special adjustments for the "pseudoVerticalDepthDifferential"
         // like in all other card movement hooks, since there can never be just one card
         // in the initial pile or the target pile when drawing initial cards for the squeak stack
+
+        const dynamicMultiplier = viewportLabel.includes("mobile") ? 0.15 : 0.3;
 
         moveCard({
           newPosition: { x: endX, y: endY },
           pseudoVerticalDepthDifferential:
-            (cardsInTargetPile - cardsInInitialPile) * 0.15,
+            (cardsInTargetPile - cardsInInitialPile) * dynamicMultiplier,
           flip: true,
           rotate: false,
           callbackFunction: () => {
@@ -88,7 +90,15 @@ function useInitialCardDrawForSqueakStack({
         });
       }
     }
-  }, [dataFromBackend, moveCard, ownerID, setGameData, suit, value]);
+  }, [
+    dataFromBackend,
+    moveCard,
+    ownerID,
+    setGameData,
+    suit,
+    value,
+    viewportLabel,
+  ]);
 }
 
 export default useInitialCardDrawForSqueakStack;

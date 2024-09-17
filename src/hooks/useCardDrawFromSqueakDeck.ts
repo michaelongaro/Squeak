@@ -22,7 +22,7 @@ function useCardDrawFromSqueakDeck({
   ownerID,
   moveCard,
 }: IUseCardDrawFromSqueakDeck) {
-  const { setGameData } = useRoomContext();
+  const { setGameData, viewportLabel } = useRoomContext();
 
   const [dataFromBackend, setDataFromBackend] =
     useState<IDrawFromSqueakDeck | null>(null);
@@ -76,11 +76,13 @@ function useCardDrawFromSqueakDeck({
           cardsInTargetPile === 1 ? 0 : cardsInTargetPile;
         const adjustedCardsInInitialPile =
           cardsInInitialPile === 1 ? 0 : cardsInInitialPile;
+        const dynamicMultiplier = viewportLabel.includes("mobile") ? 0.15 : 0.3;
 
         moveCard({
           newPosition: { x: endX, y: endY },
           pseudoVerticalDepthDifferential:
-            (adjustedCardsInTargetPile - adjustedCardsInInitialPile) * 0.15,
+            (adjustedCardsInTargetPile - adjustedCardsInInitialPile) *
+            dynamicMultiplier,
           flip: true,
           rotate: false,
           callbackFunction: () => {
@@ -89,7 +91,15 @@ function useCardDrawFromSqueakDeck({
         });
       }
     }
-  }, [dataFromBackend, moveCard, ownerID, setGameData, suit, value]);
+  }, [
+    dataFromBackend,
+    moveCard,
+    ownerID,
+    setGameData,
+    suit,
+    value,
+    viewportLabel,
+  ]);
 }
 
 export default useCardDrawFromSqueakDeck;

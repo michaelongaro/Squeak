@@ -425,7 +425,7 @@ function OtherPlayersCardContainers({
                       <div
                         key={`${playerID}squeakDeckCard${card.suit}${card.value}`}
                         style={{
-                          bottom: `${squeakDeckIdx * 0.15}px`,
+                          bottom: `${squeakDeckIdx * (viewportLabel.includes("mobile") ? 0.15 : 0.3)}px`,
                           zIndex:
                             cardsBeingMovedProgramatically.squeakDeck.includes(
                               playerID,
@@ -483,7 +483,7 @@ function OtherPlayersCardContainers({
                       <div
                         key={`${playerID}handCard${card.suit}${card.value}`}
                         style={{
-                          bottom: `${handIdx * 0.15}px`,
+                          bottom: `${handIdx * (viewportLabel.includes("mobile") ? 0.15 : 0.3)}px`,
                         }}
                         className="absolute left-0 select-none transition-[bottom]"
                       >
@@ -545,7 +545,7 @@ function OtherPlayersCardContainers({
                               <div
                                 key={`${playerID}deckCard${card.suit}${card.value}`}
                                 style={{
-                                  bottom: `${deckIdx * 0.15}px`,
+                                  bottom: `${deckIdx * (viewportLabel.includes("mobile") ? 0.15 : 0.3)}px`,
                                 }}
                                 className="absolute left-0 h-full w-full select-none transition-[bottom]"
                               >
