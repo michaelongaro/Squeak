@@ -188,11 +188,9 @@ function FriendsList({ setShowFriendsListDialog }: IFriendsList) {
                                 />
                                 <div className="baseVertFlex !items-start text-lightGreen">
                                   {friend.username}
-                                  {friend.online && (
-                                    <div className="text-sm opacity-70">
-                                      {friend.status}
-                                    </div>
-                                  )}
+                                  <div className="text-sm opacity-70">
+                                    {friend.status}
+                                  </div>
                                 </div>
                               </div>
 

@@ -216,11 +216,9 @@ function FriendsListSheet({
                                         />
                                         <div className="baseVertFlex !items-start text-darkGreen">
                                           {friend.username}
-                                          {friend.online && (
-                                            <div className="text-sm opacity-70">
-                                              {friend.status}
-                                            </div>
-                                          )}
+                                          <div className="text-sm opacity-70">
+                                            {friend.status}
+                                          </div>
                                         </div>
                                       </div>
                                     </Button>

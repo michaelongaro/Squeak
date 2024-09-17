@@ -29,7 +29,7 @@ export async function goOfflineHandler(
         },
         data: {
           online: false,
-          status: "on main menu",
+          status: "Offline",
           roomCode: null,
           currentRoomIsPublic: null,
         },
