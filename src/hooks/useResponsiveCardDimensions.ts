@@ -6,10 +6,13 @@ function useResponsiveCardDimensions() {
 
   useEffect(() => {
     function updateDimensions() {
+      let width = 50;
+      let height = 65;
+
       // large mobile dimensions
       if (window.innerHeight >= 667) {
-        setWidth(54);
-        setHeight(70);
+        width = 54;
+        height = 70;
       }
 
       // tablet dimensions
@@ -19,14 +22,17 @@ function useResponsiveCardDimensions() {
         window.innerHeight >= 700 &&
         window.innerHeight < 800
       ) {
-        setWidth(57);
-        setHeight(74);
+        width = 57;
+        height = 74;
       }
       // desktop dimensions
       else if (window.innerWidth >= 1500 && window.innerHeight >= 800) {
-        setWidth(67);
-        setHeight(87);
+        width = 67;
+        height = 87;
       }
+
+      setWidth(width);
+      setHeight(height);
     }
 
     updateDimensions();
