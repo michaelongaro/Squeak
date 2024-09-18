@@ -21,6 +21,7 @@ function StaticCard({
 }: IStaticCard) {
   return (
     <img
+      fetchPriority="high"
       style={{
         ...(width !== undefined &&
           height !== undefined && {

@@ -908,6 +908,7 @@ function Card({
         >
           <img
             ref={imageRef}
+            fetchPriority="high"
             style={{
               width: width,
               height: height,
