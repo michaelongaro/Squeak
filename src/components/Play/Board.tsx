@@ -52,7 +52,7 @@ function Board() {
         if (proposedCardBoxShadow?.id === plusOneIndicatorID) {
           setPlusOneIndicatorID(null);
         }
-      }, 750);
+      }, 900);
     }
   }, [proposedCardBoxShadow, plusOneIndicatorID, setProposedCardBoxShadow]);
 
@@ -136,7 +136,7 @@ function Board() {
                         exit={{ scale: 0 }}
                         transition={{
                           type: "spring",
-                          damping: 6,
+                          damping: 4.5,
                           stiffness: 100,
                           delay: 0.25,
                         }}
