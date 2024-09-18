@@ -83,8 +83,9 @@ function Buzzer({ playerID, roomCode, interactive }: IBuzzer) {
         transition: "filter 150ms ease-in-out",
         animation:
           hoveringOnButton || !interactive ? "none" : "pulse 3s infinite",
+        zIndex: playExpandingPulseWaveAnimation ? 200 : 100,
       }}
-      className="relative z-[100] h-[30px] w-[50px] rounded-[50%] tablet:h-[35px] tablet:w-[57px] desktop:h-[40px] desktop:w-[65px]"
+      className="relative h-[30px] w-[50px] rounded-[50%] tablet:h-[35px] tablet:w-[57px] desktop:h-[40px] desktop:w-[65px]"
       onPointerEnter={() => {
         if (interactive) setHoveringOnButton(true);
       }}
@@ -160,15 +161,16 @@ function Buzzer({ playerID, roomCode, interactive }: IBuzzer) {
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
+          backgroundColor: playerMetadata[playerIDWhoSqueaked || ""]?.color,
           height: playExpandingPulseWaveAnimation ? "500px" : "0",
           width: playExpandingPulseWaveAnimation ? "500px" : "0",
-          backgroundColor: playerMetadata[playerIDWhoSqueaked || ""]?.color,
           opacity: playExpandingPulseWaveAnimation ? "0.5" : "0",
+          zIndex: playExpandingPulseWaveAnimation ? "200" : "100",
           transition: playExpandingPulseWaveAnimation
             ? "all 1s linear"
             : "all 0.25s linear",
         }}
-        className="absolute z-[150] rounded-[50%]"
+        className="absolute rounded-[50%]"
       ></div>
     </motion.div>
   );
