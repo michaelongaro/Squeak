@@ -122,7 +122,7 @@ function GeneralLayout({ children }: GeneralLayout) {
             content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, height=device-height"
           ></meta>
           <link rel="icon" href="/favicon.ico" />
-          <link rel="canonical" href="https://playsqueak.com" />
+          <link rel="canonical" href="https://www.playsqueak.com" />
           <meta property="og:title" content="Squeak"></meta>
           <meta property="og:url" content="www.playsqueak.com" />
           <meta
