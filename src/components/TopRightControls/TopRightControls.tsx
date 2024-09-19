@@ -1034,20 +1034,13 @@ function SheetSettings({
   const utils = api.useUtils();
   const { data: user } = api.users.getUserByID.useQuery(userID);
   const updateUser = api.users.updateUser.useMutation({
-    onMutate: () => {
-      // relatively sure we are doing this wrong with the "keys" that it is going off of.
-      utils.users.getUserByID.cancel(userID);
-      const optimisticUpdate = utils.users.getUserByID.getData(userID);
-
-      if (optimisticUpdate) {
-        // does this implementation of userID as a query string work?
-        utils.users.getUserByID.setData(userID, optimisticUpdate);
-      }
-    },
     onSettled: () => {
       setTimeout(() => {
         setSaveButtonText("Saved");
+
         utils.users.getUserByID.invalidate(userID);
+        utils.users.getUsersFromIDList.invalidate();
+        utils.users.getLeaderboardStats.invalidate();
 
         setTimeout(() => {
           setSaveButtonText("Save");
@@ -1088,7 +1081,7 @@ function SheetSettings({
     localPlayerSettings,
     setLocalPlayerMetadata,
     setLocalPlayerSettings,
-  ]); // TODO: I hope this isn't a problem, but check if adding the setters as a dependency causes any issues
+  ]);
 
   useEffect(() => {
     if (user === undefined || user === null) return;
