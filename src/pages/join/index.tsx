@@ -411,7 +411,9 @@ function JoinRoom() {
           </Button>
         </div>
 
-        <PublicRooms />
+        <div className="baseFlex w-full px-8">
+          <PublicRooms />
+        </div>
       </div>
     </motion.div>
   );

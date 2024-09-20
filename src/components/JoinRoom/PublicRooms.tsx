@@ -88,7 +88,7 @@ function PublicRooms() {
   return (
     <motion.fieldset
       layout={"size"}
-      className="mt-8 w-[360px] rounded-md border-2 border-white p-2 sm:w-full sm:p-4"
+      className="mt-8 w-[360px] rounded-md border-2 border-white p-2 xs:w-full xs:max-w-xl xs:p-4"
     >
       <legend className="baseFlex gap-4 pl-4 pr-4 text-left text-lg text-lightGreen">
         <div className="baseFlex gap-2 whitespace-nowrap">
@@ -159,7 +159,7 @@ function PublicRooms() {
                             ? "0 0 0.375rem 0.375rem"
                             : "none",
                       }}
-                      className="relative grid w-auto grid-cols-3 place-items-center border-b-2 border-darkGreen p-4 pl-2 pr-10 text-lightGreen transition-colors lg:w-[600px]"
+                      className="relative grid w-auto grid-cols-3 place-items-center border-b-2 border-darkGreen p-4 pl-2 pr-10 text-lightGreen transition-colors tablet:w-[600px]"
                       onPointerEnter={() => setHoveredIndex(index)}
                       onPointerLeave={() => setHoveredIndex(-1)}
                     >
@@ -241,7 +241,7 @@ function PublicRooms() {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.5 }}
-                className="baseVertFlex w-full py-4 text-lightGreen lg:min-w-[604px]" // 604px is width of table of rooms found so there isn't any layout shift when switching between states
+                className="baseVertFlex w-full py-4 text-lightGreen tablet:min-w-[604px]" // 604px is width of table of rooms found so there isn't any layout shift when switching between states
               >
                 <TbCards className="size-16 text-lightGreen" />
                 <div className="baseVertFlex mt-4 w-full gap-2">
@@ -267,7 +267,7 @@ function PublicRooms() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.5 }}
-            className="baseFlex w-auto py-16 lg:min-w-[604px]"
+            className="baseFlex w-auto py-16 tablet:min-w-[604px]"
           >
             <div
               className="inline-block size-12 animate-spin rounded-full border-[2px] border-lightGreen border-t-transparent text-lightGreen"
