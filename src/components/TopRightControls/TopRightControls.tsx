@@ -104,7 +104,7 @@ const settingsViewLabels = ["avatar", "front", "back"] as const;
 
 function TopRightControls() {
   const { isSignedIn } = useAuth();
-  const { asPath } = useRouter();
+  const { route, asPath } = useRouter();
   const userID = useUserIDContext();
 
   const {
@@ -139,6 +139,8 @@ function TopRightControls() {
     useState(false);
   const [showFriendsListUnauthTooltip, setShowFriendsListUnauthTooltip] =
     useState(false);
+
+  const [showTutorialDialog, setShowTutorialDialog] = useState(false);
 
   useEffect(() => {
     if (
@@ -245,216 +247,252 @@ function TopRightControls() {
   }
 
   return (
-    <div
-      style={{
-        alignItems: !asPath.includes("/game") ? "flex-end" : "center",
-      }}
-      className={`${
-        asPath.includes("/game") ? "baseFlex" : "baseVertFlex"
-      } fixed right-1 top-1 z-[190] !min-w-fit gap-3 sm:gap-4 lg:right-4 lg:top-4`}
-    >
-      {!asPath.includes("/game") && (
-        <div className="relative h-[40px] w-[40px] md:h-[44px] md:w-[44px]">
-          <div
-            onPointerEnter={() => {
-              if (!isSignedIn) {
-                setShowSettingsUnauthTooltip(true);
-              }
-            }}
-            onPointerLeave={() => {
-              if (!isSignedIn) {
-                setShowSettingsUnauthTooltip(false);
-              }
-            }}
-          >
-            <TooltipProvider>
-              <Tooltip open={showSettingsUnauthTooltip}>
-                <TooltipTrigger asChild>
-                  {/* below is not ideal, but tooltip wouldn't show w/ Dialog being rendered */}
-                  {isSignedIn ? (
-                    <Dialog
-                      open={showSettingsDialog}
-                      onOpenChange={(isOpen) => setShowSettingsDialog(isOpen)}
-                    >
-                      <DialogTrigger asChild>
-                        <Button
-                          variant={"secondary"}
-                          disabled={!user}
-                          includeMouseEvents
-                          aria-label="Settings"
-                          onClick={() => setShowSettingsDialog(true)}
-                          className="h-[40px] w-[40px] md:h-[44px] md:w-[44px]"
-                        >
-                          <IoSettingsSharp size={"1.5rem"} />
-                        </Button>
-                      </DialogTrigger>
+    <>
+      <div
+        style={{
+          alignItems: !asPath.includes("/game") ? "flex-end" : "center",
+        }}
+        className={`${
+          asPath.includes("/game") ? "baseFlex" : "baseVertFlex"
+        } fixed right-1 top-1 z-[190] !min-w-fit gap-3 sm:gap-4 lg:right-4 lg:top-4`}
+      >
+        {!asPath.includes("/game") && (
+          <div className="relative h-[40px] w-[40px] md:h-[44px] md:w-[44px]">
+            <div
+              onPointerEnter={() => {
+                if (!isSignedIn) {
+                  setShowSettingsUnauthTooltip(true);
+                }
+              }}
+              onPointerLeave={() => {
+                if (!isSignedIn) {
+                  setShowSettingsUnauthTooltip(false);
+                }
+              }}
+            >
+              <TooltipProvider>
+                <Tooltip open={showSettingsUnauthTooltip}>
+                  <TooltipTrigger asChild>
+                    {/* below is not ideal, but tooltip wouldn't show w/ Dialog being rendered */}
+                    {isSignedIn ? (
+                      <Dialog
+                        open={showSettingsDialog}
+                        onOpenChange={(isOpen) => setShowSettingsDialog(isOpen)}
+                      >
+                        <DialogTrigger asChild>
+                          <Button
+                            variant={"secondary"}
+                            disabled={!user}
+                            includeMouseEvents
+                            aria-label="Settings"
+                            onClick={() => setShowSettingsDialog(true)}
+                            className="h-[40px] w-[40px] md:h-[44px] md:w-[44px]"
+                          >
+                            <IoSettingsSharp size={"1.5rem"} />
+                          </Button>
+                        </DialogTrigger>
 
-                      <UserSettingsAndStatsDialog
-                        setShowDialog={setShowSettingsDialog}
-                      />
-                    </Dialog>
-                  ) : (
+                        <UserSettingsAndStatsDialog
+                          setShowDialog={setShowSettingsDialog}
+                        />
+                      </Dialog>
+                    ) : (
+                      <Button
+                        variant={"secondary"}
+                        disabled={!isSignedIn}
+                        includeMouseEvents
+                        aria-label="Settings"
+                        onClick={() => setShowSettingsDialog(true)}
+                        className="h-[40px] w-[40px] md:h-[44px] md:w-[44px]"
+                      >
+                        <IoSettingsSharp size={"1.5rem"} />
+                      </Button>
+                    )}
+                  </TooltipTrigger>
+                  <TooltipContent
+                    side={"left"}
+                    sideOffset={8}
+                    className="border-2 border-lightGreen bg-darkGreen text-lightGreen"
+                  >
+                    <p>Log in to access</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+          </div>
+        )}
+
+        <AudioLevelSlider />
+
+        {asPath.includes("/game") && (
+          <>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="secondary" className="size-11 !shrink-0">
+                  <TbDoorExit size={"1.5rem"} />
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent className="baseVertFlex gap-8">
+                <AlertDialogHeader>
+                  <AlertDialogTitle className="text-center">
+                    Are you sure you want to leave the game?
+                  </AlertDialogTitle>
+                </AlertDialogHeader>
+                <AlertDialogFooter className="baseFlex !justify-center gap-4 sm:gap-8">
+                  <AlertDialogCancel asChild>
+                    <Button variant={"secondary"} className="w-24">
+                      Cancel
+                    </Button>
+                  </AlertDialogCancel>
+                  <AlertDialogAction asChild>
+                    <Button
+                      variant={"destructive"}
+                      className="w-24"
+                      onClick={() => {
+                        leaveRoom();
+                      }}
+                    >
+                      Confirm
+                    </Button>
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+
+            <div className="absolute right-0 top-[60px]">
+              <Button
+                variant={"secondary"}
+                onClick={() => setShowVotingDialog(true)}
+                className="absolute right-0 top-0 size-11"
+              >
+                <MdHowToVote size={"1.5rem"} />
+              </Button>
+
+              {votingIsLockedOut && (
+                <motion.div
+                  key={"desktopVotingCooldownTimer"}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.15 }}
+                  className="cooldownVoteTimer absolute right-0 top-0"
+                ></motion.div>
+              )}
+
+              <AnimatePresence mode="wait">
+                {showVotingDialog && (
+                  <VotingDialog
+                    showVotingOptionButtons={showVotingOptionButtons}
+                    setShowVotingOptionButtons={setShowVotingOptionButtons}
+                  />
+                )}
+              </AnimatePresence>
+            </div>
+          </>
+        )}
+
+        {!asPath.includes("/game") && (
+          <div className="relative h-[40px] w-[40px] md:h-[44px] md:w-[44px]">
+            <div
+              onPointerEnter={() => {
+                if (!isSignedIn) {
+                  setShowFriendsListUnauthTooltip(true);
+                }
+              }}
+              onPointerLeave={() => {
+                if (!isSignedIn) {
+                  setShowFriendsListUnauthTooltip(false);
+                }
+              }}
+            >
+              <TooltipProvider>
+                <Tooltip open={showFriendsListUnauthTooltip}>
+                  <TooltipTrigger asChild>
                     <Button
                       variant={"secondary"}
-                      disabled={!isSignedIn}
+                      disabled={!user}
                       includeMouseEvents
-                      aria-label="Settings"
-                      onClick={() => setShowSettingsDialog(true)}
-                      className="h-[40px] w-[40px] md:h-[44px] md:w-[44px]"
+                      aria-label="Friends list"
+                      className="absolute right-0 top-0 size-11"
+                      onClick={() => setShowFriendsList(!showFriendsList)}
                     >
-                      <IoSettingsSharp size={"1.5rem"} />
+                      <FaUserFriends size={"1.5rem"} />
                     </Button>
-                  )}
-                </TooltipTrigger>
-                <TooltipContent
-                  side={"left"}
-                  sideOffset={8}
-                  className="border-2 border-lightGreen bg-darkGreen text-lightGreen"
-                >
-                  <p>Log in to access</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
-        </div>
-      )}
-
-      <AudioLevelSlider />
-
-      {asPath.includes("/game") && (
-        <>
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button variant="secondary" className="size-11 !shrink-0">
-                <TbDoorExit size={"1.5rem"} />
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent className="baseVertFlex gap-8">
-              <AlertDialogHeader>
-                <AlertDialogTitle className="text-center">
-                  Are you sure you want to leave the game?
-                </AlertDialogTitle>
-              </AlertDialogHeader>
-              <AlertDialogFooter className="baseFlex !justify-center gap-4 sm:gap-8">
-                <AlertDialogCancel asChild>
-                  <Button variant={"secondary"} className="w-24">
-                    Cancel
-                  </Button>
-                </AlertDialogCancel>
-                <AlertDialogAction asChild>
-                  <Button
-                    variant={"destructive"}
-                    className="w-24"
-                    onClick={() => {
-                      leaveRoom();
-                    }}
+                  </TooltipTrigger>
+                  <TooltipContent
+                    side={"left"}
+                    sideOffset={8}
+                    className="border-2 border-lightGreen bg-darkGreen text-lightGreen"
                   >
-                    Confirm
-                  </Button>
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+                    <p>Log in to access</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
 
-          <div className="absolute right-0 top-[60px]">
-            <Button
-              variant={"secondary"}
-              onClick={() => setShowVotingDialog(true)}
-              className="absolute right-0 top-0 size-11"
-            >
-              <MdHowToVote size={"1.5rem"} />
-            </Button>
+            <AnimatePresence mode={"wait"}>
+              {newInviteNotification && (
+                <motion.div
+                  key={"friendsListInviteNotification"}
+                  initial={{ opacity: 0, scale: 0.5 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.5 }}
+                  transition={{ duration: 0.25 }}
+                  className="baseFlex absolute right-[-5px] top-[-5px] size-4"
+                >
+                  <div
+                    style={{
+                      animationDuration: "2s",
+                    }}
+                    className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-500 opacity-75"
+                  ></div>
+                  <div className="relative size-4 rounded-[50%] bg-red-600"></div>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
-            {votingIsLockedOut && (
-              <motion.div
-                key={"desktopVotingCooldownTimer"}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.15 }}
-                className="cooldownVoteTimer absolute right-0 top-0"
-              ></motion.div>
-            )}
-
-            <AnimatePresence mode="wait">
-              {showVotingDialog && (
-                <VotingDialog
-                  showVotingOptionButtons={showVotingOptionButtons}
-                  setShowVotingOptionButtons={setShowVotingOptionButtons}
-                />
+            <AnimatePresence mode={"wait"}>
+              {showFriendsList && (
+                <FriendsList setShowFriendsListDialog={setShowFriendsList} />
               )}
             </AnimatePresence>
           </div>
-        </>
-      )}
+        )}
+      </div>
 
-      {!asPath.includes("/game") && (
-        <div className="relative h-[40px] w-[40px] md:h-[44px] md:w-[44px]">
-          <div
-            onPointerEnter={() => {
-              if (!isSignedIn) {
-                setShowFriendsListUnauthTooltip(true);
-              }
-            }}
-            onPointerLeave={() => {
-              if (!isSignedIn) {
-                setShowFriendsListUnauthTooltip(false);
-              }
-            }}
-          >
-            <TooltipProvider>
-              <Tooltip open={showFriendsListUnauthTooltip}>
-                <TooltipTrigger asChild>
+      {route !== "/" && !viewportLabel.includes("mobile") && (
+        <TooltipProvider>
+          <Tooltip>
+            <Dialog
+              open={showTutorialDialog}
+              onOpenChange={(isOpen) => setShowTutorialDialog(isOpen)}
+            >
+              <TooltipTrigger className="!absolute bottom-3 right-3 z-[500] text-lightGreen">
+                <DialogTrigger asChild>
                   <Button
-                    variant={"secondary"}
-                    disabled={!user}
+                    variant={"text"}
                     includeMouseEvents
-                    aria-label="Friends list"
-                    className="absolute right-0 top-0 size-11"
-                    onClick={() => setShowFriendsList(!showFriendsList)}
+                    onClick={() => setShowTutorialDialog(true)}
+                    className="z-[500] size-[40px] !p-0"
                   >
-                    <FaUserFriends size={"1.5rem"} />
+                    <MdQuestionMark size={"1.5rem"} />
                   </Button>
-                </TooltipTrigger>
-                <TooltipContent
-                  side={"left"}
-                  sideOffset={8}
-                  className="border-2 border-lightGreen bg-darkGreen text-lightGreen"
-                >
-                  <p>Log in to access</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
+                </DialogTrigger>
+              </TooltipTrigger>
 
-          <AnimatePresence mode={"wait"}>
-            {newInviteNotification && (
-              <motion.div
-                key={"friendsListInviteNotification"}
-                initial={{ opacity: 0, scale: 0.5 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.5 }}
-                transition={{ duration: 0.25 }}
-                className="baseFlex absolute right-[-5px] top-[-5px] size-4"
+              <TooltipContent
+                side={"right"}
+                sideOffset={8}
+                className="baseFlex z-[500] gap-2 rounded-md border-2 bg-gradient-to-br from-green-800 to-green-850 px-4 py-1 text-lightGreen"
               >
-                <div
-                  style={{
-                    animationDuration: "2s",
-                  }}
-                  className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-500 opacity-75"
-                ></div>
-                <div className="relative size-4 rounded-[50%] bg-red-600"></div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+                <p>Rules</p>
+              </TooltipContent>
 
-          <AnimatePresence mode={"wait"}>
-            {showFriendsList && (
-              <FriendsList setShowFriendsListDialog={setShowFriendsList} />
-            )}
-          </AnimatePresence>
-        </div>
+              <TutorialDialog setShowDialog={setShowTutorialDialog} />
+            </Dialog>
+          </Tooltip>
+        </TooltipProvider>
       )}
-    </div>
+    </>
   );
 }
 

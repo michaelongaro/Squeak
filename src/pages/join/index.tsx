@@ -8,6 +8,8 @@ import PlayerCustomizationPreview from "~/components/playerIcons/PlayerCustomiza
 import PlayerCustomizationPopover from "~/components/popovers/PlayerCustomizationPopover";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
+import { Dialog, DialogTrigger } from "~/components/ui/dialog";
+import { MdQuestionMark } from "react-icons/md";
 import { socket } from "~/pages/_app";
 import { api } from "~/utils/api";
 import { useRoomContext } from "../../context/RoomContext";
@@ -24,6 +26,7 @@ import {
   englishDataset,
   englishRecommendedTransformers,
 } from "obscenity";
+import TutorialDialog from "~/components/dialogs/TutorialDialog";
 
 const obscenityMatcher = new RegExpMatcher({
   ...englishDataset.build(),
@@ -58,6 +61,7 @@ function JoinRoom() {
   const [focusedInInput, setFocusedInInput] = useState<boolean>(false);
   const [usernameIsProfane, setUsernameIsProfane] = useState<boolean>(false);
   const [joiningRoom, setJoiningRoom] = useState<boolean>(false);
+  const [showTutorialDialog, setShowTutorialDialog] = useState(false);
 
   const { data: queriedRoom, refetch: searchForRoom } =
     api.rooms.findRoomByCode.useQuery(
@@ -197,7 +201,7 @@ function JoinRoom() {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
-      className="baseVertFlex relative min-h-[100dvh] pb-16 tablet:pt-16"
+      className="baseVertFlex relative min-h-[100dvh] !justify-start pb-16 tablet:!justify-center tablet:pt-16"
     >
       <div className="baseVertFlex relative gap-4">
         <div className="baseFlex sticky left-0 top-0 z-[105] w-screen !justify-start gap-4 border-b-2 border-white bg-gradient-to-br from-green-800 to-green-850 p-2 shadow-lg tablet:relative tablet:w-full tablet:bg-none tablet:shadow-none">
@@ -217,6 +221,24 @@ function JoinRoom() {
           >
             Join room
           </div>
+
+          <Dialog
+            open={showTutorialDialog}
+            onOpenChange={(isOpen) => setShowTutorialDialog(isOpen)}
+          >
+            <DialogTrigger asChild>
+              <Button
+                variant={"text"}
+                includeMouseEvents
+                onClick={() => setShowTutorialDialog(true)}
+                className="baseFlex z-[500] ml-auto mr-11 !p-0 tablet:hidden"
+              >
+                <MdQuestionMark size={"1.35rem"} />
+              </Button>
+            </DialogTrigger>
+
+            <TutorialDialog setShowDialog={setShowTutorialDialog} />
+          </Dialog>
         </div>
 
         <div className="baseVertFlex mt-4 gap-8 rounded-md border-2 border-white bg-gradient-to-br from-green-800 to-green-850 p-4 text-lightGreen">

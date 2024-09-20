@@ -11,6 +11,9 @@ import PlayerCustomizationSheet from "~/components/sheets/PlayerCustomizationShe
 import PlayerCustomizationPreview from "~/components/playerIcons/PlayerCustomizationPreview";
 import PlayerIcon from "~/components/playerIcons/PlayerIcon";
 import PlayerCustomizationPopover from "~/components/popovers/PlayerCustomizationPopover";
+import { Dialog, DialogTrigger } from "~/components/ui/dialog";
+import { MdQuestionMark } from "react-icons/md";
+import TutorialDialog from "~/components/dialogs/TutorialDialog";
 import { IoHome } from "react-icons/io5";
 import { Button } from "~/components/ui/button";
 import { socket } from "~/pages/_app";
@@ -89,6 +92,7 @@ function JoinRoom() {
   const [startRoundCountdownValue, setStartRoundCountdownValue] =
     useState<number>(3);
   const [showCountdown, setShowCountdown] = useState<boolean>(false);
+  const [showTutorialDialog, setShowTutorialDialog] = useState(false);
 
   const { data: roomResult } = api.rooms.findRoomByCode.useQuery(
     {
@@ -281,7 +285,7 @@ function JoinRoom() {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
-      className={`baseVertFlex relative min-h-[100dvh] pb-16 tablet:pt-16 ${showUsernamePromptDialog ? "pt-16" : ""}`}
+      className={`baseVertFlex relative min-h-[100dvh] !justify-start pb-16 tablet:!justify-center tablet:pt-16 ${showUsernamePromptDialog ? "pt-16" : ""}`}
     >
       <AnimatePresence mode={"wait"}>
         {showUsernamePromptDialog && room && (
@@ -539,6 +543,24 @@ function JoinRoom() {
                       : "Join room"
                   }`}
                 </div>
+
+                <Dialog
+                  open={showTutorialDialog}
+                  onOpenChange={(isOpen) => setShowTutorialDialog(isOpen)}
+                >
+                  <DialogTrigger asChild>
+                    <Button
+                      variant={"text"}
+                      includeMouseEvents
+                      onClick={() => setShowTutorialDialog(true)}
+                      className="baseFlex z-[500] ml-auto mr-11 !p-0 tablet:hidden"
+                    >
+                      <MdQuestionMark size={"1.35rem"} />
+                    </Button>
+                  </DialogTrigger>
+
+                  <TutorialDialog setShowDialog={setShowTutorialDialog} />
+                </Dialog>
               </div>
 
               <div className="baseVertFlex gap-4 text-lightGreen">

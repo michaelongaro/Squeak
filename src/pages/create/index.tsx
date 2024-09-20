@@ -13,9 +13,10 @@ import {
 import { IoSettingsSharp } from "react-icons/io5";
 import { FaRobot } from "react-icons/fa6";
 import { FaUsers } from "react-icons/fa";
+import { Dialog, DialogTrigger } from "~/components/ui/dialog";
 import PlayerIcon from "~/components/playerIcons/PlayerIcon";
 import Radio from "~/components/ui/Radio";
-import { MdCopyAll } from "react-icons/md";
+import { MdCopyAll, MdQuestionMark } from "react-icons/md";
 import { IoHome } from "react-icons/io5";
 import { BiArrowBack } from "react-icons/bi";
 import AnimatedNumbers from "~/components/ui/AnimatedNumbers";
@@ -35,6 +36,7 @@ import { Button } from "~/components/ui/button";
 import { useRouter } from "next/router";
 import { avatarPaths } from "~/utils/avatarPaths";
 import { oklchToDeckHueRotations } from "~/utils/oklchToDeckHueRotations";
+import TutorialDialog from "~/components/dialogs/TutorialDialog";
 
 const obscenityMatcher = new RegExpMatcher({
   ...englishDataset.build(),
@@ -116,6 +118,7 @@ function CreateRoom() {
   const [startRoundCountdownValue, setStartRoundCountdownValue] =
     useState<number>(3);
   const [showCountdown, setShowCountdown] = useState<boolean>(false);
+  const [showTutorialDialog, setShowTutorialDialog] = useState(false);
 
   // needs !connectedToRoom for when player inherits ownership of room after prev
   // host leaves, otherwise this effect would be overwriting the current room config
@@ -313,7 +316,7 @@ function CreateRoom() {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
-      className="baseVertFlex relative min-h-[100dvh] pb-16 tablet:pt-16"
+      className="baseVertFlex relative min-h-[100dvh] !justify-start pb-16 tablet:!justify-center tablet:pt-16"
     >
       <div className="baseVertFlex relative gap-4">
         <div className="baseFlex sticky left-0 top-0 z-[105] w-screen !justify-start gap-4 border-b-2 border-white bg-gradient-to-br from-green-800 to-green-850 p-2 shadow-lg tablet:relative tablet:w-full tablet:bg-none tablet:shadow-none">
@@ -392,6 +395,24 @@ function CreateRoom() {
                 : "Create room"
             }`}
           </div>
+
+          <Dialog
+            open={showTutorialDialog}
+            onOpenChange={(isOpen) => setShowTutorialDialog(isOpen)}
+          >
+            <DialogTrigger asChild>
+              <Button
+                variant={"text"}
+                includeMouseEvents
+                onClick={() => setShowTutorialDialog(true)}
+                className="baseFlex z-[500] ml-auto mr-11 !p-0 tablet:hidden"
+              >
+                <MdQuestionMark size={"1.35rem"} />
+              </Button>
+            </DialogTrigger>
+
+            <TutorialDialog setShowDialog={setShowTutorialDialog} />
+          </Dialog>
         </div>
 
         {!connectedToRoom && (
