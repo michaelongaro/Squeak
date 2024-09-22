@@ -194,7 +194,7 @@ function MainOptions() {
               >
                 Made by
                 <a
-                  href="https://michaelongaro.com"
+                  href="https://github.com/michaelongaro"
                   target="_blank"
                   rel="noreferrer"
                   className="baseFlex gap-1 underline underline-offset-4"

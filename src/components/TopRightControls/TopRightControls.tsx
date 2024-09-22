@@ -940,7 +940,7 @@ function MainSheet({ user, setShowSheet, newInviteNotification }: IMainSheet) {
               <div className="baseFlex !flex-nowrap gap-1.5 text-sm">
                 Made by
                 <a
-                  href="https://michaelongaro.com"
+                  href="https://github.com/michaelongaro"
                   target="_blank"
                   rel="noreferrer"
                   className="baseFlex !items-end gap-1 underline underline-offset-4"
