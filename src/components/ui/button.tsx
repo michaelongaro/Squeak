@@ -149,7 +149,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 
           {disabled && (
             <p className="baseFlex absolute right-16 w-32 gap-2 text-sm text-darkGreen/70">
-              Log in to access
+              Sign in to access
               <FaLock />
             </p>
           )}

@@ -314,7 +314,7 @@ function TopRightControls() {
                     sideOffset={8}
                     className="border-2 border-lightGreen bg-darkGreen text-lightGreen"
                   >
-                    <p>Log in to access</p>
+                    <p>Sign in to access</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
@@ -423,7 +423,7 @@ function TopRightControls() {
                     sideOffset={8}
                     className="border-2 border-lightGreen bg-darkGreen text-lightGreen"
                   >
-                    <p>Log in to access</p>
+                    <p>Sign in to access</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
