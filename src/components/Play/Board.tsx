@@ -3,7 +3,7 @@ import { useRoomContext } from "../../context/RoomContext";
 import useTrackHoverOverBoardCells from "../../hooks/useTrackHoverOverBoardCells";
 import BoardCell from "./BoardCell";
 import classes from "./Play.module.css";
-import { motion, AnimatePresence } from "framer-motion";
+
 export interface IGetBoxShadowStyles {
   id: string;
   rowIdx?: number;
@@ -52,7 +52,7 @@ function Board() {
         if (proposedCardBoxShadow?.id === plusOneIndicatorID) {
           setPlusOneIndicatorID(null);
         }
-      }, 900);
+      }, 1250);
     }
   }, [proposedCardBoxShadow, plusOneIndicatorID, setProposedCardBoxShadow]);
 
