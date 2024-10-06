@@ -62,7 +62,7 @@ function BoardCell({
                     type: "spring",
                     damping: 7,
                     stiffness: 100,
-                    delay: 0.27,
+                    delay: 0.2,
                   }}
                   className="baseFlex h-full w-full"
                 >
