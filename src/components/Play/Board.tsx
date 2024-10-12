@@ -38,7 +38,8 @@ function Board() {
     if (
       proposedCardBoxShadow !== null &&
       proposedCardBoxShadow.boxShadowValue ===
-        "0px 0px 4px 3px hsl(120, 100%, 86%)"
+        "0px 0px 4px 3px hsl(120, 100%, 86%)" &&
+      proposedCardBoxShadow.id !== plusOneIndicatorID
     ) {
       setPlusOneIndicatorID(proposedCardBoxShadow.id);
 
@@ -49,9 +50,9 @@ function Board() {
       setTimeout(() => {
         // if another card was played in quick succession *on the same cell*,
         // then leave the animation present, otherwise hide it
-        if (proposedCardBoxShadow?.id === plusOneIndicatorID) {
-          setPlusOneIndicatorID(null);
-        }
+        // if (proposedCardBoxShadow?.id === plusOneIndicatorID) {
+        setPlusOneIndicatorID(null);
+        // }
       }, 1250);
     }
   }, [proposedCardBoxShadow, plusOneIndicatorID, setProposedCardBoxShadow]);

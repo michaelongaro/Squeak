@@ -52,17 +52,17 @@ function BoardCell({
                   duration: 0.25,
                   ease: "easeOut",
                 }}
-                className={`baseFlex absolute left-0 top-0 z-[500] h-full w-full select-none rounded-sm bg-darkGreen/50 text-lg tracking-wider text-lightGreen [text-shadow:_0_1px_3px_rgb(0_0_0)] desktop:text-xl`}
+                className={`baseFlex absolute left-0 top-0 z-[500] h-full w-full select-none rounded-sm bg-darkGreen/50 text-lg tracking-wider text-lightGreen [text-shadow:_0_1px_3px_rgb(0_0_0)] desktop:text-2xl`}
               >
                 <motion.div
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
-                  exit={{ scale: 0 }}
+                  exit={{ scale: 0.5 }}
                   transition={{
                     type: "spring",
                     damping: 7,
-                    stiffness: 100,
-                    delay: 0.2,
+                    stiffness: 125,
+                    delay: 0.25,
                   }}
                   className="baseFlex h-full w-full"
                 >
