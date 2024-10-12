@@ -446,39 +446,59 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                       }}
                       className="baseFlex"
                     >
-                      <div
-                        onAnimationEnd={() => setDecksAreBeingRotated(false)}
-                        className={`${
-                          decksAreBeingRotated
-                            ? "rotateDeckByACardAnimation"
-                            : ""
-                        } absolute left-0 top-0 h-full w-full select-none`}
-                      >
-                        {gameData?.players[userID]?.deck?.map(
-                          (card, deckIdx) => (
-                            <div
-                              key={`${userID}deckCard${card.suit}${card.value}`}
-                              style={{
-                                bottom: `${deckIdx * (viewportLabel.includes("mobile") ? 0.15 : 0.3)}px`,
-                              }}
-                              className="absolute left-0 h-full w-full select-none transition-[bottom]"
-                            >
-                              <Card
-                                value={card.value}
-                                suit={card.suit}
-                                showCardBack={true} // separate state inside overrides this halfway through flip
-                                draggable={false}
-                                ownerID={userID}
-                                hueRotation={
-                                  playerMetadata[userID]?.deckHueRotation || 0
-                                }
-                                origin={"deck"}
-                                startID={`${userID}deck`}
-                                rotation={0}
-                              />
-                            </div>
-                          ),
-                        )}
+                      <div className="absolute left-0 top-0 h-full w-full select-none">
+                        <>
+                          <div
+                            onAnimationEnd={() =>
+                              setDecksAreBeingRotated(false)
+                            }
+                            className={`${
+                              decksAreBeingRotated
+                                ? "rotateDeckByACardAnimation"
+                                : ""
+                            } absolute left-0 top-0 h-full w-full select-none`}
+                          >
+                            <Card
+                              value={"2"} // placeholder
+                              suit={"S"} // placeholder
+                              showCardBack={true}
+                              draggable={false}
+                              ownerID={""} // placeholder
+                              hueRotation={
+                                playerMetadata[userID]?.deckHueRotation || 0
+                              }
+                              origin={"deck"}
+                              startID={`${userID}deck`}
+                              rotation={0}
+                            />
+                          </div>
+
+                          {gameData?.players[userID]?.deck?.map(
+                            (card, deckIdx) => (
+                              <div
+                                key={`${userID}deckCard${card.suit}${card.value}`}
+                                style={{
+                                  bottom: `${deckIdx * (viewportLabel.includes("mobile") ? 0.15 : 0.3)}px`,
+                                }}
+                                className="absolute left-0 h-full w-full select-none transition-[bottom]"
+                              >
+                                <Card
+                                  value={card.value}
+                                  suit={card.suit}
+                                  showCardBack={true} // separate state inside overrides this halfway through flip
+                                  draggable={false}
+                                  ownerID={userID}
+                                  hueRotation={
+                                    playerMetadata[userID]?.deckHueRotation || 0
+                                  }
+                                  origin={"deck"}
+                                  startID={`${userID}deck`}
+                                  rotation={0}
+                                />
+                              </div>
+                            ),
+                          )}
+                        </>
                       </div>
 
                       {/* dummy card for when deck is drawing last 1/2/3 cards so that the last cards that
