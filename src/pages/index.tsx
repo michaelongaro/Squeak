@@ -41,7 +41,7 @@ function MainOptions() {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
-      className="baseFlex relative min-h-[100dvh] py-4"
+      className="baseFlex relative min-h-[100dvh] w-full py-4"
     >
       {isSignedIn !== undefined && (
         <div className="baseVertFlex w-[17.5rem] rounded-md border-2 border-white bg-gradient-to-br from-green-800 to-green-850 p-6 shadow-lg lg:w-[22.25rem] desktop:p-8">
