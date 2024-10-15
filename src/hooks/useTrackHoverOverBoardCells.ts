@@ -19,26 +19,30 @@ function useTrackHoverOverBoardCells() {
 
   useEffect(() => {
     function resizeHandler() {
-      const newBoardCellBoundingRects: IBoundingRect[] = [];
+      setTimeout(() => {
+        const newBoardCellBoundingRects: IBoundingRect[] = [];
 
-      for (let i = 0; i < 4; i++) {
-        for (let j = 0; j < 5; j++) {
-          const cell = document
-            .getElementById(`parentCell${i}${j}`)
-            ?.getBoundingClientRect();
+        for (let i = 0; i < 4; i++) {
+          for (let j = 0; j < 5; j++) {
+            const cell = document
+              .getElementById(`parentCell${i}${j}`)
+              ?.getBoundingClientRect();
 
-          if (cell)
-            newBoardCellBoundingRects.push({
-              left: cell.left,
-              right: cell.right,
-              top: cell.top,
-              bottom: cell.bottom,
-              cellCoords: [i, j],
-            });
+            if (cell) {
+              newBoardCellBoundingRects.push({
+                left: cell.left,
+                right: cell.right,
+                top: cell.top,
+                bottom: cell.bottom,
+                cellCoords: [i, j],
+              });
+            }
+          }
         }
-      }
 
-      setBoardCellBoundingRects(newBoardCellBoundingRects);
+        setBoardCellBoundingRects(newBoardCellBoundingRects);
+      }, 1500); // hacky, but waiting for the board to be fully resized/painted
+      // before updating the bounding rects
     }
 
     resizeHandler();
