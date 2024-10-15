@@ -70,14 +70,29 @@ function GeneralLayout({ children }: GeneralLayout) {
   }, [asPath]);
 
   useEffect(() => {
-    // prefetching/caching card assets to prevent any flickering of the assets
-    // the very first time a player plays a round
-    setTimeout(() => {
-      for (const imagePath of Object.values(cardAssets)) {
+    // Prefetching/caching card assets to prevent flickering
+    const timer = setTimeout(() => {
+      const preloadedImages = Object.values(cardAssets).map((imagePath) => {
         const img = new Image();
         img.src = imagePath.src;
-      }
+        img.width = 0;
+        img.height = 0;
+        img.style.visibility = "hidden"; // Ensure it's not visible even if somehow it tries to render
+        return img;
+      });
+
+      // append images to a hidden container
+      const container = document.createElement("div");
+      container.style.display = "none";
+      preloadedImages.forEach((img) => container.appendChild(img));
+      document.body.appendChild(container);
+
+      return () => {
+        document.body.removeChild(container);
+      };
     }, 2500);
+
+    return () => clearTimeout(timer);
   }, []);
 
   // there was a semi-niche sequence on mobile where user could accidentally end up
