@@ -51,6 +51,7 @@ function useCardDropApproved({
     setProposedCardBoxShadow,
     setSqueakStackDragAlterations,
     viewportLabel,
+    setPlusOneIndicatorID,
   } = useRoomContext();
 
   const [dataFromBackend, setDataFromBackend] =
@@ -245,6 +246,7 @@ function useCardDropApproved({
           id: endID,
           boxShadowValue: `0px 0px 4px 3px hsl(120, 100%, 86%)`,
         });
+        setPlusOneIndicatorID(endID);
       }
     }
   }, [
@@ -263,6 +265,7 @@ function useCardDropApproved({
     rotation,
     userID,
     viewportLabel,
+    setPlusOneIndicatorID,
   ]);
 }
 

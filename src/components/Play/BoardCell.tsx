@@ -1,20 +1,14 @@
 import { AnimatePresence, motion } from "framer-motion";
+import { type Dispatch, type SetStateAction, useRef } from "react";
 import { type ICard } from "../../utils/generateDeckAndSqueakCards";
 import StaticCard from "~/components/Play/StaticCard";
-
-export interface IGetBoxShadowStyles {
-  id: string;
-  rowIdx?: number;
-  colIdx?: number;
-  squeakStackIdx?: number;
-}
 
 interface IBoardCell {
   card: ICard | null;
   rowIdx: number;
   colIdx: number;
   deckVariantIndex: number;
-  plusOneIndicatorID: string | null;
+  setPlusOneIndicatorID: Dispatch<SetStateAction<string | null>>;
 }
 
 function BoardCell({
@@ -22,8 +16,11 @@ function BoardCell({
   rowIdx,
   colIdx,
   deckVariantIndex,
-  plusOneIndicatorID,
+  setPlusOneIndicatorID,
 }: IBoardCell) {
+  const plusOneBackgroundRef = useRef<HTMLDivElement | null>(null);
+  const plusOneRef = useRef<HTMLDivElement | null>(null);
+
   return (
     <AnimatePresence>
       {card && (
@@ -38,41 +35,29 @@ function BoardCell({
             value={card.value}
             deckVariantIndex={deckVariantIndex}
           />
-
-          {/* TODO: the start of this whole animation
-                feels slightly delayed... maybe I am hallucinating this effect */}
-          <AnimatePresence>
-            {plusOneIndicatorID === `cell${rowIdx}${colIdx}` && (
-              <motion.div
-                key={`cell${rowIdx}${colIdx}AnimatedPlusOneIndicator`}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{
-                  duration: 0.25,
-                  ease: "easeOut",
-                }}
-                className={`baseFlex absolute left-0 top-0 z-[500] h-full w-full select-none rounded-sm bg-darkGreen/50 text-lg tracking-wider text-lightGreen [text-shadow:_0_1px_3px_rgb(0_0_0)] desktop:text-2xl`}
-              >
-                <motion.div
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  exit={{ scale: 0.5 }}
-                  transition={{
-                    type: "spring",
-                    damping: 7,
-                    stiffness: 125,
-                    delay: 0.25,
-                  }}
-                  className="baseFlex h-full w-full"
-                >
-                  +1
-                </motion.div>
-              </motion.div>
-            )}
-          </AnimatePresence>
         </motion.div>
       )}
+
+      <div
+        ref={plusOneBackgroundRef}
+        id={`cell${rowIdx}${colIdx}PlusOneBackground`}
+        onAnimationEnd={() => {
+          setPlusOneIndicatorID(null);
+          if (plusOneBackgroundRef.current && plusOneRef.current) {
+            plusOneBackgroundRef.current.classList.remove("plusOneBackground");
+            plusOneRef.current.classList.remove("springPlusOne");
+          }
+        }}
+        className={`baseFlex absolute left-0 top-0 z-[500] h-full w-full select-none rounded-sm bg-darkGreen/50 text-lg tracking-wider text-lightGreen opacity-0 [text-shadow:_0_1px_3px_rgb(0_0_0)] desktop:text-2xl`}
+      >
+        <div
+          ref={plusOneRef}
+          id={`cell${rowIdx}${colIdx}PlusOne`}
+          className={`baseFlex h-full w-full select-none opacity-0`}
+        >
+          +1
+        </div>
+      </div>
     </AnimatePresence>
   );
 }

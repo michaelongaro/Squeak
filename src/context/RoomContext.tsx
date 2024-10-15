@@ -104,6 +104,8 @@ interface IRoomContext {
   setProposedCardBoxShadow: React.Dispatch<
     React.SetStateAction<IProposedCardBoxShadow | null>
   >;
+  plusOneIndicatorID: string | null;
+  setPlusOneIndicatorID: React.Dispatch<React.SetStateAction<string | null>>;
   decksAreBeingRotated: boolean;
   setDecksAreBeingRotated: React.Dispatch<React.SetStateAction<boolean>>;
   playerIDWhoSqueaked: string | null;
@@ -262,6 +264,9 @@ export function RoomProvider(props: { children: React.ReactNode }) {
 
   const [proposedCardBoxShadow, setProposedCardBoxShadow] =
     useState<IProposedCardBoxShadow | null>(null);
+  const [plusOneIndicatorID, setPlusOneIndicatorID] = useState<string | null>(
+    null,
+  );
 
   const [currentPlayerIsDrawingFromDeck, setCurrentPlayerIsDrawingFromDeck] =
     useState<boolean>(false);
@@ -511,6 +516,8 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     setHeldSqueakStackLocation,
     proposedCardBoxShadow,
     setProposedCardBoxShadow,
+    plusOneIndicatorID,
+    setPlusOneIndicatorID,
     decksAreBeingRotated,
     setDecksAreBeingRotated,
     playerIDWhoSqueaked,

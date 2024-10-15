@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect } from "react";
 import { useRoomContext } from "../../context/RoomContext";
 import useTrackHoverOverBoardCells from "../../hooks/useTrackHoverOverBoardCells";
 import BoardCell from "./BoardCell";
@@ -18,44 +18,28 @@ function Board() {
     holdingASqueakCard,
     proposedCardBoxShadow,
     hoveredCell,
-    setProposedCardBoxShadow,
     deckVariantIndex,
+    plusOneIndicatorID,
+    setPlusOneIndicatorID,
   } = useRoomContext();
 
-  useTrackHoverOverBoardCells();
-
-  // FYI: I don't have a real way to explain why this is necessary, however the intent is that
-  // both the plusOneIndicator and the cardDropApprovedBoxShadow should be reset to null shortly
-  // after the card has been played. This was not happening after quick successive card placements
-  // on the same deck cell. Below states and effect are a workaround to manually reset these states
-  // after the card has been played. This is not ideal, but seemingly works okay.
-
-  const [plusOneIndicatorID, setPlusOneIndicatorID] = useState<string | null>(
-    null,
-  );
-
   useEffect(() => {
-    if (
-      proposedCardBoxShadow !== null &&
-      proposedCardBoxShadow.boxShadowValue ===
-        "0px 0px 4px 3px hsl(120, 100%, 86%)" &&
-      proposedCardBoxShadow.id !== plusOneIndicatorID
-    ) {
-      setPlusOneIndicatorID(proposedCardBoxShadow.id);
+    if (plusOneIndicatorID === null) return;
 
-      setTimeout(() => {
-        setProposedCardBoxShadow(null);
-      }, 300); // standard duration of box shadow transition
+    const plusOneIndicatorBackground = document.getElementById(
+      `${plusOneIndicatorID}PlusOneBackground`,
+    );
+    const plusOneIndicator = document.getElementById(
+      `${plusOneIndicatorID}PlusOne`,
+    );
 
-      setTimeout(() => {
-        // if another card was played in quick succession *on the same cell*,
-        // then leave the animation present, otherwise hide it
-        // if (proposedCardBoxShadow?.id === plusOneIndicatorID) {
-        setPlusOneIndicatorID(null);
-        // }
-      }, 1250);
+    if (plusOneIndicatorBackground && plusOneIndicator) {
+      plusOneIndicatorBackground.classList.add("plusOneBackground");
+      plusOneIndicator.classList.add("springPlusOne");
     }
-  }, [proposedCardBoxShadow, plusOneIndicatorID, setProposedCardBoxShadow]);
+  }, [plusOneIndicatorID]);
+
+  useTrackHoverOverBoardCells();
 
   function getBoxShadowStyles({
     id,
@@ -114,7 +98,7 @@ function Board() {
                   colIdx={colIdx}
                   card={cell}
                   deckVariantIndex={deckVariantIndex}
-                  plusOneIndicatorID={plusOneIndicatorID}
+                  setPlusOneIndicatorID={setPlusOneIndicatorID}
                 />
               </div>
             </div>
