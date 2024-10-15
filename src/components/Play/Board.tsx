@@ -1,4 +1,4 @@
-import { Fragment, useEffect } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { useRoomContext } from "../../context/RoomContext";
 import useTrackHoverOverBoardCells from "../../hooks/useTrackHoverOverBoardCells";
 import BoardCell from "./BoardCell";
@@ -23,6 +23,10 @@ function Board() {
     setPlusOneIndicatorID,
   } = useRoomContext();
 
+  const [prevPlusOneIndicatorID, setPrevPlusOneIndicatorID] = useState<
+    string | null
+  >(null);
+
   useEffect(() => {
     if (plusOneIndicatorID === null) return;
 
@@ -34,10 +38,24 @@ function Board() {
     );
 
     if (plusOneIndicatorBackground && plusOneIndicator) {
-      plusOneIndicatorBackground.classList.add("plusOneBackground");
-      plusOneIndicator.classList.add("springPlusOne");
+      // clear existing plusOneIndicator (if any) before showing the new ones,
+      // otherwise the previous animation would just finish out it's duration
+      // and not show the new one.
+      if (prevPlusOneIndicatorID === plusOneIndicatorID) {
+        plusOneIndicatorBackground.classList.remove("plusOneBackground");
+        plusOneIndicator.classList.remove("springPlusOne");
+        setTimeout(() => {
+          plusOneIndicatorBackground.classList.add("plusOneBackground");
+          plusOneIndicator.classList.add("springPlusOne");
+        }, 0);
+      } else {
+        plusOneIndicatorBackground.classList.add("plusOneBackground");
+        plusOneIndicator.classList.add("springPlusOne");
+      }
     }
-  }, [plusOneIndicatorID]);
+
+    setPrevPlusOneIndicatorID(plusOneIndicatorID);
+  }, [plusOneIndicatorID, prevPlusOneIndicatorID]);
 
   useTrackHoverOverBoardCells();
 
