@@ -47,7 +47,8 @@ function Board() {
         setTimeout(() => {
           plusOneIndicatorBackground.classList.add("plusOneBackground");
           plusOneIndicator.classList.add("springPlusOne");
-        }, 0);
+        }, 150); // trying to allow the browser to clear the classes before adding them back.
+        // not the biggest fan of this approach though, requestAnimationFrame didn't seem to work
       } else {
         plusOneIndicatorBackground.classList.add("plusOneBackground");
         plusOneIndicator.classList.add("springPlusOne");
