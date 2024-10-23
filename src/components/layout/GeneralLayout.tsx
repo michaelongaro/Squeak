@@ -3,7 +3,6 @@ import { useEffect, type ReactNode } from "react";
 import { Montserrat } from "next/font/google";
 import { Toaster, ToastBar } from "react-hot-toast";
 import TopRightControls from "../TopRightControls/TopRightControls";
-import { cardAssets } from "~/utils/cardAssetPaths";
 import { IoSadSharp } from "react-icons/io5";
 import usePlayerLeftRoom from "~/hooks/usePlayerLeftRoom";
 import useRejoinRoom from "~/hooks/useRejoinRoom";
@@ -23,6 +22,7 @@ import { Button } from "~/components/ui/button";
 import useReceiveFriendData from "~/hooks/useReceiveFriendData";
 import useInitializeUserStats from "~/hooks/useInitializeUserStats";
 import usePostSignUpRegistration from "~/hooks/usePostSignUpRegistration";
+import useRegisterServiceWorker from "~/hooks/useRegisterServiceWorker";
 
 const montserrat = Montserrat({
   weight: "variable",
@@ -69,32 +69,6 @@ function GeneralLayout({ children }: GeneralLayout) {
     }
   }, [asPath]);
 
-  useEffect(() => {
-    // Prefetching/caching card assets to prevent flickering
-    const timer = setTimeout(() => {
-      const preloadedImages = Object.values(cardAssets).map((imagePath) => {
-        const img = new Image();
-        img.src = imagePath.src;
-        img.width = 0;
-        img.height = 0;
-        img.style.visibility = "hidden"; // Ensure it's not visible even if somehow it tries to render
-        return img;
-      });
-
-      // append images to a hidden container
-      const container = document.createElement("div");
-      container.style.display = "none";
-      preloadedImages.forEach((img) => container.appendChild(img));
-      document.body.appendChild(container);
-
-      return () => {
-        document.body.removeChild(container);
-      };
-    }, 2500);
-
-    return () => clearTimeout(timer);
-  }, []);
-
   // there was a semi-niche sequence on mobile where user could accidentally end up
   // selecting the entire page while playing a game, so this prevents that
   useEffect(() => {
@@ -105,6 +79,7 @@ function GeneralLayout({ children }: GeneralLayout) {
     }
   }, [asPath]);
 
+  useRegisterServiceWorker();
   useGracefullyReconnectToSocket();
   usePlayerLeftRoom();
   useRejoinRoom();
@@ -131,6 +106,11 @@ function GeneralLayout({ children }: GeneralLayout) {
             content="Welcome to Squeak! A fun, fast-paced multiplayer rendition of solitaire.
                    Games can be played with 2-5 players, lasting around 20 minutes."
           />
+
+          {/* PWA related */}
+          <meta name="theme-color" content="hsl(120deg, 100%, 86%)" />
+          <link rel="manifest" href="/manifest.json" />
+
           {/* makes it so page can't be overscrolled (which is the default iOS scrolling implemenation) */}
           <meta
             name="viewport"

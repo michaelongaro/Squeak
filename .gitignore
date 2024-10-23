@@ -20,6 +20,10 @@ next-env.d.ts
 # production
 /build
 
+# service worker related
+/public/sw.js
+/public/workbox-*.js
+
 # misc
 .DS_Store
 *.pem
