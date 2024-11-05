@@ -560,7 +560,7 @@ function VotingDialog({
         width: forMobile ? "100%" : "10rem",
       }}
       transition={{ duration: forMobile ? 0 : 0.15 }}
-      className={`z-200 ${!forMobile ? "absolute right-0 top-0" : ""}`}
+      className={`z-200 shadow-xl ${!forMobile ? "absolute right-0 top-0" : ""}`}
     >
       {/* voting modal */}
       <div
