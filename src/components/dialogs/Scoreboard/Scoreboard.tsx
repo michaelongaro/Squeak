@@ -80,6 +80,9 @@ function Scoreboard() {
     IPlayerRoundDetails[]
   >([]);
 
+  const [selectedPlayerID, setSelectedPlayerID] = useState<string>(userID);
+  const [staggerCards, setStaggerCards] = useState<boolean>(true);
+
   const [hostActionButtonText, setHostActionButtonText] = useState<string>("");
   const [hoveringOnHostActionButton, setHoveringOnHostActionButton] =
     useState<boolean>(false);
@@ -395,7 +398,7 @@ function Scoreboard() {
           </VisuallyHidden>
 
           {scoreboardMetadata?.playerRoundDetails && currentPlayerStats && (
-            <div className="baseVertFlex h-full gap-6 tablet:gap-8">
+            <div className="baseVertFlex h-full gap-4 tablet:gap-8">
               <div className="baseFlex w-full !items-start !justify-between">
                 <div className="text-xl font-semibold">Scoreboard</div>
 
@@ -422,115 +425,143 @@ function Scoreboard() {
                   <div className="mr-[21px] font-semibold">Total</div>
                 </div>
 
-                {sortedPlayerRoundDetails.map((player) => (
-                  <motion.div
-                    key={player.playerID}
-                    layoutId={player.playerID}
-                    layout={"position"}
-                    style={{
-                      gridTemplateColumns: "50px auto 50px",
-                      order: showNewRankings
-                        ? player.newRanking
-                        : player.oldRanking,
-                    }}
-                    className="grid w-full max-w-xl place-items-center"
-                  >
-                    {/* ranking */}
-                    <div
-                      style={{
-                        backgroundColor:
-                          playerColorVariants[player.playerID]?.baseColor ??
-                          "white",
-                        color:
-                          playerColorVariants[player.playerID]?.textColor ??
-                          "black",
+                <div className="baseVertFlex w-full gap-2">
+                  {sortedPlayerRoundDetails.map((player) => (
+                    <motion.div
+                      key={player.playerID}
+                      layoutId={player.playerID}
+                      layout={"position"}
+                      onClick={() => {
+                        if (player.playerID !== selectedPlayerID) {
+                          // only show full staggered animation for current player
+                          setStaggerCards(false);
+                        }
+                        setSelectedPlayerID(player.playerID);
                       }}
-                      className="baseFlex h-8 w-full items-center rounded-l-md"
-                    >
-                      <AnimatePresence mode={"wait"}>
-                        {showNewRankings && (
-                          <motion.div
-                            key={`newRanking${player.playerID}`}
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            transition={{ duration: 0.15 }}
-                            className="col-start-1 row-start-1 drop-shadow-md"
-                          >
-                            {ranking[player.newRanking]}
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                      <AnimatePresence mode={"wait"}>
-                        {!showNewRankings && (
-                          <motion.div
-                            key={`oldRanking${player.playerID}`}
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            transition={{ duration: 0.15 }}
-                            className="col-start-1 row-start-1 drop-shadow-md"
-                          >
-                            {ranking[player.oldRanking] ?? "-"}
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </div>
+                      style={{
+                        gridTemplateColumns: "50px auto 50px",
+                        order: showNewRankings
+                          ? player.newRanking
+                          : player.oldRanking,
 
-                    <div
-                      style={{
-                        backgroundColor:
-                          playerColorVariants[player.playerID]?.baseColor ??
-                          "white",
+                        boxShadow:
+                          selectedPlayerID === player.playerID
+                            ? // white box shadow
+                              "0px 0px 2px 3px rgba(255, 255, 255, 0.75)"
+                            : "0px 0px 0px 0px rgba(0,0,0,1)",
                       }}
-                      className="baseVertFlex h-8 w-full gap-2 p-2 font-semibold"
+                      className="relative grid w-full max-w-xl place-items-center rounded-md transition-all"
                     >
+                      {/* ranking */}
                       <div
                         style={{
+                          backgroundColor:
+                            playerColorVariants[player.playerID]?.baseColor ??
+                            "white",
                           color:
                             playerColorVariants[player.playerID]?.textColor ??
                             "black",
                         }}
+                        className="baseFlex h-8 w-full items-center rounded-l-md"
                       >
-                        {playerMetadata[player.playerID]?.username}
-                      </div>
-                    </div>
+                        <AnimatePresence mode={"wait"}>
+                          {showNewRankings && (
+                            <motion.div
+                              key={`newRanking${player.playerID}`}
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                              exit={{ opacity: 0 }}
+                              transition={{ duration: 0.15 }}
+                              className="col-start-1 row-start-1 drop-shadow-md"
+                            >
+                              {ranking[player.newRanking]}
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
 
-                    <div
-                      style={{
-                        backgroundColor:
-                          playerColorVariants[player.playerID]?.baseColor ??
-                          "white",
-                        color: playerColorVariants[player.playerID]?.textColor,
-                      }}
-                      className="baseFlex h-8 w-full rounded-r-md pr-[21px]"
-                    >
-                      <AnimatedNumbers
-                        value={
-                          animateTotalValue ? player.newScore : player.oldScore
-                        }
-                        padding={10}
-                        fontSize={16}
-                      />
-                    </div>
-                  </motion.div>
-                ))}
+                        <AnimatePresence mode={"wait"}>
+                          {!showNewRankings && (
+                            <motion.div
+                              key={`oldRanking${player.playerID}`}
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                              exit={{ opacity: 0 }}
+                              transition={{ duration: 0.15 }}
+                              className="col-start-1 row-start-1 drop-shadow-md"
+                            >
+                              {ranking[player.oldRanking] ?? "-"}
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+
+                      <div
+                        style={{
+                          backgroundColor:
+                            playerColorVariants[player.playerID]?.baseColor ??
+                            "white",
+                        }}
+                        className="baseVertFlex h-8 w-full gap-2 p-2 font-semibold"
+                      >
+                        <div
+                          style={{
+                            color:
+                              playerColorVariants[player.playerID]?.textColor ??
+                              "black",
+                          }}
+                        >
+                          {playerMetadata[player.playerID]?.username}
+                        </div>
+                      </div>
+
+                      <div
+                        style={{
+                          backgroundColor:
+                            playerColorVariants[player.playerID]?.baseColor ??
+                            "white",
+                          color:
+                            playerColorVariants[player.playerID]?.textColor,
+                        }}
+                        className="baseFlex h-8 w-full rounded-r-md pr-[21px]"
+                      >
+                        <AnimatedNumbers
+                          value={
+                            animateTotalValue
+                              ? player.newScore
+                              : player.oldScore
+                          }
+                          padding={10}
+                          fontSize={16}
+                        />
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
               </div>
 
               <div className="baseFlex h-full max-h-72 w-full max-w-xl">
                 <div
-                  key={currentPlayerStats.playerID}
+                  key={
+                    scoreboardMetadata.playerRoundDetails[selectedPlayerID]
+                      ?.playerID
+                  }
                   className="baseVertFlex h-full w-full shadow-md"
                 >
                   {/* avatar + username */}
                   <div
                     style={{
                       backgroundColor:
-                        playerColorVariants[currentPlayerStats.playerID]
-                          ?.baseColor ?? "white",
+                        playerColorVariants[
+                          scoreboardMetadata.playerRoundDetails[
+                            selectedPlayerID
+                          ]!.playerID
+                        ]?.baseColor ?? "white",
                       color:
-                        playerColorVariants[currentPlayerStats.playerID]
-                          ?.textColor ?? "black",
+                        playerColorVariants[
+                          scoreboardMetadata.playerRoundDetails[
+                            selectedPlayerID
+                          ]!.playerID
+                        ]?.textColor ?? "black",
                     }}
                     className="baseVertFlex h-18 w-full gap-2 rounded-t-md py-1 text-sm font-semibold"
                   >
@@ -541,25 +572,34 @@ function Scoreboard() {
                   <div
                     style={{
                       backgroundColor:
-                        playerColorVariants[currentPlayerStats.playerID]
-                          ?.animatedCardsBackgroundColor ?? "white",
+                        playerColorVariants[
+                          scoreboardMetadata.playerRoundDetails[
+                            selectedPlayerID
+                          ]!.playerID
+                        ]?.animatedCardsBackgroundColor ?? "white",
                       color:
-                        playerColorVariants[currentPlayerStats.playerID]
-                          ?.textColor ?? "black",
+                        playerColorVariants[
+                          scoreboardMetadata.playerRoundDetails[
+                            selectedPlayerID
+                          ]!.playerID
+                        ]?.textColor ?? "black",
                     }}
                     className="baseFlex relative z-[1] h-full w-full overflow-hidden"
                   >
                     <div
                       style={{
                         backgroundColor:
-                          playerColorVariants[currentPlayerStats.playerID]
-                            ?.pointsBackgroundColor ?? "white",
+                          playerColorVariants[
+                            scoreboardMetadata.playerRoundDetails[
+                              selectedPlayerID
+                            ]!.playerID
+                          ]?.pointsBackgroundColor ?? "white",
                       }}
                       className="baseVertFlex z-[3] min-h-[115px] w-full gap-2 bg-black bg-opacity-30 p-2"
                     >
                       <div className="align-center flex w-full justify-between gap-4 text-nowrap px-3 text-sm leading-5">
                         Cards played
-                        <div className="baseFlex">
+                        <div className="baseFlex w-10 !justify-end">
                           <div
                             style={{
                               opacity: animateCardsPlayedValue ? 1 : 0,
@@ -571,7 +611,9 @@ function Scoreboard() {
                           <AnimatedNumbers
                             value={
                               animateCardsPlayedValue
-                                ? currentPlayerStats.cardsPlayed.length
+                                ? scoreboardMetadata.playerRoundDetails[
+                                    selectedPlayerID
+                                  ]!.cardsPlayed.length
                                 : 0
                             }
                             padding={6}
@@ -582,19 +624,25 @@ function Scoreboard() {
 
                       <div className="align-center flex w-full justify-between gap-4 px-3 text-sm leading-5">
                         Squeak
-                        <div className="baseFlex">
+                        <div className="baseFlex w-10 !justify-end">
                           <div
                             style={{
                               opacity: animateSqueakModifierValue ? 1 : 0,
                             }}
                             className="mr-1 transition-opacity"
                           >
-                            {currentPlayerStats.squeakModifier > 0 ? "+" : ""}
+                            {scoreboardMetadata.playerRoundDetails[
+                              selectedPlayerID
+                            ]!.squeakModifier > 0
+                              ? "+"
+                              : ""}
                           </div>
                           <AnimatedNumbers
                             value={
                               animateSqueakModifierValue
-                                ? currentPlayerStats.squeakModifier
+                                ? scoreboardMetadata.playerRoundDetails[
+                                    selectedPlayerID
+                                  ]!.squeakModifier
                                 : 0
                             }
                             padding={6}
@@ -605,61 +653,92 @@ function Scoreboard() {
 
                       <div className="align-center mt-1 flex w-full justify-between gap-4 px-3 font-medium">
                         Total
-                        <AnimatedNumbers
-                          value={
-                            animateTotalValue
-                              ? currentPlayerStats.newScore
-                              : currentPlayerStats.oldScore
-                          }
-                          padding={8}
-                          fontSize={16}
-                        />
+                        <div className="baseFlex w-12 !justify-end">
+                          <AnimatedNumbers
+                            value={
+                              animateTotalValue
+                                ? scoreboardMetadata.playerRoundDetails[
+                                    selectedPlayerID
+                                  ]!.newScore
+                                : scoreboardMetadata.playerRoundDetails[
+                                    selectedPlayerID
+                                  ]!.oldScore
+                            }
+                            padding={8}
+                            fontSize={16}
+                          />
+                        </div>
                       </div>
                     </div>
 
                     <AnimatedCardContainer
-                      cards={currentPlayerStats.cardsPlayed}
-                      playerID={currentPlayerStats.playerID}
+                      cards={
+                        scoreboardMetadata.playerRoundDetails[selectedPlayerID]!
+                          .cardsPlayed
+                      }
+                      playerID={
+                        scoreboardMetadata.playerRoundDetails[selectedPlayerID]!
+                          .playerID
+                      }
+                      staggerCards={staggerCards}
                     />
+
+                    {/* then make widths of animated numbers static, should have 0 layout shift */}
                   </div>
 
                   {/* ranking */}
                   <div
                     style={{
                       backgroundColor:
-                        playerColorVariants[currentPlayerStats.playerID]
-                          ?.baseColor ?? "white",
+                        playerColorVariants[
+                          scoreboardMetadata.playerRoundDetails[
+                            selectedPlayerID
+                          ]!.playerID
+                        ]?.baseColor ?? "white",
                       color:
-                        playerColorVariants[currentPlayerStats.playerID]
-                          ?.textColor ?? "black",
+                        playerColorVariants[
+                          scoreboardMetadata.playerRoundDetails[
+                            selectedPlayerID
+                          ]!.playerID
+                        ]?.textColor ?? "black",
                     }}
                     className="grid w-full grid-cols-1 items-center justify-items-center gap-2 rounded-b-md p-2 text-sm"
                   >
                     <AnimatePresence mode={"wait"}>
                       {showNewRankings && (
                         <motion.div
-                          key={`newRanking${currentPlayerStats.playerID}`}
+                          key={`newRanking${scoreboardMetadata.playerRoundDetails[selectedPlayerID]!.playerID}`}
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           exit={{ opacity: 0 }}
                           transition={{ duration: 0.15 }}
                           className="col-start-1 row-start-1 font-semibold drop-shadow-md"
                         >
-                          {ranking[currentPlayerStats.newRanking]}
+                          {
+                            ranking[
+                              scoreboardMetadata.playerRoundDetails[
+                                selectedPlayerID
+                              ]!.newRanking
+                            ]
+                          }
                         </motion.div>
                       )}
                     </AnimatePresence>
                     <AnimatePresence mode={"wait"}>
                       {!showNewRankings && (
                         <motion.div
-                          key={`oldRanking${currentPlayerStats.playerID}`}
+                          key={`oldRanking${scoreboardMetadata.playerRoundDetails[selectedPlayerID]!.playerID}`}
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           exit={{ opacity: 0 }}
                           transition={{ duration: 0.15 }}
                           className="col-start-1 row-start-1 font-semibold drop-shadow-md"
                         >
-                          {ranking[currentPlayerStats.oldRanking] ?? "-"}
+                          {ranking[
+                            scoreboardMetadata.playerRoundDetails[
+                              selectedPlayerID
+                            ]!.oldRanking
+                          ] ?? "-"}
                         </motion.div>
                       )}
                     </AnimatePresence>

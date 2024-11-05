@@ -8,9 +8,14 @@ import StaticCard from "~/components/Play/StaticCard";
 interface IAnimatedCardContainer {
   cards: ICard[];
   playerID: string;
+  staggerCards?: boolean;
 }
 
-function AnimatedCardContainer({ cards, playerID }: IAnimatedCardContainer) {
+function AnimatedCardContainer({
+  cards,
+  playerID,
+  staggerCards = true,
+}: IAnimatedCardContainer) {
   const { playerMetadata, deckVariantIndex } = useRoomContext();
 
   return (
@@ -31,6 +36,7 @@ function AnimatedCardContainer({ cards, playerID }: IAnimatedCardContainer) {
           index={index}
           totalCardsPlayed={cards.length}
           deckVariantIndex={deckVariantIndex}
+          staggerCards={staggerCards}
         />
       ))}
     </div>
@@ -46,6 +52,7 @@ interface IAnimatedCard {
   playerID: string;
   totalCardsPlayed: number;
   deckVariantIndex: number;
+  staggerCards: boolean;
 }
 
 function AnimatedCard({
@@ -54,8 +61,8 @@ function AnimatedCard({
   playerID,
   totalCardsPlayed,
   deckVariantIndex,
+  staggerCards,
 }: IAnimatedCard) {
-  const { playerMetadata } = useRoomContext();
   const controls = useAnimation();
 
   useEffect(() => {
@@ -80,8 +87,12 @@ function AnimatedCard({
 
     // Calculate delay and duration based on totalCardsPlayed
     const totalAnimationTime = 4000; // Total time (ms) for all cards to be played
-    const delay = (totalAnimationTime / totalCardsPlayed) * index;
-    const duration = totalAnimationTime / totalCardsPlayed / 1000; // convert to seconds
+    const delay = staggerCards
+      ? (totalAnimationTime / totalCardsPlayed) * index
+      : 0;
+    const duration = staggerCards
+      ? totalAnimationTime / totalCardsPlayed / 1000
+      : 1; // convert to seconds
 
     // Start the animation
     controls.start({
@@ -95,7 +106,7 @@ function AnimatedCard({
         ease: "easeOut",
       },
     });
-  }, [playerID, index, totalCardsPlayed, controls]);
+  }, [playerID, index, totalCardsPlayed, controls, staggerCards]);
 
   return (
     <motion.div
