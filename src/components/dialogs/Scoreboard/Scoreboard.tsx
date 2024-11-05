@@ -450,7 +450,7 @@ function Scoreboard() {
                               "0px 0px 2px 3px rgba(255, 255, 255, 0.75)"
                             : "0px 0px 0px 0px rgba(0,0,0,1)",
                       }}
-                      className="relative grid w-full max-w-xl place-items-center rounded-md transition-all"
+                      className="relative grid w-full max-w-xl cursor-pointer place-items-center rounded-md transition-all"
                     >
                       {/* ranking */}
                       <div
@@ -1222,7 +1222,7 @@ function Scoreboard() {
                       scoreboardMetadata.roundWinnerID
                   ]?.baseColor ?? "black",
               }}
-              className="baseFlex relative gap-4 rounded-md px-16 py-3 transition-all duration-300"
+              className="baseFlex relative gap-4 rounded-md px-16 py-2 transition-all duration-300"
             >
               {/* left confetti cannon */}
               <AnimatePresence>
@@ -1242,7 +1242,7 @@ function Scoreboard() {
                           ? "scale(0.75) rotate(225deg)"
                           : "scale(1) rotate(225deg)",
                       }}
-                      className="h-8 w-8 transition-all"
+                      className="size-7 transition-all"
                       src={confettiPopper}
                       alt={"left celebratory confetti cannon"}
                     />
@@ -1301,7 +1301,7 @@ function Scoreboard() {
                           ? "scale(0.75) rotate(135deg)"
                           : "scale(1) rotate(135deg)",
                       }}
-                      className="h-8 w-8 transition-all"
+                      className="size-7 transition-all"
                       src={confettiPopper}
                       alt={"right celebratory confetti cannon"}
                     />
