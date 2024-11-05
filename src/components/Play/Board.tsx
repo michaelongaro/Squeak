@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState } from "react";
+import { Fragment } from "react";
 import { useRoomContext } from "../../context/RoomContext";
 import useTrackHoverOverBoardCells from "../../hooks/useTrackHoverOverBoardCells";
 import BoardCell from "./BoardCell";
@@ -22,41 +22,6 @@ function Board() {
     plusOneIndicatorID,
     setPlusOneIndicatorID,
   } = useRoomContext();
-
-  const [prevPlusOneIndicatorID, setPrevPlusOneIndicatorID] = useState<
-    string | null
-  >(null);
-
-  useEffect(() => {
-    if (plusOneIndicatorID === null) return;
-
-    const plusOneIndicatorBackground = document.getElementById(
-      `${plusOneIndicatorID}PlusOneBackground`,
-    );
-    const plusOneIndicator = document.getElementById(
-      `${plusOneIndicatorID}PlusOne`,
-    );
-
-    if (plusOneIndicatorBackground && plusOneIndicator) {
-      // clear existing plusOneIndicator (if any) before showing the new ones,
-      // otherwise the previous animation would just finish out it's duration
-      // and not show the new one.
-      if (prevPlusOneIndicatorID === plusOneIndicatorID) {
-        plusOneIndicatorBackground.classList.remove("plusOneBackground");
-        plusOneIndicator.classList.remove("springPlusOne");
-        setTimeout(() => {
-          plusOneIndicatorBackground.classList.add("plusOneBackground");
-          plusOneIndicator.classList.add("springPlusOne");
-        }, 150); // trying to allow the browser to clear the classes before adding them back.
-        // not the biggest fan of this approach though, requestAnimationFrame didn't seem to work
-      } else {
-        plusOneIndicatorBackground.classList.add("plusOneBackground");
-        plusOneIndicator.classList.add("springPlusOne");
-      }
-    }
-
-    setPrevPlusOneIndicatorID(plusOneIndicatorID);
-  }, [plusOneIndicatorID, prevPlusOneIndicatorID]);
 
   useTrackHoverOverBoardCells();
 
@@ -117,6 +82,7 @@ function Board() {
                   colIdx={colIdx}
                   card={cell}
                   deckVariantIndex={deckVariantIndex}
+                  plusOneIndicatorID={plusOneIndicatorID}
                   setPlusOneIndicatorID={setPlusOneIndicatorID}
                 />
               </div>
