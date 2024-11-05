@@ -83,7 +83,7 @@ function AnimatedCard({
     const offsetFromCenter =
       ((totalCardsPlayed - 1) / 2 - index) * spacingBetweenCards;
 
-    const finalY = animatedCardContainer.height / 4.5 + offsetFromCenter;
+    const finalY = animatedCardContainer.height / 5 + offsetFromCenter;
 
     // Calculate delay and duration based on totalCardsPlayed
     const totalAnimationTime = 4000; // Total time (ms) for all cards to be played
