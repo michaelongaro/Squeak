@@ -866,88 +866,84 @@ function Card({
   }, [isDragging, handleMouseMove, handleDragEnd, handleTouchMove]);
 
   return (
-    <>
-      {(showCardBack || value || suit) && (
-        <div
-          ref={cardRef}
-          style={{
-            width: width,
-            height: height,
-            transition: getTransitionStyles(
-              inMovingSqueakStack,
-              holdingASqueakCard,
-              heldSqueakStackLocation,
-              cardOffsetPosition,
-              ownerID,
-              userID,
-            ),
-            willChange:
-              cardOffsetPosition.x === 0 && cardOffsetPosition.y === 0
-                ? "auto"
-                : "transform",
-            zIndex:
+    <div
+      ref={cardRef}
+      style={{
+        width: width,
+        height: height,
+        transition: getTransitionStyles(
+          inMovingSqueakStack,
+          holdingASqueakCard,
+          heldSqueakStackLocation,
+          cardOffsetPosition,
+          ownerID,
+          userID,
+        ),
+        willChange:
+          cardOffsetPosition.x === 0 && cardOffsetPosition.y === 0
+            ? "auto"
+            : "transform",
+        zIndex:
+          inMovingSqueakStack ||
+          cardOffsetPosition.x !== 0 ||
+          cardOffsetPosition.y !== 0
+            ? 150
+            : origin === "deck"
+              ? 50
+              : 100, // makes sure child cards stay on top whenever moving
+        transform: formatOffsetPosition(
+          inMovingSqueakStack
+            ? heldSqueakStackLocation?.[ownerID]?.location
+            : cardOffsetPosition,
+        ),
+        touchAction: "none",
+      }}
+      className={`baseFlex relative h-full w-full select-none !items-start ${
+        draggable && "cursor-grab hover:active:cursor-grabbing"
+      }`}
+      onMouseDown={handleMouseDown}
+      onTouchStart={handleTouchStart}
+    >
+      <img
+        ref={imageRef}
+        fetchPriority="high"
+        style={{
+          width: width,
+          height: height,
+          filter:
+            showCardBack && !forceShowCardFront
+              ? `hue-rotate(${hueRotation}deg)`
+              : "none",
+          transform:
+            userID === ownerID &&
+            origin !== "deck" &&
+            origin !== "squeakDeck" &&
+            (isDragging ||
               inMovingSqueakStack ||
               cardOffsetPosition.x !== 0 ||
-              cardOffsetPosition.y !== 0
-                ? 150
-                : origin === "deck"
-                  ? 50
-                  : 100, // makes sure child cards stay on top whenever moving
-            transform: formatOffsetPosition(
-              inMovingSqueakStack
-                ? heldSqueakStackLocation?.[ownerID]?.location
-                : cardOffsetPosition,
-            ),
-            touchAction: "none",
-          }}
-          className={`baseFlex relative h-full w-full select-none !items-start ${
-            draggable && "cursor-grab hover:active:cursor-grabbing"
-          }`}
-          onMouseDown={handleMouseDown}
-          onTouchStart={handleTouchStart}
-        >
-          <img
-            ref={imageRef}
-            fetchPriority="high"
-            style={{
-              width: width,
-              height: height,
-              filter:
-                showCardBack && !forceShowCardFront
-                  ? `hue-rotate(${hueRotation}deg)`
-                  : "none",
-              transform:
-                userID === ownerID &&
-                origin !== "deck" &&
-                origin !== "squeakDeck" &&
-                (isDragging ||
-                  inMovingSqueakStack ||
-                  cardOffsetPosition.x !== 0 ||
-                  cardOffsetPosition.y !== 0)
-                  ? "scale(1.05)"
-                  : "scale(1)",
-              transition: "transform 375ms ease-out",
-            }}
-            className="cardDimensions pointer-events-none relative left-0 top-0 select-none rounded-[0.15rem]"
-            src={
-              showCardBack && !forceShowCardFront
-                ? (cardAssets["cardBack"] as StaticImageData).src
-                : getCardAssetPath({
-                    suit: suit ?? "C",
-                    value: value ?? "A",
-                    deckVariantIndex,
-                  }).src
-            }
-            alt={
-              showCardBack && !forceShowCardFront
-                ? "Back of card"
-                : `${value}${suit} card`
-            }
-            draggable="false"
-          />
-        </div>
-      )}
-    </>
+              cardOffsetPosition.y !== 0)
+              ? "scale(1.05)"
+              : "scale(1)",
+          transition: "transform 375ms ease-out",
+        }}
+        className="cardDimensions pointer-events-none relative left-0 top-0 select-none rounded-[0.15rem]"
+        src={
+          showCardBack && !forceShowCardFront
+            ? (cardAssets["cardBack"] as StaticImageData).src
+            : getCardAssetPath({
+                suit: suit ?? "C",
+                value: value ?? "A",
+                deckVariantIndex,
+              }).src
+        }
+        alt={
+          showCardBack && !forceShowCardFront
+            ? "Back of card"
+            : `${value}${suit} card`
+        }
+        draggable="false"
+      />
+    </div>
   );
 }
 
