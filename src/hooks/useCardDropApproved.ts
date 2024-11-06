@@ -51,7 +51,6 @@ function useCardDropApproved({
     setProposedCardBoxShadow,
     setSqueakStackDragAlterations,
     viewportLabel,
-    setPlusOneIndicatorID,
   } = useRoomContext();
 
   const [dataFromBackend, setDataFromBackend] =
@@ -235,6 +234,33 @@ function useCardDropApproved({
 
           setGameData(gameData);
 
+          // this could go here or above right before setting the state
+
+          if (endID.includes("cell") && playerID === userID) {
+            // clear out any existing classes on cell
+
+            const rowIdx = endID[4] ?? 0;
+            const colIdx = endID[5] ?? 0;
+
+            const greenBackground = document.getElementById(
+              `cell${rowIdx}${colIdx}PlusOneBackground`,
+            );
+            const plusOne = document.getElementById(
+              `cell${rowIdx}${colIdx}PlusOne`,
+            );
+
+            if (greenBackground && plusOne) {
+              greenBackground.classList.remove("plusOneBackground");
+              plusOne.classList.remove("springPlusOne");
+
+              // force reflow to ensure the browser processes the removal
+              void greenBackground.offsetWidth;
+
+              greenBackground.classList.add("plusOneBackground");
+              plusOne.classList.add("springPlusOne");
+            }
+          }
+
           if (playerID === userID) {
             setProposedCardBoxShadow(null);
           }
@@ -246,7 +272,6 @@ function useCardDropApproved({
           id: endID,
           boxShadowValue: `0px 0px 4px 3px hsl(120, 100%, 86%)`,
         });
-        setPlusOneIndicatorID(endID);
       }
     }
   }, [
@@ -265,7 +290,6 @@ function useCardDropApproved({
     rotation,
     userID,
     viewportLabel,
-    setPlusOneIndicatorID,
   ]);
 }
 

@@ -19,8 +19,6 @@ function Board() {
     proposedCardBoxShadow,
     hoveredCell,
     deckVariantIndex,
-    plusOneIndicatorID,
-    setPlusOneIndicatorID,
   } = useRoomContext();
 
   useTrackHoverOverBoardCells();
@@ -82,8 +80,6 @@ function Board() {
                   colIdx={colIdx}
                   card={cell}
                   deckVariantIndex={deckVariantIndex}
-                  plusOneIndicatorID={plusOneIndicatorID}
-                  setPlusOneIndicatorID={setPlusOneIndicatorID}
                 />
               </div>
             </div>
