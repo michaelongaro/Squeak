@@ -79,6 +79,7 @@ interface ICardComponent {
   hueRotation: number;
   width?: number;
   height?: number;
+  zIndexOffset?: number;
 }
 
 function Card({
@@ -94,6 +95,7 @@ function Card({
   hueRotation,
   width,
   height,
+  zIndexOffset,
 }: ICardComponent) {
   const userID = useUserIDContext();
 
@@ -887,10 +889,12 @@ function Card({
           inMovingSqueakStack ||
           cardOffsetPosition.x !== 0 ||
           cardOffsetPosition.y !== 0
-            ? 150
+            ? 150 + (zIndexOffset || 0)
             : origin === "deck"
-              ? 50
-              : 100, // makes sure child cards stay on top whenever moving
+              ? 100
+              : origin === "squeakDeck" || origin === "squeakHand"
+                ? 90
+                : 110,
         transform: formatOffsetPosition(
           inMovingSqueakStack
             ? heldSqueakStackLocation?.[ownerID]?.location

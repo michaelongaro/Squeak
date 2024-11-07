@@ -392,8 +392,12 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                 filter: pointerDownOnDeck ? "brightness(0.8)" : "none",
                 transition:
                   "box-shadow 150ms cubic-bezier(0.4, 0, 0.2, 1), filter 150ms ease-in-out",
-                zIndex: cardsBeingMovedProgramatically.deck.includes(userID)
-                  ? "auto" // rendered after hand cards so auto is enough here
+                zIndex: gameData.players[userID]?.deck?.length
+                  ? gameData.players[userID]?.deck?.length > 35 // special case for drawing initial squeak stack cards
+                    ? 150
+                    : cardsBeingMovedProgramatically.deck.includes(userID)
+                      ? "auto" // rendered after hand cards so auto is enough here
+                      : 90
                   : 90, // otherwise default to 90 so regular cards fly above this whole deck
               }}
               className="relative h-full w-full select-none rounded-[0.1rem]"
@@ -479,6 +483,12 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                                 key={`${userID}deckCard${card.suit}${card.value}`}
                                 style={{
                                   bottom: `${deckIdx * (viewportLabel.includes("mobile") ? 0.15 : 0.3)}px`,
+                                  zIndex: gameData.players[userID]?.deck?.length
+                                    ? gameData.players[userID]?.deck?.length >
+                                      35 // special case for drawing initial squeak stack cards
+                                      ? 150 - deckIdx
+                                      : "auto"
+                                    : "auto",
                                 }}
                                 className="absolute left-0 h-full w-full select-none transition-[bottom]"
                               >
@@ -494,6 +504,14 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                                   origin={"deck"}
                                   startID={`${userID}deck`}
                                   rotation={0}
+                                  zIndexOffset={
+                                    gameData.players[userID]?.deck?.length // special case for drawing initial squeak stack cards
+                                      ? gameData.players[userID]?.deck?.length >
+                                        35
+                                        ? -1 * deckIdx
+                                        : 0
+                                      : 0
+                                  }
                                 />
                               </div>
                             ),

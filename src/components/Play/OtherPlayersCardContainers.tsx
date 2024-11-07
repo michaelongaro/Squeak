@@ -521,7 +521,17 @@ function OtherPlayersCardContainers({
               }}
               className={`${classes.playerDeck} cardDimensions select-none`}
             >
-              <div id={`${playerID}deck`} className="h-full w-full">
+              <div
+                id={`${playerID}deck`}
+                style={{
+                  zIndex: gameData.players[playerID]?.deck?.length
+                    ? gameData.players[playerID]?.deck?.length > 35 // special case for drawing initial squeak stack cards
+                      ? 150
+                      : 90
+                    : 90, // otherwise default to 90 so regular cards fly above this whole deck
+                }}
+                className="h-full w-full"
+              >
                 <AnimatePresence mode={"popLayout"} initial={false}>
                   {gameData?.players[playerID]?.deck.length ? (
                     <motion.div
@@ -565,6 +575,13 @@ function OtherPlayersCardContainers({
                                   key={`${playerID}deckCard${card.suit}${card.value}`}
                                   style={{
                                     bottom: `${deckIdx * (viewportLabel.includes("mobile") ? 0.15 : 0.3)}px`,
+                                    zIndex: gameData.players[userID]?.deck
+                                      ?.length
+                                      ? gameData.players[userID]?.deck?.length >
+                                        35 // special case for drawing initial squeak stack cards
+                                        ? 150 - deckIdx
+                                        : "auto"
+                                      : "auto",
                                   }}
                                   className="absolute left-0 h-full w-full select-none transition-[bottom]"
                                 >
@@ -581,6 +598,14 @@ function OtherPlayersCardContainers({
                                     origin={"deck"}
                                     startID={`${playerID}deck`}
                                     rotation={rotationOrder[idx] as number}
+                                    zIndexOffset={
+                                      gameData.players[playerID]?.deck?.length // special case for drawing initial squeak stack cards
+                                        ? gameData.players[playerID]?.deck
+                                            ?.length > 35
+                                          ? -1 * deckIdx
+                                          : 0
+                                        : 0
+                                    }
                                   />
                                 </div>
                               ),
