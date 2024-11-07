@@ -222,22 +222,8 @@ function useCardDropApproved({
         flip: false,
         rotate: endID.includes("cell"),
         callbackFunction: () => {
-          setSqueakStackDragAlterations((prev) => {
-            return {
-              ...prev,
-              [ownerID]: {
-                squeakStackDepthAlterations: [0, 0, 0, 0],
-                draggedStack: undefined,
-              },
-            };
-          });
-
-          setGameData(gameData);
-
-          // this could go here or above right before setting the state
-
-          if (endID.includes("cell") && playerID === userID) {
-            // clear out any existing classes on cell
+          if (endID.includes("cell")) {
+            // clear out any existing +1 animation classes on cell
 
             const rowIdx = endID[4] ?? 0;
             const colIdx = endID[5] ?? 0;
@@ -253,13 +239,27 @@ function useCardDropApproved({
               greenBackground.classList.remove("plusOneBackground");
               plusOne.classList.remove("springPlusOne");
 
-              // force reflow to ensure the browser processes the removal
-              void greenBackground.offsetWidth;
+              if (playerID === userID) {
+                // force reflow to ensure the browser processes the removal
+                void greenBackground.offsetWidth;
 
-              greenBackground.classList.add("plusOneBackground");
-              plusOne.classList.add("springPlusOne");
+                greenBackground.classList.add("plusOneBackground");
+                plusOne.classList.add("springPlusOne");
+              }
             }
           }
+
+          setSqueakStackDragAlterations((prev) => {
+            return {
+              ...prev,
+              [ownerID]: {
+                squeakStackDepthAlterations: [0, 0, 0, 0],
+                draggedStack: undefined,
+              },
+            };
+          });
+
+          setGameData(gameData);
 
           if (playerID === userID) {
             setProposedCardBoxShadow(null);
