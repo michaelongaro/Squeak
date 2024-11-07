@@ -22,7 +22,7 @@ import { Button } from "~/components/ui/button";
 import useReceiveFriendData from "~/hooks/useReceiveFriendData";
 import useInitializeUserStats from "~/hooks/useInitializeUserStats";
 import usePostSignUpRegistration from "~/hooks/usePostSignUpRegistration";
-import useRegisterServiceWorker from "~/hooks/useRegisterServiceWorker";
+import { cardAssets } from "~/utils/cardAssetPaths";
 
 const montserrat = Montserrat({
   weight: "variable",
@@ -79,7 +79,32 @@ function GeneralLayout({ children }: GeneralLayout) {
     }
   }, [asPath]);
 
-  useRegisterServiceWorker();
+  useEffect(() => {
+    // Prefetching/caching card assets to prevent flickering
+    const timer = setTimeout(() => {
+      const preloadedImages = Object.values(cardAssets).map((imagePath) => {
+        const img = new Image();
+        img.src = imagePath.src;
+        img.width = 0;
+        img.height = 0;
+        img.style.visibility = "hidden"; // Ensure it's not visible even if somehow it tries to render
+        return img;
+      });
+
+      // append images to a hidden container
+      const container = document.createElement("div");
+      container.style.display = "none";
+      preloadedImages.forEach((img) => container.appendChild(img));
+      document.body.appendChild(container);
+
+      return () => {
+        document.body.removeChild(container);
+      };
+    }, 2500);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   useGracefullyReconnectToSocket();
   usePlayerLeftRoom();
   useRejoinRoom();
