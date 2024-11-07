@@ -575,13 +575,6 @@ function OtherPlayersCardContainers({
                                   key={`${playerID}deckCard${card.suit}${card.value}`}
                                   style={{
                                     bottom: `${deckIdx * (viewportLabel.includes("mobile") ? 0.15 : 0.3)}px`,
-                                    zIndex: gameData.players[userID]?.deck
-                                      ?.length
-                                      ? gameData.players[userID]?.deck?.length >
-                                        35 // special case for drawing initial squeak stack cards
-                                        ? 150 - deckIdx
-                                        : "auto"
-                                      : "auto",
                                   }}
                                   className="absolute left-0 h-full w-full select-none transition-[bottom]"
                                 >

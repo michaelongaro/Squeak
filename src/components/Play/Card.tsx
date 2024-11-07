@@ -128,6 +128,8 @@ function Card({
   const [dragStart, setDragStart] = useState<IPosition>({ x: 0, y: 0 });
   const [forceShowCardFront, setForceShowCardFront] = useState(false);
 
+  const [applyZIndexOffset, setApplyZIndexOffset] = useState(false);
+
   const cardRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
 
@@ -292,6 +294,20 @@ function Card({
             };
           });
         }
+      }
+
+      // kind of hacky, but due to z-index stacking issues, we actually want the cards
+      // to initially use their default z-index, but then once they start to "fan out"
+      // while moving to their respective locations, we want to apply a z-index offset
+      // to keep later "drawn" cards on top of earlier "drawn" cards for realism.
+      if (
+        origin === "deck" &&
+        gameData?.players?.[ownerID]?.deck &&
+        gameData?.players?.[ownerID].deck.length > 35
+      ) {
+        setTimeout(() => {
+          setApplyZIndexOffset(true);
+        }, 10);
       }
 
       if (origin === "hand" || origin === "squeakHand") {
@@ -535,6 +551,7 @@ function Card({
       setHoldingASqueakCard,
       setProposedCardBoxShadow,
       setCardsBeingMovedProgrammatically,
+      gameData?.players, // FYI: not the happiest about having this as a dependency
     ],
   );
 
@@ -889,7 +906,7 @@ function Card({
           inMovingSqueakStack ||
           cardOffsetPosition.x !== 0 ||
           cardOffsetPosition.y !== 0
-            ? 150 + (zIndexOffset || 0)
+            ? 150 + (applyZIndexOffset ? zIndexOffset || 0 : 0)
             : origin === "deck"
               ? 100
               : origin === "squeakDeck" || origin === "squeakHand"
