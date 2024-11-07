@@ -448,7 +448,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                         transform: pointerDownOnDeck ? "scale(0.95)" : "none",
                         transition: "transform 150ms ease-in-out",
                       }}
-                      className="baseFlex"
+                      className="baseFlex h-full"
                     >
                       <div className="absolute left-0 top-0 h-full w-full select-none">
                         <>
