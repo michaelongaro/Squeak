@@ -113,7 +113,7 @@ function Card({
     notAllowedMoveBuffer,
     setProposedCardBoxShadow,
     setHeldSqueakStackLocation,
-    setCardsBeingMovedProgramatically,
+    setCardsBeingMovedProgrammatically,
     deckVariantIndex,
     setHoldingADeckCard,
     setHoldingASqueakCard,
@@ -253,21 +253,21 @@ function Card({
         }
 
         if (origin === "hand" || origin === "squeakHand") {
-          setCardsBeingMovedProgramatically((prev) => {
+          setCardsBeingMovedProgrammatically((prev) => {
             return {
               ...prev,
               hand: prev.hand.filter((id) => id !== ownerID),
             };
           });
         } else if (origin === "deck") {
-          setCardsBeingMovedProgramatically((prev) => {
+          setCardsBeingMovedProgrammatically((prev) => {
             return {
               ...prev,
               deck: prev.deck.filter((id) => id !== ownerID),
             };
           });
         } else if (origin === "squeakDeck") {
-          setCardsBeingMovedProgramatically((prev) => {
+          setCardsBeingMovedProgrammatically((prev) => {
             return {
               ...prev,
               squeakDeck: prev.squeakDeck.filter((id) => id !== ownerID),
@@ -295,21 +295,21 @@ function Card({
       }
 
       if (origin === "hand" || origin === "squeakHand") {
-        setCardsBeingMovedProgramatically((prev) => {
+        setCardsBeingMovedProgrammatically((prev) => {
           return {
             ...prev,
             hand: [...prev.hand, ownerID],
           };
         });
       } else if (origin === "deck") {
-        setCardsBeingMovedProgramatically((prev) => {
+        setCardsBeingMovedProgrammatically((prev) => {
           return {
             ...prev,
             deck: [...prev.deck, ownerID],
           };
         });
       } else if (origin === "squeakDeck") {
-        setCardsBeingMovedProgramatically((prev) => {
+        setCardsBeingMovedProgrammatically((prev) => {
           return {
             ...prev,
             squeakDeck: [...prev.squeakDeck, ownerID],
@@ -534,7 +534,7 @@ function Card({
       setHoldingADeckCard,
       setHoldingASqueakCard,
       setProposedCardBoxShadow,
-      setCardsBeingMovedProgramatically,
+      setCardsBeingMovedProgrammatically,
     ],
   );
 

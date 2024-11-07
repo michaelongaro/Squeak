@@ -30,7 +30,7 @@ interface IProposedCardBoxShadow {
   id: string;
   boxShadowValue: string;
 }
-interface ICardBeingMovedProgramatically {
+interface ICardBeingMovedProgrammatically {
   hand: string[]; // of playerIDs
   squeakDeck: string[]; // of playerIDs
   deck: string[]; // of playerIDs
@@ -131,9 +131,9 @@ interface IRoomContext {
   deckVariantIndex: number;
   setDeckVariantIndex: React.Dispatch<React.SetStateAction<number>>;
 
-  cardsBeingMovedProgramatically: ICardBeingMovedProgramatically;
-  setCardsBeingMovedProgramatically: React.Dispatch<
-    React.SetStateAction<ICardBeingMovedProgramatically>
+  cardsBeingMovedProgrammatically: ICardBeingMovedProgrammatically;
+  setCardsBeingMovedProgrammatically: React.Dispatch<
+    React.SetStateAction<ICardBeingMovedProgrammatically>
   >;
   newInviteNotification: boolean;
   setNewInviteNotification: React.Dispatch<React.SetStateAction<boolean>>;
@@ -291,8 +291,8 @@ export function RoomProvider(props: { children: React.ReactNode }) {
   const [scoreboardMetadata, setScoreboardMetadata] =
     useState<IScoreboardMetadata | null>(null);
 
-  const [cardsBeingMovedProgramatically, setCardsBeingMovedProgramatically] =
-    useState<ICardBeingMovedProgramatically>({
+  const [cardsBeingMovedProgrammatically, setCardsBeingMovedProgrammatically] =
+    useState<ICardBeingMovedProgrammatically>({
       hand: [],
       squeakDeck: [],
       deck: [],
@@ -531,8 +531,8 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     setCurrentVolume,
     deckVariantIndex,
     setDeckVariantIndex,
-    cardsBeingMovedProgramatically,
-    setCardsBeingMovedProgramatically,
+    cardsBeingMovedProgrammatically,
+    setCardsBeingMovedProgrammatically,
     newInviteNotification,
     setNewInviteNotification,
     mirrorPlayerContainer,

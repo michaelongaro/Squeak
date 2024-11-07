@@ -40,7 +40,7 @@ function OtherPlayersCardContainers({
     gameData,
     decksAreBeingRotated,
     setDecksAreBeingRotated,
-    cardsBeingMovedProgramatically,
+    cardsBeingMovedProgrammatically,
     roomConfig,
     squeakStackDragAlterations,
     viewportLabel,
@@ -205,7 +205,7 @@ function OtherPlayersCardContainers({
                                   gameData.players[playerID]!.squeakDeck
                                     .length -
                                     1 &&
-                                cardsBeingMovedProgramatically.squeakDeck.includes(
+                                cardsBeingMovedProgrammatically.squeakDeck.includes(
                                   playerID,
                                 )
                                   ? 150
@@ -258,7 +258,7 @@ function OtherPlayersCardContainers({
                 <div
                   id={`${playerID}hand`}
                   style={{
-                    zIndex: cardsBeingMovedProgramatically.hand.includes(
+                    zIndex: cardsBeingMovedProgrammatically.hand.includes(
                       playerID,
                     )
                       ? 150
@@ -427,7 +427,7 @@ function OtherPlayersCardContainers({
                         style={{
                           bottom: `${squeakDeckIdx * (viewportLabel.includes("mobile") ? 0.15 : 0.3)}px`,
                           zIndex:
-                            cardsBeingMovedProgramatically.squeakDeck.includes(
+                            cardsBeingMovedProgrammatically.squeakDeck.includes(
                               playerID,
                             )
                               ? 140 // 140 since the card shouldn't be above any moving cards, which are at 150
@@ -469,7 +469,7 @@ function OtherPlayersCardContainers({
               id={`${playerID}hand`}
               style={{
                 zIndex:
-                  cardsBeingMovedProgramatically.hand.includes(playerID) ===
+                  cardsBeingMovedProgrammatically.hand.includes(playerID) ===
                   true
                     ? 150
                     : 100,
@@ -515,7 +515,7 @@ function OtherPlayersCardContainers({
                   : "none",
                 transition:
                   "transform 115ms ease-in-out, filter 75ms ease-in-out",
-                zIndex: cardsBeingMovedProgramatically.deck.includes(playerID)
+                zIndex: cardsBeingMovedProgrammatically.deck.includes(playerID)
                   ? 150
                   : 100,
               }}

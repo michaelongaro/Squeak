@@ -14,7 +14,7 @@
   @apply w-[50px] h-[65px] mobileLarge:w-[54px] mobileLarge:h-[70px] tablet:w-[57px] tablet:h-[74px] desktop:w-[67px] desktop:h-[87px];
 }
 
-/* you very well might have to programatically set the percentage back to 0% when
+/* you very well might have to programmatically set the percentage back to 0% when
     vote completes/timer runs out (inside of useVoteHasBeenCast hook) */
 @property --cooldown-percent {
   initial-value: 0%;

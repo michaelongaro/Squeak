@@ -47,7 +47,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
     currentPlayerIsDrawingFromDeck,
     setCurrentPlayerIsDrawingFromDeck,
     fallbackPlayerIsDrawingFromDeckTimerIdRef,
-    cardsBeingMovedProgramatically,
+    cardsBeingMovedProgrammatically,
     viewportLabel,
   } = useRoomContext();
 
@@ -287,7 +287,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                       style={{
                         bottom: `${squeakDeckIdx * (viewportLabel.includes("mobile") ? 0.15 : 0.3)}px`,
                         zIndex:
-                          cardsBeingMovedProgramatically.squeakDeck.includes(
+                          cardsBeingMovedProgrammatically.squeakDeck.includes(
                             userID,
                           )
                             ? 150 // rendered after squeak hand cards so auto is enough here
@@ -395,7 +395,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                 zIndex: gameData.players[userID]?.deck?.length
                   ? gameData.players[userID]?.deck?.length > 35 // special case for drawing initial squeak stack cards
                     ? 150
-                    : cardsBeingMovedProgramatically.deck.includes(userID)
+                    : cardsBeingMovedProgrammatically.deck.includes(userID)
                       ? "auto" // rendered after hand cards so auto is enough here
                       : 90
                   : 90, // otherwise default to 90 so regular cards fly above this whole deck
