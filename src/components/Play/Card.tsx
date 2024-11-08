@@ -307,7 +307,7 @@ function Card({
       ) {
         setTimeout(() => {
           setApplyZIndexOffset(true);
-        }, 10);
+        }, 50);
       }
 
       if (origin === "hand" || origin === "squeakHand") {
