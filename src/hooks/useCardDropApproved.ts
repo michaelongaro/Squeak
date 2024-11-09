@@ -236,7 +236,10 @@ function useCardDropApproved({
             );
 
             if (greenBackground && plusOne) {
-              greenBackground.classList.remove("plusOneBackground");
+              greenBackground.classList.remove(
+                "plusOneBackground",
+                "kingScaleDown",
+              );
               plusOne.classList.remove("springPlusOne");
 
               if (playerID === userID) {
@@ -244,6 +247,9 @@ function useCardDropApproved({
                 void greenBackground.offsetWidth;
 
                 greenBackground.classList.add("plusOneBackground");
+                if (card.value === "K") {
+                  greenBackground.classList.add("kingScaleDown");
+                }
                 plusOne.classList.add("springPlusOne");
               }
             }

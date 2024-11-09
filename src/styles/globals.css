@@ -210,6 +210,26 @@ body {
   animation: 1.15s cubic-bezier(0.34, 1.56, 0.64, 1) 0.15s springScale;
 }
 
+@keyframes scaleDown {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+}
+
+/* also FYI: this isn't perfect, since there is a 700ms delay after placing king card down until it starts
+   to scale down, but this is at least gets rid of the overflow issues from before */
+/* a bit roundabout, but mirrors framer motion exit animation once king is played
+   and deck is reset */
+.kingScaleDown {
+  animation: 0.55s linear scaleDown;
+}
+
 
 @keyframes rotateDeck {
   0% {

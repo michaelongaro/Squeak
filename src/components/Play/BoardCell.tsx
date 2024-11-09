@@ -28,30 +28,31 @@ function BoardCell({ card, rowIdx, colIdx, deckVariantIndex }: IBoardCell) {
             value={card.value}
             deckVariantIndex={deckVariantIndex}
           />
-
-          <div
-            ref={plusOneBackgroundRef}
-            id={`cell${rowIdx}${colIdx}PlusOneBackground`}
-            onAnimationEnd={() => {
-              if (plusOneBackgroundRef.current && plusOneRef.current) {
-                plusOneBackgroundRef.current.classList.remove(
-                  "plusOneBackground",
-                );
-                plusOneRef.current.classList.remove("springPlusOne");
-              }
-            }}
-            className={`baseFlex absolute left-0 top-0 z-[500] h-full w-full select-none rounded-sm bg-darkGreen/50 text-xl tracking-wider text-lightGreen opacity-0 [text-shadow:_0_1px_3px_rgb(0_0_0)] desktop:text-2xl`}
-          >
-            <div
-              ref={plusOneRef}
-              id={`cell${rowIdx}${colIdx}PlusOne`}
-              className={`baseFlex h-full w-full select-none opacity-0`}
-            >
-              +1
-            </div>
-          </div>
         </motion.div>
       )}
+
+      <div
+        ref={plusOneBackgroundRef}
+        id={`cell${rowIdx}${colIdx}PlusOneBackground`}
+        onAnimationEnd={() => {
+          if (plusOneBackgroundRef.current && plusOneRef.current) {
+            plusOneBackgroundRef.current.classList.remove(
+              "plusOneBackground",
+              "kingScaleDown",
+            );
+            plusOneRef.current.classList.remove("springPlusOne");
+          }
+        }}
+        className={`baseFlex absolute left-0 top-0 z-[500] h-full w-full select-none rounded-sm bg-darkGreen/50 text-xl tracking-wider text-lightGreen opacity-0 [text-shadow:_0_1px_3px_rgb(0_0_0)] desktop:text-2xl`}
+      >
+        <div
+          ref={plusOneRef}
+          id={`cell${rowIdx}${colIdx}PlusOne`}
+          className={`baseFlex h-full w-full select-none opacity-0`}
+        >
+          +1
+        </div>
+      </div>
     </AnimatePresence>
   );
 }
