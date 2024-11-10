@@ -43,7 +43,7 @@ function BoardCell({ card, rowIdx, colIdx, deckVariantIndex }: IBoardCell) {
             plusOneRef.current.classList.remove("springPlusOne");
           }
         }}
-        className={`baseFlex absolute left-0 top-0 z-[500] h-full w-full select-none rounded-sm bg-darkGreen/50 text-xl tracking-wider text-lightGreen opacity-0 [text-shadow:_0_1px_3px_rgb(0_0_0)] desktop:text-2xl`}
+        className={`baseFlex absolute left-0 top-0 z-[500] h-full w-full select-none rounded-sm bg-darkGreen/50 text-xl tracking-wider text-lightGreen opacity-0 [text-shadow:_0_1px_3px_rgb(0_0_0)] desktop:text-[26px]`}
       >
         <div
           ref={plusOneRef}
