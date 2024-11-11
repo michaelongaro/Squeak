@@ -8,7 +8,6 @@ interface IStaticCard {
   hueRotation?: number;
   width?: number;
   height?: number;
-  forceHighZIndex?: boolean;
 }
 
 function StaticCard({
@@ -19,7 +18,6 @@ function StaticCard({
   hueRotation = 0,
   width,
   height,
-  forceHighZIndex,
 }: IStaticCard) {
   return (
     <img
@@ -32,7 +30,7 @@ function StaticCard({
           }),
         filter: `hue-rotate(${hueRotation}deg)`,
       }}
-      className={`cardDimensions rounded-[0.15rem] ${forceHighZIndex ? "relative isolate !z-[500]" : ""}`}
+      className="cardDimensions rounded-[0.15rem]"
       src={
         getCardAssetPath({
           suit,

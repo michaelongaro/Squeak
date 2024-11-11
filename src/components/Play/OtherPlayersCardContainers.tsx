@@ -2,13 +2,13 @@ import { useState, useEffect } from "react";
 import { useUserIDContext } from "../../context/UserIDContext";
 import { useRoomContext } from "../../context/RoomContext";
 import useResponsiveCardDimensions from "../../hooks/useResponsiveCardDimensions";
+import Card from "./Card";
 import { FaRedoAlt } from "react-icons/fa";
 import classes from "./OtherPlayersCardContainers.module.css";
 import Buzzer from "./Buzzer";
 import { AnimatePresence, motion } from "framer-motion";
 import DisconnectIcon from "~/components/ui/DisconnectIcon";
 import StaticCard from "~/components/Play/StaticCard";
-import DeferredCard from "~/components/Play/DeferredCard";
 
 interface IOtherPlayersCardContainers {
   orderedClassNames: (string | undefined)[];
@@ -45,7 +45,6 @@ function OtherPlayersCardContainers({
     squeakStackDragAlterations,
     viewportLabel,
     otherPlayerIDsDrawingFromDeck,
-    deckVariantIndex,
   } = useRoomContext();
 
   const otherPlayerIDs = Object.keys(gameData.players).filter(
@@ -170,7 +169,7 @@ function OtherPlayersCardContainers({
                               "cardDimenions absolute left-0 top-0 select-none"
                             }
                           >
-                            <DeferredCard
+                            <Card
                               value={card.value}
                               suit={card.suit}
                               draggable={false}
@@ -182,8 +181,6 @@ function OtherPlayersCardContainers({
                               }
                               startID={`${playerID}squeakStack${squeakStackIdx}${cardIdx}`}
                               rotation={rotationOrder[idx] as number}
-                              deckVariantIndex={deckVariantIndex}
-                              forceHighZIndex
                             />
                           </div>
                         ))}
@@ -216,7 +213,7 @@ function OtherPlayersCardContainers({
                             }}
                             className="absolute left-0 top-0 h-full w-full select-none"
                           >
-                            <DeferredCard
+                            <Card
                               value={card.value}
                               suit={card.suit}
                               showCardBack={true} // this would need to be changed halfway through card flip
@@ -228,8 +225,6 @@ function OtherPlayersCardContainers({
                               startID={`${playerID}squeakDeck`}
                               origin={"squeakDeck"}
                               rotation={rotationOrder[idx] as number}
-                              deckVariantIndex={deckVariantIndex}
-                              forceHighZIndex
                             />
                           </div>
                         ),
@@ -278,7 +273,7 @@ function OtherPlayersCardContainers({
                           key={`${playerID}handCard${card.suit}${card.value}`}
                           className="absolute left-0 top-0 select-none"
                         >
-                          <DeferredCard
+                          <Card
                             value={card.value}
                             suit={card.suit}
                             draggable={false}
@@ -289,8 +284,6 @@ function OtherPlayersCardContainers({
                             }
                             startID={`${playerID}hand`}
                             rotation={rotationOrder[idx] as number}
-                            deckVariantIndex={deckVariantIndex}
-                            forceHighZIndex
                           />
                         </div>
                       ),
@@ -306,7 +299,7 @@ function OtherPlayersCardContainers({
                             key={`${playerID}deckCard${card.suit}${card.value}`}
                             className="absolute left-0 top-0 h-full w-full select-none"
                           >
-                            <DeferredCard
+                            <Card
                               value={card.value}
                               suit={card.suit}
                               showCardBack={true} // separate state inside overrides this halfway through flip
@@ -318,8 +311,6 @@ function OtherPlayersCardContainers({
                               origin={"deck"}
                               startID={`${playerID}deck`}
                               rotation={rotationOrder[idx] as number}
-                              deckVariantIndex={deckVariantIndex}
-                              forceHighZIndex
                             />
                           </div>
                         ))}
@@ -403,7 +394,7 @@ function OtherPlayersCardContainers({
                         }}
                         className={"cardDimensions absolute left-0 select-none"}
                       >
-                        <DeferredCard
+                        <Card
                           value={card.value}
                           suit={card.suit}
                           draggable={false}
@@ -415,8 +406,6 @@ function OtherPlayersCardContainers({
                           }
                           startID={`${playerID}squeakStack${squeakStackIdx}${cardIdx}`}
                           rotation={rotationOrder[idx] as number}
-                          deckVariantIndex={deckVariantIndex}
-                          forceHighZIndex
                         />
                       </div>
                     ))}
@@ -446,7 +435,7 @@ function OtherPlayersCardContainers({
                         }}
                         className="absolute left-0 h-full w-full select-none transition-[bottom]"
                       >
-                        <DeferredCard
+                        <Card
                           value={card.value}
                           suit={card.suit}
                           showCardBack={true} // this would need to be changed halfway through card flip
@@ -458,8 +447,6 @@ function OtherPlayersCardContainers({
                           startID={`${playerID}squeakDeck`}
                           origin={"squeakDeck"}
                           rotation={rotationOrder[idx] as number}
-                          deckVariantIndex={deckVariantIndex}
-                          forceHighZIndex
                         />
                       </div>
                     ),
@@ -500,7 +487,7 @@ function OtherPlayersCardContainers({
                         }}
                         className="absolute left-0 select-none transition-[bottom]"
                       >
-                        <DeferredCard
+                        <Card
                           value={card.value}
                           suit={card.suit}
                           draggable={false}
@@ -511,8 +498,6 @@ function OtherPlayersCardContainers({
                           }
                           startID={`${playerID}hand`}
                           rotation={rotationOrder[idx] as number}
-                          deckVariantIndex={deckVariantIndex}
-                          forceHighZIndex
                         />
                       </div>
                     ),
@@ -569,7 +554,7 @@ function OtherPlayersCardContainers({
                                   : ""
                               } absolute left-0 top-0 h-full w-full select-none`}
                             >
-                              <DeferredCard
+                              <Card
                                 value={"2"} // placeholder
                                 suit={"S"} // placeholder
                                 showCardBack={true}
@@ -581,8 +566,6 @@ function OtherPlayersCardContainers({
                                 origin={"deck"}
                                 startID={`${playerID}deck`}
                                 rotation={0}
-                                deckVariantIndex={deckVariantIndex}
-                                forceHighZIndex
                               />
                             </div>
 
@@ -595,7 +578,7 @@ function OtherPlayersCardContainers({
                                   }}
                                   className="absolute left-0 h-full w-full select-none transition-[bottom]"
                                 >
-                                  <DeferredCard
+                                  <Card
                                     value={card.value}
                                     suit={card.suit}
                                     showCardBack={true} // separate state inside overrides this halfway through flip
@@ -616,8 +599,6 @@ function OtherPlayersCardContainers({
                                           : 0
                                         : 0
                                     }
-                                    deckVariantIndex={deckVariantIndex}
-                                    forceHighZIndex
                                   />
                                 </div>
                               ),

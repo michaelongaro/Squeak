@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { socket } from "~/pages/_app";
 import { useUserIDContext } from "../../context/UserIDContext";
 import { useRoomContext } from "../../context/RoomContext";
+import Card from "./Card";
 import { FaRedoAlt } from "react-icons/fa";
 import classes from "./PlayerCardContainer.module.css";
 import { type IGetBoxShadowStyles } from "./Board";
@@ -10,7 +11,6 @@ import useResponsiveCardDimensions from "../../hooks/useResponsiveCardDimensions
 import { AnimatePresence, motion } from "framer-motion";
 import Buzzer from "./Buzzer";
 import StaticCard from "~/components/Play/StaticCard";
-import DeferredCard from "~/components/Play/DeferredCard";
 interface IPlayerCardContainer {
   cardContainerClass: string | undefined;
 }
@@ -49,7 +49,6 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
     fallbackPlayerIsDrawingFromDeckTimerIdRef,
     cardsBeingMovedProgrammatically,
     viewportLabel,
-    deckVariantIndex,
   } = useRoomContext();
 
   const [hoveringOverDeck, setHoveringOverDeck] = useState(false);
@@ -247,7 +246,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                         setHoveredSqueakStack(null);
                       }}
                       onPointerUp={() => {
-                        // pointer events fire before the drop event in <DeferredCard />,
+                        // pointer events fire before the drop event in <Card />,
                         // so just waiting for next event loop tick
                         setTimeout(() => {
                           setHoldingASqueakCard(false);
@@ -255,7 +254,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                         }, 0);
                       }}
                     >
-                      <DeferredCard
+                      <Card
                         value={card.value}
                         suit={card.suit}
                         draggable={true}
@@ -267,8 +266,6 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                         }
                         startID={`${userID}squeakStack${squeakStackIdx}${cardIdx}`}
                         rotation={0}
-                        deckVariantIndex={deckVariantIndex}
-                        forceHighZIndex
                       />
                     </div>
                   ))}
@@ -298,7 +295,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                       }}
                       className="absolute left-0 h-full w-full select-none transition-[bottom]"
                     >
-                      <DeferredCard
+                      <Card
                         value={card.value}
                         suit={card.suit}
                         showCardBack={true} // separate state inside overrides this halfway through flip
@@ -310,8 +307,6 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                         startID={`${userID}squeakDeck`}
                         origin={"squeakDeck"}
                         rotation={0}
-                        deckVariantIndex={deckVariantIndex}
-                        forceHighZIndex
                       />
                     </div>
                   ),
@@ -355,14 +350,14 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                         setHoldingADeckCard(true);
                     }}
                     onPointerUp={() => {
-                      // pointer events fire before the drop event in <DeferredCard />,
+                      // pointer events fire before the drop event in <Card />,
                       // so just waiting for next event loop tick
                       setTimeout(() => {
                         setHoldingADeckCard(false);
                       }, 0);
                     }}
                   >
-                    <DeferredCard
+                    <Card
                       value={card.value}
                       suit={card.suit}
                       draggable={
@@ -373,8 +368,6 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                       hueRotation={playerMetadata[userID]?.deckHueRotation || 0}
                       startID={`${userID}hand`}
                       rotation={0}
-                      deckVariantIndex={deckVariantIndex}
-                      forceHighZIndex
                     />
                   </div>
                 ),
@@ -469,7 +462,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                                 : ""
                             } absolute left-0 top-0 h-full w-full select-none`}
                           >
-                            <DeferredCard
+                            <Card
                               value={"2"} // placeholder
                               suit={"S"} // placeholder
                               showCardBack={true}
@@ -481,8 +474,6 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                               origin={"deck"}
                               startID={`${userID}deck`}
                               rotation={0}
-                              deckVariantIndex={deckVariantIndex}
-                              forceHighZIndex
                             />
                           </div>
 
@@ -495,7 +486,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                                 }}
                                 className="absolute left-0 h-full w-full select-none transition-[bottom]"
                               >
-                                <DeferredCard
+                                <Card
                                   value={card.value}
                                   suit={card.suit}
                                   showCardBack={true} // separate state inside overrides this halfway through flip
@@ -515,8 +506,6 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                                         : 0
                                       : 0
                                   }
-                                  deckVariantIndex={deckVariantIndex}
-                                  forceHighZIndex
                                 />
                               </div>
                             ),
