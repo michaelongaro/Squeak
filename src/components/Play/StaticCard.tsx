@@ -30,7 +30,7 @@ function StaticCard({
           }),
         filter: `hue-rotate(${hueRotation}deg)`,
       }}
-      className="cardDimensions rounded-[0.15rem]"
+      className="cardDimensions rounded-[0.2rem]"
       src={
         getCardAssetPath({
           suit,
