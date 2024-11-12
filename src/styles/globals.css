@@ -11,7 +11,7 @@
 }
 
 .cardDimensions {
-  @apply w-[50px] h-[65px] mobileLarge:w-[54px] mobileLarge:h-[70px] tablet:w-[57px] tablet:h-[74px] desktop:w-[67px] desktop:h-[87px];
+  @apply h-[65px] w-[50px] mobileLarge:h-[70px] mobileLarge:w-[54px] tablet:h-[74px] tablet:w-[57px] desktop:h-[87px] desktop:w-[67px];
 }
 
 /* you very well might have to programmatically set the percentage back to 0% when
@@ -23,7 +23,10 @@
 }
 
 .countdownTimerToast {
-  background: conic-gradient(transparent var(--cooldown-percent), hsl(120deg 100% 18%) 0);
+  background: conic-gradient(
+    transparent var(--cooldown-percent),
+    hsl(120deg 100% 18%) 0
+  );
   border-radius: 50%;
   width: 1.25rem;
   height: 1.25rem;
@@ -32,7 +35,10 @@
 }
 
 .cooldownVoteTimer {
-  background: conic-gradient(transparent var(--cooldown-percent), rgba(0, 0, 0, 0.5) 0);
+  background: conic-gradient(
+    transparent var(--cooldown-percent),
+    rgba(0, 0, 0, 0.5) 0
+  );
   border-radius: 0.375rem;
   width: 44px;
   height: 44px;
@@ -41,7 +47,10 @@
 }
 
 .sheetCooldownVoteTimer {
-  background: conic-gradient(transparent var(--cooldown-percent), rgba(0, 0, 0, 0.5) 0);
+  background: conic-gradient(
+    transparent var(--cooldown-percent),
+    rgba(0, 0, 0, 0.5) 0
+  );
   border-radius: 0.375rem;
   width: 100%;
   height: 3rem;
@@ -50,7 +59,10 @@
 }
 
 .countdownTimerMobileVotingPreview {
-  background: conic-gradient(transparent var(--cooldown-percent), hsl(120deg 100% 86%) 0);
+  background: conic-gradient(
+    transparent var(--cooldown-percent),
+    hsl(120deg 100% 86%) 0
+  );
   border-radius: 50%;
   width: 1rem;
   height: 1rem;
@@ -144,7 +156,6 @@
   scrollbar-width: thin;
 }
 
-
 body {
   background-color: transparent;
   /* ^ for when backgroundTexture is still loading */
@@ -155,8 +166,6 @@ body {
 .rotateDeckByACardAnimation {
   animation: rotateDeck 1s ease-in-out;
 }
-
-
 
 @keyframes fadeInAndOut {
   0% {
@@ -172,11 +181,9 @@ body {
   }
 }
 
-
 .plusOneBackground {
   animation: 1.5s ease-in-out fadeInAndOut;
 }
-
 
 @keyframes springScale {
   0% {
@@ -227,9 +234,8 @@ body {
 /* a bit roundabout, but mirrors framer motion exit animation once king is played
    and deck is reset */
 .kingScaleDown {
-  animation: 0.55s linear scaleDown;
+  animation: 0.55s linear 0.15s scaleDown;
 }
-
 
 @keyframes rotateDeck {
   0% {
@@ -282,7 +288,6 @@ body {
 }
 
 @keyframes pulse {
-
   0%,
   100% {
     filter: none;
@@ -376,6 +381,10 @@ fieldset::after {
   height: calc(100% + 15px);
   border-radius: 0.375rem;
   /* green-800 to green-850 */
-  background: linear-gradient(to bottom right, #166534 0%, hsl(143, 61%, 21%) 100%);
+  background: linear-gradient(
+    to bottom right,
+    #166534 0%,
+    hsl(143, 61%, 21%) 100%
+  );
   z-index: -1;
 }

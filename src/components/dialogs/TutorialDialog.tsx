@@ -78,6 +78,7 @@ function TutorialDialog({ setShowDialog }: ITutorialDialog) {
             </div>
 
             <Image
+              unoptimized
               src={
                 viewportLabel.includes("mobile")
                   ? mobileLabeledPlayerContainer
@@ -133,6 +134,7 @@ function TutorialDialog({ setShowDialog }: ITutorialDialog) {
                   ). Each card placed is worth one point.
                 </p>
                 <Image
+                  unoptimized
                   src={boardPlacementExample}
                   alt={"Example of a card being placed on the board"}
                   width={263}
@@ -171,6 +173,7 @@ function TutorialDialog({ setShowDialog }: ITutorialDialog) {
                   piles as long as the stacking rules are followed.
                 </p>
                 <Image
+                  unoptimized
                   src={squeakStackPlacementExample}
                   alt={"Example of a card being placed on the board"}
                   width={302}
@@ -218,10 +221,10 @@ function TutorialDialog({ setShowDialog }: ITutorialDialog) {
               should increase the chance for more valid moves to be made.
             </li>
             <li>
-              Otherwise, if the decks have been rotated multiple times and it
-              feels like the game is at a standstill, players may vote to end
-              the round where it is. Note that nobody will receive the Squeak
-              bonus if this vote passes.
+              If the decks have been rotated multiple times and it feels like
+              the game is at a standstill, players may vote to end the round
+              where it is. Note that nobody will receive the Squeak bonus if
+              this vote passes.
             </li>
             <li>Votes require every player to agree in order to pass.</li>
           </ul>

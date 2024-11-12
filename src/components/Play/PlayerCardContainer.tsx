@@ -393,12 +393,11 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                 transition:
                   "box-shadow 150ms cubic-bezier(0.4, 0, 0.2, 1), filter 150ms ease-in-out",
                 zIndex: gameData.players[userID]?.deck?.length
-                  ? gameData.players[userID]?.deck?.length > 35 // special case for drawing initial squeak stack cards
+                  ? cardsBeingMovedProgrammatically.deck.includes(userID) ||
+                    gameData.players[userID]?.deck?.length > 35 // special case for drawing initial squeak stack cards
                     ? 150
-                    : cardsBeingMovedProgrammatically.deck.includes(userID)
-                      ? "auto" // rendered after hand cards so auto is enough here
-                      : 90
-                  : 90, // otherwise default to 90 so regular cards fly above this whole deck
+                    : "auto"
+                  : "auto", // otherwise default to auto so regular cards fly above this whole deck
               }}
               className="relative h-full w-full select-none rounded-[0.1rem]"
               onPointerEnter={() => {

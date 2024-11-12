@@ -525,10 +525,11 @@ function OtherPlayersCardContainers({
                 id={`${playerID}deck`}
                 style={{
                   zIndex: gameData.players[playerID]?.deck?.length
-                    ? gameData.players[playerID]?.deck?.length > 35 // special case for drawing initial squeak stack cards
+                    ? cardsBeingMovedProgrammatically.deck.includes(playerID) ||
+                      gameData.players[playerID]?.deck?.length > 35 // special case for drawing initial squeak stack cards
                       ? 150
-                      : 90
-                    : 90, // otherwise default to 90 so regular cards fly above this whole deck
+                      : "auto"
+                    : "auto", // otherwise default to auto so regular cards fly above this whole deck
                 }}
                 className="h-full w-full"
               >
