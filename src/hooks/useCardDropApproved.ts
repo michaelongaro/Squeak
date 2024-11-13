@@ -217,8 +217,10 @@ function useCardDropApproved({
       moveCard({
         newPosition: { x: endX, y: endY },
         pseudoVerticalDepthDifferential:
-          (adjustedCardsInTargetPile - adjustedCardsInInitialPile) *
-          dynamicMultiplier,
+          viewportLabel !== "desktop" && ownerID !== userID
+            ? 0
+            : (adjustedCardsInTargetPile - adjustedCardsInInitialPile) *
+              dynamicMultiplier,
         flip: false,
         rotate: endID.includes("cell"),
         callbackFunction: () => {
