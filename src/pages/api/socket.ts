@@ -228,7 +228,7 @@ export default function SocketHandler(req, res) {
 
   const onConnection = (socket: Socket) => {
     // pregame/room handlers
-    gracefulReconnectHandler(io, socket);
+    gracefulReconnectHandler(io, socket, roomData, gameData);
 
     createRoomHandler(io, socket, roomData, miscRoomData);
 

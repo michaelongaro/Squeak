@@ -1,26 +1,25 @@
-import { type Server, type Socket } from "socket.io";
-import { prisma } from "~/server/db";
+import type { Server, Socket } from "socket.io";
+import type { IGameData, IRoomData } from "~/pages/api/socket";
 
-export function gracefulReconnectHandler(io: Server, socket: Socket) {
+export function gracefulReconnectHandler(
+  io: Server,
+  socket: Socket,
+  roomData: IRoomData,
+  gameData: IGameData,
+) {
   socket.on(
     "attemptToGracefullyReconnectToRoom",
     async ({ roomCode, userID }: { roomCode: string; userID: string }) => {
-      const room = await prisma.room.findUnique({
-        where: {
-          code: roomCode,
-          playerIDsInRoom: {
-            has: userID,
-          },
-        },
-        select: {
-          code: true,
-        },
-      });
-
-      if (room) {
+      // checking if the room exists and the user is in the room
+      if (roomData[roomCode] && roomData[roomCode].players[userID]) {
         socket.join(roomCode);
+        io.in(roomCode).emit("currentRoomMetadata", {
+          roomConfig: roomData[roomCode].roomConfig,
+          playerMetadata: roomData[roomCode].players,
+          gameData: gameData[roomCode] === undefined ? {} : gameData[roomCode],
+        });
       } else {
-        io.in(roomCode).emit("forceReload");
+        io.emit("redirectToHomepage", userID);
       }
     },
   );
