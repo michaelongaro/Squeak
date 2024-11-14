@@ -295,7 +295,7 @@ function JoinRoom() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.5 }}
-            className="baseVertFlex gap-4 rounded-md border-2 border-lightGreen bg-gradient-to-br from-green-800 to-green-850 px-6 py-4 text-lightGreen sm:px-12 sm:py-8"
+            className="baseVertFlex my-auto gap-4 rounded-md border-2 border-lightGreen bg-gradient-to-br from-green-800 to-green-850 px-6 py-4 text-lightGreen sm:px-12 sm:py-8"
           >
             <div className="baseVertFlex gap-4">
               <p className="text-nowrap font-semibold">
