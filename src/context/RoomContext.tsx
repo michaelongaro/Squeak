@@ -161,9 +161,9 @@ interface IRoomContext {
   setCurrentVotes: React.Dispatch<
     React.SetStateAction<("agree" | "disagree")[]>
   >;
-  voteType: "rotateDecks" | "finishRound" | null;
+  voteType: "rotateDecks" | "endRound" | null;
   setVoteType: React.Dispatch<
-    React.SetStateAction<"rotateDecks" | "finishRound" | null>
+    React.SetStateAction<"rotateDecks" | "endRound" | null>
   >;
   votingIsLockedOut: boolean;
   setVotingIsLockedOut: React.Dispatch<React.SetStateAction<boolean>>;
@@ -308,9 +308,9 @@ export function RoomProvider(props: { children: React.ReactNode }) {
   const [currentVotes, setCurrentVotes] = useState<("agree" | "disagree")[]>(
     [],
   );
-  const [voteType, setVoteType] = useState<
-    "rotateDecks" | "finishRound" | null
-  >(null);
+  const [voteType, setVoteType] = useState<"rotateDecks" | "endRound" | null>(
+    null,
+  );
   const [votingIsLockedOut, setVotingIsLockedOut] = useState(false);
   const [showVotingDialog, setShowVotingDialog] = useState(false);
   const [passiveVoteResolutionTimerId, setPassiveVoteResolutionTimerId] =

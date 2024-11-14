@@ -523,27 +523,27 @@ function VotingDialog({
   } = useRoomContext();
 
   const rotateDecksButtonRef = useRef<HTMLDivElement | null>(null);
-  const finishRoundButtonRef = useRef<HTMLDivElement | null>(null);
+  const endRoundButtonRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (
       forSheet &&
       votingLockoutStartTimestamp &&
       rotateDecksButtonRef.current &&
-      finishRoundButtonRef.current
+      endRoundButtonRef.current
     ) {
       const elapsedSeconds = (Date.now() - votingLockoutStartTimestamp) / 1000;
 
       rotateDecksButtonRef.current!.style.animation = `timer 30s linear -${elapsedSeconds}s`;
       rotateDecksButtonRef.current!.style.animationPlayState = "running";
 
-      finishRoundButtonRef.current!.style.animation = `timer 30s linear -${elapsedSeconds}s`;
-      finishRoundButtonRef.current!.style.animationPlayState = "running";
+      endRoundButtonRef.current!.style.animation = `timer 30s linear -${elapsedSeconds}s`;
+      endRoundButtonRef.current!.style.animationPlayState = "running";
     }
   }, [
     forSheet,
     votingLockoutStartTimestamp,
-    finishRoundButtonRef,
+    endRoundButtonRef,
     rotateDecksButtonRef,
   ]);
 
@@ -560,7 +560,7 @@ function VotingDialog({
         width: forMobile ? "100%" : "10rem",
       }}
       transition={{ duration: forMobile ? 0 : 0.15 }}
-      className={`z-200 shadow-xl ${!forMobile ? "absolute right-0 top-0" : ""}`}
+      className={`z-200 ${forSheet ? "" : "shadow-xl"} ${!forMobile ? "absolute right-0 top-0" : ""}`}
     >
       {/* voting modal */}
       <div
@@ -590,9 +590,7 @@ function VotingDialog({
             <p className="font-semibold">Start a vote to...</p>
           ) : (
             <p className="font-semibold">
-              {voteType === "rotateDecks"
-                ? "Rotate decks?"
-                : "Finish the round?"}
+              {voteType === "rotateDecks" ? "Rotate decks?" : "End the round?"}
             </p>
           )}
         </div>
@@ -706,20 +704,20 @@ function VotingDialog({
 
                         socket.emit("castVote", {
                           roomCode: roomConfig.code,
-                          voteType: "finishRound",
+                          voteType: "endRound",
                           voteDirection: "for",
                         });
                       }}
                       className="absolute left-0 top-0 h-12 w-full gap-[0.8rem] whitespace-nowrap text-sm"
                     >
-                      Finish the round
+                      End the round
                       <FaForwardStep className="size-4" />
                     </Button>
 
                     {votingIsLockedOut && (
                       <motion.div
-                        key={"finishRoundCooldownTimer"}
-                        ref={finishRoundButtonRef}
+                        key={"endRoundCooldownTimer"}
+                        ref={endRoundButtonRef}
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ duration: 0.15 }}
@@ -1740,7 +1738,7 @@ function WhilePlayingSheet({
                   {gameData.playerIDsThatLeftMidgame.includes(playerID) && (
                     <DisconnectIcon
                       darkGreenStroke
-                      className="absolute left-1/2 top-1/2 size-12 -translate-x-1/2 -translate-y-1/2"
+                      className="absolute left-1/2 top-[27%] size-8 -translate-x-1/2 -translate-y-1/2"
                     />
                   )}
                 </div>

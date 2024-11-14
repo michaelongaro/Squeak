@@ -9,7 +9,7 @@ interface IVoteReceived {
   gameData: IGameData;
   miscRoomData: IMiscRoomData;
   roomData: IRoomData;
-  voteType: "rotateDecks" | "finishRound";
+  voteType: "rotateDecks" | "endRound";
   voteDirection: "for" | "against";
 }
 
@@ -28,7 +28,7 @@ export function castVoteHandler(
       voteDirection,
     }: {
       roomCode: string;
-      voteType: "rotateDecks" | "finishRound";
+      voteType: "rotateDecks" | "endRound";
       voteDirection: "for" | "against";
     }) =>
       voteReceived({
@@ -129,7 +129,7 @@ function voteReceived({
           player.deck = rotateDeckByOneCard(player.deck);
         });
         io.in(roomCode).emit("decksWereRotated", gameData[roomCode]);
-      } else if (miscRoomDataObj.voteType === "finishRound") {
+      } else if (miscRoomDataObj.voteType === "endRound") {
         generateAndEmitScoreboard({
           io,
           roomCode,

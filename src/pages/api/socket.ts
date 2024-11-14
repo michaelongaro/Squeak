@@ -70,7 +70,7 @@ interface IMiscRoomMetadata {
 
   // related to voting
   currentVotes: ("agree" | "disagree")[];
-  voteType: "rotateDecks" | "finishRound" | null;
+  voteType: "rotateDecks" | "endRound" | null;
 }
 
 interface IBlacklistedSqueakCards {

@@ -38,7 +38,7 @@ function resetCooldownPercentages() {
 }
 
 interface IVoteHasBeenCast {
-  voteType: "rotateDecks" | "finishRound";
+  voteType: "rotateDecks" | "endRound";
   currentVotes: ("agree" | "disagree")[];
   voteIsFinished: boolean;
 }
