@@ -88,7 +88,7 @@ function AnimatedCard({
     // Calculate delay and duration based on totalCardsPlayed
     const totalAnimationTime = 4000; // Total time (ms) for all cards to be played
     const delay = staggerCards
-      ? (totalAnimationTime / totalCardsPlayed) * index
+      ? 0.5 + (totalAnimationTime / totalCardsPlayed) * index
       : 0;
     const duration = staggerCards
       ? totalAnimationTime / totalCardsPlayed / 1000
