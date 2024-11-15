@@ -118,6 +118,7 @@ function TopRightControls() {
     showVotingOptionButtons,
     setShowVotingOptionButtons,
     viewportLabel,
+    connectedToRoom,
   } = useRoomContext();
 
   const { data: user } = api.users.getUserByID.useQuery(userID, {
@@ -189,6 +190,7 @@ function TopRightControls() {
         >
           <SheetTrigger
             aria-label="Settings"
+            disabled={asPath.includes("/game") && !connectedToRoom}
             onClick={() => setShowSheet(true)}
           >
             <div className="baseFlex relative">
@@ -328,7 +330,11 @@ function TopRightControls() {
           <>
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button variant="secondary" className="size-11 !shrink-0">
+                <Button
+                  variant="secondary"
+                  disabled={!connectedToRoom}
+                  className="size-11 !shrink-0"
+                >
                   <TbDoorExit size={"1.5rem"} />
                 </Button>
               </AlertDialogTrigger>
@@ -362,6 +368,7 @@ function TopRightControls() {
             <div className="absolute right-0 top-[60px]">
               <Button
                 variant={"secondary"}
+                disabled={!connectedToRoom}
                 onClick={() => setShowVotingDialog(true)}
                 className="absolute right-0 top-0 size-11"
               >
@@ -520,6 +527,7 @@ function VotingDialog({
     voteType,
     votingIsLockedOut,
     votingLockoutStartTimestamp,
+    connectedToRoom,
   } = useRoomContext();
 
   const rotateDecksButtonRef = useRef<HTMLDivElement | null>(null);
@@ -663,6 +671,7 @@ function VotingDialog({
                   <div className="relative h-12 w-full">
                     <Button
                       variant={"secondary"}
+                      disabled={!connectedToRoom}
                       onClick={() => {
                         setShowVotingOptionButtons(false);
 
@@ -696,6 +705,7 @@ function VotingDialog({
                   <div className="relative h-12 w-full">
                     <Button
                       variant={"secondary"}
+                      disabled={!connectedToRoom}
                       onClick={() => {
                         setShowVotingOptionButtons(false);
 
@@ -730,6 +740,7 @@ function VotingDialog({
                 <div className="baseFlex w-full gap-2">
                   <Button
                     variant={"secondary"}
+                    disabled={!connectedToRoom}
                     onClick={() => {
                       setShowVotingOptionButtons(false);
 
@@ -750,6 +761,7 @@ function VotingDialog({
 
                   <Button
                     variant={"secondary"}
+                    disabled={!connectedToRoom}
                     onClick={() => {
                       setShowVotingOptionButtons(false);
 
