@@ -68,7 +68,7 @@ function Play() {
       playerID: userID,
     },
     {
-      enabled: Boolean(roomCode && typeof roomCode === "string"),
+      enabled: Boolean(roomCode && typeof roomCode === "string" && userID),
     },
   );
 
@@ -122,6 +122,7 @@ function Play() {
       !isLoaded ||
       !userID ||
       !playerMetadata[userID] ||
+      !room ||
       connectedToRoom
     )
       return;
