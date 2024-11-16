@@ -140,7 +140,7 @@ function Scoreboard() {
         setSortedPlayerRoundDetails(playerRoundDetailsArray);
         setShowNewRankings(true);
         setIsTransitioning(false);
-      }, 300); // Adjust this duration for fade-out effect
+      }, 350); // cross fade duration
     }, 4000);
 
     setTimeout(() => {
@@ -430,16 +430,17 @@ function Scoreboard() {
                   <div className="mr-[21px] font-semibold">Total</div>
                 </div>
 
-                <div className="baseVertFlex w-full gap-2">
-                  <AnimatePresence mode="wait">
+                <div
+                  style={{
+                    opacity: isTransitioning ? 0 : 1,
+                    transition: "opacity 0.35s linear",
+                  }}
+                  className="baseVertFlex w-full gap-2"
+                >
+                  <AnimatePresence mode="popLayout">
                     {sortedPlayerRoundDetails.map((player) => (
-                      <motion.div
+                      <div
                         key={player.playerID}
-                        layout={!isTransitioning ? "position" : undefined} // Disable layout during transition
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: isTransitioning ? 0 : 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.3 }}
                         onClick={() => {
                           if (player.playerID !== selectedPlayerID) {
                             // only show full staggered animation for current player
@@ -468,31 +469,7 @@ function Scoreboard() {
                         className="relative grid w-full max-w-xl cursor-pointer place-items-center rounded-md transition-all"
                       >
                         <div className="baseFlex h-8 w-full items-center rounded-l-md">
-                          <AnimatePresence mode="wait">
-                            {showNewRankings ? (
-                              <motion.span
-                                key={`newRanking-${player.playerID}`}
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                exit={{ opacity: 0 }}
-                                transition={{ duration: 0.15 }}
-                              >
-                                {ranking[player.newRanking]}
-                              </motion.span>
-                            ) : (
-                              <motion.span
-                                key={`oldRanking-${player.playerID}`}
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                exit={{ opacity: 0 }}
-                                transition={{ duration: 0.15 }}
-                              >
-                                {player.oldRanking === -1
-                                  ? "-"
-                                  : ranking[player.oldRanking]}
-                              </motion.span>
-                            )}
-                          </AnimatePresence>
+                          {ranking[player.newRanking]}
                         </div>
 
                         <div className="baseVertFlex h-8 w-full gap-2 p-2 font-semibold">
@@ -510,22 +487,18 @@ function Scoreboard() {
                             fontSize={16}
                           />
                         </div>
-                      </motion.div>
+                      </div>
                     ))}
                   </AnimatePresence>
                 </div>
               </div>
 
               <div className="baseFlex h-full max-h-72 w-full max-w-xl">
-                <motion.div
+                <div
                   key={
                     scoreboardMetadata.playerRoundDetails[selectedPlayerID]
                       ?.playerID
                   }
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.3 }}
                   className="baseVertFlex h-full w-full"
                 >
                   {/* avatar + username */}
@@ -724,7 +697,7 @@ function Scoreboard() {
                       )}
                     </AnimatePresence>
                   </div>
-                </motion.div>
+                </div>
               </div>
 
               {/* player who won banner */}
