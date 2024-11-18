@@ -469,7 +469,9 @@ function Scoreboard() {
                         className="relative grid w-full max-w-xl cursor-pointer place-items-center rounded-md transition-all"
                       >
                         <div className="baseFlex h-8 w-full items-center rounded-l-md">
-                          {ranking[player.newRanking]}
+                          {!showNewRankings && player.oldRanking === -1
+                            ? "-"
+                            : ranking[player.newRanking]}
                         </div>
 
                         <div className="baseVertFlex h-8 w-full gap-2 p-2 font-semibold">
