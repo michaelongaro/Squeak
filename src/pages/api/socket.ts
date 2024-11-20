@@ -101,7 +101,7 @@ export interface IRoomPlayer {
   avatarPath: string;
   color: string;
   deckHueRotation: number;
-  botDifficulty?: "Easy" | "Medium" | "Hard";
+  botDifficulty?: "Easy" | "Medium" | "Hard" | "Expert";
 }
 
 export interface IModifyFriendData {

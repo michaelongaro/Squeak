@@ -373,24 +373,32 @@ function PlayerIcon({
             </div>
           )}
 
-          {/* difficulty toggle button that rotates through easy, medium, and hard */}
+          {/* difficulty toggle button that rotates through easy, medium, hard, and expert */}
           {!forWhilePlayingSheet && playerMetadata?.botDifficulty && (
-            <div className="baseVertFlex relative mt-2 w-16 gap-1">
+            <div className="baseVertFlex relative mt-2 w-24 gap-1">
               <div className="baseFlex w-full gap-2">
                 <div
                   className={`h-2 w-full rounded-md transition-all ${forWhilePlayingSheet ? "bg-darkGreen" : "bg-lightGreen"}`}
                 ></div>
                 <div
                   className={`${
-                    playerMetadata.botDifficulty === "Medium" ||
-                    playerMetadata.botDifficulty === "Hard"
+                    ["Medium", "Hard", "Expert"].includes(
+                      playerMetadata.botDifficulty,
+                    )
                       ? `${forWhilePlayingSheet ? "bg-darkGreen" : "bg-lightGreen"}`
                       : `${forWhilePlayingSheet ? "bg-darkGreen/20" : "bg-lightGreen/20"}`
                   } h-2 w-full rounded-md transition-all`}
                 ></div>
                 <div
                   className={`${
-                    playerMetadata.botDifficulty === "Hard"
+                    ["Hard", "Expert"].includes(playerMetadata.botDifficulty)
+                      ? `${forWhilePlayingSheet ? "bg-darkGreen" : "bg-lightGreen"}`
+                      : `${forWhilePlayingSheet ? "bg-darkGreen/20" : "bg-lightGreen/20"}`
+                  } h-2 w-full rounded-md transition-all`}
+                ></div>
+                <div
+                  className={`${
+                    playerMetadata.botDifficulty === "Expert"
                       ? `${forWhilePlayingSheet ? "bg-darkGreen" : "bg-lightGreen"}`
                       : `${forWhilePlayingSheet ? "bg-darkGreen/20" : "bg-lightGreen/20"}`
                   } h-2 w-full rounded-md transition-all`}
@@ -411,7 +419,9 @@ function PlayerIcon({
                             ? "Medium"
                             : playerMetadata.botDifficulty === "Medium"
                               ? "Hard"
-                              : "Easy",
+                              : playerMetadata.botDifficulty === "Hard"
+                                ? "Expert"
+                                : "Easy",
                       },
                     });
                   }}

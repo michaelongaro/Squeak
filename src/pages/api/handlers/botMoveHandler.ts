@@ -10,9 +10,10 @@ import { drawFromDeck } from "./drawFromDeckHandler";
 import { type ICard } from "../../../utils/generateDeckAndSqueakCards";
 
 const minTimestampDelays = {
-  Easy: 1500,
-  Medium: 1000,
-  Hard: 500,
+  Easy: 3500,
+  Medium: 3000,
+  Hard: 2500,
+  Expert: 500,
 };
 
 export function botMoveHandler(

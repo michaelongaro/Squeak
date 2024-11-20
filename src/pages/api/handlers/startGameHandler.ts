@@ -11,9 +11,10 @@ import { botMoveHandler } from "./botMoveHandler";
 import generateDeckAndSqueakCards from "../../../utils/generateDeckAndSqueakCards";
 
 const botDifficultyDelay = {
-  Easy: 7000,
-  Medium: 5000,
-  Hard: 3000,
+  Easy: 9000,
+  Medium: 7000,
+  Hard: 4500,
+  Expert: 3000,
 };
 
 export function startGameHandler(
@@ -168,7 +169,8 @@ export function startGameHandler(
             1500 * parseInt(index),
           ); // TODO: still test out better variations with delay..
         }
-      }, 5000); // roughly the time it takes for the cards to be dealt to the players on client side
+      }, 3500); // roughly the time it takes for the cards to be dealt to the players on client side, including
+      // the extra delay from inner setTimeout above
 
       if (firstRound && prisma) {
         io.in(roomCode).emit("navigateToPlayScreen", {
