@@ -224,7 +224,7 @@ export function RoomProvider(props: { children: React.ReactNode }) {
 
   const [roomConfig, setRoomConfig] = useState<IRoomConfig>({
     pointsToWin: 100,
-    maxPlayers: 2,
+    maxPlayers: 5,
     playersInRoom: 1,
     playerIDsInRoom: [userID],
     isPublic: true,

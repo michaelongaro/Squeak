@@ -33,7 +33,7 @@ function useResetPlayerStateUponPageLoad() {
 
       setRoomConfig({
         pointsToWin: 100,
-        maxPlayers: 2,
+        maxPlayers: 5,
         playersInRoom: 1,
         playerIDsInRoom: [userID],
         isPublic: true,
