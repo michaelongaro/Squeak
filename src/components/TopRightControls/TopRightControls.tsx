@@ -1769,9 +1769,9 @@ function WhilePlayingSheet({
             <Button
               variant={"outline"}
               onClick={() => setShowTutorialDialog(true)}
-              className="baseFlex z-[500] gap-2"
+              className="baseFlex z-[500] gap-1"
             >
-              <MdQuestionMark size={"1.5rem"} />
+              <MdQuestionMark size={"1.35rem"} />
               Rules
             </Button>
           </DialogTrigger>
