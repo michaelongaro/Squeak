@@ -22,11 +22,11 @@ export function getCardAssetPath({
 
   if (manuallyShowSpecificCardFront !== undefined) {
     return cardAssets[
-      `${suit}${value}${manuallyShowSpecificCardFront === 1 ? "Simple" : ""}`
+      `${suit}${value}${manuallyShowSpecificCardFront === 0 ? "Simple" : ""}`
     ] as StaticImageData;
   }
 
   return cardAssets[
-    `${suit}${value}${deckVariantIndex === 1 ? "Simple" : ""}`
+    `${suit}${value}${deckVariantIndex === 0 ? "Simple" : ""}`
   ] as StaticImageData;
 }
