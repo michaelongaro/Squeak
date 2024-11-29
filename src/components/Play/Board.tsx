@@ -69,7 +69,7 @@ function Board() {
                     ? 0.35
                     : 1,
               }}
-              className="baseFlex z-0 h-[73px] min-h-fit w-[56px] min-w-fit select-none rounded-md p-1 transition-all mobileLarge:h-[78px] mobileLarge:w-[61px] tablet:h-[82px] tablet:w-[64px] desktop:h-[95px] desktop:w-[75px]"
+              className="baseFlex z-0 h-[73px] min-h-fit w-[58px] min-w-fit select-none rounded-md p-1 transition-all mobileLarge:h-[78px] mobileLarge:w-[62px] tablet:h-[82px] tablet:w-[65px] desktop:h-[95px] desktop:w-[75px]"
             >
               <div
                 id={`cell${rowIdx}${colIdx}`}
