@@ -161,8 +161,8 @@ body {
   /* ^ for when backgroundTexture is still loading */
   background-image: url("/backgroundTexture/backgroundTexture.png");
   background-repeat: repeat;
+  -webkit-touch-callout: none; /* non-standard: prevents long touch popover on iOS devices */
 }
-
 .rotateDeckByACardAnimation {
   animation: rotateDeck 1s ease-in-out;
 }
