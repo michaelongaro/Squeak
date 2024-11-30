@@ -256,10 +256,11 @@ function PlayerIcon({
                         </Button>
                       </SheetTrigger>
                       <SheetContent>
-                        <div className="baseVertFlex gap-4 p-4">
+                        <div className="baseVertFlex gap-4 p-6">
                           <p className="max-w-64 text-center text-lg text-darkGreen">
                             Are you sure you want to kick &ldquo;{username}
-                            &rdquo;?
+                            &rdquo;
+                            <span className="ml-1">?</span>
                           </p>
                           <Button
                             variant={"destructive"}
@@ -320,7 +321,8 @@ function PlayerIcon({
                         <div className="baseVertFlex w-64 gap-3 p-2">
                           <p className="text-center font-semibold text-[hsl(0,84%,40%)]">
                             Are you sure you want to kick &ldquo;{username}
-                            &rdquo;?
+                            &rdquo;
+                            <span className="ml-1">?</span>
                           </p>
                           <Button
                             variant={"destructive"}
