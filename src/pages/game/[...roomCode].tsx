@@ -343,7 +343,7 @@ function Play() {
       )}
 
       <AnimatePresence mode={"wait"}>
-        {voteType !== null && viewportLabel.includes("mobile") && (
+        {voteType !== null && viewportLabel === "mobileLarge" && (
           <MobileVotingPreview />
         )}
       </AnimatePresence>

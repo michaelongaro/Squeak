@@ -9,6 +9,7 @@ import { type IGetBoxShadowStyles } from "./Board";
 import PlayerIcon from "../playerIcons/PlayerIcon";
 import useResponsiveCardDimensions from "../../hooks/useResponsiveCardDimensions";
 import { AnimatePresence, motion } from "framer-motion";
+import { IoSettingsSharp } from "react-icons/io5";
 import Buzzer from "./Buzzer";
 import StaticCard from "~/components/Play/StaticCard";
 interface IPlayerCardContainer {
@@ -49,6 +50,8 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
     fallbackPlayerIsDrawingFromDeckTimerIdRef,
     cardsBeingMovedProgrammatically,
     viewportLabel,
+    showSettingsSheet,
+    setShowSettingsSheet,
   } = useRoomContext();
 
   const [hoveringOverDeck, setHoveringOverDeck] = useState(false);
@@ -175,7 +178,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
   return (
     <div
       id={"playerContainer"}
-      className={`${cardContainerClass} rounded-md bg-gradient-to-br from-green-800 to-green-850`}
+      className={`${cardContainerClass} relative mr-4 rounded-md bg-gradient-to-br from-green-800 to-green-850 mobileLarge:mr-0`}
       onMouseMove={(e) => pointerMoveHandler(e.clientX, e.clientY)}
       onTouchMove={(e) => {
         if (e.touches.length > 0) {
@@ -590,6 +593,13 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
               animateLayout={false}
             />
           </div>
+
+          <IoSettingsSharp
+            className={`absolute -right-7 top-1 size-5 text-lightGreen transition-all duration-200 active:rotate-[25deg] active:brightness-50 mobileLarge:hidden ${showSettingsSheet ? "rotate-[25deg]" : ""}`}
+            onClick={() => {
+              setShowSettingsSheet(true);
+            }}
+          />
         </div>
       )}
     </div>

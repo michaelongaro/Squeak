@@ -119,6 +119,8 @@ function TopRightControls() {
     setShowVotingOptionButtons,
     viewportLabel,
     connectedToRoom,
+    showSettingsSheet,
+    setShowSettingsSheet,
   } = useRoomContext();
 
   const { data: user } = api.users.getUserByID.useQuery(userID, {
@@ -131,16 +133,11 @@ function TopRightControls() {
   useVoteHasBeenCast();
 
   const [showFriendsList, setShowFriendsList] = useState<boolean>(false);
-
   const [voteWasStarted, setVoteWasStarted] = useState(false);
-
-  const [showSheet, setShowSheet] = useState(false);
-
   const [showSettingsUnauthTooltip, setShowSettingsUnauthTooltip] =
     useState(false);
   const [showFriendsListUnauthTooltip, setShowFriendsListUnauthTooltip] =
     useState(false);
-
   const [showTutorialDialog, setShowTutorialDialog] = useState(false);
 
   useEffect(() => {
@@ -182,7 +179,10 @@ function TopRightControls() {
 
   if (viewportLabel.includes("mobile")) {
     return (
-      <Sheet open={showSheet} onOpenChange={(isOpen) => setShowSheet(isOpen)}>
+      <Sheet
+        open={showSettingsSheet}
+        onOpenChange={(isOpen) => setShowSettingsSheet(isOpen)}
+      >
         <div
           className={`baseFlex fixed right-2 !z-[150] h-8 w-8 ${
             !asPath.includes("/game") ? "top-3" : "top-1.5"
@@ -191,11 +191,11 @@ function TopRightControls() {
           <SheetTrigger
             aria-label="Settings"
             disabled={asPath.includes("/game") && !connectedToRoom}
-            onClick={() => setShowSheet(true)}
+            onClick={() => setShowSettingsSheet(true)}
           >
             <div className="baseFlex relative">
               <IoSettingsSharp
-                className={`size-5 text-lightGreen transition-all duration-200 active:brightness-50 ${showSheet ? "rotate-[25deg]" : ""}`}
+                className={`size-5 text-lightGreen transition-all duration-200 active:brightness-50 ${showSettingsSheet ? "rotate-[25deg]" : ""} ${viewportLabel === "mobile" && connectedToRoom && asPath.includes("/game") ? "opacity-0" : ""}`}
               />
 
               <AnimatePresence mode={"wait"}>
@@ -230,7 +230,7 @@ function TopRightControls() {
           >
             {asPath.includes("/game") ? (
               <WhilePlayingSheet
-                setShowSheet={setShowSheet}
+                setShowSettingsSheet={setShowSettingsSheet}
                 leaveRoom={leaveRoom}
                 showVotingOptionButtons={showVotingOptionButtons}
                 setShowVotingOptionButtons={setShowVotingOptionButtons}
@@ -238,7 +238,7 @@ function TopRightControls() {
             ) : (
               <MainSheet
                 user={user}
-                setShowSheet={setShowSheet}
+                setShowSettingsSheet={setShowSettingsSheet}
                 newInviteNotification={newInviteNotification}
               />
             )}
@@ -508,7 +508,7 @@ export default TopRightControls;
 interface IVotingDialog {
   showVotingOptionButtons: boolean;
   setShowVotingOptionButtons: React.Dispatch<React.SetStateAction<boolean>>;
-  setShowSheet?: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowSettingsSheet?: React.Dispatch<React.SetStateAction<boolean>>;
   forMobile?: boolean;
   forSheet?: boolean;
 }
@@ -516,7 +516,7 @@ interface IVotingDialog {
 function VotingDialog({
   showVotingOptionButtons,
   setShowVotingOptionButtons,
-  setShowSheet,
+  setShowSettingsSheet,
   forMobile,
   forSheet,
 }: IVotingDialog) {
@@ -676,7 +676,7 @@ function VotingDialog({
                         setShowVotingOptionButtons(false);
 
                         toast.dismiss();
-                        setShowSheet?.(false);
+                        setShowSettingsSheet?.(false);
 
                         socket.emit("castVote", {
                           roomCode: roomConfig.code,
@@ -710,7 +710,7 @@ function VotingDialog({
                         setShowVotingOptionButtons(false);
 
                         toast.dismiss();
-                        setShowSheet?.(false);
+                        setShowSettingsSheet?.(false);
 
                         socket.emit("castVote", {
                           roomCode: roomConfig.code,
@@ -745,7 +745,7 @@ function VotingDialog({
                       setShowVotingOptionButtons(false);
 
                       toast.dismiss();
-                      setShowSheet?.(false);
+                      setShowSettingsSheet?.(false);
 
                       socket.emit("castVote", {
                         roomCode: roomConfig.code,
@@ -766,7 +766,7 @@ function VotingDialog({
                       setShowVotingOptionButtons(false);
 
                       toast.dismiss();
-                      setShowSheet?.(false);
+                      setShowSettingsSheet?.(false);
 
                       socket.emit("castVote", {
                         roomCode: roomConfig.code,
@@ -828,11 +828,15 @@ function VotingDialogToast({
 
 interface IMainSheet {
   user: User | undefined | null;
-  setShowSheet: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowSettingsSheet: React.Dispatch<React.SetStateAction<boolean>>;
   newInviteNotification: boolean;
 }
 
-function MainSheet({ user, setShowSheet, newInviteNotification }: IMainSheet) {
+function MainSheet({
+  user,
+  setShowSettingsSheet,
+  newInviteNotification,
+}: IMainSheet) {
   const { signOut } = useAuth();
 
   const [renderedView, setRenderedView] = useState<AllViewLabels | undefined>();
@@ -938,7 +942,7 @@ function MainSheet({ user, setShowSheet, newInviteNotification }: IMainSheet) {
                 <Button
                   variant={"text"}
                   onClick={() => {
-                    setShowSheet(false);
+                    setShowSettingsSheet(false);
                     signOut();
                   }}
                   className="h-8 !px-0 !py-0 text-darkGreen underline underline-offset-4"
@@ -994,10 +998,7 @@ function MainSheet({ user, setShowSheet, newInviteNotification }: IMainSheet) {
             )}
 
             {renderedView === "Friends list" && (
-              <FriendsListSheet
-                setShowSheet={setShowSheet}
-                setRenderedView={setRenderedView}
-              />
+              <FriendsListSheet setRenderedView={setRenderedView} />
             )}
           </motion.div>
         )}
@@ -1637,14 +1638,14 @@ function SheetStatistics({ setRenderedView }: ISheetStatistics) {
 }
 
 interface IWhilePlayingSheet {
-  setShowSheet: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowSettingsSheet: React.Dispatch<React.SetStateAction<boolean>>;
   leaveRoom: () => void;
   showVotingOptionButtons: boolean;
   setShowVotingOptionButtons: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 function WhilePlayingSheet({
-  setShowSheet,
+  setShowSettingsSheet,
   leaveRoom,
   showVotingOptionButtons,
   setShowVotingOptionButtons,
@@ -1693,7 +1694,7 @@ function WhilePlayingSheet({
         <VotingDialog
           showVotingOptionButtons={showVotingOptionButtons}
           setShowVotingOptionButtons={setShowVotingOptionButtons}
-          setShowSheet={setShowSheet}
+          setShowSettingsSheet={setShowSettingsSheet}
           forMobile
           forSheet
         />
@@ -1803,7 +1804,7 @@ function WhilePlayingSheet({
                   variant={"destructive"}
                   className="m-0 w-24"
                   onClick={() => {
-                    setShowSheet(false);
+                    setShowSettingsSheet(false);
                     leaveRoom();
                   }}
                 >

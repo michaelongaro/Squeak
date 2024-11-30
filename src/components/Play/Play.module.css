@@ -8,9 +8,7 @@
   height: 100%;
   max-width: 100%;
   gap: 0.5rem;
-  padding: 3rem 0.75rem 0.5rem 0.75rem;
-  /* ^ for the mini voting container results and space to render settings cog
-     for <Sheet /> */
+  padding: 0.5rem 0.75rem 0.25rem 0.75rem;
 }
 
 .currentPlayerCards,
@@ -91,9 +89,11 @@
 @media (min-height: 667px) {
   .fullBoardGrid {
     gap: 1rem;
+    padding: 3rem 0.75rem 0.5rem 0.75rem;
+    /* ^ for the mini voting container results and space to render settings cog
+     for <Sheet /> */
   }
 }
-
 
 @media (min-height: 700px) and (min-width: 1000px) {
   .fullBoardGrid {
@@ -112,7 +112,7 @@
   .topPlayerCard1,
   .topPlayerCard2 {
     height: 50px;
-    width: 50px
+    width: 50px;
   }
 }
 
@@ -126,7 +126,6 @@
     grid-template-rows: 0.25fr 0.5fr 0.25fr;
     place-items: center;
     place-content: center;
-    gap: 1rem;
     padding: 0;
   }
 
@@ -145,7 +144,6 @@
       "leftPlayerCards board board rightPlayerCards"
       "leftPlayerCards currentPlayerCards currentPlayerCards rightPlayerCards";
   }
-
 
   .boardContainer {
     display: block;
@@ -198,5 +196,4 @@
     height: 502px;
     width: 210px;
   }
-
 }

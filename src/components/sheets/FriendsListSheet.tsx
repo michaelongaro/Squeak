@@ -33,16 +33,12 @@ import { IoIosArrowForward } from "react-icons/io";
 import { type AllViewLabels } from "~/components/TopRightControls/TopRightControls";
 
 interface IFriendsListSheet {
-  setShowSheet: React.Dispatch<React.SetStateAction<boolean>>;
   setRenderedView: React.Dispatch<
     React.SetStateAction<AllViewLabels | undefined>
   >;
 }
 
-function FriendsListSheet({
-  setShowSheet,
-  setRenderedView,
-}: IFriendsListSheet) {
+function FriendsListSheet({ setRenderedView }: IFriendsListSheet) {
   const userID = useUserIDContext();
   const { push } = useRouter();
 
@@ -52,6 +48,7 @@ function FriendsListSheet({
     newInviteNotification,
     setNewInviteNotification,
     roomConfig,
+    setShowSettingsSheet,
   } = useRoomContext();
 
   const { data: friends } = api.users.getUsersFromIDList.useQuery(
@@ -276,7 +273,7 @@ function FriendsListSheet({
                                               friend.currentRoomIsPublic,
                                           });
 
-                                          setShowSheet(false);
+                                          setShowSettingsSheet(false);
                                         }}
                                       >
                                         <TbDoorEnter size={"1.25rem"} />
@@ -493,7 +490,7 @@ function FriendsListSheet({
                                     friend.currentRoomIsPublic,
                                 });
 
-                                setShowSheet(false);
+                                setShowSettingsSheet(false);
                               }}
                             >
                               <AiOutlineCheck size={"1rem"} />

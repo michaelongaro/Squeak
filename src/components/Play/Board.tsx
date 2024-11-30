@@ -45,7 +45,7 @@ function Board() {
     <div
       id={"board"}
       style={{
-        outline: "4px ridge hsl(120deg 100% 86%)",
+        border: "4px ridge hsl(120deg 100% 86%)",
         boxShadow: "inset 0px 0px 16px 0px hsl(106deg 100% 5%)",
       }}
       className={`${classes.board} grid w-full select-none grid-cols-5 gap-2 rounded-md bg-gradient-to-br from-green-800 to-green-850 p-2 mobileLarge:gap-4 desktop:gap-1`}

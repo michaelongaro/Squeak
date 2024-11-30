@@ -126,6 +126,8 @@ interface IRoomContext {
     NodeJS.Timeout | undefined
   >;
 
+  showSettingsSheet: boolean;
+  setShowSettingsSheet: React.Dispatch<React.SetStateAction<boolean>>;
   currentVolume: number | null;
   setCurrentVolume: React.Dispatch<React.SetStateAction<number | null>>;
   deckVariantIndex: number;
@@ -248,6 +250,7 @@ export function RoomProvider(props: { children: React.ReactNode }) {
 
   const [friendData, setFriendData] = useState<IFriendsMetadata | undefined>();
 
+  const [showSettingsSheet, setShowSettingsSheet] = useState<boolean>(false);
   const [hoveredCell, setHoveredCell] = useState<[number, number] | null>(null);
   const [hoveredSqueakStack, setHoveredSqueakStack] = useState<number | null>(
     null,
@@ -527,6 +530,8 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     setScoreboardMetadata,
     connectedToRoom,
     setConnectedToRoom,
+    showSettingsSheet,
+    setShowSettingsSheet,
     currentVolume,
     setCurrentVolume,
     deckVariantIndex,
