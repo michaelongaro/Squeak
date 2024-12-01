@@ -25,6 +25,7 @@ function useResetPlayerStateUponPageLoad() {
     resetPlayerStateUponPageLoad,
     setResetPlayerStateUponPageLoad,
     setCardsBeingMovedProgrammatically,
+    setShowPreFirstDeckDrawPulse,
   } = useRoomContext();
 
   useEffect(() => {
@@ -48,6 +49,8 @@ function useResetPlayerStateUponPageLoad() {
         deck: [],
         squeakDeck: [],
       });
+
+      setShowPreFirstDeckDrawPulse(true);
 
       if (userID !== "") {
         const localStorageUsername = localStorage.getItem("squeak-username");
@@ -115,6 +118,7 @@ function useResetPlayerStateUponPageLoad() {
     setConnectedToRoom,
     setResetPlayerStateUponPageLoad,
     setCardsBeingMovedProgrammatically,
+    setShowPreFirstDeckDrawPulse,
   ]);
 }
 

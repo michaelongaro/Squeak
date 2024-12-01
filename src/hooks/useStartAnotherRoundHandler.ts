@@ -12,6 +12,7 @@ function useStartAnotherRoundHandler() {
     setGameData,
     setShowScoreboard,
     setShowShufflingCountdown,
+    setShowPreFirstDeckDrawPulse,
   } = useRoomContext();
 
   const [dataFromBackend, setDataFromBackend] = useState<{
@@ -47,6 +48,8 @@ function useStartAnotherRoundHandler() {
             firstRound: false,
           });
         }
+
+        setShowPreFirstDeckDrawPulse(true);
       }, 200); // waiting for scoreboard dialog to close
     }
   }, [
@@ -56,6 +59,7 @@ function useStartAnotherRoundHandler() {
     setGameData,
     roomConfig.hostUserID,
     userID,
+    setShowPreFirstDeckDrawPulse,
   ]);
 }
 

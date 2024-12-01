@@ -281,6 +281,39 @@ body {
   }
 }
 
+/* just to signal to the player that they should (most likely) start off their
+   round by drawing from their deck. */
+@keyframes preFirstDrawPulse {
+
+  0%,
+  100% {
+    filter: none;
+  }
+
+  50% {
+    filter: drop-shadow(0px 0px 10px rgba(184, 184, 184, 1));
+  }
+}
+
+@media (min-height: 700px) and (min-width: 1000px) {
+  @keyframes preFirstDrawPulse {
+
+    0%,
+    100% {
+      filter: none;
+    }
+
+    50% {
+      filter: drop-shadow(0px 0px 15px rgba(184, 184, 184, 1));
+    }
+  }
+}
+
+.initDeckPulse {
+  animation: preFirstDrawPulse 3s infinite;
+}
+
+
 @keyframes pulse {
 
   0%,

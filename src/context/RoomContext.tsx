@@ -84,6 +84,8 @@ interface IRoomContext {
     React.SetStateAction<IFriendsMetadata | undefined>
   >;
 
+  showPreFirstDeckDrawPulse: boolean;
+  setShowPreFirstDeckDrawPulse: React.Dispatch<React.SetStateAction<boolean>>;
   hoveredCell: [number, number] | null;
   setHoveredCell: React.Dispatch<React.SetStateAction<[number, number] | null>>;
   hoveredSqueakStack: number | null;
@@ -250,6 +252,8 @@ export function RoomProvider(props: { children: React.ReactNode }) {
 
   const [friendData, setFriendData] = useState<IFriendsMetadata | undefined>();
 
+  const [showPreFirstDeckDrawPulse, setShowPreFirstDeckDrawPulse] =
+    useState<boolean>(true);
   const [showSettingsSheet, setShowSettingsSheet] = useState<boolean>(false);
   const [hoveredCell, setHoveredCell] = useState<[number, number] | null>(null);
   const [hoveredSqueakStack, setHoveredSqueakStack] = useState<number | null>(
@@ -493,6 +497,8 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     setPlayerMetadata,
     gameData,
     setGameData,
+    showPreFirstDeckDrawPulse,
+    setShowPreFirstDeckDrawPulse,
     resetPlayerStateUponPageLoad,
     setResetPlayerStateUponPageLoad,
     currentPlayerIsDrawingFromDeck,

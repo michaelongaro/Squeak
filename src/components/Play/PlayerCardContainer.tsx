@@ -52,6 +52,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
     viewportLabel,
     showSettingsSheet,
     setShowSettingsSheet,
+    showPreFirstDeckDrawPulse,
   } = useRoomContext();
 
   const [hoveringOverDeck, setHoveringOverDeck] = useState(false);
@@ -378,8 +379,24 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
           </div>
 
           <div
-            className={`${classes.playerDeck} cardDimensions select-none ${currentPlayerIsDrawingFromDeck ? "z-[100]" : ""}`}
+            className={`${classes.playerDeck} cardDimensions relative select-none ${currentPlayerIsDrawingFromDeck ? "z-[100]" : ""}`}
           >
+            <AnimatePresence>
+              {showPreFirstDeckDrawPulse &&
+                gameData?.players[userID]?.hand.length === 0 &&
+                gameData?.players[userID]?.deck.length === 35 && (
+                  <motion.div
+                    key={`animated${userID}DeckPulse`}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.5, ease: "easeInOut" }}
+                    // fyi: wouldn't render drop-shadow unless a background color was set. seems to never actually be visible though thankfully
+                    className="initDeckPulse absolute left-0 top-0 z-0 size-full select-none rounded-md bg-darkGreen"
+                  ></motion.div>
+                )}
+            </AnimatePresence>
+
             <div
               id={`${userID}deck`}
               style={{

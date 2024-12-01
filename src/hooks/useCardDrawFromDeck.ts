@@ -33,6 +33,8 @@ function useCardDrawFromDeck({
     setCurrentPlayerIsDrawingFromDeck,
     fallbackPlayerIsDrawingFromDeckTimerIdRef,
     viewportLabel,
+    showPreFirstDeckDrawPulse,
+    setShowPreFirstDeckDrawPulse,
   } = useRoomContext();
 
   const [dataFromBackend, setDataFromBackend] = useState<IDrawFromDeck | null>(
@@ -107,6 +109,10 @@ function useCardDrawFromDeck({
             if (ownerID === userID) {
               setCurrentPlayerIsDrawingFromDeck(false);
               clearTimeout(fallbackPlayerIsDrawingFromDeckTimerIdRef.current);
+
+              if (showPreFirstDeckDrawPulse) {
+                setShowPreFirstDeckDrawPulse(false);
+              }
             }
 
             setGameData(gameData);
@@ -127,6 +133,8 @@ function useCardDrawFromDeck({
     fallbackPlayerIsDrawingFromDeckTimerIdRef,
     setCurrentPlayerIsDrawingFromDeck,
     viewportLabel,
+    showPreFirstDeckDrawPulse,
+    setShowPreFirstDeckDrawPulse,
   ]);
 }
 
