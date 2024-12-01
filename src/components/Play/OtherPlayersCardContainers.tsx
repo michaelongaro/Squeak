@@ -57,18 +57,17 @@ function OtherPlayersCardContainers({
   // the other player's cards on the screen
 
   useEffect(() => {
-    const updateOffsets = () => {
+    function updateOffsets() {
       const boardElement = document.getElementById("board");
       if (!boardElement) {
-        setTimeout(() => {
-          updateOffsets();
-        }, 250); // rough way to handle the fact that the board element might not be rendered yet
+        // recursively call function again until boardElement is rendered
+        updateOffsets();
         return;
       }
 
       const { top, left } = boardElement.getBoundingClientRect();
       setTopOffsetsFromBoard([top + 10, left + 10, left + 10, top + 10]);
-    };
+    }
 
     window.addEventListener("resize", updateOffsets);
 
