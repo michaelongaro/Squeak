@@ -271,6 +271,21 @@ function useCardDropApproved({
 
           if (playerID === userID) {
             setProposedCardBoxShadow(null);
+
+            // overkill, but was having occasional issues with green box shadow lingering
+            if (endID.includes("cell")) {
+              const parentCellID = endID.replace("cell", "parentCell");
+
+              setTimeout(() => {
+                const parentCell = document.getElementById(parentCellID);
+
+                if (parentCell) {
+                  parentCell.style.boxShadow = "none";
+                  // manually cause a reflow to ensure the browser processes the removal
+                  void parentCell.offsetWidth;
+                }
+              }, 150); // 150ms is the duration of the green box shadow animation
+            }
           }
         },
       });
