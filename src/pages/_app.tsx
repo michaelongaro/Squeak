@@ -35,6 +35,33 @@ function App({ Component, pageProps }: ComponentWithPageLayout) {
     setLookBehindIsSupported(supported);
   }, []);
 
+  // against accessibility, however accidental zooming on mobile was a potential problem, and reverting
+  // screen to regular zoom level seemed to cause <OtherPlayerCardContainers /> to be rendered incorrectly
+  useEffect(() => {
+    function handleGestureStartAndChange(e: Event) {
+      e.preventDefault();
+      document.body.style.zoom = "0.99";
+    }
+
+    function handleGestureEnd(e: Event) {
+      e.preventDefault();
+      document.body.style.zoom = "1";
+    }
+
+    document.addEventListener("gesturestart", handleGestureStartAndChange);
+    document.addEventListener("gesturechange", handleGestureStartAndChange);
+    document.addEventListener("gestureend", handleGestureEnd);
+
+    return () => {
+      document.removeEventListener("gesturestart", handleGestureStartAndChange);
+      document.removeEventListener(
+        "gesturechange",
+        handleGestureStartAndChange,
+      );
+      document.removeEventListener("gestureend", handleGestureEnd);
+    };
+  });
+
   if (!lookbackBehindIsSupported) {
     return <UnsupportedBrowserDetected />;
   }
