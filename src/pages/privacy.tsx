@@ -3,6 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Button } from "~/components/ui/button";
 import logo from "public/logo/squeakLogo.svg";
+import { IoHome } from "react-icons/io5";
 
 function Privacy() {
   return (
@@ -14,15 +15,22 @@ function Privacy() {
       transition={{ duration: 0.5 }}
       className="baseVertFlex min-h-[100dvh] !justify-start px-2 pb-6 tablet:pt-6"
     >
-      <div className="baseVertFlex mx-auto my-16 max-w-80 !items-start rounded-md border-2 border-white bg-gradient-to-br from-green-800 to-green-850 p-6 text-white tablet:max-w-2xl">
-        <Link href="/" className="self-center">
-          <Image
-            src={logo}
-            alt="Squeak logo"
-            priority={true}
-            className="h-48 w-48 !self-center"
-          />
-        </Link>
+      <div className="baseVertFlex relative mx-auto my-16 max-w-80 !items-start rounded-md border-2 border-white bg-gradient-to-br from-green-800 to-green-850 p-6 text-white tablet:max-w-2xl">
+        <Button
+          variant={"secondary"}
+          className="baseFlex absolute left-0 top-0 size-10"
+        >
+          <Link href="/">
+            <IoHome size={"1.25rem"} />
+          </Link>
+        </Button>
+
+        <Image
+          src={logo}
+          alt="Squeak logo"
+          priority={true}
+          className="size-48 !self-center sm:size-64"
+        />
 
         <h1 className="mb-6 text-xl font-bold tablet:text-2xl">
           Privacy Policy
