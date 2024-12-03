@@ -22,6 +22,11 @@
   syntax: "<percentage>";
 }
 
+/* mobile workaround to prevent user accidentally selecting something while in game */
+.noUserSelect * {
+  user-select: none;
+}
+
 .countdownTimerToast {
   background: conic-gradient(
     transparent var(--cooldown-percent),

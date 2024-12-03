@@ -73,9 +73,9 @@ function GeneralLayout({ children }: GeneralLayout) {
   // selecting the entire page while playing a game, so this prevents that
   useEffect(() => {
     if (asPath.includes("/game")) {
-      document.body.style.userSelect = "none";
+      document.documentElement.classList.add("noUserSelect");
     } else {
-      document.body.style.userSelect = "auto";
+      document.documentElement.classList.remove("noUserSelect");
     }
   }, [asPath]);
 
