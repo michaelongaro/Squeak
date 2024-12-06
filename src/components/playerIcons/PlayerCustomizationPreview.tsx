@@ -45,9 +45,6 @@ function PlayerCustomizationPreview({
         />
         {renderDescriptionText && (
           <p
-            style={{
-              paddingTop: forSheet ? "0" : "0.85rem",
-            }}
             className={`${useDarkerFont ? "text-lg font-semibold text-darkGreen" : "text-lightGreen"}`}
           >
             Avatar

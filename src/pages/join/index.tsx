@@ -337,7 +337,7 @@ function JoinRoom() {
           ) : (
             <div className="baseVertFlex gap-4">
               <div className="baseFlex gap-12">
-                <div className="baseVertFlex">
+                <div className="baseVertFlex gap-[15px]">
                   <PlayerCustomizationPreview
                     renderedView={"avatar"}
                     forCreateAndJoin
