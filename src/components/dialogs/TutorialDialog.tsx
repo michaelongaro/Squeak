@@ -31,7 +31,11 @@ function TutorialDialog({ setShowDialog }: ITutorialDialog) {
         <DialogDescription>Learn how to play Squeak</DialogDescription>
       </VisuallyHidden>
 
-      <div className="baseFlex sticky left-0 top-0 z-10 w-full rounded-t-md border-b border-white bg-gradient-to-br from-green-800 to-green-850 py-3 shadow-lg sm:py-4 tablet:max-w-4xl">
+      <div className="baseFlex sticky left-0 top-0 z-10 w-full rounded-t-md bg-gradient-to-br from-green-800 to-green-850 py-3 shadow-lg sm:py-4 tablet:max-w-4xl">
+        {/* FYI: had a regular bottom border implementation, however a Safari 18.2 caused the border to be
+        discolored/invisible... so this is the workaround */}
+        <div className="absolute bottom-0 left-0 h-[1px] w-full bg-white"></div>
+
         <div className="baseFlex gap-2 text-lg font-medium text-lightGreen lg:text-xl">
           <AiOutlineInfoCircle size={"1.5rem"} />
           How to play
