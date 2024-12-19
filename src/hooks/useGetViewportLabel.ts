@@ -18,7 +18,7 @@ function useGetViewportLabel() {
         viewportLabel = "mobileLarge";
       }
 
-      if (window.innerWidth >= 1000 && window.innerHeight >= 700) {
+      if (window.innerWidth >= 1024 && window.innerHeight >= 700) {
         viewportLabel = "tablet";
       }
 

@@ -392,7 +392,7 @@ function Scoreboard() {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
       >
-        <DialogContent className="w-[95%] rounded-lg border-2 border-lightGreen bg-gradient-to-br from-green-800 to-green-850 p-4 text-lightGreen shadow-md tablet:h-[75%] tablet:w-[75%]">
+        <DialogContent className="w-[95%] max-w-xl rounded-lg border-2 border-lightGreen bg-gradient-to-br from-green-800 to-green-850 p-4 text-lightGreen shadow-md">
           <VisuallyHidden>
             <DialogTitle>
               {scoreboardMetadata?.gameWinnerID ? "Game over!" : "Round over!"}
@@ -415,7 +415,7 @@ function Scoreboard() {
 
               {/* player totals */}
               <div
-                className={`baseVertFlex min-h-[${getDynamicMobileScoreboardTableHeight}px] w-full gap-1`}
+                className={`baseVertFlex min-h-[${getDynamicMobileScoreboardTableHeight()}px] w-full gap-1`}
               >
                 <div
                   style={{
@@ -423,7 +423,7 @@ function Scoreboard() {
                   }}
                   // order is -2 since player's "rankInRoom" value initializes at -1
                   // when the game starts
-                  className="order-[-2] grid w-full max-w-xl place-items-center"
+                  className="order-[-2] grid w-full max-w-md place-items-center"
                 >
                   <FaTrophy className="size-4 text-lightGreen" />
                   <div className="font-semibold">Player</div>
@@ -466,7 +466,7 @@ function Scoreboard() {
                           zIndex:
                             player.oldRanking !== player.newRanking ? 1 : 0,
                         }}
-                        className="relative grid w-full max-w-xl cursor-pointer place-items-center rounded-md transition-all"
+                        className="relative grid w-full max-w-md cursor-pointer place-items-center rounded-md transition-all"
                       >
                         <div className="baseFlex h-8 w-full items-center rounded-l-md">
                           {!showNewRankings && player.oldRanking === -1
@@ -495,7 +495,7 @@ function Scoreboard() {
                 </div>
               </div>
 
-              <div className="baseFlex h-full max-h-72 w-full max-w-xl">
+              <div className="baseFlex h-full max-h-72 w-full max-w-md">
                 <div
                   key={
                     scoreboardMetadata.playerRoundDetails[selectedPlayerID]
@@ -973,7 +973,7 @@ function Scoreboard() {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
     >
-      <DialogContent className="h-[95%] w-[95%] rounded-lg border-2 border-lightGreen bg-gradient-to-br from-green-800 to-green-850 p-4 text-lightGreen shadow-md tablet:h-auto tablet:w-[85%] desktop:w-[75%]">
+      <DialogContent className="h-[95%] w-[95%] rounded-lg border-2 border-lightGreen bg-gradient-to-br from-green-800 to-green-850 p-4 text-lightGreen shadow-md 2xl:w-[75%] tablet:h-auto">
         <VisuallyHidden>
           <DialogTitle>
             {scoreboardMetadata?.gameWinnerID ? "Game over!" : "Round over!"}
@@ -1058,7 +1058,7 @@ function Scoreboard() {
                         }}
                         className="baseVertFlex z-[3] w-full bg-black bg-opacity-30 p-2"
                       >
-                        <div className="align-center flex w-full justify-between px-4 text-lg leading-6 desktop:px-8">
+                        <div className="align-center flex w-full justify-between px-1 text-lg leading-6 2xl:px-4">
                           Cards played
                           <div className="baseFlex">
                             <div
@@ -1081,7 +1081,7 @@ function Scoreboard() {
                           </div>
                         </div>
 
-                        <div className="align-center flex w-full justify-between px-4 text-lg leading-6 desktop:px-8">
+                        <div className="align-center flex w-full justify-between px-1 text-lg leading-6 2xl:px-4">
                           Squeak
                           <div className="baseFlex">
                             <div
@@ -1104,7 +1104,7 @@ function Scoreboard() {
                           </div>
                         </div>
 
-                        <div className="align-center mt-1 flex w-full justify-between px-4 text-xl font-medium desktop:px-8">
+                        <div className="align-center mt-1 flex w-full justify-between px-1 text-xl font-medium 2xl:px-4">
                           Total
                           <AnimatedNumbers
                             value={

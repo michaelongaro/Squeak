@@ -308,7 +308,7 @@ body {
   }
 }
 
-@media (min-height: 700px) and (min-width: 1000px) {
+@media (min-height: 700px) and (min-width: 1024px) {
   @keyframes preFirstDrawPulse {
     0%,
     100% {

@@ -15,7 +15,7 @@ function Privacy() {
       transition={{ duration: 0.5 }}
       className="baseVertFlex min-h-[100dvh] !justify-start px-2 pb-6 tablet:pt-6"
     >
-      <div className="baseVertFlex relative mx-auto my-16 max-w-80 !items-start rounded-md border-2 border-white bg-gradient-to-br from-green-800 to-green-850 p-6 text-white tablet:max-w-2xl">
+      <div className="baseVertFlex relative mx-auto my-16 max-w-80 !items-start rounded-md border-2 border-white bg-gradient-to-br from-green-800 to-green-850 p-6 text-white transition-all md:max-w-2xl">
         <Button
           variant={"secondary"}
           className="baseFlex absolute left-0 top-0 size-10"
@@ -177,7 +177,7 @@ function Privacy() {
           please contact us:
         </p>
         <div className="baseVertFlex mb-4 w-full !items-start">
-          <div className="baseVertFlex !items-start gap-2 sm:!flex-row">
+          <div className="baseVertFlex !items-start gap-2 md:!flex-row">
             Email address:
             <Button variant="link" className="h-6 !px-1" asChild>
               <a href="mailto:michael.ongaro.dev@gmail.com">

@@ -95,7 +95,7 @@
   }
 }
 
-@media (min-height: 700px) and (min-width: 1000px) {
+@media (min-height: 700px) and (min-width: 1024px) {
   .fullBoardGrid {
     gap: 1rem;
     padding: 1rem 0.75rem;

@@ -17,10 +17,9 @@ function useResponsiveCardDimensions() {
 
       // tablet dimensions
       if (
-        window.innerWidth >= 1000 &&
+        window.innerWidth >= 1024 &&
         window.innerWidth < 1500 &&
-        window.innerHeight >= 700 &&
-        window.innerHeight < 800
+        window.innerHeight >= 700
       ) {
         width = 57;
         height = 74;

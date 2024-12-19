@@ -17,8 +17,7 @@
 }
 
 /* allowed to show avatars for other user's on left/top/right of board */
-@media (min-height: 700px) and (min-width: 1000px) {
-
+@media (min-height: 700px) and (min-width: 1024px) {
   .topInnerGridContainer,
   .leftInnerGridContainer,
   .rightInnerGridContainer {
@@ -27,9 +26,7 @@
   }
 }
 
-
 @media (min-height: 800px) and (min-width: 1500px) {
-
   .topInnerGridContainer,
   .leftInnerGridContainer,
   .rightInnerGridContainer {

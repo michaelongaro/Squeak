@@ -142,7 +142,7 @@ function TopRightControls() {
 
   useEffect(() => {
     if (
-      window.innerWidth <= 1000 &&
+      window.innerWidth <= 1024 &&
       voteType !== null &&
       showVotingOptionButtons
     ) {

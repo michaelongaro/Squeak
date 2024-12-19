@@ -26,7 +26,7 @@ const config = {
     extend: {
       screens: {
         mobileLarge: { raw: "(min-height: 667px)" },
-        tablet: { raw: "(min-height: 700px) and (min-width: 1000px)" },
+        tablet: { raw: "(min-height: 700px) and (min-width: 1024px)" },
         desktop: { raw: "(min-height: 800px) and (min-width: 1500px)" },
       },
       colors: {

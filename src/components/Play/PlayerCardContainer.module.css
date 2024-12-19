@@ -30,8 +30,7 @@
     ". . . . playerDeck ";
 }
 
-@media (min-width: 1000px) {
-
+@media (min-width: 1024px) {
   .gridContainer,
   .reversedGridContainer {
     height: 210px;
@@ -56,14 +55,12 @@
 }
 
 @media (min-height: 800px) and (min-width: 1500px) {
-
   .gridContainer,
   .reversedGridContainer {
     height: 210px;
     width: auto;
     gap: 1rem;
   }
-
 }
 
 .squeakDeck {
