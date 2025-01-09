@@ -16,7 +16,7 @@ function AnimatedCardContainer({
   playerID,
   staggerCards = true,
 }: IAnimatedCardContainer) {
-  const { playerMetadata, deckVariantIndex } = useRoomContext();
+  const { playerMetadata, deckVariant } = useRoomContext();
 
   return (
     <div
@@ -35,7 +35,7 @@ function AnimatedCardContainer({
           playerID={playerID}
           index={index}
           totalCardsPlayed={cards.length}
-          deckVariantIndex={deckVariantIndex}
+          deckVariant={deckVariant}
           staggerCards={staggerCards}
         />
       ))}
@@ -51,7 +51,7 @@ interface IAnimatedCard {
   index: number;
   playerID: string;
   totalCardsPlayed: number;
-  deckVariantIndex: number;
+  deckVariant: string;
   staggerCards: boolean;
 }
 
@@ -60,7 +60,7 @@ function AnimatedCard({
   index,
   playerID,
   totalCardsPlayed,
-  deckVariantIndex,
+  deckVariant,
   staggerCards,
 }: IAnimatedCard) {
   const controls = useAnimation();
@@ -125,7 +125,7 @@ function AnimatedCard({
       <StaticCard
         suit={card.suit}
         value={card.value}
-        deckVariantIndex={deckVariantIndex}
+        deckVariant={deckVariant}
       />
     </motion.div>
   );

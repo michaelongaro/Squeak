@@ -114,7 +114,7 @@ function Card({
     setProposedCardBoxShadow,
     setHeldSqueakStackLocation,
     setCardsBeingMovedProgrammatically,
-    deckVariantIndex,
+    deckVariant,
     setHoldingADeckCard,
     setHoldingASqueakCard,
     setSqueakStackDragAlterations,
@@ -947,14 +947,14 @@ function Card({
               : "scale(1)",
           transition: "transform 375ms ease-out",
         }}
-        className="cardDimensions pointer-events-none relative left-0 top-0 select-none rounded-[0.2rem]"
+        className="cardDimensions pointer-events-none relative left-0 top-0 select-none rounded-[0.3rem]"
         src={
           showCardBack && !forceShowCardFront
             ? (cardAssets["cardBack"] as StaticImageData).src
             : getCardAssetPath({
                 suit: suit ?? "C",
                 value: value ?? "A",
-                deckVariantIndex,
+                deckVariant,
               }).src
         }
         alt={

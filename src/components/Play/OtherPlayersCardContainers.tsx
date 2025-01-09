@@ -327,7 +327,7 @@ function OtherPlayersCardContainers({
                             }
                             suit={"S"} // placeholder
                             value={"2"} // placeholder
-                            deckVariantIndex={0} // placeholder
+                            deckVariant={"Simple"} // placeholder
                           />
                         </div>
                       </div>
@@ -617,7 +617,7 @@ function OtherPlayersCardContainers({
                             }
                             suit={"S"} // placeholder
                             value={"2"} // placeholder
-                            deckVariantIndex={0} // placeholder
+                            deckVariant={"Simple"} // placeholder
                           />
                         </div>
                       </>
@@ -641,7 +641,7 @@ function OtherPlayersCardContainers({
                           }
                           suit={"S"} // placeholder
                           value={"2"} // placeholder
-                          deckVariantIndex={0} // placeholder
+                          deckVariant={"Simple"} // placeholder
                         />
                       </div>
                     </motion.div>

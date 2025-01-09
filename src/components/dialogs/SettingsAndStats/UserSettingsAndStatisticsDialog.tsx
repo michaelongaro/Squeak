@@ -25,7 +25,7 @@ import {
 import { Button } from "~/components/ui/button";
 
 export interface ILocalPlayerSettings {
-  deckVariantIndex: number;
+  deckVariant: string;
   squeakPileOnLeft: boolean;
   desktopNotifications: boolean;
 }
@@ -94,7 +94,7 @@ function UserSettingsAndStatsDialog({
       } as IRoomPlayer,
     });
     setLocalPlayerSettings({
-      deckVariantIndex: user.deckVariantIndex,
+      deckVariant: user.deckVariant,
       squeakPileOnLeft: user.squeakPileOnLeft,
       desktopNotifications: user.desktopNotifications,
     });
@@ -109,7 +109,7 @@ function UserSettingsAndStatsDialog({
       localPlayerMetadata[userID]?.avatarPath !== user.avatarPath ||
       localPlayerMetadata[userID]?.color !== user.color ||
       localPlayerMetadata[userID]?.deckHueRotation !== user.deckHueRotation ||
-      localPlayerSettings.deckVariantIndex !== user.deckVariantIndex ||
+      localPlayerSettings.deckVariant !== user.deckVariant ||
       localPlayerSettings.squeakPileOnLeft !== user.squeakPileOnLeft ||
       localPlayerSettings.desktopNotifications !== user.desktopNotifications
     ) {
@@ -131,7 +131,7 @@ function UserSettingsAndStatsDialog({
       avatarPath: updatedMetadata.avatarPath,
       color: updatedMetadata.color,
       deckHueRotation: updatedMetadata.deckHueRotation,
-      deckVariantIndex: localPlayerSettings.deckVariantIndex,
+      deckVariant: localPlayerSettings.deckVariant,
       squeakPileOnLeft: localPlayerSettings.squeakPileOnLeft,
       desktopNotifications: localPlayerSettings.desktopNotifications,
     });

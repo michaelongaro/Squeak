@@ -24,8 +24,7 @@ function PlayerCustomizationPreview({
 }: IPlayerCustomizationPicker) {
   const userID = useUserIDContext();
 
-  const { playerMetadata: storePlayerMetadata, deckVariantIndex } =
-    useRoomContext();
+  const { playerMetadata: storePlayerMetadata, deckVariant } = useRoomContext();
 
   const playerMetadata = localPlayerMetadata ?? storePlayerMetadata;
 
@@ -58,7 +57,7 @@ function PlayerCustomizationPreview({
         <StaticCard
           suit={"C"}
           value={"8"}
-          deckVariantIndex={deckVariantIndex}
+          deckVariant={deckVariant}
           showCardBack={true}
           hueRotation={playerMetadata[userID]?.deckHueRotation || 0}
           width={48}
@@ -85,7 +84,7 @@ function PlayerCustomizationPreview({
       <StaticCard
         suit={"C"}
         value={"8"}
-        deckVariantIndex={deckVariantIndex}
+        deckVariant={deckVariant}
         showCardBack={false}
         width={48}
         height={64}

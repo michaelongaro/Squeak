@@ -1,168 +1,226 @@
 import cardBack from "../../public/cards/cardBack.webp";
-import C2 from "../../public/cards/2C.webp";
-import D2 from "../../public/cards/2D.webp";
-import H2 from "../../public/cards/2H.webp";
-import S2 from "../../public/cards/2S.webp";
-import C3 from "../../public/cards/3C.webp";
-import D3 from "../../public/cards/3D.webp";
-import H3 from "../../public/cards/3H.webp";
-import S3 from "../../public/cards/3S.webp";
-import C4 from "../../public/cards/4C.webp";
-import D4 from "../../public/cards/4D.webp";
-import H4 from "../../public/cards/4H.webp";
-import S4 from "../../public/cards/4S.webp";
-import C5 from "../../public/cards/5C.webp";
-import D5 from "../../public/cards/5D.webp";
-import H5 from "../../public/cards/5H.webp";
-import S5 from "../../public/cards/5S.webp";
-import C6 from "../../public/cards/6C.webp";
-import D6 from "../../public/cards/6D.webp";
-import H6 from "../../public/cards/6H.webp";
-import S6 from "../../public/cards/6S.webp";
-import C7 from "../../public/cards/7C.webp";
-import D7 from "../../public/cards/7D.webp";
-import H7 from "../../public/cards/7H.webp";
-import S7 from "../../public/cards/7S.webp";
-import C8 from "../../public/cards/8C.webp";
-import D8 from "../../public/cards/8D.webp";
-import H8 from "../../public/cards/8H.webp";
-import S8 from "../../public/cards/8S.webp";
-import C9 from "../../public/cards/9C.webp";
-import D9 from "../../public/cards/9D.webp";
-import H9 from "../../public/cards/9H.webp";
-import S9 from "../../public/cards/9S.webp";
-import C10 from "../../public/cards/10C.webp";
-import D10 from "../../public/cards/10D.webp";
-import H10 from "../../public/cards/10H.webp";
-import S10 from "../../public/cards/10S.webp";
-import CA from "../../public/cards/AC.webp";
-import DA from "../../public/cards/AD.webp";
-import HA from "../../public/cards/AH.webp";
-import SA from "../../public/cards/AS.webp";
-import CJ from "../../public/cards/JC.webp";
-import DJ from "../../public/cards/JD.webp";
-import HJ from "../../public/cards/JH.webp";
-import SJ from "../../public/cards/JS.webp";
-import CQ from "../../public/cards/QC.webp";
-import DQ from "../../public/cards/QD.webp";
-import HQ from "../../public/cards/QH.webp";
-import SQ from "../../public/cards/QS.webp";
-import CK from "../../public/cards/KC.webp";
-import DK from "../../public/cards/KD.webp";
-import HK from "../../public/cards/KH.webp";
-import SK from "../../public/cards/KS.webp";
+////////////////////////////////////////////////////////////////
+import C2Standard from "../../public/cards/Standard/2C.webp";
+import D2Standard from "../../public/cards/Standard/2D.webp";
+import H2Standard from "../../public/cards/Standard/2H.webp";
+import S2Standard from "../../public/cards/Standard/2S.webp";
+import C3Standard from "../../public/cards/Standard/3C.webp";
+import D3Standard from "../../public/cards/Standard/3D.webp";
+import H3Standard from "../../public/cards/Standard/3H.webp";
+import S3Standard from "../../public/cards/Standard/3S.webp";
+import C4Standard from "../../public/cards/Standard/4C.webp";
+import D4Standard from "../../public/cards/Standard/4D.webp";
+import H4Standard from "../../public/cards/Standard/4H.webp";
+import S4Standard from "../../public/cards/Standard/4S.webp";
+import C5Standard from "../../public/cards/Standard/5C.webp";
+import D5Standard from "../../public/cards/Standard/5D.webp";
+import H5Standard from "../../public/cards/Standard/5H.webp";
+import S5Standard from "../../public/cards/Standard/5S.webp";
+import C6Standard from "../../public/cards/Standard/6C.webp";
+import D6Standard from "../../public/cards/Standard/6D.webp";
+import H6Standard from "../../public/cards/Standard/6H.webp";
+import S6Standard from "../../public/cards/Standard/6S.webp";
+import C7Standard from "../../public/cards/Standard/7C.webp";
+import D7Standard from "../../public/cards/Standard/7D.webp";
+import H7Standard from "../../public/cards/Standard/7H.webp";
+import S7Standard from "../../public/cards/Standard/7S.webp";
+import C8Standard from "../../public/cards/Standard/8C.webp";
+import D8Standard from "../../public/cards/Standard/8D.webp";
+import H8Standard from "../../public/cards/Standard/8H.webp";
+import S8Standard from "../../public/cards/Standard/8S.webp";
+import C9Standard from "../../public/cards/Standard/9C.webp";
+import D9Standard from "../../public/cards/Standard/9D.webp";
+import H9Standard from "../../public/cards/Standard/9H.webp";
+import S9Standard from "../../public/cards/Standard/9S.webp";
+import C10Standard from "../../public/cards/Standard/10C.webp";
+import D10Standard from "../../public/cards/Standard/10D.webp";
+import H10Standard from "../../public/cards/Standard/10H.webp";
+import S10Standard from "../../public/cards/Standard/10S.webp";
+import CAStandard from "../../public/cards/Standard/AC.webp";
+import DAStandard from "../../public/cards/Standard/AD.webp";
+import HAStandard from "../../public/cards/Standard/AH.webp";
+import SAStandard from "../../public/cards/Standard/AS.webp";
+import CJStandard from "../../public/cards/Standard/JC.webp";
+import DJStandard from "../../public/cards/Standard/JD.webp";
+import HJStandard from "../../public/cards/Standard/JH.webp";
+import SJStandard from "../../public/cards/Standard/JS.webp";
+import CQStandard from "../../public/cards/Standard/QC.webp";
+import DQStandard from "../../public/cards/Standard/QD.webp";
+import HQStandard from "../../public/cards/Standard/QH.webp";
+import SQStandard from "../../public/cards/Standard/QS.webp";
+import CKStandard from "../../public/cards/Standard/KC.webp";
+import DKStandard from "../../public/cards/Standard/KD.webp";
+import HKStandard from "../../public/cards/Standard/KH.webp";
+import SKStandard from "../../public/cards/Standard/KS.webp";
+/////////////////////////////////////////////////////////////
+import C2Simple from "../../public/cards/Simple/2C.webp";
+import D2Simple from "../../public/cards/Simple/2D.webp";
+import H2Simple from "../../public/cards/Simple/2H.webp";
+import S2Simple from "../../public/cards/Simple/2S.webp";
+import C3Simple from "../../public/cards/Simple/3C.webp";
+import D3Simple from "../../public/cards/Simple/3D.webp";
+import H3Simple from "../../public/cards/Simple/3H.webp";
+import S3Simple from "../../public/cards/Simple/3S.webp";
+import C4Simple from "../../public/cards/Simple/4C.webp";
+import D4Simple from "../../public/cards/Simple/4D.webp";
+import H4Simple from "../../public/cards/Simple/4H.webp";
+import S4Simple from "../../public/cards/Simple/4S.webp";
+import C5Simple from "../../public/cards/Simple/5C.webp";
+import D5Simple from "../../public/cards/Simple/5D.webp";
+import H5Simple from "../../public/cards/Simple/5H.webp";
+import S5Simple from "../../public/cards/Simple/5S.webp";
+import C6Simple from "../../public/cards/Simple/6C.webp";
+import D6Simple from "../../public/cards/Simple/6D.webp";
+import H6Simple from "../../public/cards/Simple/6H.webp";
+import S6Simple from "../../public/cards/Simple/6S.webp";
+import C7Simple from "../../public/cards/Simple/7C.webp";
+import D7Simple from "../../public/cards/Simple/7D.webp";
+import H7Simple from "../../public/cards/Simple/7H.webp";
+import S7Simple from "../../public/cards/Simple/7S.webp";
+import C8Simple from "../../public/cards/Simple/8C.webp";
+import D8Simple from "../../public/cards/Simple/8D.webp";
+import H8Simple from "../../public/cards/Simple/8H.webp";
+import S8Simple from "../../public/cards/Simple/8S.webp";
+import C9Simple from "../../public/cards/Simple/9C.webp";
+import D9Simple from "../../public/cards/Simple/9D.webp";
+import H9Simple from "../../public/cards/Simple/9H.webp";
+import S9Simple from "../../public/cards/Simple/9S.webp";
+import C10Simple from "../../public/cards/Simple/10C.webp";
+import D10Simple from "../../public/cards/Simple/10D.webp";
+import H10Simple from "../../public/cards/Simple/10H.webp";
+import S10Simple from "../../public/cards/Simple/10S.webp";
+import CASimple from "../../public/cards/Simple/AC.webp";
+import DASimple from "../../public/cards/Simple/AD.webp";
+import HASimple from "../../public/cards/Simple/AH.webp";
+import SASimple from "../../public/cards/Simple/AS.webp";
+import CJSimple from "../../public/cards/Simple/JC.webp";
+import DJSimple from "../../public/cards/Simple/JD.webp";
+import HJSimple from "../../public/cards/Simple/JH.webp";
+import SJSimple from "../../public/cards/Simple/JS.webp";
+import CQSimple from "../../public/cards/Simple/QC.webp";
+import DQSimple from "../../public/cards/Simple/QD.webp";
+import HQSimple from "../../public/cards/Simple/QH.webp";
+import SQSimple from "../../public/cards/Simple/QS.webp";
+import CKSimple from "../../public/cards/Simple/KC.webp";
+import DKSimple from "../../public/cards/Simple/KD.webp";
+import HKSimple from "../../public/cards/Simple/KH.webp";
+import SKSimple from "../../public/cards/Simple/KS.webp";
+///////////////////////////////////////////////////////////////
+// import C2Antique from "../../public/cards/Antique/2C.webp";
+// import D2Antique from "../../public/cards/Antique/2D.webp";
+// import H2Antique from "../../public/cards/Antique/2H.webp";
+// import S2Antique from "../../public/cards/Antique/2S.webp";
+// import C3Antique from "../../public/cards/Antique/3C.webp";
+// import D3Antique from "../../public/cards/Antique/3D.webp";
+// import H3Antique from "../../public/cards/Antique/3H.webp";
+// import S3Antique from "../../public/cards/Antique/3S.webp";
+// import C4Antique from "../../public/cards/Antique/4C.webp";
+// import D4Antique from "../../public/cards/Antique/4D.webp";
+// import H4Antique from "../../public/cards/Antique/4H.webp";
+// import S4Antique from "../../public/cards/Antique/4S.webp";
+// import C5Antique from "../../public/cards/Antique/5C.webp";
+// import D5Antique from "../../public/cards/Antique/5D.webp";
+// import H5Antique from "../../public/cards/Antique/5H.webp";
+// import S5Antique from "../../public/cards/Antique/5S.webp";
+// import C6Antique from "../../public/cards/Antique/6C.webp";
+// import D6Antique from "../../public/cards/Antique/6D.webp";
+// import H6Antique from "../../public/cards/Antique/6H.webp";
+// import S6Antique from "../../public/cards/Antique/6S.webp";
+// import C7Antique from "../../public/cards/Antique/7C.webp";
+// import D7Antique from "../../public/cards/Antique/7D.webp";
+// import H7Antique from "../../public/cards/Antique/7H.webp";
+// import S7Antique from "../../public/cards/Antique/7S.webp";
+// import C8Antique from "../../public/cards/Antique/8C.webp";
+// import D8Antique from "../../public/cards/Antique/8D.webp";
+// import H8Antique from "../../public/cards/Antique/8H.webp";
+// import S8Antique from "../../public/cards/Antique/8S.webp";
+// import C9Antique from "../../public/cards/Antique/9C.webp";
+// import D9Antique from "../../public/cards/Antique/9D.webp";
+// import H9Antique from "../../public/cards/Antique/9H.webp";
+// import S9Antique from "../../public/cards/Antique/9S.webp";
+// import C10Antique from "../../public/cards/Antique/10C.webp";
+// import D10Antique from "../../public/cards/Antique/10D.webp";
+// import H10Antique from "../../public/cards/Antique/10H.webp";
+// import S10Antique from "../../public/cards/Antique/10S.webp";
+// import CAAntique from "../../public/cards/Antique/AC.webp";
+// import DAAntique from "../../public/cards/Antique/AD.webp";
+// import HAAntique from "../../public/cards/Antique/AH.webp";
+// import SAAntique from "../../public/cards/Antique/AS.webp";
+// import CJAntique from "../../public/cards/Antique/JC.webp";
+// import DJAntique from "../../public/cards/Antique/JD.webp";
+// import HJAntique from "../../public/cards/Antique/JH.webp";
+// import SJAntique from "../../public/cards/Antique/JS.webp";
+// import CQAntique from "../../public/cards/Antique/QC.webp";
+// import DQAntique from "../../public/cards/Antique/QD.webp";
+// import HQAntique from "../../public/cards/Antique/QH.webp";
+// import SQAntique from "../../public/cards/Antique/QS.webp";
+// import CKAntique from "../../public/cards/Antique/KC.webp";
+// import DKAntique from "../../public/cards/Antique/KD.webp";
+// import HKAntique from "../../public/cards/Antique/KH.webp";
+// import SKAntique from "../../public/cards/Antique/KS.webp";
+//////////////////////////////////////////////////////////
 import squeakBuzzerBase from "../../public/buzzer/baseplate.png";
 import squeakBuzzer from "../../public/buzzer/buzzerButton.png";
-import C2Simple from "../../public/cards/2CSimple.webp";
-import D2Simple from "../../public/cards/2DSimple.webp";
-import H2Simple from "../../public/cards/2HSimple.webp";
-import S2Simple from "../../public/cards/2SSimple.webp";
-import C3Simple from "../../public/cards/3CSimple.webp";
-import D3Simple from "../../public/cards/3DSimple.webp";
-import H3Simple from "../../public/cards/3HSimple.webp";
-import S3Simple from "../../public/cards/3SSimple.webp";
-import C4Simple from "../../public/cards/4CSimple.webp";
-import D4Simple from "../../public/cards/4DSimple.webp";
-import H4Simple from "../../public/cards/4HSimple.webp";
-import S4Simple from "../../public/cards/4SSimple.webp";
-import C5Simple from "../../public/cards/5CSimple.webp";
-import D5Simple from "../../public/cards/5DSimple.webp";
-import H5Simple from "../../public/cards/5HSimple.webp";
-import S5Simple from "../../public/cards/5SSimple.webp";
-import C6Simple from "../../public/cards/6CSimple.webp";
-import D6Simple from "../../public/cards/6DSimple.webp";
-import H6Simple from "../../public/cards/6HSimple.webp";
-import S6Simple from "../../public/cards/6SSimple.webp";
-import C7Simple from "../../public/cards/7CSimple.webp";
-import D7Simple from "../../public/cards/7DSimple.webp";
-import H7Simple from "../../public/cards/7HSimple.webp";
-import S7Simple from "../../public/cards/7SSimple.webp";
-import C8Simple from "../../public/cards/8CSimple.webp";
-import D8Simple from "../../public/cards/8DSimple.webp";
-import H8Simple from "../../public/cards/8HSimple.webp";
-import S8Simple from "../../public/cards/8SSimple.webp";
-import C9Simple from "../../public/cards/9CSimple.webp";
-import D9Simple from "../../public/cards/9DSimple.webp";
-import H9Simple from "../../public/cards/9HSimple.webp";
-import S9Simple from "../../public/cards/9SSimple.webp";
-import C10Simple from "../../public/cards/10CSimple.webp";
-import D10Simple from "../../public/cards/10DSimple.webp";
-import H10Simple from "../../public/cards/10HSimple.webp";
-import S10Simple from "../../public/cards/10SSimple.webp";
-import CASimple from "../../public/cards/ACSimple.webp";
-import DASimple from "../../public/cards/ADSimple.webp";
-import HASimple from "../../public/cards/AHSimple.webp";
-import SASimple from "../../public/cards/ASSimple.webp";
-import CJSimple from "../../public/cards/JCSimple.webp";
-import DJSimple from "../../public/cards/JDSimple.webp";
-import HJSimple from "../../public/cards/JHSimple.webp";
-import SJSimple from "../../public/cards/JSSimple.webp";
-import CQSimple from "../../public/cards/QCSimple.webp";
-import DQSimple from "../../public/cards/QDSimple.webp";
-import HQSimple from "../../public/cards/QHSimple.webp";
-import SQSimple from "../../public/cards/QSSimple.webp";
-import CKSimple from "../../public/cards/KCSimple.webp";
-import DKSimple from "../../public/cards/KDSimple.webp";
-import HKSimple from "../../public/cards/KHSimple.webp";
-import SKSimple from "../../public/cards/KSSimple.webp";
 import { type StaticImageData } from "next/image";
 
 export const cardAssets: {
   [key: string]: StaticImageData;
 } = {
   cardBack: cardBack,
-  C2: C2,
-  D2: D2,
-  H2: H2,
-  S2: S2,
-  C3: C3,
-  D3: D3,
-  H3: H3,
-  S3: S3,
-  C4: C4,
-  D4: D4,
-  H4: H4,
-  S4: S4,
-  C5: C5,
-  D5: D5,
-  H5: H5,
-  S5: S5,
-  C6: C6,
-  D6: D6,
-  H6: H6,
-  S6: S6,
-  C7: C7,
-  D7: D7,
-  H7: H7,
-  S7: S7,
-  C8: C8,
-  D8: D8,
-  H8: H8,
-  S8: S8,
-  C9: C9,
-  D9: D9,
-  H9: H9,
-  S9: S9,
-  C10: C10,
-  D10: D10,
-  H10: H10,
-  S10: S10,
-  CA: CA,
-  DA: DA,
-  HA: HA,
-  SA: SA,
-  CJ: CJ,
-  DJ: DJ,
-  HJ: HJ,
-  SJ: SJ,
-  CQ: CQ,
-  DQ: DQ,
-  HQ: HQ,
-  SQ: SQ,
-  CK: CK,
-  DK: DK,
-  HK: HK,
-  SK: SK,
+  /////////////////////////
+  C2Standard: C2Standard,
+  D2Standard: D2Standard,
+  H2Standard: H2Standard,
+  S2Standard: S2Standard,
+  C3Standard: C3Standard,
+  D3Standard: D3Standard,
+  H3Standard: H3Standard,
+  S3Standard: S3Standard,
+  C4Standard: C4Standard,
+  D4Standard: D4Standard,
+  H4Standard: H4Standard,
+  S4Standard: S4Standard,
+  C5Standard: C5Standard,
+  D5Standard: D5Standard,
+  H5Standard: H5Standard,
+  S5Standard: S5Standard,
+  C6Standard: C6Standard,
+  D6Standard: D6Standard,
+  H6Standard: H6Standard,
+  S6Standard: S6Standard,
+  C7Standard: C7Standard,
+  D7Standard: D7Standard,
+  H7Standard: H7Standard,
+  S7Standard: S7Standard,
+  C8Standard: C8Standard,
+  D8Standard: D8Standard,
+  H8Standard: H8Standard,
+  S8Standard: S8Standard,
+  C9Standard: C9Standard,
+  D9Standard: D9Standard,
+  H9Standard: H9Standard,
+  S9Standard: S9Standard,
+  C10Standard: C10Standard,
+  D10Standard: D10Standard,
+  H10Standard: H10Standard,
+  S10Standard: S10Standard,
+  CAStandard: CAStandard,
+  DAStandard: DAStandard,
+  HAStandard: HAStandard,
+  SAStandard: SAStandard,
+  CJStandard: CJStandard,
+  DJStandard: DJStandard,
+  HJStandard: HJStandard,
+  SJStandard: SJStandard,
+  CQStandard: CQStandard,
+  DQStandard: DQStandard,
+  HQStandard: HQStandard,
+  SQStandard: SQStandard,
+  CKStandard: CKStandard,
+  DKStandard: DKStandard,
+  HKStandard: HKStandard,
+  SKStandard: SKStandard,
+  /////////////////////////
   C2Simple: C2Simple,
   D2Simple: D2Simple,
   H2Simple: H2Simple,
@@ -215,6 +273,60 @@ export const cardAssets: {
   DKSimple: DKSimple,
   HKSimple: HKSimple,
   SKSimple: SKSimple,
+  /////////////////////////
+  // C2Antique: C2Simple,
+  // D2Antique: D2Simple,
+  // H2Antique: H2Simple,
+  // S2Antique: S2Antique,
+  // C3Antique: C3Simple,
+  // D3Antique: D3Simple,
+  // H3Antique: H3Simple,
+  // S3Antique: S3Antique,
+  // C4Antique: C4Simple,
+  // D4Antique: D4Simple,
+  // H4Antique: H4Simple,
+  // S4Antique: S4Antique,
+  // C5Antique: C5Simple,
+  // D5Antique: D5Simple,
+  // H5Antique: H5Simple,
+  // S5Antique: S5Antique,
+  // C6Antique: C6Simple,
+  // D6Antique: D6Simple,
+  // H6Antique: H6Simple,
+  // S6Antique: S6Antique,
+  // C7Antique: C7Simple,
+  // D7Antique: D7Simple,
+  // H7Antique: H7Simple,
+  // S7Antique: S7Antique,
+  // C8Antique: C8Simple,
+  // D8Antique: D8Simple,
+  // H8Antique: H8Simple,
+  // S8Antique: S8Antique,
+  // C9Antique: C9Simple,
+  // D9Antique: D9Simple,
+  // H9Antique: H9Simple,
+  // S9Antique: S9Antique,
+  // C10Antique: C10Simple,
+  // D10Antique: D10Simple,
+  // H10Antique: H10Simple,
+  // S10Antique: S10Antique,
+  // CAAntique: CASimple,
+  // DAAntique: DASimple,
+  // HAAntique: HASimple,
+  // SAAntique: SAAntique,
+  // CJAntique: CJSimple,
+  // DJAntique: DJSimple,
+  // HJAntique: HJSimple,
+  // SJAntique: SJAntique,
+  // CQAntique: CQSimple,
+  // DQAntique: DQSimple,
+  // HQAntique: HQSimple,
+  // SQAntique: SQAntique,
+  // CKAntique: CKSimple,
+  // DKAntique: DKSimple,
+  // HKAntique: HKSimple,
+  // SKAntique: SKAntique,
+  /////////////////////////
   squeakBuzzerBase: squeakBuzzerBase,
   squeakBuzzer: squeakBuzzer,
 };

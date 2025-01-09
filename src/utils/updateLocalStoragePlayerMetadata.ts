@@ -1,14 +1,14 @@
 interface IUpdateLocalStoragePlayerMetadata {
   avatarPath: string;
   color: string;
-  deckVariantIndex: number;
+  deckVariant: string;
   deckHueRotation: number;
 }
 
 export function updateLocalStoragePlayerMetadata({
   avatarPath,
   color,
-  deckVariantIndex,
+  deckVariant,
   deckHueRotation,
 }: IUpdateLocalStoragePlayerMetadata) {
   localStorage.setItem(
@@ -16,7 +16,7 @@ export function updateLocalStoragePlayerMetadata({
     JSON.stringify({
       avatarPath,
       color,
-      deckVariantIndex,
+      deckVariant,
       deckHueRotation,
     }),
   );

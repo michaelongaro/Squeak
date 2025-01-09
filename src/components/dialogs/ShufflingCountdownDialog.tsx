@@ -229,7 +229,7 @@ function AnimatedShufflingCard({
       <StaticCard
         value={"2"} // not important, placeholder vals
         suit={"S"} // not important, placeholder vals
-        deckVariantIndex={0} // not important, placeholder vals
+        deckVariant={"Simple"} // not important, placeholder vals
         showCardBack={true}
         hueRotation={hueRotation}
       />

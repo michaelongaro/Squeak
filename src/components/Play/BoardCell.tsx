@@ -7,10 +7,10 @@ interface IBoardCell {
   card: ICard | null;
   rowIdx: number;
   colIdx: number;
-  deckVariantIndex: number;
+  deckVariant: string;
 }
 
-function BoardCell({ card, rowIdx, colIdx, deckVariantIndex }: IBoardCell) {
+function BoardCell({ card, rowIdx, colIdx, deckVariant }: IBoardCell) {
   const plusOneBackgroundRef = useRef<HTMLDivElement | null>(null);
   const plusOneRef = useRef<HTMLDivElement | null>(null);
 
@@ -26,7 +26,7 @@ function BoardCell({ card, rowIdx, colIdx, deckVariantIndex }: IBoardCell) {
           <StaticCard
             suit={card.suit}
             value={card.value}
-            deckVariantIndex={deckVariantIndex}
+            deckVariant={deckVariant}
           />
         </motion.div>
       )}

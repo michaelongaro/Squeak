@@ -46,7 +46,7 @@ model User {
   avatarPath           String  @default("/avatars/rabbit.svg")
   color                String  @default("oklch(64.02% 0.171 15.38)") // defaults to red color
   deckHueRotation      Int     @default(232) // defaults to red color
-  deckVariantIndex     Int     @default(0)
+  deckVariant          String  @default("Simple")
   squeakPileOnLeft     Boolean @default(true)
   desktopNotifications Boolean @default(false)
   stats                Stats?

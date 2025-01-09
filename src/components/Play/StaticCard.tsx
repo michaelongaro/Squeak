@@ -3,7 +3,7 @@ import { getCardAssetPath } from "~/utils/getCardAssetPath";
 interface IStaticCard {
   suit: string;
   value: string;
-  deckVariantIndex: number;
+  deckVariant: string;
   showCardBack?: boolean;
   hueRotation?: number;
   width?: number;
@@ -13,7 +13,7 @@ interface IStaticCard {
 function StaticCard({
   suit,
   value,
-  deckVariantIndex,
+  deckVariant,
   showCardBack = false,
   hueRotation = 0,
   width,
@@ -35,7 +35,7 @@ function StaticCard({
         getCardAssetPath({
           suit,
           value,
-          deckVariantIndex,
+          deckVariant,
           showCardBack,
         }).src
       }

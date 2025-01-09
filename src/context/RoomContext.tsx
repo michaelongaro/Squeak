@@ -18,6 +18,7 @@ import { type IScoreboardMetadata } from "../pages/api/handlers/roundOverHandler
 import { useUserIDContext } from "./UserIDContext";
 import { api } from "~/utils/api";
 import useGetViewportLabel from "~/hooks/useGetViewportLabel";
+import { sanitizeLocalStorage } from "~/utils/sanitizeLocalStorage";
 
 export interface IHeldSqueakStackLocation {
   [playerID: string]: {
@@ -132,8 +133,8 @@ interface IRoomContext {
   setShowSettingsSheet: React.Dispatch<React.SetStateAction<boolean>>;
   currentVolume: number | null;
   setCurrentVolume: React.Dispatch<React.SetStateAction<number | null>>;
-  deckVariantIndex: number;
-  setDeckVariantIndex: React.Dispatch<React.SetStateAction<number>>;
+  deckVariant: string;
+  setDeckVariant: React.Dispatch<React.SetStateAction<string>>;
 
   cardsBeingMovedProgrammatically: ICardBeingMovedProgrammatically;
   setCardsBeingMovedProgrammatically: React.Dispatch<
@@ -220,7 +221,7 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     useState<AudioBuffer | null>(null);
 
   const [currentVolume, setCurrentVolume] = useState<number | null>(null);
-  const [deckVariantIndex, setDeckVariantIndex] = useState<number>(0);
+  const [deckVariant, setDeckVariant] = useState<string>("Simple");
 
   const [showSettingsDialog, setShowSettingsDialog] = useState<boolean>(false);
   const [showUserWasKickedDialog, setShowUserWasKickedDialog] =
@@ -404,6 +405,8 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     )
       return;
 
+    sanitizeLocalStorage();
+
     setPlayerMetadata((prev) => ({
       ...prev,
       [userID]: {
@@ -414,7 +417,7 @@ export function RoomProvider(props: { children: React.ReactNode }) {
       } as IRoomPlayer,
     }));
 
-    setDeckVariantIndex(user ? user.deckVariantIndex : 0);
+    setDeckVariant(user ? user.deckVariant : "Simple");
     setMirrorPlayerContainer(user ? !user.squeakPileOnLeft : false);
   }, [userID, user, playerMetadata, isLoaded, isSignedIn]);
 
@@ -428,6 +431,8 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     )
       return;
 
+    sanitizeLocalStorage();
+
     const localStorageUsername = localStorage.getItem("squeak-username");
     const localStoragePlayerMetadata = localStorage.getItem(
       "squeak-playerMetadata",
@@ -436,31 +441,21 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     let parsedPlayerMetadata: {
       avatarPath: string;
       color: string;
-      deckVariantIndex: number;
+      deckVariant: string;
       deckHueRotation: number;
     } = {
       avatarPath: "/avatars/rabbit.svg",
       color: "oklch(64.02% 0.171 15.38)",
-      deckVariantIndex: 0,
+      deckVariant: "Simple",
       deckHueRotation: 232,
     };
 
     if (localStoragePlayerMetadata) {
       parsedPlayerMetadata = JSON.parse(localStoragePlayerMetadata);
-    } else {
-      localStorage.setItem(
-        "squeak-playerMetadata",
-        JSON.stringify({
-          avatarPath: "/avatars/rabbit.svg",
-          color: "oklch(64.02% 0.171 15.38)",
-          deckVariantIndex: 0,
-          deckHueRotation: 232,
-        }),
-      );
     }
 
     // TODO: even if it isn't strictly used by backend, maybe include
-    // the deckVariantIndex in playerMetadata just to simplify things?
+    // the deckVariant in playerMetadata just to simplify things?
 
     setPlayerMetadata((prev) => ({
       ...prev,
@@ -472,7 +467,7 @@ export function RoomProvider(props: { children: React.ReactNode }) {
       } as IRoomPlayer,
     }));
 
-    setDeckVariantIndex(parsedPlayerMetadata.deckVariantIndex);
+    setDeckVariant(parsedPlayerMetadata.deckVariant);
     setMirrorPlayerContainer(false);
   }, [userID, user, playerMetadata, isLoaded, isSignedIn]);
 
@@ -540,8 +535,8 @@ export function RoomProvider(props: { children: React.ReactNode }) {
     setShowSettingsSheet,
     currentVolume,
     setCurrentVolume,
-    deckVariantIndex,
-    setDeckVariantIndex,
+    deckVariant,
+    setDeckVariant,
     cardsBeingMovedProgrammatically,
     setCardsBeingMovedProgrammatically,
     newInviteNotification,

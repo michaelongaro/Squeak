@@ -4,29 +4,19 @@ import { cardAssets } from "~/utils/cardAssetPaths";
 interface IGetCardAssetPath {
   suit: string;
   value: string;
-  deckVariantIndex: number;
-  manuallyShowSpecificCardFront?: number;
+  deckVariant: string;
   showCardBack?: boolean;
 }
 
 export function getCardAssetPath({
   suit,
   value,
-  deckVariantIndex,
-  manuallyShowSpecificCardFront,
+  deckVariant,
   showCardBack,
 }: IGetCardAssetPath): StaticImageData {
   if (showCardBack) {
     return cardAssets["cardBack"] as StaticImageData;
   }
 
-  if (manuallyShowSpecificCardFront !== undefined) {
-    return cardAssets[
-      `${suit}${value}${manuallyShowSpecificCardFront === 0 ? "Simple" : ""}`
-    ] as StaticImageData;
-  }
-
-  return cardAssets[
-    `${suit}${value}${deckVariantIndex === 0 ? "Simple" : ""}`
-  ] as StaticImageData;
+  return cardAssets[`${suit}${value}${deckVariant}`] as StaticImageData;
 }

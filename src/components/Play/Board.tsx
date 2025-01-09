@@ -18,7 +18,7 @@ function Board() {
     holdingASqueakCard,
     proposedCardBoxShadow,
     hoveredCell,
-    deckVariantIndex,
+    deckVariant,
   } = useRoomContext();
 
   useTrackHoverOverBoardCells();
@@ -79,7 +79,7 @@ function Board() {
                   rowIdx={rowIdx}
                   colIdx={colIdx}
                   card={cell}
-                  deckVariantIndex={deckVariantIndex}
+                  deckVariant={deckVariant}
                 />
               </div>
             </div>

@@ -543,7 +543,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                           }
                           suit={"S"} // placeholder
                           value={"2"} // placeholder
-                          deckVariantIndex={0} // placeholder
+                          deckVariant={"Simple"} // placeholder
                         />
                       </div>
                     </div>
@@ -575,7 +575,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                           }
                           suit={"S"} // placeholder
                           value={"2"} // placeholder
-                          deckVariantIndex={0} // placeholder
+                          deckVariant={"Simple"} // placeholder
                         />
                       </div>
                     </div>

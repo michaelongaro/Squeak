@@ -41,8 +41,8 @@ function PlayerCustomizationPicker({
     setPlayerMetadata: storeSetPlayerMetadata,
     connectedToRoom: storeConnectedToRoom,
     roomConfig,
-    deckVariantIndex,
-    setDeckVariantIndex,
+    deckVariant,
+    setDeckVariant,
   } = useRoomContext();
 
   // dynamic values depending on if parent is being used in <Settings /> or not
@@ -81,6 +81,7 @@ function PlayerCustomizationPicker({
   function isTooltipOptionAvailable(
     type: "avatar" | "front" | "back",
     index: number,
+    deckVariantValue?: string,
   ): boolean {
     if (type === "avatar") {
       return (
@@ -90,7 +91,7 @@ function PlayerCustomizationPicker({
         )
       );
     } else if (type === "front") {
-      return deckVariantIndex !== index;
+      return deckVariant !== deckVariantValue;
     }
 
     return (
@@ -104,10 +105,11 @@ function PlayerCustomizationPicker({
   function calculateOutline(
     type: "avatar" | "front" | "back",
     index: number,
+    deckVariantValue?: string,
   ): string {
     if (
       (type === "avatar" && userAvatarIndex === index) ||
-      (type === "front" && deckVariantIndex === index) ||
+      (type === "front" && deckVariant === deckVariantValue) ||
       (type === "back" && userDeckIndex === index)
     ) {
       return "4px solid hsl(120deg 100% 18%)";
@@ -214,7 +216,7 @@ function PlayerCustomizationPicker({
             updateLocalStoragePlayerMetadata({
               avatarPath,
               color: playerMetadata[userID]?.color || "",
-              deckVariantIndex,
+              deckVariant,
               deckHueRotation: playerMetadata[userID]?.deckHueRotation || 0,
             });
 
@@ -257,17 +259,18 @@ function PlayerCustomizationPicker({
   }
 
   function renderCardFrontTooltip() {
-    const cardFrontIndicies = [0, 1];
+    // TODO: , "Antique"
+    const cardFrontVariants = ["Simple", "Standard"];
 
     return (
       <>
-        {cardFrontIndicies.map((index) => (
+        {cardFrontVariants.map((variant, index) => (
           <div
-            key={index}
+            key={variant}
             style={{
-              outline: calculateOutline("front", index),
-              cursor: deckVariantIndex !== index ? "pointer" : "auto",
-              pointerEvents: deckVariantIndex !== index ? "auto" : "none",
+              outline: calculateOutline("front", 0, variant),
+              cursor: deckVariant !== variant ? "pointer" : "auto",
+              pointerEvents: deckVariant !== variant ? "auto" : "none",
             }}
             className="relative shrink-0 rounded-sm outline-offset-4 transition-all"
             onPointerEnter={(e) => {
@@ -298,18 +301,18 @@ function PlayerCustomizationPicker({
               updateLocalStoragePlayerMetadata({
                 avatarPath: playerMetadata[userID]?.avatarPath || "",
                 color: playerMetadata[userID]?.color || "",
-                deckVariantIndex: index,
+                deckVariant: variant,
                 deckHueRotation: playerMetadata[userID]?.deckHueRotation || 0,
               });
 
-              setDeckVariantIndex(index);
+              setDeckVariant(variant);
 
               if (setLocalPlayerSettings === undefined) return;
 
               setLocalPlayerSettings((localPlayerSettings) => {
                 return {
                   ...localPlayerSettings,
-                  deckVariantIndex: index,
+                  deckVariant: variant,
                 };
               });
             }}
@@ -322,7 +325,7 @@ function PlayerCustomizationPicker({
               <StaticCard
                 suit={"C"}
                 value={"8"}
-                deckVariantIndex={index}
+                deckVariant={variant}
                 showCardBack={false}
                 width={64}
                 height={87}
@@ -393,7 +396,7 @@ function PlayerCustomizationPicker({
             updateLocalStoragePlayerMetadata({
               avatarPath: playerMetadata[userID]?.avatarPath || "",
               color,
-              deckVariantIndex,
+              deckVariant,
               deckHueRotation:
                 oklchToDeckHueRotations[
                   color as keyof typeof oklchToDeckHueRotations
@@ -425,7 +428,7 @@ function PlayerCustomizationPicker({
           <StaticCard
             suit={"C"}
             value={"8"}
-            deckVariantIndex={deckVariantIndex}
+            deckVariant={deckVariant}
             hueRotation={
               oklchToDeckHueRotations[
                 color as keyof typeof oklchToDeckHueRotations // seems hacky
@@ -462,7 +465,8 @@ function PlayerCustomizationPicker({
               ? "h-[18rem] w-[18rem] grid-cols-3 grid-rows-3 md:h-[20rem] md:w-[20rem]"
               : type === "back"
                 ? "h-[22rem] w-[22rem] grid-cols-3 grid-rows-3 gap-4 md:h-[18rem] md:w-[25rem] md:grid-cols-4 md:grid-rows-2 tablet:gap-0"
-                : "h-[10rem] w-[15rem] grid-cols-2 grid-rows-1"
+                : // TODO: "h-[10rem] w-[22rem] grid-cols-3 grid-rows-1"
+                  "h-[10rem] w-[15rem] grid-cols-2 grid-rows-1"
           } ${forSheet ? "bg-zinc-200" : "white"} grid place-items-center rounded-md p-4 transition-all`}
         >
           {renderTooltip()}

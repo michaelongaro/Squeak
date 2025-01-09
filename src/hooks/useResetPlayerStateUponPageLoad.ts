@@ -61,12 +61,12 @@ function useResetPlayerStateUponPageLoad() {
         let parsedPlayerMetadata: {
           avatarPath: string;
           color: string;
-          deckVariantIndex: number;
+          deckVariant: string;
           deckHueRotation: number;
         } = {
           avatarPath: "/avatars/rabbit.svg",
           color: "oklch(64.02% 0.171 15.38)",
-          deckVariantIndex: 0,
+          deckVariant: "Simple",
           deckHueRotation: 232,
         };
 
@@ -77,14 +77,14 @@ function useResetPlayerStateUponPageLoad() {
             "squeak-playerMetadata",
             JSON.stringify({
               avatarPath: "/avatars/rabbit.svg",
-              deckVariantIndex: 0,
+              deckVariant: "Simple",
               deckHueRotation: 232,
             }),
           );
         }
 
         // TODO: even if it isn't strictly used by backend, maybe include
-        // the deckVariantIndex in playerMetadata just to simplify things?
+        // the deckVariant in playerMetadata just to simplify things?
 
         setPlayerMetadata({
           [userID]: {
