@@ -416,8 +416,8 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                   ? cardsBeingMovedProgrammatically.deck.includes(userID) ||
                     gameData.players[userID]?.deck?.length > 35 // special case for drawing initial squeak stack cards
                     ? 150
-                    : "auto"
-                  : "auto", // otherwise default to auto so regular cards fly above this whole deck
+                    : 0
+                  : 0, // otherwise default to 0 so regular cards fly above this whole deck
               }}
               className="relative h-full w-full select-none rounded-[0.1rem]"
               onPointerEnter={() => {
