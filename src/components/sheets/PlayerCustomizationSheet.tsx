@@ -27,7 +27,7 @@ function PlayerCustomizationSheet() {
       case "avatar":
         return "350px";
       case "front":
-        return "225px";
+        return "265px";
       case "back":
         return "430px";
       default:
@@ -89,7 +89,7 @@ function PlayerCustomizationSheet() {
                           animate={{ opacity: 1, scale: 1 }}
                           exit={{ opacity: 0, scale: 0.75 }}
                           transition={{ duration: 0.15 }}
-                          className="baseFlex color-lightGreen h-[96px] cursor-pointer gap-4 border-darkGreen"
+                          className="baseFlex color-lightGreen h-[96px] cursor-pointer gap-5 border-darkGreen"
                         >
                           <PlayerCustomizationPreview
                             renderedView={label}

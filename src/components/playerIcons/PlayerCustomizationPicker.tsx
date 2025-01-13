@@ -14,6 +14,7 @@ import { type ILocalPlayerSettings } from "../dialogs/SettingsAndStats/UserSetti
 import PlayerIcon from "./PlayerIcon";
 import { updateLocalStoragePlayerMetadata } from "~/utils/updateLocalStoragePlayerMetadata";
 import StaticCard from "~/components/Play/StaticCard";
+import { HiExternalLink } from "react-icons/hi";
 
 interface IPlayerCustomizationPicker {
   type: "avatar" | "back" | "front";
@@ -151,131 +152,27 @@ function PlayerCustomizationPicker({
     }
   }
 
-  function renderTooltip() {
-    if (type === "avatar") {
-      return renderAvatarTooltip();
-    } else if (type === "back") {
-      return renderDeckTooltip();
-    }
-
-    return renderCardFrontTooltip();
-  }
-
   function renderAvatarTooltip() {
-    return avatarPaths.map((avatarPath, index) => (
-      <div
-        key={`${avatarPath}-${index}`}
-        style={{
-          outline: calculateOutline("avatar", index),
-          cursor: isTooltipOptionAvailable("avatar", index)
-            ? "pointer"
-            : "auto",
-          pointerEvents: isTooltipOptionAvailable("avatar", index)
-            ? "auto"
-            : "none",
-        }}
-        className="relative shrink-0 rounded-[50%] outline-offset-4 transition-all"
-        onPointerEnter={(e) => {
-          if (e.pointerType === "mouse") {
-            setHoveredTooltip({ type: "avatar", index });
-          }
-
-          setScaledDownElementIndex(index);
-        }}
-        onPointerLeave={(e) => {
-          if (e.pointerType === "mouse") {
-            setHoveredTooltip(null);
-          }
-
-          setScaledDownElementIndex(-1);
-        }}
-        onPointerCancel={(e) => {
-          if (e.pointerType === "mouse") {
-            setHoveredTooltip(null);
-          }
-
-          setScaledDownElementIndex(-1);
-        }}
-        onPointerDown={() => {
-          setScaledDownElementIndex(index);
-        }}
-        onClick={() => {
-          // if user is connected to room
-          if (connectedToRoom) {
-            socket.emit("updatePlayerMetadata", {
-              newPlayerMetadata: {
-                ...playerMetadata[userID],
-                avatarPath,
-              },
-              playerID: userID,
-              roomCode: roomConfig.code,
-            } as IUpdatePlayerMetadata);
-          }
-          // if user is not connected to room
-          else {
-            updateLocalStoragePlayerMetadata({
-              avatarPath,
-              color: playerMetadata[userID]?.color || "",
-              deckVariant,
-              deckHueRotation: playerMetadata[userID]?.deckHueRotation || 0,
-            });
-
-            setPlayerMetadata({
-              ...playerMetadata,
-              [userID]: {
-                ...playerMetadata[userID],
-                avatarPath,
-              } as IRoomPlayer,
-            });
-          }
-        }}
-      >
-        <div
-          className={`transition-transform ${scaledDownElementIndex === index ? "scale-95" : ""}`}
-        >
-          <PlayerIcon
-            avatarPath={avatarPath}
-            borderColor={"transparent"}
-            size="4rem"
-            transparentBackground
-          />
-        </div>
-        {connectedToRoom &&
-          getMetadataOfPlayerByAttribute(avatarPath, "avatar") !==
-            playerMetadata[userID]?.color &&
-          getMetadataOfPlayerByAttribute(avatarPath, "avatar") !== "" && (
-            <div
-              style={{
-                backgroundColor: getMetadataOfPlayerByAttribute(
-                  avatarPath,
-                  "avatar",
-                ),
-              }}
-              className="absolute bottom-[-0.25rem] right-[-0.25rem] h-4 w-4 rounded-[50%]"
-            ></div>
-          )}
-      </div>
-    ));
-  }
-
-  function renderCardFrontTooltip() {
-    // TODO: , "Antique"
-    const cardFrontVariants = ["Simple", "Standard"];
-
     return (
-      <>
-        {cardFrontVariants.map((variant, index) => (
+      <div
+        className={`h-[18rem] w-[18rem] grid-cols-3 grid-rows-3 md:h-[20rem] md:w-[20rem] ${forSheet ? "bg-zinc-200" : ""} grid place-items-center rounded-md p-4 transition-all`}
+      >
+        {avatarPaths.map((avatarPath, index) => (
           <div
-            key={variant}
+            key={`${avatarPath}-${index}`}
             style={{
-              outline: calculateOutline("front", 0, variant),
-              cursor: deckVariant !== variant ? "pointer" : "auto",
-              pointerEvents: deckVariant !== variant ? "auto" : "none",
+              outline: calculateOutline("avatar", index),
+              cursor: isTooltipOptionAvailable("avatar", index)
+                ? "pointer"
+                : "auto",
+              pointerEvents: isTooltipOptionAvailable("avatar", index)
+                ? "auto"
+                : "none",
             }}
-            className="relative shrink-0 rounded-sm outline-offset-4 transition-all"
+            className="relative shrink-0 rounded-[50%] outline-offset-4 transition-all"
             onPointerEnter={(e) => {
               if (e.pointerType === "mouse") {
-                setHoveredTooltip({ type: "front", index });
+                setHoveredTooltip({ type: "avatar", index });
               }
 
               setScaledDownElementIndex(index);
@@ -298,180 +195,299 @@ function PlayerCustomizationPicker({
               setScaledDownElementIndex(index);
             }}
             onClick={() => {
-              updateLocalStoragePlayerMetadata({
-                avatarPath: playerMetadata[userID]?.avatarPath || "",
-                color: playerMetadata[userID]?.color || "",
-                deckVariant: variant,
-                deckHueRotation: playerMetadata[userID]?.deckHueRotation || 0,
-              });
+              // if user is connected to room
+              if (connectedToRoom) {
+                socket.emit("updatePlayerMetadata", {
+                  newPlayerMetadata: {
+                    ...playerMetadata[userID],
+                    avatarPath,
+                  },
+                  playerID: userID,
+                  roomCode: roomConfig.code,
+                } as IUpdatePlayerMetadata);
+              }
+              // if user is not connected to room
+              else {
+                updateLocalStoragePlayerMetadata({
+                  avatarPath,
+                  color: playerMetadata[userID]?.color || "",
+                  deckVariant,
+                  deckHueRotation: playerMetadata[userID]?.deckHueRotation || 0,
+                });
 
-              setDeckVariant(variant);
-
-              if (setLocalPlayerSettings === undefined) return;
-
-              setLocalPlayerSettings((localPlayerSettings) => {
-                return {
-                  ...localPlayerSettings,
-                  deckVariant: variant,
-                };
-              });
+                setPlayerMetadata({
+                  ...playerMetadata,
+                  [userID]: {
+                    ...playerMetadata[userID],
+                    avatarPath,
+                  } as IRoomPlayer,
+                });
+              }
             }}
           >
             <div
-              className={`transition-transform ${
-                scaledDownElementIndex === index ? "scale-95" : ""
-              }`}
+              className={`transition-transform ${scaledDownElementIndex === index ? "scale-95" : ""}`}
             >
-              <StaticCard
-                suit={"C"}
-                value={"8"}
-                deckVariant={variant}
-                showCardBack={false}
-                width={64}
-                height={87}
+              <PlayerIcon
+                avatarPath={avatarPath}
+                borderColor={"transparent"}
+                size="4rem"
+                transparentBackground
               />
             </div>
+            {connectedToRoom &&
+              getMetadataOfPlayerByAttribute(avatarPath, "avatar") !==
+                playerMetadata[userID]?.color &&
+              getMetadataOfPlayerByAttribute(avatarPath, "avatar") !== "" && (
+                <div
+                  style={{
+                    backgroundColor: getMetadataOfPlayerByAttribute(
+                      avatarPath,
+                      "avatar",
+                    ),
+                  }}
+                  className="absolute bottom-[-0.25rem] right-[-0.25rem] h-4 w-4 rounded-[50%]"
+                ></div>
+              )}
           </div>
         ))}
-      </>
+      </div>
+    );
+  }
+
+  function renderCardFrontTooltip() {
+    const cardFrontVariants = ["Simple", "Standard", "Antique"];
+
+    return (
+      <div className="baseVertFlex gap-2 text-black">
+        <div
+          className={`h-[10rem] w-[22rem] grid-cols-3 grid-rows-1 ${forSheet ? "mt-2 bg-zinc-200" : ""} grid place-items-center rounded-md p-4 transition-all`}
+        >
+          {cardFrontVariants.map((variant, index) => (
+            <div key={variant} className="baseVertFlex gap-3.5">
+              <div
+                style={{
+                  outline: calculateOutline("front", index, variant),
+                  cursor: deckVariant !== variant ? "pointer" : "auto",
+                  pointerEvents: deckVariant !== variant ? "auto" : "none",
+                }}
+                className="relative shrink-0 rounded-sm outline-offset-4 transition-all"
+                onPointerEnter={(e) => {
+                  if (e.pointerType === "mouse") {
+                    setHoveredTooltip({ type: "front", index });
+                  }
+
+                  setScaledDownElementIndex(index);
+                }}
+                onPointerLeave={(e) => {
+                  if (e.pointerType === "mouse") {
+                    setHoveredTooltip(null);
+                  }
+
+                  setScaledDownElementIndex(-1);
+                }}
+                onPointerCancel={(e) => {
+                  if (e.pointerType === "mouse") {
+                    setHoveredTooltip(null);
+                  }
+
+                  setScaledDownElementIndex(-1);
+                }}
+                onPointerDown={() => {
+                  setScaledDownElementIndex(index);
+                }}
+                onClick={() => {
+                  updateLocalStoragePlayerMetadata({
+                    avatarPath: playerMetadata[userID]?.avatarPath || "",
+                    color: playerMetadata[userID]?.color || "",
+                    deckVariant: variant,
+                    deckHueRotation:
+                      playerMetadata[userID]?.deckHueRotation || 0,
+                  });
+
+                  setDeckVariant(variant);
+
+                  if (setLocalPlayerSettings === undefined) return;
+
+                  setLocalPlayerSettings((localPlayerSettings) => {
+                    return {
+                      ...localPlayerSettings,
+                      deckVariant: variant,
+                    };
+                  });
+                }}
+              >
+                <div
+                  className={`transition-transform ${
+                    scaledDownElementIndex === index ? "scale-95" : ""
+                  }`}
+                >
+                  <StaticCard
+                    suit={"C"}
+                    value={"8"}
+                    deckVariant={variant}
+                    showCardBack={false}
+                    width={64}
+                    height={87}
+                  />
+                </div>
+              </div>
+              <span>
+                {variant}
+                {variant === "Antique" && <span className="ml-0.5">*</span>}
+              </span>
+            </div>
+          ))}
+        </div>
+
+        <div className="baseFlex gap-1.5 text-sm">
+          * Made by
+          <a
+            href="https://jackiestudenski.portfolio.site/"
+            target="_blank"
+            rel="noreferrer"
+            className="baseFlex gap-1 text-darkGreen underline underline-offset-4"
+          >
+            Jackie Studenski
+            <HiExternalLink className="size-4 text-darkGreen" />
+          </a>
+        </div>
+      </div>
     );
   }
 
   function renderDeckTooltip() {
-    return Object.keys(oklchToDeckHueRotations).map((color, index) => (
+    return (
       <div
-        key={`${color}-${index}`}
-        style={{
-          outline: calculateOutline("back", index),
-          cursor: isTooltipOptionAvailable("back", index) ? "pointer" : "auto",
-          pointerEvents: isTooltipOptionAvailable("back", index)
-            ? "auto"
-            : "none",
-        }}
-        className="relative shrink-0 rounded-sm outline-offset-4 transition-all"
-        onPointerEnter={(e) => {
-          if (e.pointerType === "mouse") {
-            setHoveredTooltip({ type: "back", index });
-          }
-
-          setScaledDownElementIndex(index);
-        }}
-        onPointerLeave={(e) => {
-          if (e.pointerType === "mouse") {
-            setHoveredTooltip(null);
-          }
-
-          setScaledDownElementIndex(-1);
-        }}
-        onPointerCancel={(e) => {
-          if (e.pointerType === "mouse") {
-            setHoveredTooltip(null);
-          }
-
-          setScaledDownElementIndex(-1);
-        }}
-        onPointerDown={(e) => {
-          if (e.pointerType === "mouse") {
-            setScaledDownElementIndex(index);
-          }
-        }}
-        onClick={() => {
-          // if user is connected to room
-          if (connectedToRoom) {
-            socket.emit("updatePlayerMetadata", {
-              newPlayerMetadata: {
-                ...playerMetadata[userID],
-                deckHueRotation:
-                  oklchToDeckHueRotations[
-                    color as keyof typeof oklchToDeckHueRotations // seems hacky
-                  ],
-                color,
-              },
-              playerID: userID,
-              roomCode: roomConfig.code,
-            } as IUpdatePlayerMetadata);
-          }
-          // if user is not connected to room
-          else {
-            updateLocalStoragePlayerMetadata({
-              avatarPath: playerMetadata[userID]?.avatarPath || "",
-              color,
-              deckVariant,
-              deckHueRotation:
-                oklchToDeckHueRotations[
-                  color as keyof typeof oklchToDeckHueRotations
-                ],
-            });
-
-            setPlayerMetadata({
-              ...playerMetadata,
-              [userID]: {
-                ...playerMetadata[userID],
-                color,
-                deckHueRotation:
-                  oklchToDeckHueRotations[
-                    color as keyof typeof oklchToDeckHueRotations // seems hacky
-                  ],
-              } as IRoomPlayer,
-            });
-          }
-
-          // not sure why this reset is necessary only on card back picker instead of
-          // avatar/front card pickers. but this just standardizes the behavior
-          setHoveredTooltip(null);
-          setScaledDownElementIndex(-1);
-        }}
+        className={`h-[22rem] w-[22rem] grid-cols-3 grid-rows-3 gap-4 md:h-[18rem] md:w-[25rem] md:grid-cols-4 md:grid-rows-2 tablet:gap-0 ${forSheet ? "bg-zinc-200" : ""} grid place-items-center rounded-md p-4 transition-all`}
       >
-        <div
-          className={`transition-transform ${scaledDownElementIndex === index ? "scale-95" : ""}`}
-        >
-          <StaticCard
-            suit={"C"}
-            value={"8"}
-            deckVariant={deckVariant}
-            hueRotation={
-              oklchToDeckHueRotations[
-                color as keyof typeof oklchToDeckHueRotations // seems hacky
-              ]
-            }
-            showCardBack={true}
-            width={64}
-            height={87}
-          />
-        </div>
+        {Object.keys(oklchToDeckHueRotations).map((color, index) => (
+          <div
+            key={`${color}-${index}`}
+            style={{
+              outline: calculateOutline("back", index),
+              cursor: isTooltipOptionAvailable("back", index)
+                ? "pointer"
+                : "auto",
+              pointerEvents: isTooltipOptionAvailable("back", index)
+                ? "auto"
+                : "none",
+            }}
+            className="relative shrink-0 rounded-sm outline-offset-4 transition-all"
+            onPointerEnter={(e) => {
+              if (e.pointerType === "mouse") {
+                setHoveredTooltip({ type: "back", index });
+              }
 
-        {connectedToRoom &&
-          getMetadataOfPlayerByAttribute(color, "back") !==
-            playerMetadata[userID]?.avatarPath &&
-          getMetadataOfPlayerByAttribute(color, "back") !== "" && (
-            <div className="absolute bottom-[-0.75rem] right-[-0.75rem] z-[150] h-12 w-12 rounded-[50%] outline outline-[1px] outline-zinc-200">
-              <PlayerIcon
-                avatarPath={getMetadataOfPlayerByAttribute(color, "back")}
-                borderColor={"transparent"}
-                size="3rem"
+              setScaledDownElementIndex(index);
+            }}
+            onPointerLeave={(e) => {
+              if (e.pointerType === "mouse") {
+                setHoveredTooltip(null);
+              }
+
+              setScaledDownElementIndex(-1);
+            }}
+            onPointerCancel={(e) => {
+              if (e.pointerType === "mouse") {
+                setHoveredTooltip(null);
+              }
+
+              setScaledDownElementIndex(-1);
+            }}
+            onPointerDown={(e) => {
+              if (e.pointerType === "mouse") {
+                setScaledDownElementIndex(index);
+              }
+            }}
+            onClick={() => {
+              // if user is connected to room
+              if (connectedToRoom) {
+                socket.emit("updatePlayerMetadata", {
+                  newPlayerMetadata: {
+                    ...playerMetadata[userID],
+                    deckHueRotation:
+                      oklchToDeckHueRotations[
+                        color as keyof typeof oklchToDeckHueRotations // seems hacky
+                      ],
+                    color,
+                  },
+                  playerID: userID,
+                  roomCode: roomConfig.code,
+                } as IUpdatePlayerMetadata);
+              }
+              // if user is not connected to room
+              else {
+                updateLocalStoragePlayerMetadata({
+                  avatarPath: playerMetadata[userID]?.avatarPath || "",
+                  color,
+                  deckVariant,
+                  deckHueRotation:
+                    oklchToDeckHueRotations[
+                      color as keyof typeof oklchToDeckHueRotations
+                    ],
+                });
+
+                setPlayerMetadata({
+                  ...playerMetadata,
+                  [userID]: {
+                    ...playerMetadata[userID],
+                    color,
+                    deckHueRotation:
+                      oklchToDeckHueRotations[
+                        color as keyof typeof oklchToDeckHueRotations // seems hacky
+                      ],
+                  } as IRoomPlayer,
+                });
+              }
+
+              // not sure why this reset is necessary only on card back picker instead of
+              // avatar/front card pickers. but this just standardizes the behavior
+              setHoveredTooltip(null);
+              setScaledDownElementIndex(-1);
+            }}
+          >
+            <div
+              className={`transition-transform ${scaledDownElementIndex === index ? "scale-95" : ""}`}
+            >
+              <StaticCard
+                suit={"C"}
+                value={"8"}
+                deckVariant={deckVariant}
+                hueRotation={
+                  oklchToDeckHueRotations[
+                    color as keyof typeof oklchToDeckHueRotations // seems hacky
+                  ]
+                }
+                showCardBack={true}
+                width={64}
+                height={87}
               />
             </div>
-          )}
+
+            {connectedToRoom &&
+              getMetadataOfPlayerByAttribute(color, "back") !==
+                playerMetadata[userID]?.avatarPath &&
+              getMetadataOfPlayerByAttribute(color, "back") !== "" && (
+                <div className="absolute bottom-[-0.75rem] right-[-0.75rem] z-[150] h-12 w-12 rounded-[50%] outline outline-[1px] outline-zinc-200">
+                  <PlayerIcon
+                    avatarPath={getMetadataOfPlayerByAttribute(color, "back")}
+                    borderColor={"transparent"}
+                    size="3rem"
+                  />
+                </div>
+              )}
+          </div>
+        ))}
       </div>
-    ));
+    );
   }
 
   return (
     <>
-      {userID && (
-        <div
-          className={` ${
-            type === "avatar"
-              ? "h-[18rem] w-[18rem] grid-cols-3 grid-rows-3 md:h-[20rem] md:w-[20rem]"
-              : type === "back"
-                ? "h-[22rem] w-[22rem] grid-cols-3 grid-rows-3 gap-4 md:h-[18rem] md:w-[25rem] md:grid-cols-4 md:grid-rows-2 tablet:gap-0"
-                : // TODO: "h-[10rem] w-[22rem] grid-cols-3 grid-rows-1"
-                  "h-[10rem] w-[15rem] grid-cols-2 grid-rows-1"
-          } ${forSheet ? "bg-zinc-200" : "white"} grid place-items-center rounded-md p-4 transition-all`}
-        >
-          {renderTooltip()}
-        </div>
-      )}
+      {userID && type === "avatar" && renderAvatarTooltip()}
+      {userID && type === "front" && renderCardFrontTooltip()}
+      {userID && type === "back" && renderDeckTooltip()}
     </>
   );
 }
