@@ -34,8 +34,8 @@ const orderValues = [
 
 const leaderboardCategories = [
   "Total Squeaks",
-  "Avg. cards left in Squeak pile",
   "Avg. rank per round",
+  "Avg. cards left in Squeak pile",
   "Highest score per round",
   "Total games played",
 ];
@@ -109,9 +109,7 @@ function LeaderboardDialog({ setShowDialog }: ILeaderboardDialog) {
                   <CarouselItem key={index}>
                     <p
                       className={`mx-2 select-none text-center text-lg font-medium text-lightGreen transition-all xs:whitespace-nowrap xs:text-nowrap xs:text-xl ${
-                        carouselApi?.selectedScrollSnap() === index
-                          ? ""
-                          : "opacity-50"
+                        currentlySelectedIndex === index ? "" : "opacity-50"
                       }`}
                     >
                       {categoryName}
