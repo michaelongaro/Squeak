@@ -35,6 +35,10 @@ const config = {
     locales: ["en"],
     defaultLocale: "en",
   },
+
+  experimental: {
+    reactCompiler: true,
+  },
 };
 
 export default config;
