@@ -2,10 +2,12 @@
 
 
 
-https://github.com/user-attachments/assets/ce6b2db4-898e-47a1-bd2d-85c64eeab976
+https://github.com/user-attachments/assets/ca54aaa0-4d2e-4f10-a7a4-01644fa0544b
+
+
 
 <br><br>
-Visit the live site: [Squeak](https://playsqueak.com/).
+Visit the site and play for free: [Squeak](https://playsqueak.com/).
 
 ## Description
 
