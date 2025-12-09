@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRoomContext } from "../context/RoomContext";
 
 interface IBoundingRect {
@@ -9,6 +9,32 @@ interface IBoundingRect {
   cellCoords: [number, number];
 }
 
+function throttle<T extends (...args: any[]) => void>(
+  func: T,
+  delay: number,
+): T {
+  let timeoutId: NodeJS.Timeout | null = null;
+  let lastRan = 0;
+
+  return ((...args: Parameters<T>) => {
+    const now = Date.now();
+
+    if (now - lastRan >= delay) {
+      func(...args);
+      lastRan = now;
+    } else {
+      if (timeoutId) clearTimeout(timeoutId);
+      timeoutId = setTimeout(
+        () => {
+          func(...args);
+          lastRan = Date.now();
+        },
+        delay - (now - lastRan),
+      );
+    }
+  }) as T;
+}
+
 function useTrackHoverOverBoardCells() {
   const { holdingADeckCard, holdingASqueakCard, hoveredCell, setHoveredCell } =
     useRoomContext();
@@ -16,33 +42,39 @@ function useTrackHoverOverBoardCells() {
   const [boardCellBoundingRects, setBoardCellBoundingRects] = useState<
     IBoundingRect[]
   >([]);
+  const rafIdRef = useRef<number>(0);
 
   useEffect(() => {
     function resizeHandler() {
-      setTimeout(() => {
-        const newBoardCellBoundingRects: IBoundingRect[] = [];
+      if (rafIdRef.current) {
+        cancelAnimationFrame(rafIdRef.current);
+      }
 
-        for (let i = 0; i < 4; i++) {
-          for (let j = 0; j < 5; j++) {
-            const cell = document
-              .getElementById(`parentCell${i}${j}`)
-              ?.getBoundingClientRect();
+      rafIdRef.current = requestAnimationFrame(() => {
+        setTimeout(() => {
+          const newBoardCellBoundingRects: IBoundingRect[] = [];
 
-            if (cell) {
-              newBoardCellBoundingRects.push({
-                left: cell.left,
-                right: cell.right,
-                top: cell.top,
-                bottom: cell.bottom,
-                cellCoords: [i, j],
-              });
+          for (let i = 0; i < 4; i++) {
+            for (let j = 0; j < 5; j++) {
+              const cell = document
+                .getElementById(`parentCell${i}${j}`)
+                ?.getBoundingClientRect();
+
+              if (cell) {
+                newBoardCellBoundingRects.push({
+                  left: cell.left,
+                  right: cell.right,
+                  top: cell.top,
+                  bottom: cell.bottom,
+                  cellCoords: [i, j],
+                });
+              }
             }
           }
-        }
 
-        setBoardCellBoundingRects(newBoardCellBoundingRects);
-      }, 1500); // hacky, but waiting for the board to be fully resized/painted
-      // before updating the bounding rects
+          setBoardCellBoundingRects(newBoardCellBoundingRects);
+        }, 100);
+      });
     }
 
     resizeHandler();
@@ -51,13 +83,15 @@ function useTrackHoverOverBoardCells() {
 
     return () => {
       window.removeEventListener("resize", resizeHandler);
+      if (rafIdRef.current) {
+        cancelAnimationFrame(rafIdRef.current);
+      }
     };
   }, []);
 
   useEffect(() => {
-    // listener to check which squeak stack is being hovered over
-    // excludes the squeak stack that the card is currently in
-    function pointerMoveHandler(clientX: number, clientY: number) {
+    // Throttled pointer move handler to reduce overhead
+    const pointerMoveHandler = throttle((clientX: number, clientY: number) => {
       if (!holdingADeckCard && !holdingASqueakCard) {
         if (hoveredCell !== null) setHoveredCell(null);
         return;
@@ -88,7 +122,7 @@ function useTrackHoverOverBoardCells() {
       ) {
         setHoveredCell(newHoveredCell);
       }
-    }
+    }, 16); // ~60fps throttling
 
     // Mouse move handler
     function mouseMoveHandler(e: MouseEvent) {
@@ -105,7 +139,7 @@ function useTrackHoverOverBoardCells() {
     }
 
     window.addEventListener("mousemove", mouseMoveHandler);
-    window.addEventListener("touchmove", touchMoveHandler);
+    window.addEventListener("touchmove", touchMoveHandler, { passive: true });
 
     return () => {
       window.removeEventListener("mousemove", mouseMoveHandler);
