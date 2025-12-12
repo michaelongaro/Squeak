@@ -30,7 +30,7 @@
     "framer-motion": "^12.23.25",
     "lodash.isequal": "^4.5.0",
     "lucide-react": "^0.428.0",
-    "next": "^16.0.8",
+    "next": "^16.0.10",
     "next-progress": "^2.3.1",
     "obscenity": "^0.4.5",
     "radix-ui": "^1.4.3",
