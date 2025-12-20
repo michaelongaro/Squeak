@@ -954,7 +954,7 @@ function MainSheet({
               <div className="baseFlex !flex-nowrap gap-1.5 text-sm">
                 Made by
                 <a
-                  href="https://github.com/michaelongaro"
+                  href="https://www.michaelongaro.com"
                   target="_blank"
                   rel="noreferrer"
                   className="baseFlex !items-end gap-1 underline underline-offset-4"
