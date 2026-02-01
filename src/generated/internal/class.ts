@@ -17,8 +17,8 @@ import type * as Prisma from "./prismaNamespace"
 
 const config: runtime.GetPrismaClientConfig = {
   "previewFeatures": [],
-  "clientVersion": "7.1.0",
-  "engineVersion": "ab635e6b9d606fa5c8fb8b1a7f909c3c3c1c98ba",
+  "clientVersion": "7.3.0",
+  "engineVersion": "9d6ad21cbbceab97458517b147a6a09ff43aa735",
   "activeProvider": "postgresql",
   "inlineSchema": "generator client {\n  provider = \"prisma-client\"\n  output   = \"../src/generated\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n}\n\nmodel Room {\n  id              String   @id @default(cuid())\n  createdAt       DateTime @default(now())\n  pointsToWin     Int      @default(100)\n  maxPlayers      Int      @default(4)\n  playersInRoom   Int      @default(1)\n  playerIDsInRoom String[] @default([])\n  isPublic        Boolean  @default(true)\n  code            String   @unique\n  hostUsername    String\n  hostUserID      String\n  gameStarted     Boolean  @default(false)\n}\n\nmodel Stats {\n  id                      String @id @default(cuid())\n  squeaks                 Int    @default(0)\n  averageFinishingPlace   Float  @default(0)\n  allFinishedPlacesValues Int[]  @default([])\n  averageLeftInSqueak     Float  @default(0)\n  allLeftInSqueakValues   Int[]  @default([])\n  highestScore            Int    @default(0)\n  totalGamesPlayed        Int    @default(0)\n  totalRoundsPlayed       Int    @default(0)\n  user                    User   @relation(fields: [userID], references: [userId], onDelete: Cascade)\n  userID                  String @unique\n}\n\nmodel User {\n  id        String   @id @default(cuid())\n  createdAt DateTime @default(now())\n\n  userId String @unique // used from Clerk\n\n  // user metadata\n  username             String  @default(\"New user\")\n  avatarPath           String  @default(\"/avatars/rabbit.svg\")\n  color                String  @default(\"oklch(64.02% 0.171 15.38)\") // defaults to red color\n  deckHueRotation      Int     @default(232) // defaults to red color\n  deckVariant          String  @default(\"Simple\")\n  squeakPileOnLeft     Boolean @default(true)\n  desktopNotifications Boolean @default(false)\n  stats                Stats?\n\n  // just storing IDs for simplicity, client handles querying for relevant User data that\n  // can be found from these IDs.\n  friendIDs       String[] @default([])\n  friendInviteIDs String[] @default([])\n  roomInviteIDs   String[] @default([])\n\n  online              Boolean  @default(true)\n  status              String   @default(\"on main menu\")\n  roomCode            String?\n  currentRoomIsPublic Boolean?\n  currentRoomIsFull   Boolean?\n}\n",
   "runtimeDataModel": {
@@ -37,12 +37,14 @@ async function decodeBase64AsWasm(wasmBase64: string): Promise<WebAssembly.Modul
 }
 
 config.compilerWasm = {
-  getRuntime: async () => await import("@prisma/client/runtime/query_compiler_bg.postgresql.mjs"),
+  getRuntime: async () => await import("@prisma/client/runtime/query_compiler_fast_bg.postgresql.mjs"),
 
   getQueryCompilerWasmModule: async () => {
-    const { wasm } = await import("@prisma/client/runtime/query_compiler_bg.postgresql.wasm-base64.mjs")
+    const { wasm } = await import("@prisma/client/runtime/query_compiler_fast_bg.postgresql.wasm-base64.mjs")
     return await decodeBase64AsWasm(wasm)
-  }
+  },
+
+  importName: "./query_compiler_fast_bg.js"
 }
 
 
