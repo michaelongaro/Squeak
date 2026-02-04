@@ -245,7 +245,7 @@ function PublicRooms() {
               >
                 <TbCards className="size-16 text-lightGreen" />
                 <div className="baseVertFlex mt-4 w-full gap-2">
-                  <p className="font-semibold">No rooms found.</p>
+                  <p className="font-semibold">No rooms found</p>
                 </div>
                 <div className="baseFlex w-full gap-1.5">
                   <Button
