@@ -11,12 +11,16 @@ import PlayerIcon from "~/components/playerIcons/PlayerIcon";
 import LeaderboardDialog from "~/components/dialogs/LeaderboardDialog";
 import { HiExternalLink } from "react-icons/hi";
 import Image from "next/image";
-import logo from "public/logo/squeakLogo.svg";
+import logo from "public/logo/squeakHomepageLogo.svg";
 import { Button } from "~/components/ui/button";
 import { useRouter } from "next/router";
 import { useRoomContext } from "~/context/RoomContext";
 import Link from "next/link";
 import { Dialog, DialogTrigger } from "~/components/ui/dialog";
+
+import D8Standard from "public/cards/Standard/8D.webp";
+import KCStandard from "public/cards/Standard/KC.webp";
+import AHStandard from "public/cards/Standard/AH.webp";
 
 function MainOptions() {
   const { isSignedIn } = useAuth();
@@ -45,12 +49,67 @@ function MainOptions() {
     >
       {isSignedIn !== undefined && (
         <div className="baseVertFlex w-[17.5rem] rounded-md border-2 border-white bg-gradient-to-br from-green-800 to-green-850 p-6 shadow-lg lg:w-[22.25rem] desktop:p-8">
-          <Image
-            src={logo}
-            alt="Squeak logo"
-            priority={true}
-            className="h-48 w-48 tablet:h-[300px] tablet:w-[300px]"
-          />
+          <div className="baseFlex pointer-events-none relative h-48 w-48 tablet:h-[300px] tablet:w-[300px]">
+            <div className="baseFlex absolute top-0 h-[80px] w-48 overflow-hidden tablet:h-[120px] tablet:w-[300px]">
+              <motion.div
+                initial={{ translateY: 50 }}
+                animate={{ translateY: 0 }}
+                transition={{
+                  type: "spring",
+                  delay: 0.25,
+                }}
+                className="absolute left-[22px] top-[35px] w-[61px] tablet:left-[38px] tablet:top-[56px] tablet:w-[92px]"
+              >
+                <img
+                  src={D8Standard.src}
+                  alt="8 of Diamonds"
+                  fetchPriority="high"
+                  className="size-full rotate-[-22deg] rounded-[0.3rem]"
+                />
+              </motion.div>
+
+              <motion.div
+                initial={{ translateY: 50 }}
+                animate={{ translateY: 0 }}
+                transition={{
+                  type: "spring",
+                  delay: 0.15,
+                }}
+                className="absolute top-[20px] w-[61px] tablet:left-[106px] tablet:top-[35px] tablet:w-[92px]"
+              >
+                <img
+                  src={KCStandard.src}
+                  alt="King of Clubs"
+                  fetchPriority="high"
+                  className="size-full rounded-[0.3rem]"
+                />
+              </motion.div>
+
+              <motion.div
+                initial={{ translateY: 50 }}
+                animate={{ translateY: 0 }}
+                transition={{
+                  type: "spring",
+                  delay: 0.35,
+                }}
+                className="absolute left-[110px] top-[34px] w-[61px] tablet:left-[174px] tablet:top-[56px] tablet:w-[92px]"
+              >
+                <img
+                  src={AHStandard.src}
+                  alt="Ace of Hearts"
+                  fetchPriority="high"
+                  className="size-full rotate-[22deg] rounded-[0.3rem]"
+                />
+              </motion.div>
+            </div>
+
+            <Image
+              src={logo}
+              alt="Squeak logo"
+              priority={true}
+              className="z-10 size-48 tablet:size-[288px]"
+            />
+          </div>
 
           {isSignedIn ? (
             <AnimatePresence mode={"popLayout"}>
