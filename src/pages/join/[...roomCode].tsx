@@ -1,5 +1,5 @@
 import { useAuth } from "@clerk/nextjs";
-import { type Room } from "@prisma/client";
+import { type Room } from "~/generated/browser";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
@@ -481,7 +481,7 @@ function JoinRoom() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.5 }}
-              className="baseVertFlex relative gap-4"
+              className="baseVertFlex relative gap-8"
             >
               <div className="baseFlex sticky left-0 top-0 z-[105] w-screen !justify-start gap-4 border-b-2 border-white bg-gradient-to-br from-green-800 to-green-850 p-2 shadow-lg tablet:relative tablet:w-full tablet:bg-none tablet:shadow-none">
                 <Button
@@ -563,8 +563,8 @@ function JoinRoom() {
                 </Dialog>
               </div>
 
-              <div className="baseVertFlex gap-4 text-lightGreen">
-                <fieldset className="baseVertFlex mt-4 gap-4 rounded-md border-2 border-white p-4">
+              <div className="baseVertFlex gap-8 text-lightGreen">
+                <fieldset className="baseVertFlex gap-4 rounded-md border-2 border-white p-4">
                   <legend className="baseFlex gap-2 pl-4 pr-4 text-left text-lg">
                     <IoSettingsSharp size={"1.25rem"} />
                     Room settings
