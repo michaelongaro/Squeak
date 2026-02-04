@@ -188,9 +188,10 @@ function MainOptions() {
                 transition={{
                   opacity: { duration: 0.15 },
                   scale: { duration: 0.15 },
-                  translateX: { duration: 0.45 },
+                  translateX: { duration: 0.55 },
+                  ease: "easeOut",
                 }}
-                className="baseFlex absolute left-[1rem] gap-2 overflow-hidden"
+                className="baseFlex absolute left-[2rem] gap-1.5 overflow-hidden text-sm"
               >
                 Made by
                 <a
@@ -200,7 +201,7 @@ function MainOptions() {
                   className="baseFlex gap-1 underline underline-offset-4"
                 >
                   Michael Ongaro
-                  <HiExternalLink size={"1.25rem"} />
+                  <HiExternalLink size={"1rem"} />
                 </a>
               </motion.div>
             )}
