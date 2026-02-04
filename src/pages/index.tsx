@@ -52,7 +52,7 @@ function MainOptions() {
           <div className="baseFlex pointer-events-none relative h-48 w-48 tablet:h-[300px] tablet:w-[300px]">
             <div className="baseFlex absolute top-0 h-[80px] w-48 overflow-hidden tablet:h-[120px] tablet:w-[300px]">
               <motion.div
-                initial={{ translateY: 50 }}
+                initial={{ translateY: 55 }}
                 animate={{ translateY: 0 }}
                 transition={{
                   type: "spring",
@@ -69,7 +69,7 @@ function MainOptions() {
               </motion.div>
 
               <motion.div
-                initial={{ translateY: 50 }}
+                initial={{ translateY: 65 }}
                 animate={{ translateY: 0 }}
                 transition={{
                   type: "spring",
@@ -86,7 +86,7 @@ function MainOptions() {
               </motion.div>
 
               <motion.div
-                initial={{ translateY: 50 }}
+                initial={{ translateY: 55 }}
                 animate={{ translateY: 0 }}
                 transition={{
                   type: "spring",
