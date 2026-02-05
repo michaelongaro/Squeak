@@ -90,7 +90,7 @@ function useCardDrawFromDeck({
         .getElementById(endID)
         ?.getBoundingClientRect();
 
-      // pseudo depth doesn't apply to the first card a the pile
+      // pseudo depth doesn't apply to the first card in the pile
       const adjustedCardsInTargetPile =
         cardsInTargetPile === 1 ? 0 : cardsInTargetPile;
       const adjustedCardsInInitialPile =

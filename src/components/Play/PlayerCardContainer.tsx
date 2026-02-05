@@ -181,7 +181,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
   return (
     <div
       id={"playerContainer"}
-      className={`${cardContainerClass} relative mr-4 rounded-md bg-gradient-to-br from-green-800 to-green-850 mobileLarge:mr-0`}
+      className={`${cardContainerClass} relative w-full rounded-md pr-8 xs:max-w-sm sm:max-w-md lg:max-w-none mobileLarge:mr-0`}
       onMouseMove={(e) => pointerMoveHandler(e.clientX, e.clientY)}
       onTouchMove={(e) => {
         if (e.touches.length > 0) {
@@ -197,14 +197,14 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
             mirrorPlayerContainer
               ? classes.reversedGridContainer
               : classes.gridContainer
-          } select-none`}
+          } select-none bg-gradient-to-br from-green-800 to-green-850`}
         >
           {gameData?.players[userID]?.squeakHand.map(
             (cards, squeakStackIdx) => (
               <div
                 key={`${userID}squeakStack${squeakStackIdx}`}
                 // @ts-expect-error asdf
-                className={`${cardClassMap[squeakStackIdx]} relative h-full w-full select-none`}
+                className={`${cardClassMap[squeakStackIdx]} relative h-full w-[50px] select-none mobileLarge:w-[54px] tablet:w-[57px] desktop:w-[67px]`}
               >
                 <div
                   id={`${userID}squeakHand${squeakStackIdx}`}
@@ -227,7 +227,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                             cardDimensions.height
                           }px`,
                   }}
-                  className="absolute w-full select-none rounded-[0.2rem] transition-all"
+                  className="cardDimensions absolute w-full select-none rounded-[0.2rem] transition-all"
                 >
                   {cards.map((card, cardIdx) => (
                     <div
@@ -282,7 +282,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
 
           <div
             id={`${userID}squeakDeck`}
-            className={`${classes.squeakDeck} baseFlex h-full w-full select-none`}
+            className={`${classes.squeakDeck} baseFlex h-full w-[50px] select-none mobileLarge:w-[54px] tablet:w-[57px] desktop:w-[67px]`}
           >
             {gameData.players[userID]!.squeakDeck.length > 0 && (
               <div className="relative h-full w-full">

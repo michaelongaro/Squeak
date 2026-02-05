@@ -60,7 +60,7 @@ import {
   englishRecommendedTransformers,
 } from "obscenity";
 import PlayerIcon from "../playerIcons/PlayerIcon";
-import { type User } from "@prisma/client";
+import { type User } from "~/generated/browser";
 import { Dialog, DialogTrigger } from "~/components/ui/dialog";
 import {
   Accordion,
@@ -1761,7 +1761,7 @@ function WhilePlayingSheet({
         </AccordionItem>
       </Accordion>
 
-      <div className="baseFlex w-full !justify-around border-t-[1px] border-darkGreen px-2 py-4">
+      <div className="baseFlex w-full gap-8 border-t-[1px] border-darkGreen px-2 py-4">
         <Dialog
           open={showTutorialDialog}
           onOpenChange={(isOpen) => setShowTutorialDialog(isOpen)}
