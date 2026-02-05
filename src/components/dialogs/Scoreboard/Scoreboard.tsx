@@ -425,9 +425,9 @@ function Scoreboard() {
                   // when the game starts
                   className="order-[-2] grid w-full max-w-md place-items-center"
                 >
-                  <FaTrophy className="size-4 text-lightGreen" />
+                  <FaTrophy className="mr-2 size-4 text-lightGreen" />
                   <div className="font-semibold">Player</div>
-                  <div className="mr-[21px] font-semibold">Total</div>
+                  <div className="mr-2 font-semibold">Total</div>
                 </div>
 
                 <div
@@ -461,33 +461,37 @@ function Scoreboard() {
                           boxShadow:
                             selectedPlayerID === player.playerID
                               ? // white box shadow
-                                "0px 0px 2px 2.5px rgba(255, 255, 255, 0.75)"
-                              : "0px 0px 0px 0px rgba(0,0,0,1)",
+                                "inset 0px 0px 1px 1px rgba(255, 255, 255, 1)"
+                              : "inset 0px 0px 0px 0px rgba(0,0,0,1)",
                           zIndex:
                             player.oldRanking !== player.newRanking ? 1 : 0,
                         }}
-                        className="relative grid w-full max-w-md cursor-pointer place-items-center rounded-md transition-all"
+                        className="relative grid w-full max-w-md cursor-pointer rounded-md transition-all"
                       >
-                        <div className="baseFlex h-8 w-full items-center rounded-l-md">
-                          {!showNewRankings && player.oldRanking === -1
-                            ? "-"
-                            : ranking[player.newRanking]}
+                        <div className="baseFlex h-8 w-[50px]">
+                          <div className="baseFlex h-8 w-[25px] !justify-start">
+                            {!showNewRankings && player.oldRanking === -1
+                              ? "-"
+                              : ranking[player.newRanking]}
+                          </div>
                         </div>
 
                         <div className="baseVertFlex h-8 w-full gap-2 p-2 font-semibold">
                           {playerMetadata[player.playerID]?.username}
                         </div>
 
-                        <div className="baseFlex h-8 w-full rounded-r-md pr-[21px]">
-                          <AnimatedNumbers
-                            value={
-                              animateTotalValue
-                                ? player.newScore
-                                : player.oldScore
-                            }
-                            padding={10}
-                            fontSize={16}
-                          />
+                        <div className="baseFlex h-8 w-[50px]">
+                          <div className="baseFlex h-8 w-[25px] !justify-end">
+                            <AnimatedNumbers
+                              value={
+                                animateTotalValue
+                                  ? player.newScore
+                                  : player.oldScore
+                              }
+                              padding={10}
+                              fontSize={16}
+                            />
+                          </div>
                         </div>
                       </div>
                     ))}
@@ -766,7 +770,7 @@ function Scoreboard() {
                             scoreboardMetadata.roundWinnerID
                         ]?.textColor ?? "black",
                     }}
-                    className="w-[125px] text-center text-sm xs:w-auto"
+                    className="text-center text-sm"
                   >
                     {scoreboardMetadata.gameWinnerID
                       ? playerMetadata[scoreboardMetadata.gameWinnerID]
