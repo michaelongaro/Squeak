@@ -79,7 +79,7 @@ function JoinRoom() {
     {
       enabled: Boolean(
         (friendData?.friendInviteIDs ? friendData.friendInviteIDs.length : 0) >
-          0,
+        0,
       ),
     },
   );
@@ -411,7 +411,7 @@ function JoinRoom() {
           </Button>
         </div>
 
-        <div className="baseFlex w-full px-8">
+        <div className="baseFlex w-full px-2 xs:w-full xs:max-w-xl xs:px-8">
           <PublicRooms />
         </div>
       </div>

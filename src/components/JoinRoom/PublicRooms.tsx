@@ -88,7 +88,7 @@ function PublicRooms() {
   return (
     <motion.fieldset
       layout={"size"}
-      className="mt-8 w-[360px] rounded-md border-2 border-white p-2 xs:w-full xs:max-w-xl xs:p-4"
+      className="mt-8 w-full rounded-md border-2 border-white p-2 xs:p-4"
     >
       <legend className="baseFlex gap-4 pl-4 pr-4 text-left text-lg text-lightGreen">
         <div className="baseFlex gap-2 whitespace-nowrap">
