@@ -43,6 +43,29 @@ function useTrackHoverOverBoardCells() {
     IBoundingRect[]
   >([]);
   const rafIdRef = useRef<number>(0);
+  const resizeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const hoveredCellRef = useRef<[number, number] | null>(hoveredCell);
+  const holdingADeckCardRef = useRef(holdingADeckCard);
+  const holdingASqueakCardRef = useRef(holdingASqueakCard);
+  const boardCellBoundingRectsRef = useRef<IBoundingRect[]>(
+    boardCellBoundingRects,
+  );
+
+  useEffect(() => {
+    hoveredCellRef.current = hoveredCell;
+  }, [hoveredCell]);
+
+  useEffect(() => {
+    holdingADeckCardRef.current = holdingADeckCard;
+  }, [holdingADeckCard]);
+
+  useEffect(() => {
+    holdingASqueakCardRef.current = holdingASqueakCard;
+  }, [holdingASqueakCard]);
+
+  useEffect(() => {
+    boardCellBoundingRectsRef.current = boardCellBoundingRects;
+  }, [boardCellBoundingRects]);
 
   useEffect(() => {
     function resizeHandler() {
@@ -51,7 +74,11 @@ function useTrackHoverOverBoardCells() {
       }
 
       rafIdRef.current = requestAnimationFrame(() => {
-        setTimeout(() => {
+        if (resizeTimeoutRef.current) {
+          clearTimeout(resizeTimeoutRef.current);
+        }
+
+        resizeTimeoutRef.current = setTimeout(() => {
           const newBoardCellBoundingRects: IBoundingRect[] = [];
 
           for (let i = 0; i < 4; i++) {
@@ -86,21 +113,26 @@ function useTrackHoverOverBoardCells() {
       if (rafIdRef.current) {
         cancelAnimationFrame(rafIdRef.current);
       }
+      if (resizeTimeoutRef.current) {
+        clearTimeout(resizeTimeoutRef.current);
+      }
     };
   }, []);
 
   useEffect(() => {
     // Throttled pointer move handler to reduce overhead
     const pointerMoveHandler = throttle((clientX: number, clientY: number) => {
-      if (!holdingADeckCard && !holdingASqueakCard) {
-        if (hoveredCell !== null) setHoveredCell(null);
+      if (!holdingADeckCardRef.current && !holdingASqueakCardRef.current) {
+        if (hoveredCellRef.current !== null) setHoveredCell(null);
         return;
       }
 
       let newHoveredCell: [number, number] | null = null;
 
-      for (let i = 0; i < boardCellBoundingRects.length; i++) {
-        const rect = boardCellBoundingRects[i];
+      const rects = boardCellBoundingRectsRef.current;
+
+      for (let i = 0; i < rects.length; i++) {
+        const rect = rects[i];
 
         if (
           rect &&
@@ -115,10 +147,12 @@ function useTrackHoverOverBoardCells() {
       }
 
       // only update hoveredCell if it has changed
+      const currentHoveredCell = hoveredCellRef.current;
+
       if (
-        (hoveredCell === null && newHoveredCell !== null) ||
-        hoveredCell?.[0] !== newHoveredCell?.[0] ||
-        hoveredCell?.[1] !== newHoveredCell?.[1]
+        (currentHoveredCell === null && newHoveredCell !== null) ||
+        currentHoveredCell?.[0] !== newHoveredCell?.[0] ||
+        currentHoveredCell?.[1] !== newHoveredCell?.[1]
       ) {
         setHoveredCell(newHoveredCell);
       }
@@ -145,13 +179,7 @@ function useTrackHoverOverBoardCells() {
       window.removeEventListener("mousemove", mouseMoveHandler);
       window.removeEventListener("touchmove", touchMoveHandler);
     };
-  }, [
-    boardCellBoundingRects,
-    hoveredCell,
-    setHoveredCell,
-    holdingADeckCard,
-    holdingASqueakCard,
-  ]);
+  }, [setHoveredCell]);
 }
 
 export default useTrackHoverOverBoardCells;
