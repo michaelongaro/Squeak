@@ -11,10 +11,14 @@ function useSyncClientWithServer() {
   );
 
   useEffect(() => {
-    socket.on("syncClientWithServer", (data) => setDataFromBackend(data));
+    function handleSyncClientWithServer(data: IGameMetadata) {
+      setDataFromBackend(data);
+    }
+
+    socket.on("syncClientWithServer", handleSyncClientWithServer);
 
     return () => {
-      socket.off("syncClientWithServer", (data) => setDataFromBackend(data));
+      socket.off("syncClientWithServer", handleSyncClientWithServer);
     };
   }, []);
 

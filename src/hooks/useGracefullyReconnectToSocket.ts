@@ -56,10 +56,14 @@ function useGracefullyReconnectToSocket() {
   }, [roomConfig.code, connectedToRoom, userID]);
 
   useEffect(() => {
-    socket.on("currentRoomMetadata", (data) => setDataFromBackend(data));
+    function handleCurrentRoomMetadata(data: ICurrentRoomMetadata) {
+      setDataFromBackend(data);
+    }
+
+    socket.on("currentRoomMetadata", handleCurrentRoomMetadata);
 
     return () => {
-      socket.off("currentRoomMetadata", (data) => setDataFromBackend(data));
+      socket.off("currentRoomMetadata", handleCurrentRoomMetadata);
     };
   }, []);
 

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { socket } from "~/pages/_app";
 import { useUserIDContext } from "../context/UserIDContext";
 import { useRoomContext } from "../context/RoomContext";
@@ -25,12 +25,19 @@ function useScoreboardData() {
 
   const [dataFromBackend, setDataFromBackend] =
     useState<IScoreboardMetadataWithSqueakSound | null>(null);
+  const scoreboardTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    socket.on("scoreboardMetadata", (data) => setDataFromBackend(data));
+    function handleScoreboardMetadata(
+      data: IScoreboardMetadataWithSqueakSound,
+    ) {
+      setDataFromBackend(data);
+    }
+
+    socket.on("scoreboardMetadata", handleScoreboardMetadata);
 
     return () => {
-      socket.off("scoreboardMetadata", (data) => setDataFromBackend(data));
+      socket.off("scoreboardMetadata", handleScoreboardMetadata);
     };
   }, []);
 
@@ -47,7 +54,8 @@ function useScoreboardData() {
 
       if (
         playSqueakSound &&
-        (userID !== roundWinnerID || userID !== gameWinnerID) &&
+        userID !== roundWinnerID &&
+        userID !== gameWinnerID &&
         audioContext &&
         masterVolumeGainNode
       ) {
@@ -62,7 +70,11 @@ function useScoreboardData() {
 
       toast.dismiss(); // in case there is voting toast still up
 
-      setTimeout(
+      if (scoreboardTimeoutRef.current) {
+        clearTimeout(scoreboardTimeoutRef.current);
+      }
+
+      scoreboardTimeoutRef.current = setTimeout(
         () => {
           setScoreboardMetadata({
             gameWinnerID,
@@ -87,6 +99,14 @@ function useScoreboardData() {
     masterVolumeGainNode,
     squeakButtonPressBuffer,
   ]);
+
+  useEffect(() => {
+    return () => {
+      if (scoreboardTimeoutRef.current) {
+        clearTimeout(scoreboardTimeoutRef.current);
+      }
+    };
+  }, []);
 }
 
 export default useScoreboardData;
