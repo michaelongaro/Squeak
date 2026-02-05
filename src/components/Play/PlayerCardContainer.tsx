@@ -58,6 +58,8 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
   const [hoveringOverDeck, setHoveringOverDeck] = useState(false);
   const [pointerDownOnDeck, setPointerDownOnDeck] = useState(false);
 
+  const allowDeckHoverEffect = !viewportLabel.includes("mobile");
+
   const cardDimensions = useResponsiveCardDimensions();
 
   useEffect(() => {
@@ -401,6 +403,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
               id={`${userID}deck`}
               style={{
                 boxShadow:
+                  allowDeckHoverEffect &&
                   hoveringOverDeck &&
                   !holdingADeckCard &&
                   !currentPlayerIsDrawingFromDeck &&
@@ -422,9 +425,11 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
               className="relative h-full w-full select-none rounded-[0.1rem]"
               onPointerEnter={() => {
                 if (currentPlayerIsDrawingFromDeck) return;
+                if (!allowDeckHoverEffect) return;
                 setHoveringOverDeck(true);
               }}
               onPointerLeave={() => {
+                if (!allowDeckHoverEffect) return;
                 setHoveringOverDeck(false);
                 setPointerDownOnDeck(false);
               }}
