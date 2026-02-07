@@ -1223,59 +1223,66 @@ function SheetSettings({
       </div>
 
       <div className="baseVertFlex h-full w-full !justify-start overflow-y-auto">
-        <div className="baseFlex mb-4 mt-16 gap-2">
-          <Label>Username</Label>
-          <div className="relative">
-            <Input
-              disabled={saveButtonText !== "Save"}
-              type="text"
-              placeholder="username"
-              className="!ring-offset-white focus-visible:ring-2"
-              maxLength={16}
-              onFocus={() => setFocusedInInput(true)}
-              onBlur={() => setFocusedInInput(false)}
-              onChange={(e) => {
-                setUsernameIsProfane(obscenityMatcher.hasMatch(e.target.value));
+        <div className="baseFlex mb-4 mt-16 w-full gap-2">
+          <div className="baseFlex w-full !justify-between gap-2 px-4">
+            <Label htmlFor="drawerUsername" className="font-semibold">
+              Username
+            </Label>
+            <div className="relative">
+              <Input
+                id="drawerUsername"
+                disabled={saveButtonText !== "Save"}
+                type="text"
+                placeholder="username"
+                className="!ring-offset-white focus-visible:ring-2"
+                maxLength={16}
+                onFocus={() => setFocusedInInput(true)}
+                onBlur={() => setFocusedInInput(false)}
+                onChange={(e) => {
+                  setUsernameIsProfane(
+                    obscenityMatcher.hasMatch(e.target.value),
+                  );
 
-                setLocalPlayerMetadata((prevMetadata) => ({
-                  ...prevMetadata,
-                  [userID]: {
-                    ...prevMetadata?.[userID],
-                    username: e.target.value,
-                  } as IRoomPlayer,
-                }));
-              }}
-              value={localPlayerMetadata[userID]?.username || ""}
-            />
+                  setLocalPlayerMetadata((prevMetadata) => ({
+                    ...prevMetadata,
+                    [userID]: {
+                      ...prevMetadata?.[userID],
+                      username: e.target.value,
+                    } as IRoomPlayer,
+                  }));
+                }}
+                value={localPlayerMetadata[userID]?.username || ""}
+              />
 
-            <div
-              style={{
-                opacity:
-                  focusedInInput ||
-                  localPlayerMetadata[userID]?.username?.length === 0
-                    ? 1
-                    : 0,
-              }}
-              className="absolute right-1 top-0 text-xl text-red-600 transition-opacity"
-            >
-              *
+              <div
+                style={{
+                  opacity:
+                    focusedInInput ||
+                    localPlayerMetadata[userID]?.username?.length === 0
+                      ? 1
+                      : 0,
+                }}
+                className="absolute right-1 top-0 text-xl text-red-600 transition-opacity"
+              >
+                *
+              </div>
+
+              <AnimatePresence>
+                {usernameIsProfane && (
+                  <motion.div
+                    key={"settingsProfanityWarning"}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.15 }}
+                    className="baseVertFlex absolute -right-2 top-12 z-[501] whitespace-nowrap rounded-md border-2 border-[hsl(0,84%,60%)] bg-gradient-to-br from-red-50 to-red-100 px-4 py-2 text-sm text-[hsl(0,84%,40%)] shadow-md tablet:right-[-255px] tablet:top-0"
+                  >
+                    <div>Username not allowed,</div>
+                    <div className="text-center">please choose another one</div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
-
-            <AnimatePresence>
-              {usernameIsProfane && (
-                <motion.div
-                  key={"settingsProfanityWarning"}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.15 }}
-                  className="baseVertFlex absolute -right-2 top-11 z-[501] whitespace-nowrap rounded-md border-2 border-[hsl(0,84%,60%)] bg-gradient-to-br from-red-50 to-red-100 px-4 py-2 text-sm text-[hsl(0,84%,40%)] shadow-md tablet:right-[-255px] tablet:top-0"
-                >
-                  <div>Username not allowed,</div>
-                  <div className="text-center">please choose another one</div>
-                </motion.div>
-              )}
-            </AnimatePresence>
           </div>
         </div>
 
@@ -1313,60 +1320,46 @@ function SheetSettings({
           ))}
         </div>
 
-        <div
-          style={{
-            gridTemplateColumns: "minmax(204px, auto) auto",
-          }}
-          className="mt-4 grid grid-cols-2 gap-4"
-        >
-          <Label
-            htmlFor="squeakPileOnLeft"
-            className="self-center justify-self-start"
-          >
-            Show Squeak Pile on left
-          </Label>
-          <Switch
-            id="squeakPileOnLeft"
-            disabled={saveButtonText !== "Save"}
-            checked={localPlayerSettings.squeakPileOnLeft}
-            onCheckedChange={() =>
-              setLocalPlayerSettings((prevSettings) => ({
-                ...prevSettings,
-                squeakPileOnLeft: !prevSettings.squeakPileOnLeft,
-              }))
-            }
-            className="self-center border-darkGreen"
-          />
+        <div className="baseVertFlex mt-4 w-full gap-4 px-4">
+          <div className="baseFlex w-full !justify-between gap-2">
+            <Label htmlFor="squeakPileOnLeft">Show Squeak Pile on left</Label>
+            <Switch
+              id="squeakPileOnLeft"
+              disabled={saveButtonText !== "Save"}
+              checked={localPlayerSettings.squeakPileOnLeft}
+              onCheckedChange={() =>
+                setLocalPlayerSettings((prevSettings) => ({
+                  ...prevSettings,
+                  squeakPileOnLeft: !prevSettings.squeakPileOnLeft,
+                }))
+              }
+              className="self-center border-darkGreen"
+            />
+          </div>
         </div>
 
-        <div
-          style={{
-            gridTemplateColumns: "minmax(204px, auto) auto",
-          }}
-          className="my-4 grid grid-cols-2 items-center gap-4"
-        >
-          <Label
-            htmlFor="enableDesktopNotifications"
-            className="justify-self-start"
-          >
-            Enable mobile notifications
-          </Label>
-          <Switch
-            id="enableDesktopNotifications"
-            disabled={saveButtonText !== "Save"}
-            checked={localPlayerSettings.desktopNotifications}
-            onCheckedChange={() => {
-              Notification.requestPermission().then((result) => {
-                if (result === "granted") {
-                  setLocalPlayerSettings((prevSettings) => ({
-                    ...prevSettings,
-                    desktopNotifications: !prevSettings.desktopNotifications,
-                  }));
-                }
-              });
-            }}
-            className="self-center border-darkGreen"
-          />
+        <div className="baseVertFlex my-4 w-full gap-4 px-4">
+          <div className="baseFlex w-full !justify-between gap-2">
+            <Label htmlFor="enableDesktopNotifications">
+              Enable mobile notifications
+            </Label>
+            <Switch
+              id="enableDesktopNotifications"
+              disabled={saveButtonText !== "Save"}
+              checked={localPlayerSettings.desktopNotifications}
+              onCheckedChange={() => {
+                Notification.requestPermission().then((result) => {
+                  if (result === "granted") {
+                    setLocalPlayerSettings((prevSettings) => ({
+                      ...prevSettings,
+                      desktopNotifications: !prevSettings.desktopNotifications,
+                    }));
+                  }
+                });
+              }}
+              className="self-center border-darkGreen"
+            />
+          </div>
         </div>
 
         <div className="baseFlex my-4 w-full gap-4">
