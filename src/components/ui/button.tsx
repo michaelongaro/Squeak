@@ -41,7 +41,8 @@ const buttonVariants = cva(
 );
 
 export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+  extends
+    React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   asChild?: boolean;
   forceActive?: boolean;
@@ -103,6 +104,9 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
             setBrightness(0.65);
           }}
           onPointerUp={() => {
+            setBrightness(1);
+          }}
+          onLostPointerCapture={() => {
             setBrightness(1);
           }}
           style={{

@@ -97,9 +97,9 @@ const config = {
       DEFAULT: "linear",
     },
   },
-  future: {
-    hoverOnlyWhenSupported: true,
-  },
+  // future: {
+  //   hoverOnlyWhenSupported: true,
+  // },
   plugins: [require("tailwindcss-animate")],
 } satisfies Config;
 
