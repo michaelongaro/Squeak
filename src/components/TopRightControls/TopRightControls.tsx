@@ -859,7 +859,7 @@ function MainSheet({
       case "avatar":
         return "365px";
       case "front":
-        return "275px";
+        return "315px";
       case "back":
         return "430px";
       default:

@@ -27,7 +27,7 @@ function PlayerCustomizationSheet() {
       case "avatar":
         return "350px";
       case "front":
-        return "265px";
+        return "315px";
       case "back":
         return "430px";
       default:
