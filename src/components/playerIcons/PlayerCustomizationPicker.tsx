@@ -259,7 +259,7 @@ function PlayerCustomizationPicker({
     const cardFrontVariants = ["Simple", "Standard", "Antique"];
 
     return (
-      <div className="baseVertFlex gap-2 text-black">
+      <div className="baseVertFlex h-[14rem] w-[22rem] gap-2 text-black">
         <div
           className={`h-[10rem] w-[22rem] grid-cols-3 grid-rows-1 ${forSheet ? "mt-2 bg-zinc-200" : ""} grid place-items-center rounded-md p-4 transition-all`}
         >
