@@ -9,7 +9,7 @@ import { AiOutlinePlusCircle, AiOutlineInfoCircle } from "react-icons/ai";
 import { IoStatsChart } from "react-icons/io5";
 import PlayerIcon from "~/components/playerIcons/PlayerIcon";
 import LeaderboardDialog from "~/components/dialogs/LeaderboardDialog";
-import { HiExternalLink } from "react-icons/hi";
+import { HiOutlineExternalLink } from "react-icons/hi";
 import Image from "next/image";
 import logo from "public/logo/squeakHomepageLogo.svg";
 import { Button } from "~/components/ui/button";
@@ -260,7 +260,10 @@ function MainOptions() {
                   className="baseFlex gap-1 underline underline-offset-4"
                 >
                   Michael Ongaro
-                  <HiExternalLink size={"1rem"} />
+                  <HiOutlineExternalLink
+                    size={"0.95rem"}
+                    className="mt-[2px]"
+                  />
                 </a>
               </motion.div>
             )}

@@ -2,7 +2,7 @@ import { type ReactNode } from "react";
 import Image from "next/image";
 import { IoClose } from "react-icons/io5";
 import { AiOutlineInfoCircle } from "react-icons/ai";
-import { HiExternalLink } from "react-icons/hi";
+import { HiOutlineExternalLink } from "react-icons/hi";
 import labeledPlayerContainer from "../../../public/tutorial/labeledPlayerContainer.png";
 import mobileLabeledPlayerContainer from "../../../public/tutorial/mobileLabeledPlayerContainer.png";
 import boardPlacementExample from "../../../public/tutorial/boardPlacementExample.jpg";
@@ -68,7 +68,7 @@ function TutorialDialog({ setShowDialog }: ITutorialDialog) {
                   className="inline-flex items-center justify-center gap-1 pl-1 underline underline-offset-4"
                 >
                   Nerts
-                  <HiExternalLink className="lg:size-4.5 size-[18px]" />
+                  <HiOutlineExternalLink className="lg:size-4.5 size-[18px]" />
                 </a>
                 . Games can be played with 2-5 players, where each player starts
                 with a regular deck of cards. After shuffling, each player

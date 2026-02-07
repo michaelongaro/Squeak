@@ -14,7 +14,7 @@ import { type ILocalPlayerSettings } from "../dialogs/SettingsAndStats/UserSetti
 import PlayerIcon from "./PlayerIcon";
 import { updateLocalStoragePlayerMetadata } from "~/utils/updateLocalStoragePlayerMetadata";
 import StaticCard from "~/components/Play/StaticCard";
-import { HiExternalLink } from "react-icons/hi";
+import { HiOutlineExternalLink } from "react-icons/hi";
 
 interface IPlayerCustomizationPicker {
   type: "avatar" | "back" | "front";
@@ -349,7 +349,7 @@ function PlayerCustomizationPicker({
             className="baseFlex gap-1 text-darkGreen underline underline-offset-4"
           >
             Jackie Studenski
-            <HiExternalLink className="size-4 text-darkGreen" />
+            <HiOutlineExternalLink className="size-4 text-darkGreen" />
           </a>
         </div>
       </div>

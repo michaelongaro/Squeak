@@ -34,7 +34,7 @@ import { IoIosCheckmark } from "react-icons/io";
 import { IoClose, IoSave } from "react-icons/io5";
 import useVoteHasBeenCast from "~/hooks/useVoteHasBeenCast";
 import toast from "react-hot-toast";
-import { HiExternalLink } from "react-icons/hi";
+import { HiOutlineExternalLink } from "react-icons/hi";
 import { IoIosArrowForward } from "react-icons/io";
 import {
   Tooltip,
@@ -960,7 +960,10 @@ function MainSheet({
                   className="baseFlex !items-end gap-1 underline underline-offset-4"
                 >
                   Michael Ongaro
-                  <HiExternalLink size={"1rem"} />
+                  <HiOutlineExternalLink
+                    size={"0.95rem"}
+                    className="mb-[2px]"
+                  />
                 </a>
               </div>
             </div>
