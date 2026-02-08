@@ -30,6 +30,7 @@ export interface IHeldSqueakStackLocation {
 interface IProposedCardBoxShadow {
   id: string;
   boxShadowValue: string;
+  durationMs?: number;
 }
 interface ICardBeingMovedProgrammatically {
   hand: string[]; // of playerIDs
@@ -270,6 +271,7 @@ export function RoomProvider(props: { children: React.ReactNode }) {
 
   const [proposedCardBoxShadow, setProposedCardBoxShadow] =
     useState<IProposedCardBoxShadow | null>(null);
+  const proposedCardBoxShadowTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const [currentPlayerIsDrawingFromDeck, setCurrentPlayerIsDrawingFromDeck] =
     useState<boolean>(false);
@@ -330,6 +332,34 @@ export function RoomProvider(props: { children: React.ReactNode }) {
   useEffect(() => {
     fetch("/api/socket");
   }, []);
+
+  useEffect(() => {
+    if (proposedCardBoxShadowTimeoutRef.current) {
+      clearTimeout(proposedCardBoxShadowTimeoutRef.current);
+      proposedCardBoxShadowTimeoutRef.current = null;
+    }
+
+    if (!proposedCardBoxShadow?.durationMs) return;
+
+    const { id, boxShadowValue, durationMs } = proposedCardBoxShadow;
+
+    proposedCardBoxShadowTimeoutRef.current = setTimeout(() => {
+      setProposedCardBoxShadow((prev) => {
+        if (!prev) return prev;
+        if (prev.id !== id || prev.boxShadowValue !== boxShadowValue) {
+          return prev;
+        }
+        return null;
+      });
+    }, durationMs);
+
+    return () => {
+      if (proposedCardBoxShadowTimeoutRef.current) {
+        clearTimeout(proposedCardBoxShadowTimeoutRef.current);
+        proposedCardBoxShadowTimeoutRef.current = null;
+      }
+    };
+  }, [proposedCardBoxShadow]);
 
   useEffect(() => {
     if (audioContext === null) return;

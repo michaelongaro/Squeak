@@ -406,11 +406,8 @@ function Card({
           setProposedCardBoxShadow({
             id: `cell${hoveredCell[0]}${hoveredCell[1]}`,
             boxShadowValue: `0px 0px 4px 3px rgba(227, 12, 5, 1)`,
+            durationMs: 250,
           });
-
-          setTimeout(() => {
-            setProposedCardBoxShadow(null);
-          }, 250);
         } else if (
           hoveredSqueakStack !== null &&
           originIndexForHeldSqueakCard !== hoveredSqueakStack
@@ -418,11 +415,8 @@ function Card({
           setProposedCardBoxShadow({
             id: `${userID}squeakHand${hoveredSqueakStack}`,
             boxShadowValue: `0px 0px 4px 3px rgba(227, 12, 5, 1)`,
+            durationMs: 250,
           });
-
-          setTimeout(() => {
-            setProposedCardBoxShadow(null);
-          }, 250);
         }
 
         setCardOffsetPosition({ x: 0, y: 0 });
