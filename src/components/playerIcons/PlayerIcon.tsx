@@ -362,14 +362,10 @@ function PlayerIcon({
 
           {username && (
             <div
-              className={`baseFlex mt-2 gap-2 whitespace-nowrap text-nowrap ${forWhilePlayingSheet ? "mb-4" : ""}`}
+              className={`baseFlex mt-2 gap-1.5 whitespace-nowrap text-nowrap ${forWhilePlayingSheet ? "mb-4" : ""}`}
             >
               {playerIsHost && (
-                <FaCrown
-                  size={"0.9rem"}
-                  viewBox="0 0 591 512"
-                  className="mb-[0.1rem] shrink-0"
-                />
+                <FaCrown size={"0.9rem"} className="mb-[0.1rem] shrink-0" />
               )}
               {username}
             </div>
@@ -406,6 +402,7 @@ function PlayerIcon({
                   } h-2 w-full rounded-md transition-all`}
                 ></div>
               </div>
+
               {roomHostIsRendering ? (
                 <Button
                   variant={"secondary"}
