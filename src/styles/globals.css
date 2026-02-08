@@ -298,7 +298,7 @@ body {
   }
 
   50% {
-    filter: drop-shadow(0px 0px 10px rgba(184, 184, 184, 1));
+    filter: drop-shadow(0px 0px 5px rgba(184, 184, 184, 1));
   }
 }
 
@@ -311,7 +311,7 @@ body {
     }
 
     50% {
-      filter: drop-shadow(0px 0px 15px rgba(184, 184, 184, 1));
+      filter: drop-shadow(0px 0px 10px rgba(184, 184, 184, 1));
     }
   }
 }

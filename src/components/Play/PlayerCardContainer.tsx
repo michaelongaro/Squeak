@@ -394,7 +394,7 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.5, ease: "easeInOut" }}
                     // fyi: wouldn't render drop-shadow unless a background color was set. seems to never actually be visible though thankfully
-                    className="initDeckPulse absolute left-0 top-0 z-0 size-full select-none rounded-md bg-darkGreen"
+                    className="initDeckPulse absolute left-0 top-0 z-0 size-full select-none rounded-none bg-darkGreen"
                   ></motion.div>
                 )}
             </AnimatePresence>
