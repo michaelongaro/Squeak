@@ -671,10 +671,10 @@ function CreateRoom() {
                       playerMetadata: getNewBotMetadata(),
                     });
                   }}
-                  className="baseFlex gap-2 whitespace-nowrap !px-4 text-xs"
+                  className="baseFlex gap-2.5 whitespace-nowrap !px-4 text-sm"
                 >
-                  <FaRobot size={"1.5rem"} />
-                  Add bot
+                  <FaRobot size={"1.25rem"} />
+                  Add Bot
                 </Button>
               </legend>
               <div className="baseVertFlex gap-6 p-2">
