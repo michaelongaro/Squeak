@@ -682,7 +682,7 @@ function CreateRoom() {
                   style={{
                     gridTemplateRows: "auto",
                   }}
-                  className={`grid grid-cols-2 !items-start !justify-start overflow-hidden p-4 pb-0 sm:flex sm:!flex-row`}
+                  className={`grid w-full grid-cols-2 !items-start !justify-start overflow-hidden sm:flex sm:!flex-row sm:p-4 sm:pb-0`}
                 >
                   <AnimatePresence mode="popLayout">
                     {Object.keys(playerMetadata)?.map((playerID) => (
