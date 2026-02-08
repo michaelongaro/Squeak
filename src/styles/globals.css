@@ -168,6 +168,12 @@ body {
   animation: rotateDeck 1s ease-in-out;
 }
 
+.handResetAnimating {
+  opacity: 0 !important;
+  transform: scale(0.75) !important;
+  transition: opacity 150ms ease-in-out, transform 150ms ease-in-out;
+}
+
 @keyframes fadeInAndOut {
   0% {
     opacity: 0;

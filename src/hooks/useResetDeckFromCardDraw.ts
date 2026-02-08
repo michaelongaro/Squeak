@@ -41,14 +41,11 @@ function useResetDeckFromCardDraw() {
 
       if (!playersHandContainer) return;
 
-      playersHandContainer.style.transition = "all 0.15s ease-in-out";
-      playersHandContainer.style.opacity = "0";
-      playersHandContainer.style.transform = "scale(0.75)";
+      playersHandContainer.classList.add("handResetAnimating");
 
       setTimeout(() => {
         setGameData(gameData);
-        playersHandContainer.style.opacity = "1";
-        playersHandContainer.style.transform = "scale(1)";
+        playersHandContainer.classList.remove("handResetAnimating");
       }, 150);
     }
   }, [dataFromBackend, setGameData, setOtherPlayerIDsDrawingFromDeck, userID]);
