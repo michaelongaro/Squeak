@@ -146,7 +146,7 @@ function TopRightControls() {
       voteType !== null &&
       showVotingOptionButtons
     ) {
-      toast.custom((t) => (
+      toast.custom((t: any) => (
         <VotingDialogToast
           isVisible={t.visible}
           showVotingOptionButtons={showVotingOptionButtons}
@@ -473,7 +473,10 @@ function TopRightControls() {
               open={showTutorialDialog}
               onOpenChange={(isOpen) => setShowTutorialDialog(isOpen)}
             >
-              <TooltipTrigger className="!absolute bottom-3 right-3 z-[500] text-lightGreen">
+              <TooltipTrigger
+                asChild
+                className="!absolute bottom-3 right-3 z-[500] text-lightGreen"
+              >
                 <DialogTrigger asChild>
                   <Button
                     variant={"text"}
