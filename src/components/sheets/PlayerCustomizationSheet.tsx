@@ -7,11 +7,14 @@ import {
   SheetContent,
   SheetPortal,
   SheetTrigger,
+  SheetTitle,
+  SheetDescription,
 } from "~/components/ui/sheet";
 import { useRoomContext } from "~/context/RoomContext";
 import PlayerCustomizationPicker from "../playerIcons/PlayerCustomizationPicker";
 import PlayerCustomizationPreview from "../playerIcons/PlayerCustomizationPreview";
 import { IoIosArrowForward } from "react-icons/io";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 const viewLabels = ["avatar", "front", "back"] as const;
 
@@ -51,6 +54,13 @@ function PlayerCustomizationSheet() {
           }}
           className="text-darkGreen"
         >
+          <VisuallyHidden>
+            <SheetTitle>Customize your experience</SheetTitle>
+            <SheetDescription>
+              Choose your avatar, card front style, and card back color.
+            </SheetDescription>
+          </VisuallyHidden>
+
           <div
             style={{
               height: getRenderedViewHeight(),
