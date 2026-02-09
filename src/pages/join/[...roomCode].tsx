@@ -487,7 +487,7 @@ function JoinRoom() {
                 <Button
                   variant={"secondary"}
                   disabled={showExitRoomSpinner}
-                  className="size-10"
+                  className="size-9"
                   onClick={() => {
                     setShowExitRoomSpinner(true);
 
@@ -509,7 +509,7 @@ function JoinRoom() {
                         className="baseFlex"
                       >
                         <div
-                          className="inline-block size-4 animate-spin rounded-full border-[2px] border-lightGreen/25 border-t-transparent text-lightGreen"
+                          className="inline-block size-[14px] animate-spin rounded-full border-[2px] border-lightGreen/25 border-t-transparent text-lightGreen"
                           role="status"
                           aria-label="loading"
                         >
@@ -525,7 +525,7 @@ function JoinRoom() {
                         transition={{ duration: 0.25 }}
                         className="baseFlex"
                       >
-                        <BiArrowBack size={"1.25rem"} />
+                        <BiArrowBack className="size-5" />
                       </motion.div>
                     )}
                   </AnimatePresence>

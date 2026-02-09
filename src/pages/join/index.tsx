@@ -207,10 +207,10 @@ function JoinRoom() {
         <div className="baseFlex sticky left-0 top-0 z-[105] w-screen !justify-start gap-4 border-b-2 border-white bg-gradient-to-br from-green-800 to-green-850 p-2 shadow-lg tablet:relative tablet:w-full tablet:bg-none tablet:shadow-none">
           <Button
             variant={"secondary"}
-            className="size-10"
+            className="size-9"
             onClick={() => leaveRoom()}
           >
-            <IoHome size={"1.25rem"} />
+            <IoHome className="size-5" />
           </Button>
 
           <div
