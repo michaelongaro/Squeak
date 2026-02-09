@@ -23,7 +23,7 @@ import { Sheet, SheetTrigger, SheetContent } from "~/components/ui/sheet";
 import { FiMail } from "react-icons/fi";
 
 const SIZE_DUR = 0.2;
-const FADE_DUR = 0.4;
+const FADE_DUR = 0.2;
 
 interface IPlayerIcon {
   avatarPath?: string;
