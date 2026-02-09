@@ -54,6 +54,10 @@ export function joinRoomHandler(
           ];
       }
 
+      if (!playerMetadata.cardBackVariant) {
+        playerMetadata.cardBackVariant = "Standard";
+      }
+
       players[userID] = playerMetadata;
 
       io.in(code).emit("playerMetadataUpdated", players);

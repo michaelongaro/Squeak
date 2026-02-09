@@ -5,6 +5,7 @@ interface IStaticCard {
   value: string;
   deckVariant: string;
   showCardBack?: boolean;
+  cardBackVariant?: string;
   hueRotation?: number;
   width?: number;
   height?: number;
@@ -15,6 +16,7 @@ function StaticCard({
   value,
   deckVariant,
   showCardBack = false,
+  cardBackVariant,
   hueRotation = 0,
   width,
   height,
@@ -37,6 +39,7 @@ function StaticCard({
           value,
           deckVariant,
           showCardBack,
+          cardBackVariant,
         }).src
       }
       alt={`${value}${suit} card`}

@@ -28,11 +28,11 @@ function PlayerCustomizationSheet() {
   function getRenderedViewHeight() {
     switch (renderedView) {
       case "avatar":
-        return "350px";
+        return "400px";
       case "front":
         return "315px";
       case "back":
-        return "430px";
+        return "580px";
       default:
         return "250px";
     }
@@ -57,7 +57,7 @@ function PlayerCustomizationSheet() {
           <VisuallyHidden>
             <SheetTitle>Customize your experience</SheetTitle>
             <SheetDescription>
-              Choose your avatar, card front style, and card back color.
+              Choose your avatar, card front style, and card back options.
             </SheetDescription>
           </VisuallyHidden>
 

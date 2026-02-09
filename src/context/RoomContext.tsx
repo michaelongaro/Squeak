@@ -443,6 +443,7 @@ export function RoomProvider(props: { children: React.ReactNode }) {
         username: user ? user.username : "",
         avatarPath: user ? user.avatarPath : "/avatars/rabbit.svg",
         color: user ? user.color : "oklch(64.02% 0.171 15.38)",
+        cardBackVariant: user ? user.cardBackVariant : "Standard",
         deckHueRotation: user ? user.deckHueRotation : 232,
       } as IRoomPlayer,
     }));
@@ -472,11 +473,13 @@ export function RoomProvider(props: { children: React.ReactNode }) {
       avatarPath: string;
       color: string;
       deckVariant: string;
+      cardBackVariant: string;
       deckHueRotation: number;
     } = {
       avatarPath: "/avatars/rabbit.svg",
       color: "oklch(64.02% 0.171 15.38)",
       deckVariant: "Simple",
+      cardBackVariant: "Standard",
       deckHueRotation: 232,
     };
 
@@ -493,6 +496,7 @@ export function RoomProvider(props: { children: React.ReactNode }) {
         username: localStorageUsername ?? "",
         avatarPath: parsedPlayerMetadata.avatarPath,
         color: parsedPlayerMetadata.color,
+        cardBackVariant: parsedPlayerMetadata.cardBackVariant,
         deckHueRotation: parsedPlayerMetadata.deckHueRotation,
       } as IRoomPlayer,
     }));

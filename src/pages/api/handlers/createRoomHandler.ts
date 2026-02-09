@@ -16,6 +16,10 @@ export function createRoomHandler(
   socket.on(
     "createRoom",
     async (roomConfig: IRoomConfig, playerMetadata: IRoomPlayer) => {
+      if (!playerMetadata.cardBackVariant) {
+        playerMetadata.cardBackVariant = "Standard";
+      }
+
       socket.join(roomConfig.code);
 
       roomData[roomConfig.code] = {

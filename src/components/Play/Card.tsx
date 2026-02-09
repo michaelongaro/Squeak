@@ -11,8 +11,6 @@ import useCardDrawFromSqueakDeck from "../../hooks/useCardDrawFromSqueakDeck";
 import useCardDropApproved from "../../hooks/useCardDropApproved";
 import useCardDropDenied from "../../hooks/useCardDropDenied";
 import { adjustCoordinatesByRotation } from "../../utils/adjustCoordinatesByRotation";
-import { type StaticImageData } from "next/image";
-import { cardAssets } from "../../utils/cardAssetPaths";
 import useInitialCardDrawForSqueakStack from "~/hooks/useInitialCardDrawForSqueakStack";
 import { getCardAssetPath } from "~/utils/getCardAssetPath";
 
@@ -70,6 +68,7 @@ interface ICardComponent {
   value?: string;
   suit?: string;
   showCardBack?: boolean;
+  cardBackVariant?: string;
   draggable: boolean;
   origin: "deck" | "hand" | "squeakHand" | "squeakDeck";
   ownerID: string;
@@ -86,6 +85,7 @@ function Card({
   value,
   suit,
   showCardBack,
+  cardBackVariant,
   draggable,
   startID,
   origin,
@@ -944,7 +944,13 @@ function Card({
         className="cardDimensions pointer-events-none relative left-0 top-0 select-none rounded-[0.3rem]"
         src={
           showCardBack && !forceShowCardFront
-            ? (cardAssets["cardBack"] as StaticImageData).src
+            ? getCardAssetPath({
+                suit: suit ?? "C",
+                value: value ?? "A",
+                deckVariant,
+                showCardBack: true,
+                cardBackVariant,
+              }).src
             : getCardAssetPath({
                 suit: suit ?? "C",
                 value: value ?? "A",

@@ -1,4 +1,6 @@
-import cardBack from "../../public/cards/cardBack.webp";
+import cardBackStandard from "../../public/cards/Backs/Standard.webp";
+import cardBackWaves from "../../public/cards/Backs/Waves.webp";
+import cardBackGeometric from "../../public/cards/Backs/Geometric.webp";
 ////////////////////////////////////////////////////////////////
 import C2Standard from "../../public/cards/Standard/2C.webp";
 import D2Standard from "../../public/cards/Standard/2D.webp";
@@ -166,7 +168,9 @@ import { type StaticImageData } from "next/image";
 export const cardAssets: {
   [key: string]: StaticImageData;
 } = {
-  cardBack: cardBack,
+  cardBackStandard: cardBackStandard,
+  cardBackWaves: cardBackWaves,
+  cardBackGeometric: cardBackGeometric,
   /////////////////////////
   C2Standard: C2Standard,
   D2Standard: D2Standard,

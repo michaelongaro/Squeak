@@ -860,11 +860,11 @@ function MainSheet({
       case "Friend actions":
         return "280px";
       case "avatar":
-        return "365px";
+        return "400px";
       case "front":
         return "315px";
       case "back":
-        return "430px";
+        return "590px";
       default:
         return "388px";
     }
@@ -1121,6 +1121,7 @@ function SheetSettings({
         username: user.username,
         avatarPath: user.avatarPath,
         color: user.color,
+        cardBackVariant: user.cardBackVariant,
         deckHueRotation: user.deckHueRotation,
       } as IRoomPlayer,
     });
@@ -1146,6 +1147,7 @@ function SheetSettings({
         localPlayerMetadata[userID]?.username.length !== 0) ||
       localPlayerMetadata[userID]?.avatarPath !== user.avatarPath ||
       localPlayerMetadata[userID]?.color !== user.color ||
+      localPlayerMetadata[userID]?.cardBackVariant !== user.cardBackVariant ||
       localPlayerMetadata[userID]?.deckHueRotation !== user.deckHueRotation ||
       localPlayerSettings.deckVariant !== user.deckVariant ||
       localPlayerSettings.squeakPileOnLeft !== user.squeakPileOnLeft ||
@@ -1168,6 +1170,7 @@ function SheetSettings({
       username: updatedMetadata.username,
       avatarPath: updatedMetadata.avatarPath,
       color: updatedMetadata.color,
+      cardBackVariant: updatedMetadata.cardBackVariant,
       deckHueRotation: updatedMetadata.deckHueRotation,
       deckVariant: localPlayerSettings.deckVariant,
       squeakPileOnLeft: localPlayerSettings.squeakPileOnLeft,
@@ -1185,6 +1188,7 @@ function SheetSettings({
           username: updatedMetadata.username,
           avatarPath: updatedMetadata.avatarPath,
           color: updatedMetadata.color,
+          cardBackVariant: updatedMetadata.cardBackVariant,
           deckHueRotation: updatedMetadata.deckHueRotation,
         },
       });

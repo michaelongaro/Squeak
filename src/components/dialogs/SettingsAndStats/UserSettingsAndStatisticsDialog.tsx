@@ -90,6 +90,7 @@ function UserSettingsAndStatsDialog({
         username: user.username,
         avatarPath: user.avatarPath,
         color: user.color,
+        cardBackVariant: user.cardBackVariant,
         deckHueRotation: user.deckHueRotation,
       } as IRoomPlayer,
     });
@@ -108,6 +109,7 @@ function UserSettingsAndStatsDialog({
         localPlayerMetadata[userID]?.username.length !== 0) ||
       localPlayerMetadata[userID]?.avatarPath !== user.avatarPath ||
       localPlayerMetadata[userID]?.color !== user.color ||
+      localPlayerMetadata[userID]?.cardBackVariant !== user.cardBackVariant ||
       localPlayerMetadata[userID]?.deckHueRotation !== user.deckHueRotation ||
       localPlayerSettings.deckVariant !== user.deckVariant ||
       localPlayerSettings.squeakPileOnLeft !== user.squeakPileOnLeft ||
@@ -130,6 +132,7 @@ function UserSettingsAndStatsDialog({
       username: updatedMetadata.username,
       avatarPath: updatedMetadata.avatarPath,
       color: updatedMetadata.color,
+      cardBackVariant: updatedMetadata.cardBackVariant,
       deckHueRotation: updatedMetadata.deckHueRotation,
       deckVariant: localPlayerSettings.deckVariant,
       squeakPileOnLeft: localPlayerSettings.squeakPileOnLeft,
@@ -147,6 +150,7 @@ function UserSettingsAndStatsDialog({
           username: updatedMetadata.username,
           avatarPath: updatedMetadata.avatarPath,
           color: updatedMetadata.color,
+          cardBackVariant: updatedMetadata.cardBackVariant,
           deckHueRotation: updatedMetadata.deckHueRotation,
         },
       });

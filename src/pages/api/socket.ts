@@ -100,6 +100,7 @@ export interface IRoomPlayer {
   username: string;
   avatarPath: string;
   color: string;
+  cardBackVariant: string;
   deckHueRotation: number;
   botDifficulty?: "Easy" | "Medium" | "Hard" | "Expert";
 }

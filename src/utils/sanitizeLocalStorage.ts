@@ -2,6 +2,7 @@ const defaultPlayerMetadata = {
   avatarPath: "/avatars/rabbit.svg",
   color: "oklch(64.02% 0.171 15.38)",
   deckVariant: "Simple",
+  cardBackVariant: "Standard",
   deckHueRotation: 232,
 };
 
@@ -35,6 +36,7 @@ export function sanitizeLocalStorage() {
         typeof parsedMetadata.avatarPath !== "string" ||
         typeof parsedMetadata.color !== "string" ||
         typeof parsedMetadata.deckVariant !== "string" ||
+        typeof parsedMetadata.cardBackVariant !== "string" ||
         typeof parsedMetadata.deckHueRotation !== "number"
       ) {
         throw new Error("Invalid metadata format");

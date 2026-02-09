@@ -305,6 +305,9 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                         value={card.value}
                         suit={card.suit}
                         showCardBack={true} // separate state inside overrides this halfway through flip
+                        cardBackVariant={
+                          playerMetadata[userID]?.cardBackVariant || "Standard"
+                        }
                         draggable={false}
                         ownerID={userID}
                         hueRotation={
@@ -490,6 +493,10 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                               value={"2"} // placeholder
                               suit={"S"} // placeholder
                               showCardBack={true}
+                              cardBackVariant={
+                                playerMetadata[userID]?.cardBackVariant ||
+                                "Standard"
+                              }
                               draggable={false}
                               ownerID={""} // placeholder
                               hueRotation={
@@ -514,6 +521,10 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                                   value={card.value}
                                   suit={card.suit}
                                   showCardBack={true} // separate state inside overrides this halfway through flip
+                                  cardBackVariant={
+                                    playerMetadata[userID]?.cardBackVariant ||
+                                    "Standard"
+                                  }
                                   draggable={false}
                                   ownerID={userID}
                                   hueRotation={
@@ -543,6 +554,10 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                       <div className="absolute left-0 top-0 z-[1] h-full w-full select-none">
                         <StaticCard
                           showCardBack={true}
+                          cardBackVariant={
+                            playerMetadata[userID]?.cardBackVariant ||
+                            "Standard"
+                          }
                           hueRotation={
                             playerMetadata[userID]?.deckHueRotation || 0
                           }
@@ -575,6 +590,10 @@ function PlayerCardContainer({ cardContainerClass }: IPlayerCardContainer) {
                       <div className="col-start-1 row-start-1 select-none opacity-25">
                         <StaticCard
                           showCardBack={true}
+                          cardBackVariant={
+                            playerMetadata[userID]?.cardBackVariant ||
+                            "Standard"
+                          }
                           hueRotation={
                             playerMetadata[userID]?.deckHueRotation || 0
                           }

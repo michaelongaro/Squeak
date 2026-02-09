@@ -6,6 +6,7 @@ interface IGetCardAssetPath {
   value: string;
   deckVariant: string;
   showCardBack?: boolean;
+  cardBackVariant?: string;
 }
 
 export function getCardAssetPath({
@@ -13,9 +14,12 @@ export function getCardAssetPath({
   value,
   deckVariant,
   showCardBack,
+  cardBackVariant = "Standard",
 }: IGetCardAssetPath): StaticImageData {
   if (showCardBack) {
-    return cardAssets["cardBack"] as StaticImageData;
+    const backKey = `cardBack${cardBackVariant}`;
+    return (cardAssets[backKey] ??
+      cardAssets["cardBackStandard"]) as StaticImageData;
   }
 
   return cardAssets[`${suit}${value}${deckVariant}`] as StaticImageData;

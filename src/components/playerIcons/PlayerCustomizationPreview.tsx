@@ -59,6 +59,7 @@ function PlayerCustomizationPreview({
           value={"8"}
           deckVariant={deckVariant}
           showCardBack={true}
+          cardBackVariant={playerMetadata[userID]?.cardBackVariant}
           hueRotation={playerMetadata[userID]?.deckHueRotation || 0}
           width={48}
           height={64}

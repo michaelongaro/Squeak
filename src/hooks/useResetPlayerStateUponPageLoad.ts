@@ -62,11 +62,13 @@ function useResetPlayerStateUponPageLoad() {
           avatarPath: string;
           color: string;
           deckVariant: string;
+          cardBackVariant: string;
           deckHueRotation: number;
         } = {
           avatarPath: "/avatars/rabbit.svg",
           color: "oklch(64.02% 0.171 15.38)",
           deckVariant: "Simple",
+          cardBackVariant: "Standard",
           deckHueRotation: 232,
         };
 
@@ -78,6 +80,7 @@ function useResetPlayerStateUponPageLoad() {
             JSON.stringify({
               avatarPath: "/avatars/rabbit.svg",
               deckVariant: "Simple",
+              cardBackVariant: "Standard",
               deckHueRotation: 232,
             }),
           );
@@ -91,6 +94,8 @@ function useResetPlayerStateUponPageLoad() {
             username: user?.username ?? localStorageUsername ?? "",
             avatarPath: user?.avatarPath ?? parsedPlayerMetadata.avatarPath,
             color: user?.color ?? parsedPlayerMetadata.color,
+            cardBackVariant:
+              user?.cardBackVariant ?? parsedPlayerMetadata.cardBackVariant,
             deckHueRotation:
               user?.deckHueRotation ?? parsedPlayerMetadata.deckHueRotation,
           } as IRoomPlayer,

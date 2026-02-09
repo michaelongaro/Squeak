@@ -300,10 +300,15 @@ function CreateRoom() {
       Math.floor(Math.random() * oklchToDeckArray.length)
     ] as [string, number];
 
+    const cardBackVariants = ["Standard", "Waves", "Geometric"] as const;
+    const randomCardBackVariant =
+      cardBackVariants[Math.floor(Math.random() * cardBackVariants.length)];
+
     return {
       username: randomBotName,
       avatarPath: randomAvatarPath,
       color: randomColor,
+      cardBackVariant: randomCardBackVariant,
       deckHueRotation: randomDeckHueRotation,
       botDifficulty: "Medium",
     } as IRoomPlayer;

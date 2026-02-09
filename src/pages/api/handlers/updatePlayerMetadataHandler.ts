@@ -4,7 +4,7 @@ import { type IRoomData, type IUpdatePlayerMetadata } from "../socket";
 export function updatePlayerMetadataHandler(
   io: Server,
   socket: Socket,
-  roomData: IRoomData
+  roomData: IRoomData,
 ) {
   socket.on(
     "updatePlayerMetadata",
@@ -16,6 +16,7 @@ export function updatePlayerMetadataHandler(
 
       user.avatarPath = newPlayerMetadata.avatarPath;
       user.color = newPlayerMetadata.color;
+      user.cardBackVariant = newPlayerMetadata.cardBackVariant;
       user.deckHueRotation = newPlayerMetadata.deckHueRotation;
       user.username = newPlayerMetadata.username;
 
@@ -23,6 +24,6 @@ export function updatePlayerMetadataHandler(
         user.botDifficulty = newPlayerMetadata.botDifficulty;
       }
       io.in(roomCode).emit("playerMetadataUpdated", room.players);
-    }
+    },
   );
 }

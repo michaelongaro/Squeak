@@ -80,6 +80,9 @@ function OtherPlayersCardContainers({
 
   const cardDimensions = useResponsiveCardDimensions();
 
+  const getCardBackVariant = (playerID: string) =>
+    playerMetadata[playerID]?.cardBackVariant || "Standard";
+
   function getDynamicTopValue(
     squeakStackIdx: number,
     squeakStackLength: number,
@@ -216,6 +219,7 @@ function OtherPlayersCardContainers({
                               value={card.value}
                               suit={card.suit}
                               showCardBack={true} // this would need to be changed halfway through card flip
+                              cardBackVariant={getCardBackVariant(playerID)}
                               draggable={false}
                               ownerID={playerID}
                               hueRotation={
@@ -302,6 +306,7 @@ function OtherPlayersCardContainers({
                               value={card.value}
                               suit={card.suit}
                               showCardBack={true} // separate state inside overrides this halfway through flip
+                              cardBackVariant={getCardBackVariant(playerID)}
                               draggable={false}
                               ownerID={playerID}
                               hueRotation={
@@ -322,6 +327,7 @@ function OtherPlayersCardContainers({
                         <div className="col-start-1 row-start-1 select-none opacity-25">
                           <StaticCard
                             showCardBack={true}
+                            cardBackVariant={getCardBackVariant(playerID)}
                             hueRotation={
                               playerMetadata[playerID]?.deckHueRotation || 0
                             }
@@ -438,6 +444,7 @@ function OtherPlayersCardContainers({
                           value={card.value}
                           suit={card.suit}
                           showCardBack={true} // this would need to be changed halfway through card flip
+                          cardBackVariant={getCardBackVariant(playerID)}
                           draggable={false}
                           ownerID={playerID}
                           hueRotation={
@@ -558,6 +565,7 @@ function OtherPlayersCardContainers({
                                 value={"2"} // placeholder
                                 suit={"S"} // placeholder
                                 showCardBack={true}
+                                cardBackVariant={getCardBackVariant(playerID)}
                                 draggable={false}
                                 ownerID={""} // placeholder
                                 hueRotation={
@@ -582,6 +590,9 @@ function OtherPlayersCardContainers({
                                     value={card.value}
                                     suit={card.suit}
                                     showCardBack={true} // separate state inside overrides this halfway through flip
+                                    cardBackVariant={getCardBackVariant(
+                                      playerID,
+                                    )}
                                     draggable={false}
                                     ownerID={playerID}
                                     hueRotation={
@@ -612,6 +623,7 @@ function OtherPlayersCardContainers({
                         <div className="absolute left-0 top-0 z-[1] h-full w-full select-none">
                           <StaticCard
                             showCardBack={true}
+                            cardBackVariant={getCardBackVariant(playerID)}
                             hueRotation={
                               playerMetadata[playerID]?.deckHueRotation || 0
                             }
@@ -636,6 +648,7 @@ function OtherPlayersCardContainers({
                       <div className="col-start-1 row-start-1 select-none opacity-25">
                         <StaticCard
                           showCardBack={true}
+                          cardBackVariant={getCardBackVariant(playerID)}
                           hueRotation={
                             playerMetadata[playerID]?.deckHueRotation || 0
                           }

@@ -86,6 +86,9 @@ function ShufflingCountdownDialog() {
                 key={`animatedShufflingCard${index}`}
                 index={index + 1} // seems to fix bug where the first card skipped animation entirely
                 hueRotation={playerMetadata[userID]?.deckHueRotation || 0}
+                cardBackVariant={
+                  playerMetadata[userID]?.cardBackVariant || "Standard"
+                }
               />
             ))}
           </div>
@@ -110,9 +113,11 @@ export default ShufflingCountdownDialog;
 function AnimatedShufflingCard({
   index,
   hueRotation,
+  cardBackVariant,
 }: {
   index: number;
   hueRotation: number;
+  cardBackVariant: string;
 }) {
   const controls = useAnimation();
   const topPosition = index * 2; // Ensuring each card gets a unique initial top position
@@ -231,6 +236,7 @@ function AnimatedShufflingCard({
         suit={"S"} // not important, placeholder vals
         deckVariant={"Simple"} // not important, placeholder vals
         showCardBack={true}
+        cardBackVariant={cardBackVariant}
         hueRotation={hueRotation}
       />
     </motion.div>
