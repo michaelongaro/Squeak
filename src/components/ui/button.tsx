@@ -84,7 +84,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const [overrideHideSuitAccents, setOverrideHideSuitAccents] =
       useState(false);
 
-    const dynamicOpacity = disabled ? 0.25 : 1;
+    const dynamicOpacity = disabled ? 0.5 : 1;
 
     // TODO: can probably simplify these below outside of secondary variant most likely?
 

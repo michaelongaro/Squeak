@@ -16,7 +16,7 @@ import OtherPlayerIcons from "~/components/Play/OtherPlayerIcons";
 import classes from "~/components/Play/Play.module.css";
 import useSyncClientWithServer from "../../hooks/useSyncClientWithServer";
 import MobileVotingPreview from "~/components/dialogs/MobileVotingPreview";
-import { type Room } from "@prisma/client";
+import { type Room } from "~/generated/browser";
 import { useRouter } from "next/router";
 import { useAuth } from "@clerk/nextjs";
 import { api } from "~/utils/api";
