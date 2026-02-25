@@ -32,7 +32,7 @@ function PlayerCustomizationSheet() {
       case "front":
         return "315px";
       case "back":
-        return "580px";
+        return "550px";
       default:
         return "250px";
     }

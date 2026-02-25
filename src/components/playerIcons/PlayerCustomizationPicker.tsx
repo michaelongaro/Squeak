@@ -392,7 +392,7 @@ function PlayerCustomizationPicker({
 
     return (
       <div
-        className={`baseVertFlex h-[32rem] w-[22rem] gap-4 md:h-[25rem] md:w-[25rem] ${forSheet ? "bg-zinc-200" : ""} rounded-md p-4 transition-all`}
+        className={`baseVertFlex h-[30rem] w-[22rem] !justify-start gap-4 overflow-y-auto md:h-[25.5rem] md:w-[25rem] md:overflow-y-hidden ${forSheet ? "bg-zinc-200" : ""} rounded-md p-4 transition-all`}
       >
         <div className="baseFlex w-full !justify-start text-sm font-medium text-darkGreen">
           Pattern

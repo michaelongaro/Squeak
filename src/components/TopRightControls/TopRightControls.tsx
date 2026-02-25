@@ -864,7 +864,7 @@ function MainSheet({
       case "front":
         return "315px";
       case "back":
-        return "590px";
+        return "570px";
       default:
         return "388px";
     }
