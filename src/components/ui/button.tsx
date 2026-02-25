@@ -126,7 +126,8 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     if (variant === "sheet") {
       return (
         <Comp
-          onPointerEnter={() => {
+          onPointerEnter={(event) => {
+            if (event.pointerType === "touch") return;
             setIsActive(true);
           }}
           onPointerLeave={() => {
@@ -139,6 +140,15 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
             setIsActive(true);
           }}
           onPointerUp={() => {
+            setIsActive(false);
+          }}
+          onClickCapture={() => {
+            setIsActive(false);
+          }}
+          onLostPointerCapture={() => {
+            setIsActive(false);
+          }}
+          onBlur={() => {
             setIsActive(false);
           }}
           className={cn(
@@ -187,10 +197,27 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
             setBrightness(1);
             setIsActive(false);
           }}
-          onPointerEnter={() => {
+          onClickCapture={() => {
+            setBrightness(1);
+            setIsActive(false);
+          }}
+          onPointerEnter={(event) => {
+            if (event.pointerType === "touch") return;
             setIsActive(true);
           }}
           onPointerLeave={() => {
+            setBrightness(1);
+            setIsActive(false);
+          }}
+          onPointerCancel={() => {
+            setBrightness(1);
+            setIsActive(false);
+          }}
+          onLostPointerCapture={() => {
+            setBrightness(1);
+            setIsActive(false);
+          }}
+          onBlur={() => {
             setBrightness(1);
             setIsActive(false);
           }}
@@ -244,11 +271,28 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
             setBrightness(1);
             setIsActive(false);
           }}
-          onPointerEnter={() => {
+          onClickCapture={() => {
+            setBrightness(1);
+            setIsActive(false);
+          }}
+          onPointerEnter={(event) => {
+            if (event.pointerType === "touch") return;
             setIsActive(true);
             setOverrideHideSuitAccents(false);
           }}
           onPointerLeave={() => {
+            setBrightness(1);
+            setIsActive(false);
+          }}
+          onPointerCancel={() => {
+            setBrightness(1);
+            setIsActive(false);
+          }}
+          onLostPointerCapture={() => {
+            setBrightness(1);
+            setIsActive(false);
+          }}
+          onBlur={() => {
             setBrightness(1);
             setIsActive(false);
           }}

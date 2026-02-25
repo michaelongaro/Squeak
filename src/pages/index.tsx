@@ -64,7 +64,7 @@ function MainOptions() {
                   src={D8Standard.src}
                   alt="8 of Diamonds"
                   fetchPriority="high"
-                  className="size-full rotate-[-22deg] rounded-[0.3rem]"
+                  className="size-full rotate-[-22deg] rounded-[0.2rem]"
                 />
               </motion.div>
 
@@ -81,7 +81,7 @@ function MainOptions() {
                   src={KCStandard.src}
                   alt="King of Clubs"
                   fetchPriority="high"
-                  className="size-full rounded-[0.3rem]"
+                  className="size-full rounded-[0.2rem]"
                 />
               </motion.div>
 
@@ -98,7 +98,7 @@ function MainOptions() {
                   src={AHStandard.src}
                   alt="Ace of Hearts"
                   fetchPriority="high"
-                  className="size-full rotate-[22deg] rounded-[0.3rem]"
+                  className="size-full rotate-[22deg] rounded-[0.2rem]"
                 />
               </motion.div>
             </div>

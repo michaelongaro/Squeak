@@ -56,11 +56,37 @@ function PlayerCustomizationPicker({
     index: number;
   } | null>(null);
 
+  const [canHover, setCanHover] = useState(false);
+
   const [scaledDownElementIndex, setScaledDownElementIndex] =
     useState<number>(-1);
 
   const [userAvatarIndex, setUserAvatarIndex] = useState<number>(-1);
   const [userDeckIndex, setUserDeckIndex] = useState<number>(-1);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const mediaQuery = window.matchMedia("(hover: hover) and (pointer: fine)");
+
+    const updateCanHover = () => {
+      setCanHover(mediaQuery.matches);
+    };
+
+    updateCanHover();
+
+    mediaQuery.addEventListener("change", updateCanHover);
+
+    return () => {
+      mediaQuery.removeEventListener("change", updateCanHover);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!canHover) {
+      setHoveredTooltip(null);
+    }
+  }, [canHover]);
 
   useEffect(() => {
     const userMetadata = playerMetadata[userID];
@@ -118,7 +144,8 @@ function PlayerCustomizationPicker({
 
     if (!isTooltipOptionAvailable(type, index)) return "4px solid transparent";
 
-    return hoveredTooltip &&
+    return canHover &&
+      hoveredTooltip &&
       hoveredTooltip.type === type &&
       hoveredTooltip.index === index
       ? "4px solid hsl(120deg 100% 40%)"
@@ -171,21 +198,20 @@ function PlayerCustomizationPicker({
             }}
             className="relative shrink-0 rounded-[50%] outline-offset-4 transition-all"
             onPointerEnter={(e) => {
-              if (e.pointerType === "mouse") {
+              if (canHover && e.pointerType === "mouse") {
                 setHoveredTooltip({ type: "avatar", index });
+                setScaledDownElementIndex(index);
               }
-
-              setScaledDownElementIndex(index);
             }}
             onPointerLeave={(e) => {
-              if (e.pointerType === "mouse") {
+              if (canHover && e.pointerType === "mouse") {
                 setHoveredTooltip(null);
               }
 
               setScaledDownElementIndex(-1);
             }}
             onPointerCancel={(e) => {
-              if (e.pointerType === "mouse") {
+              if (canHover && e.pointerType === "mouse") {
                 setHoveredTooltip(null);
               }
 
@@ -193,6 +219,12 @@ function PlayerCustomizationPicker({
             }}
             onPointerDown={() => {
               setScaledDownElementIndex(index);
+            }}
+            onPointerUp={() => {
+              setScaledDownElementIndex(-1);
+            }}
+            onLostPointerCapture={() => {
+              setScaledDownElementIndex(-1);
             }}
             onClick={() => {
               // if user is connected to room
@@ -225,6 +257,9 @@ function PlayerCustomizationPicker({
                   } as IRoomPlayer,
                 });
               }
+
+              setHoveredTooltip(null);
+              setScaledDownElementIndex(-1);
             }}
           >
             <div
@@ -275,21 +310,20 @@ function PlayerCustomizationPicker({
                 }}
                 className="relative shrink-0 rounded-[1px] outline-offset-4 transition-all"
                 onPointerEnter={(e) => {
-                  if (e.pointerType === "mouse") {
+                  if (canHover && e.pointerType === "mouse") {
                     setHoveredTooltip({ type: "front", index });
+                    setScaledDownElementIndex(index);
                   }
-
-                  setScaledDownElementIndex(index);
                 }}
                 onPointerLeave={(e) => {
-                  if (e.pointerType === "mouse") {
+                  if (canHover && e.pointerType === "mouse") {
                     setHoveredTooltip(null);
                   }
 
                   setScaledDownElementIndex(-1);
                 }}
                 onPointerCancel={(e) => {
-                  if (e.pointerType === "mouse") {
+                  if (canHover && e.pointerType === "mouse") {
                     setHoveredTooltip(null);
                   }
 
@@ -297,6 +331,12 @@ function PlayerCustomizationPicker({
                 }}
                 onPointerDown={() => {
                   setScaledDownElementIndex(index);
+                }}
+                onPointerUp={() => {
+                  setScaledDownElementIndex(-1);
+                }}
+                onLostPointerCapture={() => {
+                  setScaledDownElementIndex(-1);
                 }}
                 onClick={() => {
                   updateLocalStoragePlayerMetadata({
@@ -319,6 +359,9 @@ function PlayerCustomizationPicker({
                       deckVariant: variant,
                     };
                   });
+
+                  setHoveredTooltip(null);
+                  setScaledDownElementIndex(-1);
                 }}
               >
                 <div
@@ -380,6 +423,7 @@ function PlayerCustomizationPicker({
       }
 
       if (
+        canHover &&
         hoveredTooltip &&
         hoveredTooltip.type === "pattern" &&
         hoveredTooltip.index === index
@@ -410,30 +454,33 @@ function PlayerCustomizationPicker({
               }}
               className="relative shrink-0 rounded-[1px] outline-offset-2 transition-all"
               onPointerEnter={(e) => {
-                if (e.pointerType === "mouse") {
+                if (canHover && e.pointerType === "mouse") {
                   setHoveredTooltip({ type: "pattern", index });
+                  setScaledDownElementIndex(index + 100);
                 }
-
-                setScaledDownElementIndex(index + 100);
               }}
               onPointerLeave={(e) => {
-                if (e.pointerType === "mouse") {
+                if (canHover && e.pointerType === "mouse") {
                   setHoveredTooltip(null);
                 }
 
                 setScaledDownElementIndex(-1);
               }}
               onPointerCancel={(e) => {
-                if (e.pointerType === "mouse") {
+                if (canHover && e.pointerType === "mouse") {
                   setHoveredTooltip(null);
                 }
 
                 setScaledDownElementIndex(-1);
               }}
               onPointerDown={(e) => {
-                if (e.pointerType === "mouse") {
-                  setScaledDownElementIndex(index + 100);
-                }
+                setScaledDownElementIndex(index + 100);
+              }}
+              onPointerUp={() => {
+                setScaledDownElementIndex(-1);
+              }}
+              onLostPointerCapture={() => {
+                setScaledDownElementIndex(-1);
               }}
               onClick={() => {
                 // if user is connected to room
@@ -509,30 +556,33 @@ function PlayerCustomizationPicker({
               }}
               className="relative shrink-0 rounded-[1px] outline-offset-2 transition-all"
               onPointerEnter={(e) => {
-                if (e.pointerType === "mouse") {
+                if (canHover && e.pointerType === "mouse") {
                   setHoveredTooltip({ type: "back", index });
+                  setScaledDownElementIndex(index);
                 }
-
-                setScaledDownElementIndex(index);
               }}
               onPointerLeave={(e) => {
-                if (e.pointerType === "mouse") {
+                if (canHover && e.pointerType === "mouse") {
                   setHoveredTooltip(null);
                 }
 
                 setScaledDownElementIndex(-1);
               }}
               onPointerCancel={(e) => {
-                if (e.pointerType === "mouse") {
+                if (canHover && e.pointerType === "mouse") {
                   setHoveredTooltip(null);
                 }
 
                 setScaledDownElementIndex(-1);
               }}
               onPointerDown={(e) => {
-                if (e.pointerType === "mouse") {
-                  setScaledDownElementIndex(index);
-                }
+                setScaledDownElementIndex(index);
+              }}
+              onPointerUp={() => {
+                setScaledDownElementIndex(-1);
+              }}
+              onLostPointerCapture={() => {
+                setScaledDownElementIndex(-1);
               }}
               onClick={() => {
                 // if user is connected to room

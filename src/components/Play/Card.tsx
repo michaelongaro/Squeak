@@ -941,7 +941,7 @@ function Card({
               : "scale(1)",
           transition: "transform 375ms ease-out",
         }}
-        className="cardDimensions pointer-events-none relative left-0 top-0 select-none rounded-[0.3rem]"
+        className="cardDimensions pointer-events-none relative left-0 top-0 select-none rounded-[0.2rem]"
         src={
           showCardBack && !forceShowCardFront
             ? getCardAssetPath({
