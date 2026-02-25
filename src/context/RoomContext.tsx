@@ -19,6 +19,14 @@ import { useUserIDContext } from "./UserIDContext";
 import { api } from "~/utils/api";
 import useGetViewportLabel from "~/hooks/useGetViewportLabel";
 import { sanitizeLocalStorage } from "~/utils/sanitizeLocalStorage";
+import {
+  DEFAULT_COLOR,
+  DEFAULT_DECK_HUE_ROTATION,
+  normalizeAvatarPath,
+  normalizeCardBackVariant,
+  normalizeDeckVariant,
+  parseAndNormalizeLocalPlayerMetadata,
+} from "~/utils/playerMetadataDefaults";
 
 export interface IHeldSqueakStackLocation {
   [playerID: string]: {
@@ -441,14 +449,14 @@ export function RoomProvider(props: { children: React.ReactNode }) {
       ...prev,
       [userID]: {
         username: user ? user.username : "",
-        avatarPath: user ? user.avatarPath : "/avatars/rabbit.svg",
-        color: user ? user.color : "oklch(64.02% 0.171 15.38)",
-        cardBackVariant: user ? user.cardBackVariant : "Standard",
-        deckHueRotation: user ? user.deckHueRotation : 232,
+        avatarPath: normalizeAvatarPath(user?.avatarPath),
+        color: user?.color ?? DEFAULT_COLOR,
+        cardBackVariant: normalizeCardBackVariant(user?.cardBackVariant),
+        deckHueRotation: user?.deckHueRotation ?? DEFAULT_DECK_HUE_ROTATION,
       } as IRoomPlayer,
     }));
 
-    setDeckVariant(user ? user.deckVariant : "Simple");
+    setDeckVariant(normalizeDeckVariant(user?.deckVariant));
     setMirrorPlayerContainer(user ? !user.squeakPileOnLeft : false);
   }, [userID, user, playerMetadata, isLoaded, isSignedIn]);
 
@@ -469,23 +477,9 @@ export function RoomProvider(props: { children: React.ReactNode }) {
       "squeak-playerMetadata",
     );
 
-    let parsedPlayerMetadata: {
-      avatarPath: string;
-      color: string;
-      deckVariant: string;
-      cardBackVariant: string;
-      deckHueRotation: number;
-    } = {
-      avatarPath: "/avatars/rabbit.svg",
-      color: "oklch(64.02% 0.171 15.38)",
-      deckVariant: "Simple",
-      cardBackVariant: "Standard",
-      deckHueRotation: 232,
-    };
-
-    if (localStoragePlayerMetadata) {
-      parsedPlayerMetadata = JSON.parse(localStoragePlayerMetadata);
-    }
+    const parsedPlayerMetadata = parseAndNormalizeLocalPlayerMetadata(
+      localStoragePlayerMetadata,
+    );
 
     // TODO: even if it isn't strictly used by backend, maybe include
     // the deckVariant in playerMetadata just to simplify things?
@@ -494,14 +488,16 @@ export function RoomProvider(props: { children: React.ReactNode }) {
       ...prev,
       [userID]: {
         username: localStorageUsername ?? "",
-        avatarPath: parsedPlayerMetadata.avatarPath,
+        avatarPath: normalizeAvatarPath(parsedPlayerMetadata.avatarPath),
         color: parsedPlayerMetadata.color,
-        cardBackVariant: parsedPlayerMetadata.cardBackVariant,
+        cardBackVariant: normalizeCardBackVariant(
+          parsedPlayerMetadata.cardBackVariant,
+        ),
         deckHueRotation: parsedPlayerMetadata.deckHueRotation,
       } as IRoomPlayer,
     }));
 
-    setDeckVariant(parsedPlayerMetadata.deckVariant);
+    setDeckVariant(normalizeDeckVariant(parsedPlayerMetadata.deckVariant));
     setMirrorPlayerContainer(false);
   }, [userID, user, playerMetadata, isLoaded, isSignedIn]);
 

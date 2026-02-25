@@ -1,10 +1,4 @@
-const defaultPlayerMetadata = {
-  avatarPath: "/avatars/rabbit.svg",
-  color: "oklch(64.02% 0.171 15.38)",
-  deckVariant: "Simple",
-  cardBackVariant: "Standard",
-  deckHueRotation: 232,
-};
+import { parseAndNormalizeLocalPlayerMetadata } from "~/utils/playerMetadataDefaults";
 
 export function sanitizeLocalStorage() {
   // FYI: no need to sanitize the userID field because it's normal
@@ -28,31 +22,11 @@ export function sanitizeLocalStorage() {
     localStorage.setItem("squeak-username", "");
   }
 
-  if (metadata) {
-    try {
-      const parsedMetadata = JSON.parse(metadata);
-
-      if (
-        typeof parsedMetadata.avatarPath !== "string" ||
-        typeof parsedMetadata.color !== "string" ||
-        typeof parsedMetadata.deckVariant !== "string" ||
-        typeof parsedMetadata.cardBackVariant !== "string" ||
-        typeof parsedMetadata.deckHueRotation !== "number"
-      ) {
-        throw new Error("Invalid metadata format");
-      }
-    } catch (e) {
-      localStorage.setItem(
-        "squeak-playerMetadata",
-        JSON.stringify(defaultPlayerMetadata),
-      );
-    }
-  } else {
-    localStorage.setItem(
-      "squeak-playerMetadata",
-      JSON.stringify(defaultPlayerMetadata),
-    );
-  }
+  const normalizedMetadata = parseAndNormalizeLocalPlayerMetadata(metadata);
+  localStorage.setItem(
+    "squeak-playerMetadata",
+    JSON.stringify(normalizedMetadata),
+  );
 
   if (volume) {
     try {

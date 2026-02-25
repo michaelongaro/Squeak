@@ -8,6 +8,11 @@ import type {
   IRoomPlayersMetadata,
 } from "~/pages/api/socket";
 import { api } from "~/utils/api";
+import {
+  normalizeAvatarPath,
+  normalizeCardBackVariant,
+  parseAndNormalizeLocalPlayerMetadata,
+} from "~/utils/playerMetadataDefaults";
 
 function useResetPlayerStateUponPageLoad() {
   const { events } = useRouter();
@@ -58,33 +63,14 @@ function useResetPlayerStateUponPageLoad() {
           "squeak-playerMetadata",
         );
 
-        let parsedPlayerMetadata: {
-          avatarPath: string;
-          color: string;
-          deckVariant: string;
-          cardBackVariant: string;
-          deckHueRotation: number;
-        } = {
-          avatarPath: "/avatars/rabbit.svg",
-          color: "oklch(64.02% 0.171 15.38)",
-          deckVariant: "Simple",
-          cardBackVariant: "Standard",
-          deckHueRotation: 232,
-        };
+        const parsedPlayerMetadata = parseAndNormalizeLocalPlayerMetadata(
+          localStoragePlayerMetadata,
+        );
 
-        if (localStoragePlayerMetadata) {
-          parsedPlayerMetadata = JSON.parse(localStoragePlayerMetadata);
-        } else {
-          localStorage.setItem(
-            "squeak-playerMetadata",
-            JSON.stringify({
-              avatarPath: "/avatars/rabbit.svg",
-              deckVariant: "Simple",
-              cardBackVariant: "Standard",
-              deckHueRotation: 232,
-            }),
-          );
-        }
+        localStorage.setItem(
+          "squeak-playerMetadata",
+          JSON.stringify(parsedPlayerMetadata),
+        );
 
         // TODO: even if it isn't strictly used by backend, maybe include
         // the deckVariant in playerMetadata just to simplify things?
@@ -92,10 +78,13 @@ function useResetPlayerStateUponPageLoad() {
         setPlayerMetadata({
           [userID]: {
             username: user?.username ?? localStorageUsername ?? "",
-            avatarPath: user?.avatarPath ?? parsedPlayerMetadata.avatarPath,
+            avatarPath: normalizeAvatarPath(
+              user?.avatarPath ?? parsedPlayerMetadata.avatarPath,
+            ),
             color: user?.color ?? parsedPlayerMetadata.color,
-            cardBackVariant:
+            cardBackVariant: normalizeCardBackVariant(
               user?.cardBackVariant ?? parsedPlayerMetadata.cardBackVariant,
+            ),
             deckHueRotation:
               user?.deckHueRotation ?? parsedPlayerMetadata.deckHueRotation,
           } as IRoomPlayer,
