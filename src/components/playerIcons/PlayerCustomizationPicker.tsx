@@ -361,7 +361,12 @@ function PlayerCustomizationPicker({
   }
 
   function renderDeckTooltip() {
-    const cardBackVariants = ["Standard", "Waves", "Geometric"] as const;
+    const cardBackVariants = [
+      "Standard",
+      "Waves",
+      "Geometric",
+      "Kaleidoscope",
+    ] as const;
     const selectedCardBackVariant =
       playerMetadata[userID]?.cardBackVariant || "Standard";
 

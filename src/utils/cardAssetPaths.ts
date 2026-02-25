@@ -1,6 +1,7 @@
 import cardBackStandard from "../../public/cards/Backs/Standard.webp";
 import cardBackWaves from "../../public/cards/Backs/Waves.webp";
 import cardBackGeometric from "../../public/cards/Backs/Geometric.webp";
+import cardBackKaleidoscope from "../../public/cards/Backs/Kaleidoscope.webp";
 ////////////////////////////////////////////////////////////////
 import C2Standard from "../../public/cards/Standard/2C.webp";
 import D2Standard from "../../public/cards/Standard/2D.webp";
@@ -171,6 +172,7 @@ export const cardAssets: {
   cardBackStandard: cardBackStandard,
   cardBackWaves: cardBackWaves,
   cardBackGeometric: cardBackGeometric,
+  cardBackKaleidoscope: cardBackKaleidoscope,
   /////////////////////////
   C2Standard: C2Standard,
   D2Standard: D2Standard,

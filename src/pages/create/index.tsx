@@ -300,7 +300,12 @@ function CreateRoom() {
       Math.floor(Math.random() * oklchToDeckArray.length)
     ] as [string, number];
 
-    const cardBackVariants = ["Standard", "Waves", "Geometric"] as const;
+    const cardBackVariants = [
+      "Standard",
+      "Waves",
+      "Geometric",
+      "Kaleidoscope",
+    ] as const;
     const randomCardBackVariant =
       cardBackVariants[Math.floor(Math.random() * cardBackVariants.length)];
 
