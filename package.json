@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "prisma generate && next build",
-    "dev": "next dev",
+    "dev": "next dev --webpack",
     "db:push": "prisma db push",
     "db:studio": "prisma studio",
     "postinstall": "prisma generate",
@@ -75,5 +75,14 @@
   "optionalDependencies": {
     "bufferutil": "^4.1.0",
     "utf-8-validate": "^6.0.6"
+  },
+  "allowScripts": {
+    "bufferutil@4.1.0": true,
+    "prisma@7.8.0": true,
+    "unrs-resolver@1.12.2": true,
+    "utf-8-validate@6.0.6": true,
+    "@clerk/shared@3.47.8": true,
+    "@prisma/engines@7.8.0": true,
+    "sharp@0.34.5": true
   }
 }
