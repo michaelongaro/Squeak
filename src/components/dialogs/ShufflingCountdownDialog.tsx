@@ -81,7 +81,7 @@ function ShufflingCountdownDialog() {
             }}
             className="z-[2] mt-4 h-[115px] w-full tablet:h-[165px]"
           >
-            {deck.map((card, index) => (
+            {deck.map((_, index) => (
               <AnimatedShufflingCard
                 key={`animatedShufflingCard${index}`}
                 index={index + 1} // seems to fix bug where the first card skipped animation entirely
@@ -120,7 +120,7 @@ function AnimatedShufflingCard({
   cardBackVariant: string;
 }) {
   const controls = useAnimation();
-  const topPosition = index * 2; // Ensuring each card gets a unique initial top position
+  const topPosition = index * 1.5; // Ensuring each card gets a unique initial top position
   const halfDeckLength = Math.floor(deck.length / 2);
   const isMountedRef = useRef(true);
 
