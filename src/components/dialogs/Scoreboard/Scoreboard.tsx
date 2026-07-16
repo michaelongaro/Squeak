@@ -11,7 +11,7 @@ import { FaTrophy } from "react-icons/fa6";
 import { BiArrowBack } from "react-icons/bi";
 import confettiPopper from "../../../../public/scoreboard/confettiPopper.svg";
 import { useUserIDContext } from "../../../context/UserIDContext";
-import { type IPlayerRoundDetails } from "../../../pages/api/handlers/roundOverHandler";
+import { type IPlayerRoundDetails } from "~/types/socket";
 import { Button } from "~/components/ui/button";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import {

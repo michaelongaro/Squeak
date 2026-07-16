@@ -1,5 +1,5 @@
 import { type Server, type Socket } from "socket.io";
-import { type IRoomData, type IUpdatePlayerMetadata } from "../socket";
+import { type IRoomData, type IUpdatePlayerMetadata } from "~/types/socket";
 
 export function updatePlayerMetadataHandler(
   io: Server,

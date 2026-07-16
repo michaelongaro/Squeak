@@ -2,7 +2,7 @@ import { type ICard } from "../../../utils/generateDeckAndSqueakCards";
 import React, { useEffect } from "react";
 import { useRoomContext } from "../../../context/RoomContext";
 import { motion, useAnimation } from "framer-motion";
-import { type IRoomPlayersMetadata } from "~/pages/api/socket";
+import { type IRoomPlayersMetadata } from "~/types/socket";
 import StaticCard from "~/components/Play/StaticCard";
 
 interface IAnimatedCardContainer {

@@ -5,7 +5,7 @@ import Statistics from "./Statistics";
 import {
   type IRoomPlayersMetadata,
   type IRoomPlayer,
-} from "../../../pages/api/socket";
+} from "~/types/socket";
 import { useUserIDContext } from "../../../context/UserIDContext";
 import { useRoomContext } from "../../../context/RoomContext";
 import { api } from "~/utils/api";

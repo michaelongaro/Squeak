@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { socket } from "~/pages/_app";
-import { type IGameMetadata } from "../pages/api/socket";
+import { type IGameMetadata } from "~/types/socket";
 import { useRoomContext } from "../context/RoomContext";
 
 function useSyncClientWithServer() {

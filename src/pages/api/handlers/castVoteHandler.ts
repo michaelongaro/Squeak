@@ -1,5 +1,5 @@
 import { type Server, type Socket } from "socket.io";
-import { type IRoomData, type IMiscRoomData, type IGameData } from "../socket";
+import { type IRoomData, type IMiscRoomData, type IGameData } from "~/types/socket";
 import { generateAndEmitScoreboard } from "./roundOverHandler";
 import { type ICard } from "~/utils/generateDeckAndSqueakCards";
 

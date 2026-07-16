@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { useRoomContext } from "~/context/RoomContext";
 import { useUserIDContext } from "~/context/UserIDContext";
 import { socket } from "~/pages/_app";
-import type { IRoomConfig } from "~/pages/create";
-import type { IGameMetadata, IRoomPlayersMetadata } from "~/pages/api/socket";
+import type { IRoomConfig } from "~/types/room";
+import type { IGameMetadata, IRoomPlayersMetadata } from "~/types/socket";
 
 interface ICurrentRoomMetadata {
   roomConfig: IRoomConfig;

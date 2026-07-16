@@ -1,5 +1,5 @@
 import type { Server, Socket } from "socket.io";
-import type { IGameData, IRoomData } from "~/pages/api/socket";
+import type { IGameData, IRoomData } from "~/types/socket";
 
 export function gracefulReconnectHandler(
   io: Server,

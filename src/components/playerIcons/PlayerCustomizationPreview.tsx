@@ -1,7 +1,7 @@
 import PlayerIcon from "./PlayerIcon";
 import { useUserIDContext } from "~/context/UserIDContext";
 import { useRoomContext } from "~/context/RoomContext";
-import { type IRoomPlayersMetadata } from "~/pages/api/socket";
+import { type IRoomPlayersMetadata } from "~/types/socket";
 import StaticCard from "~/components/Play/StaticCard";
 
 interface IPlayerCustomizationPicker {

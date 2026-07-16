@@ -6,7 +6,7 @@ import type {
   IGameMetadata,
   IRoomPlayer,
   IRoomPlayersMetadata,
-} from "~/pages/api/socket";
+} from "~/types/socket";
 import { api } from "~/utils/api";
 import {
   normalizeAvatarPath,

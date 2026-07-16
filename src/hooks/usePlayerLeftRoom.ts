@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { socket } from "~/pages/_app";
 import { useUserIDContext } from "../context/UserIDContext";
 import { useRoomContext } from "../context/RoomContext";
-import { type IPlayerHasLeftRoom } from "./../pages/api/socket";
+import { type IPlayerHasLeftRoom } from "~/types/socket";
 import useLeaveRoom from "./useLeaveRoom";
 import { useRouter } from "next/router";
 

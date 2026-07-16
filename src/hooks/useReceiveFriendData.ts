@@ -3,7 +3,7 @@ import { useAuth } from "@clerk/nextjs";
 import { socket } from "~/pages/_app";
 import { useUserIDContext } from "../context/UserIDContext";
 import { useRoomContext } from "../context/RoomContext";
-import { type IReceiveFriendData } from "../pages/api/socket";
+import { type IReceiveFriendData } from "~/types/socket";
 
 function useReceiveFriendData() {
   const { isSignedIn } = useAuth();

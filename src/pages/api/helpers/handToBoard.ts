@@ -2,7 +2,7 @@ import cardPlacementIsValid from "../../../utils/cardPlacementIsValid";
 
 import { type Server } from "socket.io";
 import { type ICard } from "../../../utils/generateDeckAndSqueakCards";
-import { type IMiscRoomData, type IGameData } from "../socket";
+import { type IMiscRoomData, type IGameData } from "~/types/socket";
 
 interface IDeckToBoard {
   gameData: IGameData;

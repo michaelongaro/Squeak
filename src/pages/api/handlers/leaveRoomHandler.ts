@@ -5,7 +5,7 @@ import {
   type IGameMetadata,
   type IRoomData,
   type IMiscRoomData,
-} from "../socket";
+} from "~/types/socket";
 import { prisma } from "~/server/db";
 interface ILeaveRoomHandler {
   playerID: string;

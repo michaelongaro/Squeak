@@ -3,7 +3,7 @@ import {
   type IRoomPlayersMetadata,
   type IRoomData,
   type IRoomPlayer,
-} from "../socket";
+} from "~/types/socket";
 import { avatarPaths } from "../../../utils/avatarPaths";
 import { oklchToDeckHueRotations } from "../../../utils/oklchToDeckHueRotations";
 import { prisma } from "~/server/db";

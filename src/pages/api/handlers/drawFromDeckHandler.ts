@@ -1,5 +1,5 @@
 import { type Server, type Socket } from "socket.io";
-import { type IGameData } from "../socket";
+import { type IGameData } from "~/types/socket";
 import { type ICard } from "~/utils/generateDeckAndSqueakCards";
 
 interface IDrawFromDeckBackendVersion {

@@ -1,5 +1,5 @@
 import { type Server, type Socket } from "socket.io";
-import { type IMiscRoomData, type IGameData, type IRoomData } from "../socket";
+import { type IMiscRoomData, type IGameData, type IRoomData } from "~/types/socket";
 import { prisma } from "~/server/db";
 
 export function oldRoomCleanupCronHandler(

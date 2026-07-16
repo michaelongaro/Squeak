@@ -1,6 +1,6 @@
 import { type Server, type Socket } from "socket.io";
-import { type IRoomConfig } from "~/pages/create";
-import { type IRoomData } from "../socket";
+import { type IRoomConfig } from "~/types/room";
+import { type IRoomData } from "~/types/socket";
 import { prisma } from "~/server/db";
 
 export function updateRoomConfigHandler(

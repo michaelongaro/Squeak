@@ -5,7 +5,7 @@ import {
   type IRejoinData,
   type IRoomData,
   type IMiscRoomData,
-} from "../socket";
+} from "~/types/socket";
 import { prisma } from "~/server/db";
 
 interface IJoinRoomConfig {

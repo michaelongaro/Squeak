@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { socket } from "~/pages/_app";
-import { type ICardDropProposal } from "../pages/api/socket";
+import { type ICardDropProposal } from "~/types/socket";
 import { useRoomContext } from "../context/RoomContext";
 import { type IMoveCard } from "../components/Play/Card";
 

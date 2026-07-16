@@ -29,8 +29,8 @@ import useLeaveRoom from "../../hooks/useLeaveRoom";
 import {
   type IGameMetadata,
   type IRoomPlayersMetadata,
-} from "../../pages/api/socket";
-import { type IRoomConfig } from "../create";
+} from "~/types/socket";
+import { type IRoomConfig } from "~/types/room";
 import { Label } from "~/components/ui/label";
 import { Input } from "~/components/ui/input";
 import UnableToJoinRoom from "~/components/Play/UnableToJoinRoom";

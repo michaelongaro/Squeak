@@ -1,5 +1,5 @@
 import { type Server, type Socket } from "socket.io";
-import { type IFriendsData } from "../socket";
+import { type IFriendsData } from "~/types/socket";
 import { prisma } from "~/server/db";
 
 export async function goOfflineHandler(

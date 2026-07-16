@@ -6,7 +6,7 @@ import { api } from "~/utils/api";
 import {
   type IRoomPlayersMetadata,
   type IRoomPlayer,
-} from "../../pages/api/socket";
+} from "~/types/socket";
 import UserSettingsAndStatsDialog, {
   type ILocalPlayerSettings,
 } from "../dialogs/SettingsAndStats/UserSettingsAndStatisticsDialog";

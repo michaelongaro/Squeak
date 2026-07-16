@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { socket } from "~/pages/_app";
 import { useRoomContext } from "../context/RoomContext";
-import { type IDrawFromDeck } from "../pages/api/socket";
+import { type IDrawFromDeck } from "~/types/socket";
 import { useUserIDContext } from "~/context/UserIDContext";
 
 function useResetDeckFromCardDraw() {

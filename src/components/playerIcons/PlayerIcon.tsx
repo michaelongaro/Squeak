@@ -3,7 +3,7 @@ import { socket } from "~/pages/_app";
 import { motion } from "framer-motion";
 import { useUserIDContext } from "../../context/UserIDContext";
 import { useRoomContext } from "../../context/RoomContext";
-import { type IRoomPlayer } from "../../pages/api/socket";
+import { type IRoomPlayer } from "~/types/socket";
 import { AiOutlinePlus, AiOutlineClose } from "react-icons/ai";
 import { FaCrown } from "react-icons/fa6";
 import { FiCheck } from "react-icons/fi";

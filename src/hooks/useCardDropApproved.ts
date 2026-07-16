@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { socket } from "~/pages/_app";
 import { useRoomContext } from "../context/RoomContext";
-import { type ICardDropProposal } from "../pages/api/socket";
+import { type ICardDropProposal } from "~/types/socket";
 import { type IMoveCard } from "../components/Play/Card";
 
 // is there any better approach than a partial here? don't like having to do huge

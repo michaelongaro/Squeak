@@ -3,8 +3,8 @@ import {
   type IMiscRoomData,
   type IRoomData,
   type IRoomPlayer,
-} from "../socket";
-import { type IRoomConfig } from "~/pages/create";
+} from "~/types/socket";
+import { type IRoomConfig } from "~/types/room";
 import { prisma } from "~/server/db";
 
 export function createRoomHandler(

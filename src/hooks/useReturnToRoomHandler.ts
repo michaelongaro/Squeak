@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { socket } from "~/pages/_app";
 import { useUserIDContext } from "../context/UserIDContext";
 import { useRoomContext } from "../context/RoomContext";
-import { type IMoveBackToLobby } from "../pages/api/socket";
+import { type IMoveBackToLobby } from "~/types/socket";
 import { useRouter } from "next/router";
 
 function useReturnToRoomHandler() {

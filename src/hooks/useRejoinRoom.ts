@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { socket } from "~/pages/_app";
 import { useUserIDContext } from "../context/UserIDContext";
 import { useRoomContext } from "../context/RoomContext";
-import { type IRejoinData } from "./../pages/api/socket";
+import { type IRejoinData } from "~/types/socket";
 
 function useRejoinRoom() {
   const userID = useUserIDContext();

@@ -4,7 +4,7 @@ import {
   type IGameData,
   type IRoomData,
   type IPlayerCardsMetadata,
-} from "../socket";
+} from "~/types/socket";
 import { prisma } from "~/server/db";
 import { drawInitialSqueakStackCardFromDeck } from "../helpers/drawInitialSqueakStackCardFromDeck";
 import { botMoveHandler } from "./botMoveHandler";

@@ -7,14 +7,14 @@ import React, {
 } from "react";
 import { socket } from "~/pages/_app";
 import { useAuth } from "@clerk/nextjs";
-import { type IRoomConfig } from "~/pages/create";
+import { type IRoomConfig } from "~/types/room";
 import {
   type IRoomPlayer,
   type IRoomPlayersMetadata,
   type IFriendsMetadata,
-} from "../pages/api/socket";
-import { type IGameMetadata } from "../pages/api/socket";
-import { type IScoreboardMetadata } from "../pages/api/handlers/roundOverHandler";
+} from "~/types/socket";
+import { type IGameMetadata } from "~/types/socket";
+import { type IScoreboardMetadata } from "~/types/socket";
 import { useUserIDContext } from "./UserIDContext";
 import { api } from "~/utils/api";
 import useGetViewportLabel from "~/hooks/useGetViewportLabel";

@@ -4,31 +4,14 @@ import {
   type ICard,
 } from "../../../utils/generateDeckAndSqueakCards";
 import { updatePlayerStatsAfterRound } from "../helpers/updatePlayerStatsAfterRound";
-import { type IGameData, type IRoomData, type IMiscRoomData } from "../socket";
-
-export interface IScoreboardMetadata {
-  gameWinnerID: string | null;
-  roundWinnerID: string;
-  playerRoundDetails: IPlayerRoundDetailsMetadata;
-}
-
-export interface IPlayerRoundDetailsMetadata {
-  [playerID: string]: IPlayerRoundDetails;
-}
-
-export interface IPlayerRoundDetails {
-  playerID: string;
-  cardsPlayed: ICard[];
-  squeakModifier: number;
-  oldScore: number;
-  newScore: number;
-  oldRanking: number;
-  newRanking: number;
-}
-
-export interface IPlayerRankings {
-  [playerID: string]: number;
-}
+import type {
+  IGameData,
+  IMiscRoomData,
+  IPlayerRankings,
+  IPlayerRoundDetailsMetadata,
+  IRoomData,
+  IScoreboardMetadata,
+} from "~/types/socket";
 
 interface IRoundOverBackendVersion {
   io: Server;

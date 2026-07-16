@@ -3,7 +3,7 @@ import { useUserIDContext } from "../../../context/UserIDContext";
 import {
   type IRoomPlayersMetadata,
   type IRoomPlayer,
-} from "../../../pages/api/socket";
+} from "~/types/socket";
 import {
   AlertDialog,
   AlertDialogContent,

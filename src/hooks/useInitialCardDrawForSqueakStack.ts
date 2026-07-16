@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { socket } from "~/pages/_app";
 import { useRoomContext } from "../context/RoomContext";
-import { type IDrawFromSqueakDeck } from "../pages/api/socket";
+import { type IDrawFromSqueakDeck } from "~/types/socket";
 import { type IMoveCard } from "../components/Play/Card";
 
 interface IUseInitialCardDrawForSqueakStack {

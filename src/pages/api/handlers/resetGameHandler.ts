@@ -7,7 +7,7 @@ import {
   type IGameMetadata,
   type IMiscRoomData,
   type IPlayerCardsMetadata,
-} from "../socket";
+} from "~/types/socket";
 import { prisma } from "~/server/db";
 
 interface IResetGame {

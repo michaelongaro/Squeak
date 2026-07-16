@@ -1,6 +1,6 @@
 import { type Server } from "socket.io";
 import { type ICard } from "../../../utils/generateDeckAndSqueakCards";
-import { type IGameData } from "../socket";
+import { type IGameData } from "~/types/socket";
 
 interface IDeckToSqueak {
   gameData: IGameData;

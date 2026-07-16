@@ -9,7 +9,7 @@ import {
   type IRoomPlayersMetadata,
   type IGameMetadata,
   type IRoomPlayer,
-} from "../../pages/api/socket";
+} from "~/types/socket";
 import { IoSettingsSharp } from "react-icons/io5";
 import { FaRobot } from "react-icons/fa6";
 import { FaUsers } from "react-icons/fa";
@@ -37,6 +37,7 @@ import { useRouter } from "next/router";
 import { avatarPaths } from "~/utils/avatarPaths";
 import { oklchToDeckHueRotations } from "~/utils/oklchToDeckHueRotations";
 import TutorialDialog from "~/components/dialogs/TutorialDialog";
+import type { IRoomConfig } from "~/types/room";
 
 const obscenityMatcher = new RegExpMatcher({
   ...englishDataset.build(),
@@ -59,18 +60,6 @@ const botNames = [
   "Bot Anthony",
   "Bot Amber",
 ];
-
-export interface IRoomConfig {
-  pointsToWin: number;
-  maxPlayers: number;
-  playersInRoom: number;
-  playerIDsInRoom: string[];
-  isPublic: boolean;
-  code: string;
-  hostUsername: string;
-  hostUserID: string;
-  gameStarted: boolean;
-}
 
 function CreateRoom() {
   const { isSignedIn } = useAuth();

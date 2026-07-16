@@ -1,5 +1,5 @@
 import { type Server } from "socket.io";
-import { type IGameData } from "../socket";
+import { type IGameData } from "~/types/socket";
 
 interface IInitDrawFromSqueakDeck {
   roomCode: string;

@@ -1,5 +1,5 @@
 import { type Server, type Socket } from "socket.io";
-import { type IFriendsData, type IModifyFriendData } from "../socket";
+import { type IFriendsData, type IModifyFriendData } from "~/types/socket";
 import { prisma } from "~/server/db";
 
 export function modifyFriendDataHandler(

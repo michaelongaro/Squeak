@@ -7,7 +7,7 @@ import {
   type IGameData,
   type ICardDropProposal,
   type IMiscRoomData,
-} from "../socket";
+} from "~/types/socket";
 
 export function proposedCardDropHandler(
   io: Server,

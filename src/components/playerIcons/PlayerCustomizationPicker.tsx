@@ -6,7 +6,7 @@ import {
   type IRoomPlayer,
   type IRoomPlayersMetadata,
   type IUpdatePlayerMetadata,
-} from "../../pages/api/socket";
+} from "~/types/socket";
 import { avatarPaths } from "../../utils/avatarPaths";
 import { deckHueRotations } from "../../utils/deckHueRotations";
 import { oklchToDeckHueRotations } from "../../utils/oklchToDeckHueRotations";

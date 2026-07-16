@@ -12,7 +12,7 @@ import {
 import { Button } from "~/components/ui/button";
 import { FaUsers } from "react-icons/fa";
 import { BiArrowBack } from "react-icons/bi";
-import { type IRoomConfig } from "~/pages/create";
+import { type IRoomConfig } from "~/types/room";
 import { TbCards } from "react-icons/tb";
 import { useRouter } from "next/router";
 import { AnimatePresence, motion } from "framer-motion";

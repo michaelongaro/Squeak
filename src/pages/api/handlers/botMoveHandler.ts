@@ -1,6 +1,6 @@
 import { type Server } from "socket.io";
 import cardPlacementIsValid from "../../../utils/cardPlacementIsValid";
-import { type IGameData, type IRoomData, type IMiscRoomData } from "../socket";
+import { type IGameData, type IRoomData, type IMiscRoomData } from "~/types/socket";
 import { generateAndEmitScoreboard } from "./roundOverHandler";
 import { squeakToSqueak } from "../helpers/squeakToSqueak";
 import { squeakToBoard } from "../helpers/squeakToBoard";

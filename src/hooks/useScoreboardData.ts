@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { socket } from "~/pages/_app";
 import { useUserIDContext } from "../context/UserIDContext";
 import { useRoomContext } from "../context/RoomContext";
-import { type IScoreboardMetadata } from "../pages/api/handlers/roundOverHandler";
+import { type IScoreboardMetadata } from "~/types/socket";
 import toast from "react-hot-toast";
 
 interface IScoreboardMetadataWithSqueakSound extends IScoreboardMetadata {

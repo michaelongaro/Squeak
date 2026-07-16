@@ -18,9 +18,9 @@ import useLeaveRoom from "../../hooks/useLeaveRoom";
 import {
   type IRoomPlayersMetadata,
   type IRoomPlayer,
-} from "../../pages/api/socket";
+} from "~/types/socket";
 import { useRouter } from "next/router";
-import { type IRoomConfig } from "~/pages/create";
+import { type IRoomConfig } from "~/types/room";
 import {
   RegExpMatcher,
   englishDataset,
