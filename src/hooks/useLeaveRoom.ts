@@ -1,4 +1,4 @@
-import { socket } from "~/pages/_app";
+import { socket } from "~/lib/socket";
 import { useAuth } from "@clerk/nextjs";
 import { useUserIDContext } from "../context/UserIDContext";
 import { useRoomContext } from "../context/RoomContext";

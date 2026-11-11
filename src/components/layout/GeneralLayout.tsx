@@ -55,7 +55,7 @@ interface GeneralLayout {
 function GeneralLayout({ children }: GeneralLayout) {
   const { asPath } = useRouter();
 
-  const { showUserWasKickedDialog, setShowUserWasKickedDialog } =
+  const { showUserWasKickedDialog, setShowUserWasKickedDialog, deckVariant } =
     useRoomContext();
 
   // prevents iOS overscrolling on the /game page for better UX while playing
@@ -80,16 +80,24 @@ function GeneralLayout({ children }: GeneralLayout) {
   }, [asPath]);
 
   useEffect(() => {
-    // Prefetching/caching card assets to prevent flickering
+    // Prefetch only the selected deck to avoid fetching every card variant.
+    let preloadedContainer: HTMLDivElement | undefined;
     const timer = setTimeout(() => {
-      const preloadedImages = Object.values(cardAssets).map((imagePath) => {
-        const img = new Image();
-        img.src = imagePath.src;
-        img.width = 0;
-        img.height = 0;
-        img.style.visibility = "hidden"; // Ensure it's not visible even if somehow it tries to render
-        return img;
-      });
+      const preloadedImages = Object.entries(cardAssets)
+        .filter(
+          ([key]) =>
+            key.endsWith(deckVariant) ||
+            key.startsWith("cardBack") ||
+            key.startsWith("squeakBuzzer"),
+        )
+        .map(([, imagePath]) => {
+          const img = new Image();
+          img.src = imagePath.src;
+          img.width = 0;
+          img.height = 0;
+          img.style.visibility = "hidden"; // Ensure it's not visible even if somehow it tries to render
+          return img;
+        });
 
       // append images to a hidden container
       const container = document.createElement("div");
@@ -97,13 +105,14 @@ function GeneralLayout({ children }: GeneralLayout) {
       preloadedImages.forEach((img) => container.appendChild(img));
       document.body.appendChild(container);
 
-      return () => {
-        document.body.removeChild(container);
-      };
+      preloadedContainer = container;
     }, 2500);
 
-    return () => clearTimeout(timer);
-  }, []);
+    return () => {
+      clearTimeout(timer);
+      preloadedContainer?.remove();
+    };
+  }, [deckVariant]);
 
   useGracefullyReconnectToSocket();
   usePlayerLeftRoom();

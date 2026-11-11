@@ -7,6 +7,19 @@ datasource db {
   provider = "postgresql"
 }
 
+// Daily UTC counters. No user identifiers, IP addresses, or page URLs.
+model Analytics {
+  date          DateTime @id @db.Date
+  pageViews     Int      @default(0)
+  roomsCreated  Int      @default(0)
+  gamesStarted  Int      @default(0)
+  gamesPlayed   Int      @default(0)
+  roundsStarted Int      @default(0)
+  roundsPlayed  Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @default(now()) @updatedAt
+}
+
 model Room {
   id              String   @id @default(cuid())
   createdAt       DateTime @default(now())

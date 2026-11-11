@@ -27,7 +27,7 @@ const values = [
   "K",
 ];
 
-export function createAndFormatDeck(): ICard[] {
+export function createDeck(): ICard[] {
   const deck: ICard[] = [];
   for (let i = 0; i < 4; i++) {
     for (let j = 0; j < 13; j++) {
@@ -38,21 +38,17 @@ export function createAndFormatDeck(): ICard[] {
     }
   }
 
-  return shuffleDeck(deck);
+  return deck;
 }
 
-function shuffleDeck(deck: ICard[]): ICard[] {
-  const shuffledDeck: ICard[] = [];
-
-  while (deck.length > 0) {
-    const randomIndex = Math.floor(Math.random() * deck.length);
-    if (deck[randomIndex] === undefined) continue;
-    const card: ICard = deck[randomIndex] as ICard;
-    shuffledDeck.push(card);
-    deck.splice(randomIndex, 1);
+export function createAndFormatDeck(): ICard[] {
+  const deck = createDeck();
+  // Fisher-Yates shuffles in linear time without repeatedly splicing the deck.
+  for (let i = deck.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [deck[i], deck[j]] = [deck[j]!, deck[i]!];
   }
-
-  return shuffledDeck;
+  return deck;
 }
 
 function generateDeckAndSqueakCards(): IPlayerCards {

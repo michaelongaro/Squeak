@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure, protectedProcedure } from "../trpc";
 import { clerkClient } from "@clerk/nextjs/server";
+import { TRPCError } from "@trpc/server";
 
 interface IFormattedStats {
   [category: string]: IFormattedStat[];
@@ -70,16 +71,13 @@ export const usersRouter = createTRPCRouter({
   create: protectedProcedure
     .input(z.string())
     .mutation(async ({ input: userId, ctx }) => {
-      await ctx.prisma.user
-        .create({
-          data: {
-            userId,
-          },
-        })
-        .catch((err) => {
-          console.log(err);
-          return false;
-        });
+      if (userId !== ctx.auth.userId)
+        throw new TRPCError({ code: "FORBIDDEN" });
+      await ctx.prisma.user.upsert({
+        where: { userId },
+        create: { userId, stats: { create: {} } },
+        update: {},
+      });
 
       return true;
     }),
@@ -139,7 +137,7 @@ export const usersRouter = createTRPCRouter({
       });
 
       const clerk = await clerkClient();
-      clerk.users.deleteUser(userId);
+      await clerk.users.deleteUser(userId);
 
       // deleteMany instead of delete because prisma throws an error if the row doesn't exist
       return ctx.prisma.user.deleteMany({
@@ -159,7 +157,16 @@ export const usersRouter = createTRPCRouter({
           username: true,
           color: true,
           avatarPath: true,
-          stats: true,
+          stats: {
+            select: {
+              squeaks: true,
+              averageFinishingPlace: true,
+              averageLeftInSqueak: true,
+              highestScore: true,
+              totalGamesPlayed: true,
+              totalRoundsPlayed: true,
+            },
+          },
         },
       });
 
@@ -188,10 +195,12 @@ export const usersRouter = createTRPCRouter({
           ...baseUserMetadata,
           value: user?.stats?.averageFinishingPlace || 0,
         });
-        leaderboardStats["Average left in Squeak"]?.push({
-          ...baseUserMetadata,
-          value: user?.stats?.averageLeftInSqueak || 0,
-        });
+        if (user.stats && user.stats.totalRoundsPlayed > 0) {
+          leaderboardStats["Average left in Squeak"]?.push({
+            ...baseUserMetadata,
+            value: user.stats.averageLeftInSqueak,
+          });
+        }
         leaderboardStats["Highest score per round"]?.push({
           ...baseUserMetadata,
           value: user?.stats?.highestScore || 0,
@@ -222,9 +231,6 @@ export const usersRouter = createTRPCRouter({
             .sort((a, b) => a.value - b.value)
             .slice(0, 10);
         } else if (category === "Average left in Squeak") {
-          // removing all "0" values from the array
-          currentCategory = currentCategory.filter((stat) => stat.value !== 0);
-
           currentCategory = currentCategory
             .sort((a, b) => a.value - b.value)
             .slice(0, 10);

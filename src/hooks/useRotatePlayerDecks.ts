@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { socket } from "~/pages/_app";
+import { socket } from "~/lib/socket";
 import { useRoomContext } from "../context/RoomContext";
 import { type IGameMetadata } from "~/types/socket";
 
@@ -11,10 +11,10 @@ function useRotatePlayerDecks() {
   );
 
   useEffect(() => {
-    socket.on("decksWereRotated", (data) => setDataFromBackend(data));
+    socket.on("decksWereRotated", setDataFromBackend);
 
     return () => {
-      socket.off("decksWereRotated", (data) => setDataFromBackend(data));
+      socket.off("decksWereRotated", setDataFromBackend);
     };
   }, []);
 

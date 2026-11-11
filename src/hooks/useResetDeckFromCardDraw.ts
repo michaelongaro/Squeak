@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { socket } from "~/pages/_app";
+import { socket } from "~/lib/socket";
 import { useRoomContext } from "../context/RoomContext";
 import { type IDrawFromDeck } from "~/types/socket";
 import { useUserIDContext } from "~/context/UserIDContext";
@@ -13,10 +13,10 @@ function useResetDeckFromCardDraw() {
   );
 
   useEffect(() => {
-    socket.on("resetDeckFromCardDraw", (data) => setDataFromBackend(data));
+    socket.on("resetDeckFromCardDraw", setDataFromBackend);
 
     return () => {
-      socket.off("resetDeckFromCardDraw", (data) => setDataFromBackend(data));
+      socket.off("resetDeckFromCardDraw", setDataFromBackend);
     };
   }, []);
 

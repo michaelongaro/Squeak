@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@clerk/nextjs";
-import { socket } from "~/pages/_app";
+import { socket } from "~/lib/socket";
 import { useUserIDContext } from "../context/UserIDContext";
 import { useRoomContext } from "../context/RoomContext";
 import { type IReceiveFriendData } from "~/types/socket";
@@ -21,10 +21,10 @@ function useReceiveFriendData() {
     useState<IReceiveFriendData | null>(null);
 
   useEffect(() => {
-    socket.on("friendDataUpdated", (data) => setDataFromBackend(data));
+    socket.on("friendDataUpdated", setDataFromBackend);
 
     return () => {
-      socket.off("friendDataUpdated", (data) => setDataFromBackend(data));
+      socket.off("friendDataUpdated", setDataFromBackend);
     };
   }, []);
 
@@ -43,7 +43,10 @@ function useReceiveFriendData() {
         ) {
           setNewInviteNotification(true);
 
-          if (Notification.permission === "granted") {
+          if (
+            typeof Notification !== "undefined" &&
+            Notification.permission === "granted"
+          ) {
             new Notification("You have a new friend invite");
           }
         }
@@ -55,7 +58,10 @@ function useReceiveFriendData() {
         ) {
           setNewInviteNotification(true);
 
-          if (Notification.permission === "granted") {
+          if (
+            typeof Notification !== "undefined" &&
+            Notification.permission === "granted"
+          ) {
             new Notification("You have a new room invite");
           }
         }

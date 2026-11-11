@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { socket } from "~/pages/_app";
+import { socket } from "~/lib/socket";
 import { useRoomContext } from "../context/RoomContext";
 import { type IDrawFromDeck } from "~/types/socket";
 import { type IMoveCard } from "../components/Play/Card";
@@ -42,12 +42,21 @@ function useCardDrawFromDeck({
   );
 
   useEffect(() => {
-    socket.on("playerDrawnFromDeck", (data) => setDataFromBackend(data));
+    const handleEvent = (data: NonNullable<typeof dataFromBackend>) => {
+      if (
+        data.playerID === ownerID &&
+        data.cardBeingAnimated?.value === value &&
+        data.cardBeingAnimated?.suit === suit
+      ) {
+        setDataFromBackend(data);
+      }
+    };
+    socket.on("playerDrawnFromDeck", handleEvent);
 
     return () => {
-      socket.off("playerDrawnFromDeck", (data) => setDataFromBackend(data));
+      socket.off("playerDrawnFromDeck", handleEvent);
     };
-  }, []);
+  }, [ownerID, value, suit]);
 
   useEffect(() => {
     if (dataFromBackend !== null) {

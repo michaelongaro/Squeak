@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { socket } from "~/pages/_app";
+import { socket } from "~/lib/socket";
 import { useRoomContext } from "../context/RoomContext";
 import { type ICardDropProposal } from "~/types/socket";
 import { type IMoveCard } from "../components/Play/Card";
@@ -57,12 +57,21 @@ function useCardDropApproved({
     useState<ICardDropAccepted | null>(null);
 
   useEffect(() => {
-    socket.on("cardDropApproved", (data) => setDataFromBackend(data));
+    const handleEvent = (data: NonNullable<typeof dataFromBackend>) => {
+      if (
+        data.playerID === ownerID &&
+        data.card?.value === value &&
+        data.card?.suit === suit
+      ) {
+        setDataFromBackend(data);
+      }
+    };
+    socket.on("cardDropApproved", handleEvent);
 
     return () => {
-      socket.off("cardDropApproved", (data) => setDataFromBackend(data));
+      socket.off("cardDropApproved", handleEvent);
     };
-  }, []);
+  }, [ownerID, value, suit]);
 
   useEffect(() => {
     if (dataFromBackend !== null) {

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { socket } from "~/pages/_app";
+import { socket } from "~/lib/socket";
 import { useUserIDContext } from "../../context/UserIDContext";
 import { useRoomContext } from "../../context/RoomContext";
 import { api } from "~/utils/api";
@@ -61,8 +61,8 @@ function PublicRooms() {
         code: roomConfig.code,
         playerMetadata: playerMetadata[userID],
       },
-      (response?: "roomIsFull") => {
-        if (response !== "roomIsFull") {
+      (response?: "roomIsFull" | "gameStarted") => {
+        if (response === undefined) {
           setConnectedToRoom(true);
           push(`join/${roomConfig.code}`);
         }

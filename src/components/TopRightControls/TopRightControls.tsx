@@ -1,12 +1,9 @@
 import React, { useState, useEffect, useRef, Fragment } from "react";
 import { useRoomContext } from "../../context/RoomContext";
 import { useAuth } from "@clerk/nextjs";
-import { socket } from "~/pages/_app";
+import { socket } from "~/lib/socket";
 import { api } from "~/utils/api";
-import {
-  type IRoomPlayersMetadata,
-  type IRoomPlayer,
-} from "~/types/socket";
+import { type IRoomPlayersMetadata, type IRoomPlayer } from "~/types/socket";
 import UserSettingsAndStatsDialog, {
   type ILocalPlayerSettings,
 } from "../dialogs/SettingsAndStats/UserSettingsAndStatisticsDialog";

@@ -16,7 +16,7 @@ import { MdQuestionMark } from "react-icons/md";
 import TutorialDialog from "~/components/dialogs/TutorialDialog";
 import { IoHome } from "react-icons/io5";
 import { Button } from "~/components/ui/button";
-import { socket } from "~/pages/_app";
+import { socket } from "~/lib/socket";
 import { api } from "~/utils/api";
 import { useRoomContext } from "../../context/RoomContext";
 import {
@@ -26,10 +26,7 @@ import {
 } from "obscenity";
 import { useUserIDContext } from "../../context/UserIDContext";
 import useLeaveRoom from "../../hooks/useLeaveRoom";
-import {
-  type IGameMetadata,
-  type IRoomPlayersMetadata,
-} from "~/types/socket";
+import { type IGameMetadata, type IRoomPlayersMetadata } from "~/types/socket";
 import { type IRoomConfig } from "~/types/room";
 import { Label } from "~/components/ui/label";
 import { Input } from "~/components/ui/input";
@@ -326,8 +323,10 @@ function JoinRoom() {
                                 username,
                               },
                             },
-                            (response?: "roomIsFull") => {
-                              if (response === "roomIsFull") {
+                            (response?: "roomIsFull" | "gameStarted") => {
+                              if (response === "gameStarted") {
+                                setShowGameAlreadyStartedDialog(true);
+                              } else if (response === "roomIsFull") {
                                 setShowRoomIsFullDialog(true);
                               } else {
                                 setShowUsernamePromptDialog(false);
@@ -427,8 +426,10 @@ function JoinRoom() {
                           username,
                         },
                       },
-                      (response?: "roomIsFull") => {
-                        if (response === "roomIsFull") {
+                      (response?: "roomIsFull" | "gameStarted") => {
+                        if (response === "gameStarted") {
+                          setShowGameAlreadyStartedDialog(true);
+                        } else if (response === "roomIsFull") {
                           setJoinRoomText("Room is full.");
                         } else {
                           setShowUsernamePromptDialog(false);

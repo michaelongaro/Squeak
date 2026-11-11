@@ -5,18 +5,15 @@ import type { AppProps } from "next/app";
 import { RoomProvider } from "../context/RoomContext";
 import NextProgress from "next-progress";
 import { api } from "~/utils/api";
-import { io } from "socket.io-client";
+import { socket } from "~/lib/socket";
 import GeneralLayout from "~/components/layout/GeneralLayout";
 import dynamic from "next/dynamic";
 import "../styles/globals.css";
+import { usePageViewAnalytics } from "~/hooks/usePageViewAnalytics";
 
 const UnsupportedBrowserDetected = dynamic(
   () => import("~/components/UnsupportedBrowserDetected"),
 );
-
-export const socket = io({
-  path: "/api/socket",
-});
 
 // might in some way mess with t3 bootstrapping, be wary
 type ComponentWithPageLayout = AppProps & {
@@ -26,6 +23,24 @@ type ComponentWithPageLayout = AppProps & {
 };
 
 function App({ Component, pageProps }: ComponentWithPageLayout) {
+  usePageViewAnalytics();
+
+  useEffect(() => {
+    let cancelled = false;
+    void fetch("/api/socket")
+      .then((response) => {
+        if (!response.ok)
+          throw new Error("Unable to initialize the game connection");
+        if (!cancelled) socket.connect();
+      })
+      .catch((error: unknown) => console.error(error));
+
+    return () => {
+      cancelled = true;
+      socket.disconnect();
+    };
+  }, []);
+
   // used only as a fallback since Clerk auth requires lookbehind support
   // and older, but still used Safari versions don't support it.
   const [lookbackBehindIsSupported, setLookBehindIsSupported] = useState(true);
@@ -60,7 +75,7 @@ function App({ Component, pageProps }: ComponentWithPageLayout) {
       );
       document.removeEventListener("gestureend", handleGestureEnd);
     };
-  });
+  }, []);
 
   if (!lookbackBehindIsSupported) {
     return <UnsupportedBrowserDetected />;

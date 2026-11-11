@@ -23,9 +23,6 @@ const config = {
       },
     ],
   },
-  typescript: {
-    ignoreBuildErrors: true, // ideally don't want this, but our types are very transient right now
-  },
   i18n: {
     locales: ["en"],
     defaultLocale: "en",

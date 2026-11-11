@@ -1,0 +1,74 @@
+import type { PlayerSocket as Socket } from "~/types/socket";
+import { type Server } from "socket.io";
+import {
+  type IMiscRoomData,
+  type IRoomData,
+  type IRoomPlayer,
+} from "~/types/socket";
+import { type IRoomConfig } from "~/types/room";
+import { prisma } from "~/server/db";
+import { recordAnalytics } from "~/server/analytics";
+
+export function createRoomHandler(
+  io: Server,
+  socket: Socket,
+  roomData: IRoomData,
+  miscRoomData: IMiscRoomData,
+) {
+  socket.on(
+    "createRoom",
+    async (roomConfig: IRoomConfig, playerMetadata: IRoomPlayer) => {
+      if (!playerMetadata.cardBackVariant) {
+        playerMetadata.cardBackVariant = "Standard";
+      }
+
+      socket.data.playerID = roomConfig.hostUserID;
+      void socket.join(roomConfig.code);
+
+      roomData[roomConfig.code] = {
+        roomConfig,
+        players: {
+          [roomConfig.hostUserID]: playerMetadata,
+        },
+      };
+
+      const boardTimestamps = Array.from({ length: 4 }, () =>
+        Array.from({ length: 5 }, () => 0),
+      );
+
+      miscRoomData[roomConfig.code] = {
+        boardTimestamps,
+        preventOtherPlayersFromSqueaking: false,
+        botIntervals: [],
+        blacklistedSqueakCards: {},
+        scoreboardMetadata: null,
+        currentVotes: [],
+        voteType: null,
+      };
+
+      const room = roomData[roomConfig.code];
+
+      if (room) {
+        io.in(roomConfig.code).emit("roomWasCreated", {
+          roomConfig: room.roomConfig,
+          playerMetadata: room.players,
+        });
+      }
+
+      await prisma.room.create({
+        data: {
+          pointsToWin: roomConfig.pointsToWin,
+          maxPlayers: roomConfig.maxPlayers,
+          isPublic: roomConfig.isPublic,
+          playersInRoom: roomConfig.playersInRoom,
+          playerIDsInRoom: [roomConfig.hostUserID],
+          code: roomConfig.code,
+          hostUsername: roomConfig.hostUsername,
+          hostUserID: roomConfig.hostUserID,
+          gameStarted: roomConfig.gameStarted,
+        },
+      });
+      void recordAnalytics({ roomsCreated: 1 });
+    },
+  );
+}

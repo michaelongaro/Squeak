@@ -24,19 +24,7 @@ const suitToNumberMap = {
 };
 
 type validCardValues =
-  | "A"
-  | "2"
-  | "3"
-  | "4"
-  | "5"
-  | "6"
-  | "7"
-  | "8"
-  | "9"
-  | "10"
-  | "J"
-  | "Q"
-  | "K";
+  "A" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "10" | "J" | "Q" | "K";
 type validCardSuits = "H" | "C" | "D" | "S";
 
 function cardPlacementIsValid(
@@ -55,6 +43,10 @@ function cardPlacementIsValid(
     : null;
 
   const baseNumSuit = suitToNumberMap[suit as validCardSuits];
+
+  if (!Number.isInteger(proposedNumValue) || !Number.isInteger(baseNumSuit)) {
+    return false;
+  }
 
   // "K" is the last card that can be placed onto a deck (necessary?)
   if (forBoard && currentCell?.value !== "K") {

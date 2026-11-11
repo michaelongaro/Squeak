@@ -1,0 +1,41 @@
+import { type Server } from "socket.io";
+import { type IGameData } from "~/types/socket";
+
+interface IInitDrawFromSqueakDeck {
+  roomCode: string;
+  indexToDrawTo: number;
+  playerID: string;
+  gameData: IGameData;
+  io: Server;
+}
+
+export function drawInitialSqueakStackCardFromDeck({
+  roomCode,
+  indexToDrawTo,
+  playerID,
+  gameData,
+  io,
+}: IInitDrawFromSqueakDeck) {
+  const board = gameData[roomCode]?.board;
+  const players = gameData[roomCode]?.players;
+  const player = gameData[roomCode]?.players?.[playerID];
+  if (!board || !players || !player) return;
+
+  const target = player.squeakHand[indexToDrawTo];
+  if (!target || target.length !== 0) return;
+
+  const card = player.deck.pop();
+
+  if (card) {
+    target.push(card);
+
+    io.in(roomCode).emit("initialCardDrawnForSqueakStack", {
+      playerID,
+      cardsInInitialPile: player.deck.length,
+      cardsInTargetPile: 0,
+      indexToDrawTo,
+      newCard: card,
+      gameData: gameData[roomCode],
+    });
+  }
+}

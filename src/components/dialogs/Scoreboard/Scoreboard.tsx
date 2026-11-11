@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useRef } from "react";
-import { socket } from "~/pages/_app";
+import { socket } from "~/lib/socket";
 import AnimatedCardContainer from "./AnimatedCardContainer";
 import AnimatedNumbers from "~/components/ui/AnimatedNumbers";
 import confetti from "canvas-confetti";

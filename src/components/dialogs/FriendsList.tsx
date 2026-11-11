@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { socket } from "~/pages/_app";
+import { socket } from "~/lib/socket";
 import { api } from "~/utils/api";
 import { FiMail } from "react-icons/fi";
 import { FaUserFriends } from "react-icons/fa";

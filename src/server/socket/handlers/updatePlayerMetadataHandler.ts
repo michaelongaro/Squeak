@@ -1,0 +1,30 @@
+import type { PlayerSocket as Socket } from "~/types/socket";
+import { type Server } from "socket.io";
+import { type IRoomData, type IUpdatePlayerMetadata } from "~/types/socket";
+
+export function updatePlayerMetadataHandler(
+  io: Server,
+  socket: Socket,
+  roomData: IRoomData,
+) {
+  socket.on(
+    "updatePlayerMetadata",
+    ({ newPlayerMetadata, playerID, roomCode }: IUpdatePlayerMetadata) => {
+      const room = roomData[roomCode];
+      const user = roomData[roomCode]?.players[playerID];
+
+      if (!room || !user) return;
+
+      user.avatarPath = newPlayerMetadata.avatarPath;
+      user.color = newPlayerMetadata.color;
+      user.cardBackVariant = newPlayerMetadata.cardBackVariant;
+      user.deckHueRotation = newPlayerMetadata.deckHueRotation;
+      user.username = newPlayerMetadata.username;
+
+      if (newPlayerMetadata.botDifficulty) {
+        user.botDifficulty = newPlayerMetadata.botDifficulty;
+      }
+      io.in(roomCode).emit("playerMetadataUpdated", room.players);
+    },
+  );
+}

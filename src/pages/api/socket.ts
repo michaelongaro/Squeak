@@ -1,33 +1,28 @@
-import { Server, type Socket } from "socket.io";
-import type {
-  IFriendsData,
-  IGameData,
-  IMiscRoomData,
-  IRoomData,
-} from "~/types/socket";
-import { drawFromDeckHandler } from "./handlers/drawFromDeckHandler";
-import { proposedCardDropHandler } from "./handlers/proposedCardDropHandler";
-import { roundOverHandler } from "./handlers/roundOverHandler";
-import { resetGameHandler } from "./handlers/resetGameHandler";
-import { leaveRoomHandler } from "./handlers/leaveRoomHandler";
-import { initializePlayerInFriendsObjectHandler } from "./handlers/initializePlayerInFriendsObjectHandler";
-import { modifyFriendDataHandler } from "./handlers/modifyFriendDataHandler";
-import { updateRoomConfigHandler } from "./handlers/updateRoomConfigHandler";
-import { startGameHandler } from "./handlers/startGameHandler";
-import { createRoomHandler } from "./handlers/createRoomHandler";
-import { joinRoomHandler } from "./handlers/joinRoomHandler";
-import { updatePlayerMetadataHandler } from "./handlers/updatePlayerMetadataHandler";
-import { castVoteHandler } from "./handlers/castVoteHandler";
-import { rejoinRoomHandler } from "./handlers/rejoinRoomHandler";
-import { oldRoomCleanupCronHandler } from "~/pages/api/handlers/oldRoomCleanupCronHandler";
-import { broadcastRoomActionCountdownHandler } from "~/pages/api/handlers/broadcastRoomActionCountdownHandler";
-import { gracefulReconnectHandler } from "~/pages/api/handlers/gracefulReconnectHandler";
-import { goOfflineHandler } from "~/pages/api/handlers/goOfflineHandler";
+import type { PlayerSocket as Socket } from "~/types/socket";
+import { Server } from "socket.io";
+import type { Server as HTTPServer } from "node:http";
+import type { Socket as NetSocket } from "node:net";
+import type { NextApiRequest, NextApiResponse } from "next";
+import { socketState } from "~/server/socket/state";
+import { drawFromDeckHandler } from "~/server/socket/handlers/drawFromDeckHandler";
+import { proposedCardDropHandler } from "~/server/socket/handlers/proposedCardDropHandler";
+import { roundOverHandler } from "~/server/socket/handlers/roundOverHandler";
+import { resetGameHandler } from "~/server/socket/handlers/resetGameHandler";
+import { leaveRoomHandler } from "~/server/socket/handlers/leaveRoomHandler";
+import { initializePlayerInFriendsObjectHandler } from "~/server/socket/handlers/initializePlayerInFriendsObjectHandler";
+import { modifyFriendDataHandler } from "~/server/socket/handlers/modifyFriendDataHandler";
+import { updateRoomConfigHandler } from "~/server/socket/handlers/updateRoomConfigHandler";
+import { startGameHandler } from "~/server/socket/handlers/startGameHandler";
+import { createRoomHandler } from "~/server/socket/handlers/createRoomHandler";
+import { joinRoomHandler } from "~/server/socket/handlers/joinRoomHandler";
+import { updatePlayerMetadataHandler } from "~/server/socket/handlers/updatePlayerMetadataHandler";
+import { castVoteHandler } from "~/server/socket/handlers/castVoteHandler";
+import { rejoinRoomHandler } from "~/server/socket/handlers/rejoinRoomHandler";
+import { broadcastRoomActionCountdownHandler } from "~/server/socket/handlers/broadcastRoomActionCountdownHandler";
+import { gracefulReconnectHandler } from "~/server/socket/handlers/gracefulReconnectHandler";
+import { goOfflineHandler } from "~/server/socket/handlers/goOfflineHandler";
 
-const roomData: IRoomData = {};
-const gameData: IGameData = {};
-const friendsData: IFriendsData = {};
-const miscRoomData: IMiscRoomData = {};
+const { roomData, gameData, friendsData, miscRoomData } = socketState;
 
 // unsure of if this is necessary
 export const config = {
@@ -36,18 +31,27 @@ export const config = {
   },
 };
 
-// @ts-expect-error sdf
-export default function SocketHandler(req, res) {
+export default function SocketHandler(
+  _req: NextApiRequest,
+  res: NextApiResponse,
+) {
+  const server = (
+    res.socket as (NetSocket & { server: HTTPServer & { io?: Server } }) | null
+  )?.server;
+  if (!server) {
+    res.status(503).end();
+    return;
+  }
   // means that socket server was already initialized
-  if (res.socket.server.io) {
+  if (server.io) {
     res.end();
     return;
   }
 
-  const io = new Server(res.socket.server, {
+  const io = new Server(server, {
     path: "/api/socket",
   });
-  res.socket.server.io = io;
+  server.io = io;
 
   const onConnection = (socket: Socket) => {
     // pregame/room handlers
@@ -66,7 +70,7 @@ export default function SocketHandler(req, res) {
     startGameHandler(io, socket, roomData, gameData, miscRoomData);
 
     // game/room handlers
-    drawFromDeckHandler(io, socket, gameData);
+    drawFromDeckHandler(io, socket, gameData, miscRoomData);
 
     proposedCardDropHandler(io, socket, gameData, miscRoomData);
 
@@ -80,15 +84,16 @@ export default function SocketHandler(req, res) {
 
     rejoinRoomHandler(io, socket, gameData, roomData, miscRoomData);
 
-    oldRoomCleanupCronHandler(io, socket, gameData, roomData, miscRoomData);
-
-    socket.on("directlyLeaveRoom", (roomCode) => {
-      socket.leave(roomCode);
+    socket.on("directlyLeaveRoom", (roomCode: string) => {
+      void socket.leave(roomCode);
     });
 
-    socket.on("measurePlayerPing", (_, ack) => {
-      ack(Date.now());
-    });
+    socket.on(
+      "measurePlayerPing",
+      (_: unknown, ack?: (timestamp: number) => void) => {
+        if (typeof ack === "function") ack(Date.now());
+      },
+    );
 
     // friends handlers
     initializePlayerInFriendsObjectHandler(io, socket, friendsData);

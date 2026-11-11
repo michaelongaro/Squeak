@@ -10,15 +10,12 @@ import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Dialog, DialogTrigger } from "~/components/ui/dialog";
 import { MdQuestionMark } from "react-icons/md";
-import { socket } from "~/pages/_app";
+import { socket } from "~/lib/socket";
 import { api } from "~/utils/api";
 import { useRoomContext } from "../../context/RoomContext";
 import { useUserIDContext } from "../../context/UserIDContext";
 import useLeaveRoom from "../../hooks/useLeaveRoom";
-import {
-  type IRoomPlayersMetadata,
-  type IRoomPlayer,
-} from "~/types/socket";
+import { type IRoomPlayersMetadata, type IRoomPlayer } from "~/types/socket";
 import { useRouter } from "next/router";
 import { type IRoomConfig } from "~/types/room";
 import {
@@ -78,8 +75,7 @@ function JoinRoom() {
     friendData?.roomInviteIDs ?? [],
     {
       enabled: Boolean(
-        (friendData?.friendInviteIDs ? friendData.friendInviteIDs.length : 0) >
-        0,
+        (friendData?.roomInviteIDs ? friendData.roomInviteIDs.length : 0) > 0,
       ),
     },
   );
@@ -92,8 +88,8 @@ function JoinRoom() {
         code: roomCode,
         playerMetadata: playerMetadata[userID],
       },
-      (response?: "roomIsFull") => {
-        if (response !== "roomIsFull") {
+      (response?: "roomIsFull" | "gameStarted") => {
+        if (response === undefined) {
           push(`join/${roomCode}`);
           setConnectedToRoom(true);
         }

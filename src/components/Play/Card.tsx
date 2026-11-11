@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from "react";
-import { socket } from "~/pages/_app";
+import { socket } from "~/lib/socket";
 import { useUserIDContext } from "../../context/UserIDContext";
 import {
   type IHeldSqueakStackLocation,

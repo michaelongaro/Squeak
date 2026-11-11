@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@clerk/nextjs";
 import cryptoRandomString from "crypto-random-string";
 import { api } from "~/utils/api";
-import { socket } from "~/pages/_app";
+import { socket } from "~/lib/socket";
 import { useUserIDContext } from "../../context/UserIDContext";
 import { useRoomContext } from "../../context/RoomContext";
 import {

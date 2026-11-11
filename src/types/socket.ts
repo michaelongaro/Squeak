@@ -1,5 +1,10 @@
 import type { IRoomConfig } from "~/types/room";
 import type { ICard, IPlayerCards } from "~/utils/generateDeckAndSqueakCards";
+import type { Socket } from "socket.io";
+
+export interface PlayerSocket extends Socket {
+  data: { playerID?: string };
+}
 
 export interface IFriendsData {
   [userID: string]: IFriendsMetadata;
@@ -34,7 +39,9 @@ interface IMiscRoomMetadata {
   };
   scoreboardMetadata: IScoreboardMetadata | null;
   currentVotes: ("agree" | "disagree")[];
+  voterIDs?: string[];
   voteType: "rotateDecks" | "endRound" | null;
+  roundStarted?: boolean;
 }
 
 interface IBlacklistedSqueakCards {

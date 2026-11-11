@@ -12,7 +12,7 @@ export const roomsRouter = createTRPCRouter({
         code: z.string(),
         hostUsername: z.string(),
         hostUserID: z.string(),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       try {
@@ -55,7 +55,7 @@ export const roomsRouter = createTRPCRouter({
       z.object({
         roomCode: z.string(),
         playerID: z.string().optional(),
-      })
+      }),
     )
     .query(async ({ ctx, input }) => {
       const { roomCode, playerID } = input;
@@ -63,7 +63,7 @@ export const roomsRouter = createTRPCRouter({
       if (roomCode === "") return null;
 
       try {
-        const room = await ctx.prisma.room.findFirst({
+        const room = await ctx.prisma.room.findUnique({
           where: {
             code: roomCode,
           },
@@ -73,7 +73,7 @@ export const roomsRouter = createTRPCRouter({
 
         if (!room) return "Room not found.";
 
-        if (room.playersInRoom === room.maxPlayers) return "Room is full.";
+        if (room.playersInRoom >= room.maxPlayers) return "Room is full.";
 
         if (room.gameStarted) return "Game has already started.";
 
@@ -94,7 +94,7 @@ export const roomsRouter = createTRPCRouter({
         hostUsername: z.string(),
         hostUserID: z.string(),
         gameStarted: z.boolean(),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       try {

@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 
 interface IOnClickOutside {
-  ref: React.RefObject<HTMLDivElement>;
+  ref: React.RefObject<HTMLDivElement | null>;
   setShowDialog: (showSettingsDialog: boolean) => void;
 }
 

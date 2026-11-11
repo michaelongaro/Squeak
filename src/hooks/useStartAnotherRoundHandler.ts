@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { socket } from "~/pages/_app";
+import { socket } from "~/lib/socket";
 import { useRoomContext } from "../context/RoomContext";
 import { type IGameMetadata } from "~/types/socket";
 import { useUserIDContext } from "../context/UserIDContext";
@@ -21,10 +21,10 @@ function useStartAnotherRoundHandler() {
   } | null>(null);
 
   useEffect(() => {
-    socket.on("startNewRound", (data) => setDataFromBackend(data));
+    socket.on("startNewRound", setDataFromBackend);
 
     return () => {
-      socket.off("startNewRound", (data) => setDataFromBackend(data));
+      socket.off("startNewRound", setDataFromBackend);
     };
   }, []);
 

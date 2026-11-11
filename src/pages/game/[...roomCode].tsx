@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
-import { socket } from "~/pages/_app";
+import { socket } from "~/lib/socket";
 import Board from "~/components/Play/Board";
 import PlayerCardContainer from "~/components/Play/PlayerCardContainer";
 import OtherPlayersCardContainers from "~/components/Play/OtherPlayersCardContainers";

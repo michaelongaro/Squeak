@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { socket } from "~/pages/_app";
+import { socket } from "~/lib/socket";
 import { useUserIDContext } from "../context/UserIDContext";
 import { useRoomContext } from "../context/RoomContext";
 import { type IMoveBackToLobby } from "~/types/socket";
@@ -16,10 +16,10 @@ function useReturnToRoomHandler() {
     useState<IMoveBackToLobby | null>(null);
 
   useEffect(() => {
-    socket.on("moveBackToLobby", (data) => setDataFromBackend(data));
+    socket.on("moveBackToLobby", setDataFromBackend);
 
     return () => {
-      socket.off("moveBackToLobby", (data) => setDataFromBackend(data));
+      socket.off("moveBackToLobby", setDataFromBackend);
     };
   }, []);
 

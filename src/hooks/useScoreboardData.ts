@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { socket } from "~/pages/_app";
+import { socket } from "~/lib/socket";
 import { useUserIDContext } from "../context/UserIDContext";
 import { useRoomContext } from "../context/RoomContext";
 import { type IScoreboardMetadata } from "~/types/socket";

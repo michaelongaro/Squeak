@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { socket } from "~/pages/_app";
+import { socket } from "~/lib/socket";
 import { useRoomContext } from "../context/RoomContext";
 import toast from "react-hot-toast";
 
@@ -63,10 +63,10 @@ function useVoteHasBeenCast() {
   // think that any overlap is really possible...
 
   useEffect(() => {
-    socket.on("voteHasBeenCast", (data) => setDataFromBackend(data));
+    socket.on("voteHasBeenCast", setDataFromBackend);
 
     return () => {
-      socket.off("voteHasBeenCast", (data) => setDataFromBackend(data));
+      socket.off("voteHasBeenCast", setDataFromBackend);
     };
   }, []);
 

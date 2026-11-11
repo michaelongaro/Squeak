@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { socket } from "~/pages/_app";
+import { socket } from "~/lib/socket";
 import { useUserIDContext } from "../context/UserIDContext";
 import { useRoomContext } from "../context/RoomContext";
 import { type IPlayerHasLeftRoom } from "~/types/socket";
@@ -23,10 +23,10 @@ function usePlayerLeftRoom() {
   useEffect(() => {
     if (!connectedToRoom) return; // probably keeping but not sure yet
 
-    socket.on("playerHasLeftRoom", (data) => setDataFromBackend(data));
+    socket.on("playerHasLeftRoom", setDataFromBackend);
 
     return () => {
-      socket.off("playerHasLeftRoom", (data) => setDataFromBackend(data));
+      socket.off("playerHasLeftRoom", setDataFromBackend);
     };
   }, [connectedToRoom]);
 

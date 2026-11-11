@@ -5,7 +5,7 @@ import React, {
   useEffect,
   useRef,
 } from "react";
-import { socket } from "~/pages/_app";
+import { socket } from "~/lib/socket";
 import { useAuth } from "@clerk/nextjs";
 import { type IRoomConfig } from "~/types/room";
 import {
@@ -286,7 +286,9 @@ export function RoomProvider(props: { children: React.ReactNode }) {
 
   // cleanup timer just in case the current player doesn't receive the
   // "playerDrawnFromDeck" emit from the server
-  const fallbackPlayerIsDrawingFromDeckTimerIdRef = useRef<NodeJS.Timeout>();
+  const fallbackPlayerIsDrawingFromDeckTimerIdRef = useRef<
+    NodeJS.Timeout | undefined
+  >(undefined);
 
   const [decksAreBeingRotated, setDecksAreBeingRotated] =
     useState<boolean>(false);
@@ -336,10 +338,6 @@ export function RoomProvider(props: { children: React.ReactNode }) {
   const [votingLockoutStartTimestamp, setVotingLockoutStartTimestamp] =
     useState<number | null>(null);
   const [showVotingOptionButtons, setShowVotingOptionButtons] = useState(true);
-
-  useEffect(() => {
-    fetch("/api/socket");
-  }, []);
 
   useEffect(() => {
     if (proposedCardBoxShadowTimeoutRef.current) {
@@ -466,7 +464,7 @@ export function RoomProvider(props: { children: React.ReactNode }) {
       playerMetadata[userID] !== undefined ||
       !isLoaded ||
       isSignedIn ||
-      user !== null
+      userID === ""
     )
       return;
 
